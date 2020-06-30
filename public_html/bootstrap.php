@@ -25,7 +25,7 @@ use PHPMailer\PHPMailer\Exception;
  *
  * @author makungaj1
  */
-function send_email($host, $username, $password, $to, $content, $subject="", $from="", $port=587) {
+function sendEmail($host, $username, $password, $to, $content, $subject="", $from="", $port=587) {
     $mail = new PHPMailer(true);
 
     $mail->isSMTP();
