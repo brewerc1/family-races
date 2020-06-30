@@ -25,5 +25,3 @@ if($config['prod_mode'] == false){
 
 // Include the database configuration
 require_once $config['path_to_system'] . '/database.php';
-
-?>
