@@ -1,5 +1,15 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/family-races/public_html/bootstrap.php');
+require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+
+
+// SQL to fetch user data
+
+$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code FROM user";
+$display_user_result = $pdo->prepare($display_user_sql);
+$display_user_result->execute();
+$num_display_user_results = $display_user_result->rowCount();
+$row = $display_user_result->fetch();
+
 ?>
 
 
@@ -37,9 +47,42 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/family-races/public_html/bootstrap.p
         </section>
         
         <section>
-            <h2>Current Users</h2>
+            <h2>Current Users</h2>     
+             <?php
+
+                if ($num_display_user_results > 0) {
+                    $invited = "";
+
+                    // loop through DB return
+                    while($row = $display_user_result->fetch()) {
+
+                        // handle user with invite but hasn't accepted
+                        if(!empty($row["invite_code"])) {
+                            $invited = "<span class='invited_chip'>pending</span>";
+                            $name = $row["email"];
+                        } else {
+                            $name = $row["first_name"] . ' ' . $row["last_name"];
+                        }
+                        // handle missing photo
+                        if(empty($row["photo"])) {
+                            $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+                        } else {
+                            $photo = $row["photo"];
+                        }
+
+                        // output row of user data
+echo <<< ENDUSER
             <div class="user-row">
-                <a href="../user/user_profile.php?u=1"><img src=" " alt="photo"></a><span>User's Name</span> Invited
+                <a href="../user/user_profile.php?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
+            </div>
+
+ENDUSER;
+                    } 
+                } else {
+                    echo "0 results";
+                }         
+
+                ?>  
             </div>
         </section>
     </main>
