@@ -1,4 +1,5 @@
 <?php
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 
@@ -9,6 +10,7 @@ $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
+
 
 ?>
 
@@ -47,6 +49,7 @@ $row = $display_user_result->fetch();
         </section>
         
         <section>
+
             <h2>Current Users</h2>     
              <?php
 
@@ -83,6 +86,7 @@ ENDUSER;
                 }         
 
                 ?>  
+
             </div>
         </section>
     </main>
