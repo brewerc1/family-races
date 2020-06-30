@@ -1,5 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/family-races/public_html/bootstrap.php');
+require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 //get selected UID
 $display_uid = 1; // Replace 1 with $_GET['u']
