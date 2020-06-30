@@ -11,10 +11,7 @@ $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
 
-
 ?>
-
-
 <!doctype html>
 <html lang="en">
 <head>
