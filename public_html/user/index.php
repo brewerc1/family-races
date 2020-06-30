@@ -5,10 +5,12 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/family-races/public_html/bootstrap.p
 $display_uid = 1; // Replace 1 with $_GET['u']
 
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
+
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute(['display_uid' => $display_uid]);
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
+
 ?>
 
 <!doctype html>
@@ -48,17 +50,21 @@ $row = $display_user_result->fetch();
                 <p>EMAIL: <?php echo $row['email']  ?></p>
                 <p>CITY: <?php echo $row['city'] ?></p>
                 <p>STATE: <?php echo $row['state'] ?></p>
+
             </div>
         </section>
         
         <section id="user_records">
             <h1>Keenland Records</h1>
+
             <p><?php //echo $row['records'] ?></p>
+
 
         </section>
     </main>
     
     <footer>
+
         <p>Created by students of the College of Informatics at Northern Kentucky University</p>
     </footer>
 </body>
