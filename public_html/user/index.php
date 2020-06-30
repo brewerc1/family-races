@@ -6,7 +6,10 @@ $display_uid = 1; // Replace 1 with $_GET['u']
 
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
 
-
+$display_user_result = $pdo->prepare($display_user_sql);
+$display_user_result->execute(['display_uid' => $display_uid]);
+$num_display_user_results = $display_user_result->rowCount();
+$row = $display_user_result->fetch();
 
 ?>
 
@@ -36,30 +39,33 @@ $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
     </nav>
     <main role="main">
         <section id="user_info">
-            <!-- Assumes DB query returns to $row array-->
             <div>
-            <img src="<?php $row['photo'] ?>" alt="User Photo"/>   
+            <img src="<?php echo $row['photo'] ?>" alt="User Photo"/>   
             <a href="./edit" class="button">Edit Profile</a> <!-- ??? style into a button or change to form -->
-            <a href="" class="button">Go to Google</a> <!-- ??? style into a button or change to form -->
-            <p><?php $row['first_name'] . $row['last_name'] ?> </p>\
+            <a href="./settings/" class="button">User Settings</a> <!-- ??? style into a button or change to form -->
+            <p><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
             </div>
             <div>
-                <p><?php $row['motto'] ?></p>
-                <p><?php $row['email']  ?></p>
-                <p><?php $row['city'] ?></p>
-                <p><?php $row['state'] ?></p>
+                <p>MOTTO: <?php echo $row['motto'] ?></p>
+                <p>EMAIL: <?php echo $row['email']  ?></p>
+                <p>CITY: <?php echo $row['city'] ?></p>
+                <p>STATE: <?php echo $row['state'] ?></p>
+
             </div>
         </section>
         
         <section id="user_records">
             <h1>Keenland Records</h1>
-            <p><?php $row['records'] ?></p>
+
+            <p><?php //echo $row['records'] ?></p>
+
 
         </section>
     </main>
     
     <footer>
-        <p>Created by students of the College of Informatics at Northern Kentucky University</p>>
+
+        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
     </footer>
 </body>
 </html>
