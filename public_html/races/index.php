@@ -1,4 +1,9 @@
 <?php
+/**
+ * Page to interect with individual races.
+ * 
+ * Page Desctiption
+ */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Get UID
@@ -34,6 +39,11 @@ $num_races_result = $pdo->prepare($num_races_sql);
 $num_races_result->execute(['event' => $event]);
 $num_races = $num_races_result->rowCount();
 
+// TODO: Check session variable for current user info
+// TODO: Get current event info from db
+// TODO: Conditional statements to check if window closed (display results)
+// TODO: Conditional statement to check if window not open yet
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -60,75 +70,81 @@ $num_races = $num_races_result->rowCount();
             margin: 2px;
         }
         pre {
-          border: 1px solid #ccc;
-          background-color: rgba(0,0,0,.05);
-          color: rgba(0,0,0,.65);
-          padding-left: 5px;
-          position: fixed;
-          top: 0;
-          left: 0;
+            border: 1px solid #ccc;
+            background-color: rgba(0,0,0,.05);
+            color: rgba(0,0,0,.65);
+            padding-left: 5px;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
     </style>
     <script>
-      $(document).ready(function(){
-        $(function(){
-          // bind change event to select
-          $('#race_picker').on('change', function () {
-              var url = "/races/?" + $(this).val(); // get selected value
-              if (url) { // require a URL
-                  window.location = url; // redirect
-              }
-              return false;
-          });
+        $(document).ready(function(){
+            $(function(){
+            // bind change event to select
+                $('#race_picker').on('change', function () {
+                    var url = "/races/?" + $(this).val(); // get selected value
+                    if (url) { // require a URL
+                        window.location = url; // redirect
+                    }
+                return false;
+                });
+            });
         });
-      });
   </script>
 </head>
 <body>
 
 <div id="page-wrapper">
-    <form method="post" action="./invite.php" id="race">
+    <form method="post" action="./invite.php" id="race"> <!-- Race Select Menu -->
         <select id="race_picker">
 <?php 
+// Builds the select menu based on number of races
+    // TODO: "all" option to display event standings
+    // TODO: Replace "race #" display with memorial race title
 for($i = 1; $i <= $num_races; $i++){
-  if($i == $race){
-    $attr = "selected='selected' disabled='disabled'";
-  }else{
-    $attr = "";
-  }
-  echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
+    if($i == $race){
+        $attr = "selected='selected' disabled='disabled'";
+    }else{
+        $attr = "";
+    }
+    echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
 }
 ?>
-          <option value="e=$event&r=all&u=$uid">All Races</option>
+            <option value="e=$event&r=all&u=$uid">All Races</option>
         </select>
-    </form>
-    <p><strong>You Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
-    <strong>Purse:</strong> $<?php //echo $purse;?></p>
+    </form> <!-- END id race_picker -->
 
+    <div id="user_bet"> <!-- Display User's Bet -->
+    <!-- TODO: select menu's to display user pick options, defaul to current pick -->
+    <p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
+    <strong>Purse:</strong> $<?php //echo $purse;?></p>
+    </div> <!-- END id user_bet -->
+    <div id="race_leaderboard">
 <?php
 
 if ($num_race_results > 0) {
-  $invited = "";
+    $invited = "";
 
-  // Output data of each row
-  while($row = $race_result->fetch()) {
-    $name = $row["first_name"] . ' ' . $row["last_name"];
-      // Handle missing profile photo
-      if(empty($row["photo"])) {
-          $photo = "https://races.informatics.plus/images/no-user-image.jpg";
-      }else{
-          $photo = $row["photo"];
-      }
-      echo "<div class='user-row'><a href='/user/user_profile?uid=" . $row["user_id"] . "'><img src='$photo' alt='photo'></a><span>$name</span> <span class='earnings'>\${$row["earnings"]}</span></div>";
+    // Output data of each row
+    while($row = $race_result->fetch()) {
+        $name = $row["first_name"] . ' ' . $row["last_name"];
+        // Handle missing profile photo
+        if(empty($row["photo"])) {
+            $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+        }else{
+            $photo = $row["photo"];
+        }
+        echo "<div class='user-row'><a href='/user/user_profile?uid=" . $row["user_id"] . "'><img src='$photo' alt='photo'></a><span>$name</span> <span class='earnings'>\${$row["earnings"]}</span></div>";
     }
-  } else {
-    echo "0 results";
-  }
-
-
+    } else {
+        echo "0 results";
+    }
 
 //echo "<pre><b>UID:</b> $uid<br><b>Event:</b> $event<br><b>Race:</b> $race</pre>";
 ?>
+    </div> <!-- END id race_leaderboard -->
 </div> <!-- end id page-wrapper -->
 
 
