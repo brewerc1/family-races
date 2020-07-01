@@ -22,8 +22,6 @@ use PHPMailer\PHPMailer\Exception;
  *
  *
  *  May have to require vendor/autoload.php
- *
- * @author makungaj1
  */
 function sendEmail($host, $username, $password, $to, $content, $subject="", $from="", $port=587) {
     $mail = new PHPMailer(true);
@@ -59,45 +57,14 @@ function sendEmail($host, $username, $password, $to, $content, $subject="", $fro
     }
 }
 
+
 /**
  * @return string
- *
- *  This function returns a unique code like Lx7!3469187
- *
- *  The code starts with an uppercase letter followed by a lowercase letter
- *  followed by a digit. That digit specifies the number of digit at the end of the code
- *
- *  Hw8!13234720
- *
- *  Hw8! : 8 indicates 8 digits at the end of the code '13234720'
- *
- * @author makungaj1
+ * @throws \Exception
  */
 function generateCode()
 {
-
-    $second = date("s");
-
-    $year_month_date = date("Ymd");
-
-    $upper = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-        'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-        'Y', 'Z');
-
-    $lower = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-        'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
-
-    $s_char = array('!', '~', '#', '@', '$', '%', '&', '*');
-
-
-    $end_digits = rand($second, $year_month_date);
-
-    $count_digits = strlen((string)$end_digits);
-
-    return $upper[array_rand($upper)] . $lower[array_rand($lower)] . $count_digits .
-        $s_char[array_rand($s_char)] . $end_digits;
-
+    return bin2hex(random_bytes(4));
 }
 
 ?>
