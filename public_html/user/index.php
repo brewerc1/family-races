@@ -10,13 +10,17 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-//get selected UID
+// get selected UID
 $display_uid = 1; // Replace 1 with $_GET['u']
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute(['display_uid' => $display_uid]);
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
+
+// TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
+
+// TODO: Check session variable for logged in user. If "logged in" == "displayed", enable links to "settings" and "edit"
 
 ?>
 <!doctype html>
@@ -46,9 +50,10 @@ $row = $display_user_result->fetch();
     <main role="main">
         <section id="user_info">
             <div>
-            <img src="<?php echo $row['photo'] ?>" alt="User Photo"/>   
-            <a href="./edit" class="button">Edit Profile</a> <!-- ??? style into a button or change to form -->
-            <a href="./settings/" class="button">User Settings</a> <!-- ??? style into a button or change to form -->
+            <img src="<?php echo $row['photo'] ?>" alt="User Photo"/> 
+            <!-- Links not displayed if "logged in" == "displayed" -->  
+            <a href="./edit" class="button">Edit Profile</a> 
+            <a href="./settings/" class="button">User Settings</a> 
             <p><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
             </div>
             <div>
@@ -62,11 +67,8 @@ $row = $display_user_result->fetch();
         
         <section id="user_records">
             <h1>Keenland Records</h1>
-
             <p><?php //echo $row['records'] ?></p>
-
-
-        </section>
+        </section> <!-- END user_records -->
     </main>
     
     <footer>
