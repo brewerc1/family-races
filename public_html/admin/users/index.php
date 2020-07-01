@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Admin page for user management
+ * 
+ * This page fetches and displays data for all users. 
+ * Registered users are displayed as a picture, first name, last name.
+ * Invited users are displayed with their email, and a pending tag. 
+ * A user can be invited by entering an email.
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 
