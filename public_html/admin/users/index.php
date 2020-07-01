@@ -54,7 +54,7 @@ $row = $display_user_result->fetch();
                 <input type="email" name="email_to_invite" placeholder="Invite a New User" required>
                 <button type="submit" form="invite_form" name="send_email_btn" value="Submit">+</button>
             </form>
-        </section><!-- END user invite section -->
+        </section><!-- END id user_invite -->
 
         <section id="display_current_users"> 
             <h2>Current Users</h2>     
@@ -94,7 +94,7 @@ ENDUSER;
                 ?>  
 
             </div>
-        </section> <!-- END display_current_users -->
+        </section> <!-- END id display_current_users -->
 
     </main>
     
