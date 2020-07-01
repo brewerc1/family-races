@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 30, 2020 at 04:38 PM
+-- Generation Time: Jul 01, 2020 at 07:11 PM
 -- Server version: 10.2.10-MariaDB
 -- PHP Version: 7.2.30
 
@@ -427,15 +427,23 @@ CREATE TABLE `site_settings` (
   `memorial_race_enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `memorial_race_number` tinyint(4) NOT NULL DEFAULT 9,
   `memorial_race_name` varchar(45) NOT NULL,
-  `welcome_video_url` varchar(128) NOT NULL
+  `welcome_video_url` varchar(128) NOT NULL,
+  `invite_email_subject` varchar(64) NOT NULL,
+  `invite_email_body` text NOT NULL,
+  `email_server` varchar(64) NOT NULL,
+  `email_server_port` varchar(5) NOT NULL,
+  `email_server_account` varchar(64) NOT NULL,
+  `email_server_password` varchar(64) NOT NULL,
+  `email_from_name` varchar(64) NOT NULL,
+  `email_from_address` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `site_settings`
 --
 
-INSERT INTO `site_settings` (`id`, `sound_fx`, `voiceovers`, `terms_enable`, `terms_text`, `default_horse_count`, `memorial_race_enable`, `memorial_race_number`, `memorial_race_name`, `welcome_video_url`) VALUES
-(1, 1, 1, 1, 'Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\r\n\r\nEtiam porta sem malesuada magna mollis euismod. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor.\r\n\r\nNullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.\r\n\r\nMaecenas faucibus mollis interdum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas sed diam eget risus varius blandit sit amet non magna. Vestibulum id ligula porta felis euismod semper. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula porta felis euismod semper.', 9, 1, 3, 'Denny Jones Memorial', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+INSERT INTO `site_settings` (`id`, `sound_fx`, `voiceovers`, `terms_enable`, `terms_text`, `default_horse_count`, `memorial_race_enable`, `memorial_race_number`, `memorial_race_name`, `welcome_video_url`, `invite_email_subject`, `invite_email_body`, `email_server`, `email_server_port`, `email_server_account`, `email_server_password`, `email_from_name`, `email_from_address`) VALUES
+(1, 1, 1, 1, 'Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\r\n\r\nEtiam porta sem malesuada magna mollis euismod. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor.\r\n\r\nNullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.\r\n\r\nMaecenas faucibus mollis interdum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas sed diam eget risus varius blandit sit amet non magna. Vestibulum id ligula porta felis euismod semper. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula porta felis euismod semper.', 9, 1, 3, 'Denny Jones Memorial', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'You\'re Invited!', 'Here\'s your invite link to get started using Family Races!', 'smtp.gmail.com', '587', 'cscdevemail@gmail.com', 'nku1234!', 'Family Races', 'cscdevemail@gmail.com');
 
 -- --------------------------------------------------------
 
