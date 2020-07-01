@@ -1,11 +1,18 @@
 <?php
+/**
+ * Page to Display User Profile
+ * 
+ * This page displays the profile of a selected user.
+ * The user ID of the correct user is recieved with $_GET['u'].
+ * Page also check if the logged in user is the displayed user, enabling the "edit" and "settings links.
+ */
+
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 //get selected UID
 $display_uid = 1; // Replace 1 with $_GET['u']
-
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
-
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute(['display_uid' => $display_uid]);
 $num_display_user_results = $display_user_result->rowCount();
