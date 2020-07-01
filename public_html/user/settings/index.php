@@ -36,6 +36,7 @@ $uid = $_GET['u'];
     </nav>
     <main role="main">
         <section id="user_settings">
+            <!-- Currently displays each setting in a <p> -->
             <h1>Settings</h1>
             <p>Sound Effects</p>
             <p>Voiceovers</p>
