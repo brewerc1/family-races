@@ -7,48 +7,50 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/PHPMailer.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
+
 
 /**
- * @param $host
- * @param $username
- * @param $password
- * @param $to
- * @param $content : may use html5 tags and should have the invite code included.
- * @param string $subject optional
- * @param string $from optional
- * @param int $port optional
- *
+ * @param $email_server
+ * @param $email_server_account
+ * @param $email_server_password
+ * @param $email_server_port
+ * @param $email_from_name
+ * @param $email_from_address
+ * @param $invite_email_subject
+ * @param $invite_email_body
+ * @param $recipient_email
  * @return bool
- *
- *
- *  May have to require vendor/autoload.php
  */
-function sendEmail($host, $username, $password, $to, $content, $subject="", $from="", $port=587) {
+function sendEmail($email_server, $email_server_account, $email_server_password, $email_server_port,
+                   $email_from_name, $email_from_address, $invite_email_subject, $invite_email_body,
+                   $recipient_email) {
+
+
     $mail = new PHPMailer(true);
 
-    $mail->isSMTP();
-    $mail->Host       = $host;
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $username;
-    $mail->Password   = $password;
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = $port;
-
-
     try {
-
-        if (empty($from))
-            $from = $username;
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host       = $email_server;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $email_server_account;
+        $mail->Password   = $email_server_password;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $email_server_port;
 
         //Recipients
-        $mail->setFrom($from);
-        $mail->addAddress($to);
+        $mail->setFrom($email_from_address, $email_from_name);
+        $mail->addAddress($recipient_email);
+
 
         // Content
         $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body    = $content;
-        $mail->AltBody = strip_tags($content);
+        $mail->Subject = $invite_email_subject;
+        $mail->Body    = $invite_email_body;
+        $mail->AltBody = strip_tags($invite_email_body);
 
         $mail->send();
         return true;
