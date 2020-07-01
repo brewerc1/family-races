@@ -68,7 +68,7 @@ $row = $display_user_result->fetch();
         <section id="user_records">
             <h1>Keenland Records</h1>
             <p><?php //echo $row['records'] ?></p>
-        </section> <!-- END id user_records -->
+        </section> <!-- END user_records -->
     </main>
     
     <footer>
