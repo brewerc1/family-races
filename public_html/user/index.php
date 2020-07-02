@@ -23,7 +23,9 @@ $row = $display_user_result->fetch();
 
 // TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
-// TODO: Check session variable for logged in user. If "logged in" == "displayed", enable links to "settings" and "edit"
+// TODO: Check session variable for logged in user. 
+
+// Links to "edit" and "settings" page
 $settings_link = "<a href='./settings/?u=" . $current_user_id . "' id='settings_link' class='button'>User Settings</a>";
 $edit_link = "<a href='./edit/?u=" . $current_user_id . "' id='edit_link' class='button'>Edit Profile</a> "    
 
