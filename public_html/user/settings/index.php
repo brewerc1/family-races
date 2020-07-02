@@ -91,8 +91,10 @@ $db_voiceovers = $row['voiceovers'];
             if(!$_POST['sound_fx']){ $sound_fx_value = 0; } 
             else if ($_POST[]){ $sound_fx_value = 1; }
 
-            if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != '1'){set to 0}
+            // from Chris: if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != '1'){set to 0}
 
+            
+            //do the same for voiceovers
             if(!$_POST['voiceovers']){ $voiceover_value = 0; } else { $voiceovers_value = 1; }
 
 
