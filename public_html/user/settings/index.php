@@ -8,7 +8,9 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Get UID
-$uid = $_GET['u']; // This should end up coming from $_SESSION
+$uid = $_GET['u']; // All user data, including settings, will be in $_SESSION
+
+
 
 // SQL to retrieve user settings
 $user_settings_sql = "SELECT sound_fx, voiceovers FROM user WHERE id = :uid";
@@ -17,10 +19,12 @@ $user_settings_result->execute(['uid' => $uid]);
 $num_user_setting_results = $user_settings_result->rowCount();
 $row = $user_settings_result->fetch();
 
-$sound_fx = $row['sound_fx'];
-$voiceovers = $row['voiceovers'];
+$db_sound_fx = $row['sound_fx'];
+$db_voiceovers = $row['voiceovers'];
 
 // TODO: create SQL to update preferences
+
+
 
 ?>
 <!doctype html>
@@ -31,15 +35,14 @@ $voiceovers = $row['voiceovers'];
     <title>User Settings</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link href="/css/races.css" rel="stylesheet">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        function handleClick(cb) {
 
-        }
-    </script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 </head>
 <body>
     <nav id="main-navigation">
@@ -54,24 +57,56 @@ $voiceovers = $row['voiceovers'];
     </nav>
     <main role="main">
         <section id="user_settings">
-
             <h1>Settings</h1>
-            
-            <p><label>
-                <input type="checkbox" <?php if($sound_fx == 1){echo 'checked';} ?> onclick="handleClick(this);">
-                Sound Effects
-            </label></p>
+            <div id="settings">
 
-            <p><label>
-                <input type="checkbox" <?php if($voiceovers == 1){echo 'checked';} ?> onclick="handleClick(this);">
-                Voiceovers
-            </label></P>
-        
+            <form method="post" action="./?u=<?php echo $uid ?>">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" data-toggle="toggle" name="sound_fx" value="0" id="sound_fx" <?php if($db_sound_fx == 1){echo 'checked';} ?> >
+                        Sound Effects
+                    </label>
+                </div>
+                <div class="checkbox disabled">
+                    <label>
+                        <input type="checkbox" data-toggle="toggle" name="voiceovers" value="0" id="voiceovers" <?php if($db_voiceovers == 1){echo 'checked';} ?>>
+                        Voiceovers
+                    </label>
+                </div>
+                <input type="submit" name="save_button" value="Save">
+            </form> 
+            </div> <!-- END id settings -->
 
-            <p>change password link</p>
-            <a href="../?u=<?php echo $uid ?>" class="button">Cancel</a>
             <a href="../../password/reset.php" class="button">Change Password</a>
+            <a href="../?u=<?php echo $uid ?>" class="button">Cancel</a>
+            
         </section> <!-- END id user_settings -->
+        <section id="testing_area">
+        <?php 
+        // Check if "save" button was clicked
+        if(isset($_POST['save_button'])){
+            var_dump($_POST);
+            
+            //fix: 
+            if(!$_POST['sound_fx']){ $sound_fx_value = 0; } 
+            else if ($_POST[]){ $sound_fx_value = 1; }
+
+            if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != '1'){set to 0}
+
+            if(!$_POST['voiceovers']){ $voiceover_value = 0; } else { $voiceovers_value = 1; }
+
+
+            $voiceovers_value = $_POST['voiceovers'];
+
+            $update_preferences_sql = "UPDATE user SET sound_fx = :sound_fx_value, voiceovers = :voiceovers_value  WHERE id = :uid;";
+            $update_preferences_result = $pdo->prepare($update_preferences_sql);
+            $update_preferences_result->execute(['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'uid' => $uid]);
+            $row = $user_settings_result->fetch();
+            
+
+        }
+        ?>
+        </section>
     </main>
     
     <footer>
