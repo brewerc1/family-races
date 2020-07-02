@@ -1,10 +1,11 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charsetasdas ="utf-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"> 
     <title>Skeleton HTML</title>
 
