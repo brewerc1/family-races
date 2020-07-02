@@ -1,14 +1,10 @@
 <?php
 
-asdasd
-asd
-asd
-asd
 
 /**
  * Page to Display User Settings
  * 
- * Page Description
+ * Page Desdfgdfgption
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
