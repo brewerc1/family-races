@@ -83,7 +83,7 @@ $row = $display_user_result->fetch();
                         // output row of user data
 echo <<< ENDUSER
             <div class="user-row">
-                <a href="../user/user_profile.php?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
+                <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
             </div>
 ENDUSER;
                     } 
