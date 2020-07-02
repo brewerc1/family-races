@@ -1,10 +1,8 @@
 <?php
-
-
 /**
  * Page to Display User Settings
  * 
- * Page Desdfgdfgption
+ * Page Description
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
