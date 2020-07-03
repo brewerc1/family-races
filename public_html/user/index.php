@@ -1,8 +1,15 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+// Authentication System
+ob_start();
+session_start();
+
+if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+    header("Location: /login/");
+
 
 //get selected UID
-$display_uid = 1; // Replace 1 with $_GET['u']
+$display_uid = $_SESSION["id"]; // Replace 1 with $_GET['u']
 
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
 
