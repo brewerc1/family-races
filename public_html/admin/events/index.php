@@ -9,7 +9,7 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
 
 // To be reviewed
 if (!$_SESSION["admin"])
-    header("Location: " . $_SERVER["HTTP_REFERER"] . "?access=denied");
+    header("Location: " . $_SERVER["HTTP_REFERER"]);
 
 ?>
 
