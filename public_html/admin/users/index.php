@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Admin page for user management
+ * 
+ * This page fetches and displays data for all users. 
+ * Registered users are displayed as a picture, first name, last name.
+ * Invited users are displayed with their email, and a pending tag. 
+ * A user can be invited by entering an email.
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Authentication  and Authorization System
@@ -20,6 +29,8 @@ $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
+
+// TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
 ?>
 <!doctype html>
@@ -47,16 +58,15 @@ $row = $display_user_result->fetch();
         </ul>
     </nav>
     <main role="main">
-        <section>
+        <section id="User_invite"> 
             <h1>User Management</h1>
             <form method="post" action="../admin/invite.php" id="invite_form">
                 <input type="email" name="email_to_invite" placeholder="Invite a New User" required>
                 <button type="submit" form="invite_form" name="send_email_btn" value="Submit">+</button>
             </form>
-        </section>
-        
-        <section>
+        </section><!-- END user invite section -->
 
+        <section id="display_current_users"> 
             <h2>Current Users</h2>     
              <?php
 
@@ -83,9 +93,8 @@ $row = $display_user_result->fetch();
                         // output row of user data
 echo <<< ENDUSER
             <div class="user-row">
-                <a href="../user/user_profile.php?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
+                <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
             </div>
-
 ENDUSER;
                     } 
                 } else {
@@ -95,11 +104,12 @@ ENDUSER;
                 ?>  
 
             </div>
-        </section>
+        </section> <!-- END display_current_users -->
+
     </main>
     
     <footer>
-        <p>Created by students of the College of Informatics at Northern Kentucky University</p>>
+        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
     </footer>
 </body>
 </html>

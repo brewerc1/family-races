@@ -100,6 +100,7 @@ if (isset($_POST["login"])) {
     </div>
 </main>
 
+
 <footer>
     <p>Created by students of the College of Informatics at Northern Kentucky University</p>
 </footer>
