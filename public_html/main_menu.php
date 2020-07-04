@@ -22,10 +22,10 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
             margin:0;
             padding:0;
         }
-    </style>
+    </style>e
 </head>
 <body>
-    <!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
+
     <nav id="main-navigation">
         <h1>Main Navigation</h1>
         <ul>
