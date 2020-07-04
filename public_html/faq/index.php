@@ -230,7 +230,7 @@ Still, the player pointed out that such arbitrary “rules” can become an asse
 The player added that all “rules” have numerous exceptions and that the game can be simplified so even the average player can understand it. 
 “In the end, the core of the game comes down to four basic questions: Which horses are fast enough to win? What is the likely pace scenario? Which horses have a better chance of winning than their odds suggest? And what is the racetrack bias? 
 “If you can answer those four questions you’ve got 95 percent of the game figured out. Never mind the ‘rules.’ They’re nonsense.” 
-        </p>
+</p>
     </div>
 
     </main>     
