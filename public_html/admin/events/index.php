@@ -15,7 +15,12 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+include '../../template/header.php';
 ?>
 
 <h1>Admin Events Page</h1>
 <p>Displays a list of events</p>
+
+<?php
+include '../../template/footer.php';
+?>

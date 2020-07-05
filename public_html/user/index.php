@@ -36,31 +36,9 @@ if (isset($_GET["u"])) {
 
 // TODO: Check session variable for logged in user. If "logged in" == "displayed", enable links to "settings" and "edit"
 
-?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"> 
-    <title>User Profile</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-    <nav id="main-navigation">
-        <h1>Main Navigation</h1>
-        <ul>
-            <li>Menu 1</li>
-            <li>Menu 2</li>
-            <li>Menu 3</li>
-            <li>Menu 4</li>
-            <li>Menu 5</li>
-        </ul>
-    </nav>
+include '../template/header.php';
+?>
     <main role="main">
         <section id="user_info">
             <div>
@@ -90,10 +68,7 @@ LINKS;
             <p><?php //echo $row['records'] ?></p>
         </section> <!-- END user_records -->
     </main>
-    
-    <footer>
 
-        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-    </footer>
-</body>
-</html>
+<?php
+include '../template/footer.php';
+?>

@@ -109,7 +109,7 @@ if (isset($_GET["message"])) {
             </span>
     </div>
     <div id="forgot_pwd">
-        <a href="../password/index.php">Forgot Password</a>
+        <a href="http://localhost/password">Forgot Password</a>
     </div>
 </main>
 

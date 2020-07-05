@@ -57,8 +57,8 @@ if (!$_SESSION["admin"]) {
             <ul >
                 <li><a href="link to current event"> Current Event </a></li>
                 <li><a href="link to event and race management page">Event & Race Managment</a></li>
-                <li><a href="link to user managment page">User Management</a></li>
-                <li><a href="link to site settings">Site Settings</a></li>
+                <li><a href="./users">User Management</a></li>
+                <li><a href="./settings">Site Settings</a></li>
             </ul>
         </section>
      

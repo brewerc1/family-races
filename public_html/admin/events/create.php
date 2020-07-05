@@ -15,7 +15,12 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+include '../../template/header.php';
 ?>
 
 <h1>Admin Create an Event Page</h1>
 <p>Create a new event</p>
+
+<?php
+include '../../template/footer.php';
+?>

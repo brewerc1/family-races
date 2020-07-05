@@ -27,7 +27,7 @@ if (isset($_POST["invite"])) {
                     $unique_code = generateCode();
                 } catch (Exception $e) {
                     header("Location: ./?message=Fails to generate Code");
-                    exit;
+                    exit; // a bug?
                 }
 
                 // write to the db
