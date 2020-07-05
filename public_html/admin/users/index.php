@@ -20,7 +20,7 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
 
 // To be reviewed
 if (!$_SESSION["admin"])
-    header("Location: " . $_SERVER["HTTP_REFERER"]);
+    header("Location: javascript://window.history.back()");
 
 // SQL to fetch user data
 

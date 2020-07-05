@@ -9,7 +9,7 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
 
 // To be reviewed
 if (!$_SESSION["admin"])
-    header("Location: " . $_SERVER["HTTP_REFERER"]);
+    header("Location: javascript://window.history.back()");
 
 ?>
 <!doctype html>
@@ -40,11 +40,11 @@ if (!$_SESSION["admin"])
     <nav id="main-navigation">
         <h1>Main Navigation</h1>
         <ul>
-            <li><a href="http://localhost/races/index.php">Races</a></li>
-            <li><a href="http://localhost/HOF/index.php">HOF</a></li>
-            <li><a href="http://localhost/FAQ/index.php">FAQ</a></li>
-            <li><a href="http://localhost/profile/index.php">Me</a></li>
-            <li><a href="http://localhost/admin/index.php">Admin</a></li>
+            <li><a href="../races/">Races</a></li>
+            <li><a href="../HOF/">HOF</a></li>
+            <li><a href="../FAQ/">FAQ</a></li>
+            <li><a href="../user/">Me</a></li>
+            <li><a href="../admin/">Admin</a></li>
         </ul>
     </nav>
     <main role="main">

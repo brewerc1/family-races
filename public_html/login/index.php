@@ -47,7 +47,6 @@ if (isset($_POST["login"])) {
                 // Valid credentials
                 ob_start();
                 session_start();
-                setcookie("user_id", $user_row["id"], strtotime('+30 days'), '/');
 
                 // Session variables (13)
                 $_SESSION["id"] = $user_row["id"];

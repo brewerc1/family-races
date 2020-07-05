@@ -7,13 +7,30 @@ session_start();
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
+// logged in user
+$full_name = $_SESSION['first_name'].' '.$_SESSION['last_name'];
+$photo = $_SESSION['photo'];
+$motto = $_SESSION['motto'];
+$email = $_SESSION['email'];
+$city = $_SESSION['city'];
+$state = $_SESSION['state'];
+
 // get selected UID
-$display_uid = $_SESSION["id"]; // Replace 1 with $_GET['u']
-$display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
-$display_user_result = $pdo->prepare($display_user_sql);
-$display_user_result->execute(['display_uid' => $display_uid]);
-$num_display_user_results = $display_user_result->rowCount();
-$row = $display_user_result->fetch();
+if (isset($_GET["u"])) {
+    $display_uid = $_GET["u"]; // Replace 1 with $_GET['u']
+    $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
+    $display_user_result = $pdo->prepare($display_user_sql);
+    $display_user_result->execute(['display_uid' => $display_uid]);
+    $num_display_user_results = $display_user_result->rowCount();
+    $row = $display_user_result->fetch();
+
+    $full_name = $row['first_name'].' '.$row['last_name'];
+    $photo = $row['photo'];
+    $motto = $row['motto'];
+    $email = $row['email'];
+    $city = $row['city'];
+    $state = $row['state'];
+}
 
 // TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
@@ -47,17 +64,23 @@ $row = $display_user_result->fetch();
     <main role="main">
         <section id="user_info">
             <div>
-            <img src="<?php echo $row['photo'] ?>" alt="User Photo"/> 
+            <img src="<?php echo $photo ?>" alt="User Photo"/>
             <!-- Links not displayed if "logged in" == "displayed" -->  
-            <a href="./edit" class="button">Edit Profile</a> 
-            <a href="./settings/?u=<?php echo $display_uid?>" class="button">User Settings</a> 
-            <p><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
+            <?php
+            if (!isset($_GET["u"])) {
+echo <<< LINKS
+<a href="./edit" class="button">Edit Profile</a> 
+<a href="./settings/" class="button">User Settings</a> 
+LINKS;
+            }
+            ?>
+            <p><?php echo $full_name ?> </p>
             </div>
             <div>
-                <p>MOTTO: <?php echo $row['motto'] ?></p>
-                <p>EMAIL: <?php echo $row['email']  ?></p>
-                <p>CITY: <?php echo $row['city'] ?></p>
-                <p>STATE: <?php echo $row['state'] ?></p>
+                <p>MOTTO: <?php echo $motto ?></p>
+                <p>EMAIL: <?php echo $email  ?></p>
+                <p>CITY: <?php echo $city ?></p>
+                <p>STATE: <?php echo $state ?></p>
 
             </div>
         </section>
