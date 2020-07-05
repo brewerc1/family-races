@@ -19,8 +19,12 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
 // To be reviewed
-if (!$_SESSION["admin"])
-    header("Location: javascript://window.history.back()");
+if (!$_SESSION["admin"]) {
+    header("HTTP/1.1 401 Unauthorized");
+    // An error page
+    //header("Location: error401.php");
+    exit;
+}
 
 // SQL to fetch user data
 
@@ -32,6 +36,11 @@ $row = $display_user_result->fetch();
 
 // TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
+// Notification System
+$notification = "";
+if (isset($_GET["message"])) {
+    $notification = $_GET["message"];
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -58,12 +67,18 @@ $row = $display_user_result->fetch();
         </ul>
     </nav>
     <main role="main">
-        <section id="User_invite"> 
+        <section id="User_invite">
             <h1>User Management</h1>
-            <form method="post" action="../admin/invite.php" id="invite_form">
-                <input type="email" name="email_to_invite" placeholder="Invite a New User" required>
-                <button type="submit" form="invite_form" name="send_email_btn" value="Submit">+</button>
+            <form method="POST" action="./invite_user.php" id="invite_form">
+                <input type="email" name="email" placeholder="Invite a New User" required>
+                <button type="submit" form="invite_form" name="invite" >+</button>
             </form>
+            <!-- Notification: use css or javascript to display only for few minutes-->
+            <span class="notification">
+                <?php
+                echo $notification;
+                ?>
+            </span>
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 

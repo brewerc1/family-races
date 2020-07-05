@@ -8,8 +8,12 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
 // To be reviewed
-if (!$_SESSION["admin"])
-    header("Location: javascript://window.history.back()");
+if (!$_SESSION["admin"]) {
+    header("HTTP/1.1 401 Unauthorized");
+    // An error page
+    //header("Location: error401.php");
+    exit;
+}
 
 ?>
 

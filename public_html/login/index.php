@@ -16,11 +16,11 @@ if (isset($_POST["login"])) {
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        header("Location: /login/?login=false&email=" . $email);
+        header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
-        header("Location: /login/?login=false");
+        header("Location: /login/?login=false&message=Invalid Credentials");
 
     } else {
 
@@ -31,7 +31,7 @@ if (isset($_POST["login"])) {
 
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
-            header("Location: /login/?login=false&email=" . $email);
+            header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
         } else {
             $user_row = $user->fetch();
@@ -41,7 +41,7 @@ if (isset($_POST["login"])) {
 
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
-                header("Location: /login/?login=false&email=" . $email);
+                header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
             } else {
                 // Valid credentials
@@ -72,6 +72,12 @@ if (isset($_POST["login"])) {
 
 }
 
+// Notification System
+$notification = "";
+if (isset($_GET["message"])) {
+    $notification = $_GET["message"];
+}
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -94,6 +100,14 @@ if (isset($_POST["login"])) {
         <input type="password" name="pwd" placeholder="password">
         <input type="submit" value="Login" name="login">
     </form>
+    <div>
+        <!-- Notification: use css or javascript to display only for few minutes-->
+        <span class="notification">
+                <?php
+                echo $notification;
+                ?>
+            </span>
+    </div>
     <div id="forgot_pwd">
         <a href="../password/index.php">Forgot Password</a>
     </div>
