@@ -1,1 +1,1 @@
-<?php> This is where the main menu html is!<?>
+<?php //This is where the main menu html is! ?>
