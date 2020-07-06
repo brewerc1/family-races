@@ -1,10 +1,12 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+
+include '../template/header.php';
 ?>
 
 <h1>Races Page</h1>
 <div
-    <ul>
+    <ul id="race-dropdown">
         <li> Race 1 </li>
         <li> Race 2 </li>
         <li> Race 3 </li>
@@ -16,9 +18,9 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
         <h2>Place your bet:</h2>
         <form>
             <p>Horse:</p>
-            <input type="number" step=1>
+            <input type="number" step=1 name="horse-number">
             <p>to</p>
-            <ul>
+            <ul id="horse-position" name="horse-position">
                 <li> Win </li>
                 <li> Place </li>
                 <li> Show </li>
@@ -33,3 +35,7 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
         <h2>Check back for results after the race!</h2>
     </div>
 </div>
+
+<?php
+include '../template/footer.php';
+?>

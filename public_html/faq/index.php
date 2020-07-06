@@ -40,7 +40,6 @@
             <li>Place: Choose a horse to finish in first OR second place.</li>
             <li>Show: Choose a horse to finish in first, second OR third place.</li>
         </ul>
-
         <div>
         <h1>Approximate Payouts</h1>
             <table>
@@ -233,10 +232,11 @@ The player added that all “rules” have numerous exceptions and that the game
 </p>
     </div>
 
-    </main>     
- 
+      
+    </main>
+    
     <footer>
         <p>Created by students of the College of Informatics at Northern Kentucky University</p>
     </footer>
-    </body>
+</body>
 </html>

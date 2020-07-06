@@ -11,7 +11,7 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // get selected UID
-$display_uid = 1; // Replace 1 with $_GET['u']
+$display_uid = $_GET['u']; // Replace 1 with $_GET['u']
 $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute(['display_uid' => $display_uid]);
@@ -53,7 +53,7 @@ $row = $display_user_result->fetch();
             <img src="<?php echo $row['photo'] ?>" alt="User Photo"/> 
             <!-- Links not displayed if "logged in" == "displayed" -->  
             <a href="./edit" class="button">Edit Profile</a> 
-            <a href="./settings/" class="button">User Settings</a> 
+            <a href="./settings/?u=<?php echo $display_uid?>" class="button">User Settings</a> 
             <p><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
             </div>
             <div>
