@@ -45,7 +45,7 @@ nav#main-navigation li {
 }
 
 /* 
-For tab highlighting
+For tab highlighting*/
 
 nav#main-navigation li:hover {
 	background-color: green;
@@ -53,4 +53,4 @@ nav#main-navigation li:hover {
 
 nav#main-navigation li.active {
 	background-color: blue;
-} */
+}
