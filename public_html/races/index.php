@@ -1,16 +1,19 @@
 <?php
-/**
- * Page to interect with individual races.
- * 
- * Page Desctiption
- */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-include '../template/header.php';
+//include '../template/header.php';
+
+// Authentication System
+ob_start();
+session_start();
+
+if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+    header("Location: /login/");
 
 // Get UID
-$uid = $_GET['u'];
+$uid = $_SESSION['id'];
 
+// URL needs to have the GET variables to work ex: http://localhost/races/?e=1&r=3
 // Get event
 $event = $_GET['e'];
 

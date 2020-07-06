@@ -3,6 +3,11 @@
 // Get the configuration array from the config file located outside the document root.
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/../system/config.php');
 
+// Those information are used to hash password.
+// @author makungaj1
+$hash_algorithm = "sha256";
+$pepper = "clisvFdxMd2020";
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;

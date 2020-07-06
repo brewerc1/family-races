@@ -1,6 +1,3 @@
-<?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -29,10 +26,17 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     <nav id="main-navigation">
         <h1>Main Navigation</h1>
         <ul>
-            <li><a href="http://localhost/races/index.php">Races</a></li>
-            <li><a href="http://localhost/HOF/index.php">HOF</a></li>
-            <li><a href="http://localhost/FAQ/index.php">FAQ</a></li>
-            <li><a href="http://localhost/profile/index.php">Me</a></li>
-            <li><a href="http://localhost/admin/index.php">Admin</a></li>
+            <li><a href="http://localhost/races">Races</a></li>
+            <li><a href="http://localhost/HOF/">HOF</a></li>
+            <li><a href="http://localhost/FAQ/">FAQ</a></li>
+            <li><a href="http://localhost/user/">Me</a></li>
+            <?php
+                if ($_SESSION['admin']) {
+                    echo <<< ADMIN
+<li><a href= "http://localhost/admin/">Admin</a></li>
+ADMIN;
+                }
+            ?>
+            <li><a href="http://localhost/logout">Log out</a></li>
         </ul>
     </nav>
