@@ -4,11 +4,14 @@
  * 
  * This page displays the profile of a selected user.
  * The user ID of the correct user is recieved with $_GET['u'].
- * Page also check if the logged in user is the displayed user, enabling the "edit" and "settings links.
+ * Page checks if the logged in user is the displayed user, enabling the "edit" and "settings links.
  */
 
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+
+// Placeholder for logged in user from $_SESSION
+$current_user_id = 1;
 
 // get selected UID
 $display_uid = $_GET['u']; // Replace 1 with $_GET['u']
@@ -20,7 +23,11 @@ $row = $display_user_result->fetch();
 
 // TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
-// TODO: Check session variable for logged in user. If "logged in" == "displayed", enable links to "settings" and "edit"
+// TODO: Check session variable for logged in user. 
+
+// Links to "edit" and "settings" page
+$settings_link = "<a href='./settings/?u=" . $current_user_id . "' id='settings_link' class='button'>User Settings</a>";
+$edit_link = "<a href='./edit/?u=" . $current_user_id . "' id='edit_link' class='button'>Edit Profile</a> "    
 
 ?>
 <!doctype html>
@@ -33,8 +40,8 @@ $row = $display_user_result->fetch();
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
     <link href="/css/races.css" rel="stylesheet">
-    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 <body>
     <nav id="main-navigation">
@@ -52,9 +59,13 @@ $row = $display_user_result->fetch();
             <div>
             <img src="<?php echo $row['photo'] ?>" alt="User Photo"/> 
             <!-- Links not displayed if "logged in" == "displayed" -->  
-            <a href="./edit" class="button">Edit Profile</a> 
-            <a href="./settings/?u=<?php echo $display_uid?>" class="button">User Settings</a> 
-            <p><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
+            <?php
+            if ($current_user_id == $display_uid){
+                echo $edit_link; 
+                echo $settings_link; 
+            }
+            ?>
+            <p id="user_name"><?php echo $row['first_name'].' '.$row['last_name'] ?> </p>
             </div>
             <div>
                 <p>MOTTO: <?php echo $row['motto'] ?></p>
