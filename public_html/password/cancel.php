@@ -30,7 +30,11 @@ if (!$pdo->prepare($sql)->execute(['pw_reset_code' => NULL, 'email' => $email]))
 } else {
     echo "<h1>Your password reset request was successfully canceled.</h1>";
 }
+?>
 
-
-include '../template/footer.php';
+<footer>
+        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
+    </footer>
+</body>
+</html>
 

@@ -46,6 +46,8 @@ if (isset($_GET["message"]))
     </section>
 </main>
 
-<?php
-include '../template/footer.php';
-?>
+<footer>
+    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
+</footer>
+</body>
+</html>
