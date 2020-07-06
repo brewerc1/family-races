@@ -1,3 +1,14 @@
+<?php
+require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+// Authentication  and Authorization System
+ob_start();
+session_start();
+
+if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+    header("Location: /login/");
+
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -26,11 +37,18 @@
     <nav id="main-navigation">
         <h1>Main Navigation</h1>
         <ul>
-            <li><a href="http://localhost/races/index.php">Races</a></li>
-            <li><a href="http://localhost/HOF/index.php">HOF</a></li>
-            <li><a href="http://localhost/faq/index.php">FAQ</a></li>
-            <li><a href="http://localhost/profile/index.php">Me</a></li>
-            <li><a href="http://localhost/admin/index.php">Admin</a></li>
+            <li><a href="http://localhost/races/">Races</a></li>
+            <li><a href="http://localhost/HOF/">HOF</a></li>
+            <li><a href="http://localhost/faq/">FAQ</a></li>
+            <li><a href="http://localhost/user/">Me</a></li>
+            <?php
+            if ($_SESSION['admin']) {
+echo <<< ADMIN
+<li><a href= "http://localhost/admin/">Admin</a></li>
+ADMIN;
+            }
+            ?>
+            <li><a href="http://localhost/logout">Log out</a></li>
         </ul>
     </nav>
     <main role="main">
