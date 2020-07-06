@@ -37,8 +37,8 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
 // TODO: Check session variable for logged in user. 
 
 // Links to "edit" and "settings" page
-$settings_link = "<a href='./settings/?u=" . $current_user_id . "' id='settings_link' class='button'>User Settings</a>";
-$edit_link = "<a href='./edit/?u=" . $current_user_id . "' id='edit_link' class='button'>Edit Profile</a> "    
+$settings_link = "<a href='./settings/?u=" . $_SESSION['id'] . "' id='settings_link' class='button'>User Settings</a>";
+$edit_link = "<a href='./edit/?u=" . $_SESSION['id'] . "' id='edit_link' class='button'>Edit Profile</a> "    
 
 
 ?>

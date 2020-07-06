@@ -1,6 +1,5 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-//test
 ?>
 <!doctype html>
 <html lang="en">
