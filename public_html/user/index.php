@@ -15,8 +15,8 @@ $email = $_SESSION['email'];
 $city = $_SESSION['city'];
 $state = $_SESSION['state'];
 
-// get selected UID
-if (isset($_GET["u"])) {
+// get selected UID: Don't run if the GET["u"] is SESSION["id"]
+if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
     $display_uid = $_GET["u"]; // Replace 1 with $_GET['u']
     $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
     $display_user_result = $pdo->prepare($display_user_sql);
@@ -45,7 +45,7 @@ include '../template/header.php';
             <img src="<?php echo $photo ?>" alt="User Photo"/>
             <!-- Links not displayed if "logged in" == "displayed" -->  
             <?php
-            if (!isset($_GET["u"])) {
+            if (!isset($_GET["u"]) || ($_GET["u"] == $_SESSION["id"])) {
 echo <<< LINKS
 <a href="./edit" class="button">Edit Profile</a> 
 <a href="./settings/" class="button">User Settings</a> 
