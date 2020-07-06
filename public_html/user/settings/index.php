@@ -15,9 +15,7 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
 // Get UID
-//$uid = $_SESSION["id"]; // This should end up coming from $_SESSION
-
-
+$uid = $_SESSION['id'];
 
 // TODO: create SQL to update preferences
 
