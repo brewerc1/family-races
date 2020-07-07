@@ -13,3 +13,44 @@ h1 {
 	font-family: 'Playfair Display', serif;
 	font-weight: 400;
 }
+
+
+/*Styling for the menu navigation*/
+nav#main-navigation {
+	overflow: hidden;
+	position: fixed;
+	bottom: 0;
+	width: 100vw;
+}
+
+nav#main-navigation a {
+	text-decoration: none;
+	color: black;
+	padding: 2vw;
+}
+
+nav#main-navigation ul {
+	margin: 0px;
+	padding: 0px;
+
+	display: flex;
+}
+
+nav#main-navigation li {
+	list-style-type: none;
+	width: 20%;
+	padding: 1vw;
+	text-align: center;
+	font-size: 3vh;
+}
+
+/* 
+For tab highlighting*/
+
+nav#main-navigation li:hover {
+	background-color: green;
+}
+
+nav#main-navigation li.active {
+	background-color: blue;
+}
