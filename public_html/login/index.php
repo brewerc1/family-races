@@ -1,6 +1,23 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
+// turn on output buffering
+ob_start('template');
+
+// start a session
+session_start();
+
+// set the page title for the template
+$page_title = "Login";
+
+// include the menu javascript for the template
+$javascript = <<< HERE
+$( document ).ready(function() {
+    $('#hof').addClass('active');
+});
+HERE;
+
+
 // Self explanatory
 $value = "";
 if (!empty($_GET["email"])) {
@@ -45,8 +62,6 @@ if (isset($_POST["login"])) {
 
             } else {
                 // Valid credentials
-                ob_start();
-                session_start();
 
                 // Session variables (13)
                 $_SESSION["id"] = $user_row["id"];
@@ -75,47 +90,29 @@ if (isset($_POST["login"])) {
 // Notification System
 $notification = "";
 if (isset($_GET["message"])) {
-    $notification = $_GET["message"];
+    $notification = trim($_GET["message"]);
 }
 
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Log In</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-<main role="main">
-    <form method="POST" action= <?php $_SERVER["PHP_SELF"] ?>>
-        <input type="email" name="email" placeholder="someone@something.com"
+{header}
+{main_nav}
+    <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+        <input type="email" name="email" placeholder="your@email.com"
                value=<?php echo $value ?>>
         <input type="password" name="pwd" placeholder="password">
         <input type="submit" value="Login" name="login">
     </form>
-    <div>
-        <!-- Notification: use css or javascript to display only for few minutes-->
-        <span class="notification">
-                <?php
-                echo $notification;
-                ?>
-            </span>
+    <?php if(isset($notification) && $notification != ''){?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <?php echo $notification; ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
+    <?php } ?>
     <div id="forgot_pwd">
-        <a href="http://localhost/password">Forgot Password</a>
+        <a href="/password/">Forgot Password</a>
     </div>
 </main>
-
-
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+{footer}
+<?php ob_end_flush(); ?>
