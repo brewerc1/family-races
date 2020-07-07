@@ -57,7 +57,6 @@ if (isset($_POST["invite"])) {
                             header("Location: ./?message=Invite not sent");
 
                         } else {
-
                             header("Location: ./?message=Invite sent");
                         }
 
