@@ -18,7 +18,11 @@ return <<< HTML
 
     
     <script>
-        $javascript
+        $( document ).ready(function() {
+            $javascript
+            var path_id = $(location).attr('pathname').split('/')[1];
+            $("#" + path_id).addClass("active");
+        });
     </script>
 </head>
 <body>
