@@ -15,7 +15,7 @@ $javascript = '';
 ob_start('template');
 session_start();
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"]))
     header("Location: /login/");
 
 // Get UID
@@ -61,13 +61,13 @@ if(isset($_POST['save_button'])){
             <h1>Settings</h1>
             
             <form action="./" method="post">
-                <p><label>
-                    <input type="checkbox" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
+            <div class="checkbox"><p><label>
+                    <input type="checkbox" data-toggle="toggle" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
                     Sound Effects
-                </label></p>
+                </label></p></div>
 
                 <p><label>
-                    <input type="checkbox" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                    <input type="checkbox" data-toggle="toggle" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
                     Voiceovers
                 </label></P>
                 <input type="submit" value="Save" name="save_button">
