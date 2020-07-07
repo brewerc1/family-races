@@ -58,17 +58,17 @@ if (!$_SESSION["admin"]) {
             <form action="./" method="post">
         
                 <p><label>
-                    <input type="checkbox" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>
+                    <input type="checkbox" data-toggle="toggle" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>
                     Sound Effects
                 </label></p>
 
                 <p><label>
-                    <input type="checkbox" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
+                    <input type="checkbox" data-toggle="toggle" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
                     Voiceovers
                 </label></P>
 
                 <p><label>
-                    <input type="checkbox" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
+                    <input type="checkbox" data-toggle="toggle" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
                     Enable Terms & Conditions
                 </label></P>
 
@@ -100,7 +100,7 @@ ENDOPTION;
                 </label></P>
 
                 <p><label>
-                    <input type="checkbox" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
+                    <input type="checkbox" data-toggle="toggle" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
                     Enable Memorial Race
                 </label></P>
 
