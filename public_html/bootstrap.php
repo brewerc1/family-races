@@ -8,6 +8,26 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/../system/config.php');
 $hash_algorithm = "sha256";
 $pepper = "clisvFdxMd2020";
 
+// Code for page templating
+function template($buffer)
+{
+    global $page_title, $javascript;
+    $to_match = array
+    (
+        '{header}', 
+        '{main_nav}', 
+        '{footer}'
+    );
+    $replace_with = array
+    (
+        require $_SERVER['DOCUMENT_ROOT'] . '/template/header.php', 
+        require $_SERVER['DOCUMENT_ROOT'] . '/template/main_nav.php', 
+        require $_SERVER['DOCUMENT_ROOT'] . '/template/footer.php'
+    );
+    return(str_replace($to_match, $replace_with, $buffer));
+}
+
+// Code for sending out emails
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
