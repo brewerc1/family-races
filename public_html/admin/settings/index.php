@@ -28,7 +28,7 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
-// SQL to get site settings - needs to exist at login or bootstrap
+// SQL to get site settings - needs to exist in bootstrap with conditional (!$_SESSION['id])
     $site_settings_sql = "SELECT * FROM site_settings";
     $site_settings_result = $pdo->prepare($site_settings_sql);
     $site_settings_result->execute();
