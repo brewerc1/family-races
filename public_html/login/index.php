@@ -74,9 +74,9 @@ if (isset($_POST["login"])) {
                 $_SESSION["state"] = $user_row["state"];
                 $_SESSION["motto"] = $user_row["motto"];
                 $_SESSION["photo"] = $user_row["photo"];
-                $_SESSION["sound_fx"] = $user_row["sound_fx"] ; //bool
-                $_SESSION["voiceovers"] = $user_row["voiceovers"] ; //bool
-                $_SESSION["admin"] = $user_row["admin"] ; //bool
+                $_SESSION["sound_fx"] = $user_row["sound_fx"];
+                $_SESSION["voiceovers"] = $user_row["voiceovers"]; 
+                $_SESSION["admin"] = $user_row["admin"]; 
 
                 // Redirect to welcome page
                 header("Location: /login/welcome/");
