@@ -1,7 +1,18 @@
 <?php
+/**
+ * Page to Display Site Settings
+ * 
+ * Page description
+ * 
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+
+$page_title = "Site Settings";
+$javascript = '';
+
 // Authentication  and Authorization System
-ob_start();
+ob_start('template');
 session_start();
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
@@ -15,54 +26,58 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+
 ?>
-<!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-        <title>Skeleton HTML</title>
+{header}
+{main_nav}
 
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-        <link href="/css/races.css" rel="stylesheet">
+<main role="main">
+        <section id="site_settings">
+            <h1>Settings</h1>
+            
+            <form action="./" method="post">
+        
+                <p><label>
+                    <input type="checkbox" name="sound_fx" <?php //if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
+                    Sound Effects
+                </label></p>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <style>
-            nav#main-navigation li {
-                display: inline-block;
-                width: 18%;
-            }
-            nav#main-navigation ul {
-                margin:0;
-                padding:0;
-            }
-        </style>
-    </head>
-<body>
-<!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-<nav id="main-navigation">
-    <h1>Main Navigation</h1>
-    <ul>
-        <li><a href="http://localhost/races">Races</a></li>
-        <li><a href="http://localhost/HOF/">HOF</a></li>
-        <li><a href="http://localhost/faq/">FAQ</a></li>
-        <li><a href="http://localhost/user/">Me</a></li>
-        <?php
-        if ($_SESSION['admin']) {
-            echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-        }
-        ?>
-        <li><a href="http://localhost/logout">Log out</a></li>
-    </ul>
-</nav>
+                <p><label>
+                    <input type="checkbox" name="voiceovers" <?php //if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                    Voiceovers
+                </label></P>
 
-<h1>Admin Settings Page</h1>
+                <p><label>
+                    <input type="checkbox" name="terms_enable" <?php //if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                    Enable Terms & Conditions
+                </label></P>
 
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+                <!-- terms text area -->
+
+                <!-- default horse count select -->
+
+                <p><label>
+                    <input type="checkbox" name="memorial_race_enable" <?php //if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                    Enable Memorial Race
+                </label></P>
+
+                <!-- Memorial race number (select?) -->
+
+                <!-- Memorial race name text field -->
+
+                <!-- Welcome Video URL text -->
+
+                <!-- Invite Email Subject -->
+
+                <!-- Invite email Body -->
+
+
+                <input type="submit" value="Save" name="save_button">
+            </form>
+            
+            <p><a href="../" >Cancel</a></p>
+            
+        </section> <!-- END id user_settings -->
+    </main>
+{footer}
+<?php ob_end_flush(); ?>
