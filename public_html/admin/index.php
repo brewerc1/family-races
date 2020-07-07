@@ -29,11 +29,11 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     <nav id="main-navigation">
         <h1>Main Navigation</h1>
         <ul>
-            <li><a href="http://localhost/races/index.php">Races</a></li>
-            <li><a href="http://localhost/HOF/index.php">HOF</a></li>
-            <li><a href="http://localhost/FAQ/index.php">FAQ</a></li>
-            <li><a href="http://localhost/profile/index.php">Me</a></li>
-            <li><a href="http://localhost/admin/index.php">Admin</a></li>
+            <li><a href="/races/index.php">Races</a></li>
+            <li><a href="/hof/index.php">HOF</a></li>
+            <li><a href="/faq/index.php">FAQ</a></li>
+            <li><a href="/profile/index.php">Me</a></li>
+            <li><a href="/admin/index.php">Admin</a></li>
         </ul>
     </nav>
     <main role="main">
@@ -41,9 +41,9 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
             <h1>The Stables</h1>
             <ul >
                 <li><a href="link to current event"> Current Event </a></li>
-                <li><a href="link to event and race management page">Event & Race Managment</a></li>
-                <li><a href="link to user managment page">User Management</a></li>
-                <li><a href="link to site settings">Site Settings</a></li>
+                <li><a href="/admin/events">Event & Race Managment</a></li>
+                <li><a href="/user/">User Management</a></li>
+                <li><a href="/admin/settings">Site Settings</a></li>
             </ul>
         </section>
      
