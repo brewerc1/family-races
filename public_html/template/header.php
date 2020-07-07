@@ -1,7 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-
-return <<<HTML
+return <<< HTML
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,8 +12,12 @@ return <<<HTML
     <link href="/css/races.css" rel="stylesheet">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $javascript
+    </script>
 </head>
 <body>
-    
+
 HTML;
 ?>
