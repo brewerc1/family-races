@@ -2,7 +2,7 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 if (isset($_POST["invite"])) {
-    $email = $_POST["email"];
+    $email = trim($_POST["email"]);
 
     if (!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
         header("Location: ./?message=Incorrect Email");
@@ -58,8 +58,6 @@ if (isset($_POST["invite"])) {
                         } else {
                             header("Location: ./?message=Invite sent");
                         }
-
-
 
                     }
                 }

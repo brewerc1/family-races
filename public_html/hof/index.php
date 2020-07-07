@@ -2,7 +2,6 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 $page_title = "Hall of Fame";
 $javascript = <<<HERE
-jQuery("#hof").addClass("active");
 HERE;
 // turn on output buffering 
 ob_start('template');

@@ -13,7 +13,7 @@ if (!isset($_GET["email"]) && !isset($_GET["code"])) {
 $email = $_GET["email"];
 $code = $_GET["code"];
 
-$query = "SELECT email FROM user WHERE invite_code = :invite_code";
+$query = "SELECT * FROM user WHERE invite_code = :invite_code";
 
 $invite_code = $pdo->prepare($query);
 $invite_code->execute(['invite_code' => $code]);

@@ -11,11 +11,7 @@ session_start();
 $page_title = "Login";
 
 // include the menu javascript for the template
-$javascript = <<< HERE
-$( document ).ready(function() {
-    $('#hof').addClass('active');
-});
-HERE;
+$javascript = "";
 
 
 // Self explanatory
@@ -74,9 +70,9 @@ if (isset($_POST["login"])) {
                 $_SESSION["state"] = $user_row["state"];
                 $_SESSION["motto"] = $user_row["motto"];
                 $_SESSION["photo"] = $user_row["photo"];
-                $_SESSION["sound_fx"] = $user_row["sound_fx"] == 1; //bool
-                $_SESSION["voiceovers"] = $user_row["voiceovers"] == 1; //bool
-                $_SESSION["admin"] = $user_row["admin"] == 1; //bool
+                $_SESSION["sound_fx"] = $user_row["sound_fx"];
+                $_SESSION["voiceovers"] = $user_row["voiceovers"];
+                $_SESSION["admin"] = $user_row["admin"];
 
                 // Redirect to welcome page
                 header("Location: /login/welcome/");
@@ -94,25 +90,24 @@ if (isset($_GET["message"])) {
 }
 
 ?>
-{header}
-{main_nav}
+    {header}
     <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
         <input type="email" name="email" placeholder="your@email.com"
                value=<?php echo $value ?>>
         <input type="password" name="pwd" placeholder="password">
         <input type="submit" value="Login" name="login">
     </form>
-    <?php if(isset($notification) && $notification != ''){?>
+<?php if(isset($notification) && $notification != ''){?>
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <?php echo $notification; ?>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <?php } ?>
+<?php } ?>
     <div id="forgot_pwd">
         <a href="/password/">Forgot Password</a>
     </div>
-</main>
-{footer}
+    </main>
+    {footer}
 <?php ob_end_flush(); ?>
