@@ -16,7 +16,7 @@ return <<< HTML
                     <a class="nav-link" href="/faq/">FAQ</a>
                 </li>
                 <li class="nav-item" id="profile">
-                    <a class="nav-link" href="/profile/">Me</a>
+                    <a class="nav-link" href="/user/">Me</a>
                 </li>
                 <li class="nav-item" id="admin">
                     <a class="nav-link" href="/admin/">Admin</a>
