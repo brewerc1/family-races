@@ -14,7 +14,6 @@ if (isset($_POST["invite"])) {
         if ($emails->rowCount() != 0) {
             header("Location: ./?message=User already invited");
         } else {
-
             $query = "SELECT invite_email_subject, invite_email_body, email_server, email_server_port, email_server_account, email_server_password, email_from_name, email_from_address FROM site_settings";
             $email_arguments = $pdo->prepare($query);
             $email_arguments->execute();
