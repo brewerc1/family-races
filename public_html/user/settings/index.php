@@ -60,7 +60,7 @@ if(isset($_POST['save_button'])){
         <section id="user_settings">
             <h1>Settings</h1>
             
-            <form action="./" method="post">
+            <form action="./index.php" method="post">
             <div class="checkbox"><p><label>
                     <input type="checkbox" data-toggle="toggle" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
                     Sound Effects
