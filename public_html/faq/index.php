@@ -2,7 +2,6 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 $page_title = "Frequently Asked Questions";
 $javascript = <<<HERE
-jQuery("#faq").addClass("active");
 HERE;
 // turn on output buffering 
 ob_start('template');
