@@ -25,22 +25,29 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
  * @param integer $pref_val : can be either 0  or 1
  * @param string $pref_name : $_GET["changePref"]
  * @param PDO $pdo
+ * @author makungaj1
  */
 function updatePreferences($pref_val, $pref_name, PDO $pdo) {
     // Update the Session variable
     $_SESSION[$pref_name] = ($pref_val == 1);
+
+    // value to be set in DB
     $val = $_SESSION[$pref_name] ? 1 : NULL;
 
+    // sql prepared stmt
     if ($pref_name == "sound_fx") {
         $sql = "UPDATE user SET sound_fx=:val WHERE id=:id";
     } else {
         $sql = "UPDATE user SET voiceovers=:val WHERE id=:id";
     }
+
     $pdo->prepare($sql)->execute(['val' => $val, 'id' => $_SESSION["id"]]);
 
+    // redirect user to user/settings to avoid bugs on page reload
     header("Location: http://localhost/user/settings/");
 }
 
+// run only if $_GET["changePref"] is set
 if (isset($_GET["changePref"])) {
     $val = $_SESSION[$_GET["changePref"]] ? 0 : 1;
     updatePreferences($val, $_GET["changePref"], $pdo);
@@ -73,6 +80,10 @@ if (isset($_GET["changePref"])) {
     <script>
         /**
          * @param prefN, can be either sound_fx or voiceovers
+         * @author makungaj1
+         *
+         *  Upon onClick event, the script redirect to user/settings/?changePre= sound_fx of voiceovers
+         *  so that the php updatePreferences() function will catch it in $_GET["changePref"]
          * */
         function handleOnClick(prefN) {
             window.location.replace("http://localhost/user/settings/?changePref=" + prefN);
