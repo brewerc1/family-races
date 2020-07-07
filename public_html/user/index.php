@@ -8,6 +8,7 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
 // logged in user
+// user to display if url: localhost/user/ or localhost/user/?u=1 where $_GET["u"] == $_SESSION["id"]
 $full_name = $_SESSION['first_name'].' '.$_SESSION['last_name'];
 $photo = $_SESSION['photo'];
 $motto = $_SESSION['motto'];
@@ -16,7 +17,8 @@ $city = $_SESSION['city'];
 $state = $_SESSION['state'];
 
 // get selected UID: Don't run if the GET["u"] is SESSION["id"]
-if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
+// User to display only if url: localhost/user/?u=2 where $_GET["u"] != $_SESSION["id"] and current logged in user is admin ($_SESSION["admin"])
+if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"]) && $_SESSION["admin"]) {
     $display_uid = $_GET["u"]; // Replace 1 with $_GET['u']
     $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
     $display_user_result = $pdo->prepare($display_user_sql);

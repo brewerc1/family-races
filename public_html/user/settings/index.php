@@ -19,8 +19,32 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
 
 
 
-// TODO: create SQL to update preferences
+// TODO: create SQL to update preferences: Done
 
+/**
+ * @param integer $pref_val : can be either 0  or 1
+ * @param string $pref_name : $_GET["changePref"]
+ * @param PDO $pdo
+ */
+function updatePreferences($pref_val, $pref_name, PDO $pdo) {
+    // Update the Session variable
+    $_SESSION[$pref_name] = ($pref_val == 1);
+    $val = $_SESSION[$pref_name] ? 1 : NULL;
+
+    if ($pref_name == "sound_fx") {
+        $sql = "UPDATE user SET sound_fx=:val WHERE id=:id";
+    } else {
+        $sql = "UPDATE user SET voiceovers=:val WHERE id=:id";
+    }
+    $pdo->prepare($sql)->execute(['val' => $val, 'id' => $_SESSION["id"]]);
+
+    header("Location: http://localhost/user/settings/");
+}
+
+if (isset($_GET["changePref"])) {
+    $val = $_SESSION[$_GET["changePref"]] ? 0 : 1;
+    updatePreferences($val, $_GET["changePref"], $pdo);
+}
 
 
 ?>
@@ -46,6 +70,14 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
             padding:0;
         }
     </style>
+    <script>
+        /**
+         * @param prefN, can be either sound_fx or voiceovers
+         * */
+        function handleOnClick(prefN) {
+            window.location.replace("http://localhost/user/settings/?changePref=" + prefN);
+        }
+    </script>
 </head>
 <body>
 <!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
@@ -71,40 +103,40 @@ ADMIN;
             <h1>Settings</h1>
             
             <p><label>
-                <input type="checkbox" <?php if($_SESSION["sound_fx"]){echo 'checked';} ?> onclick="handleClick(this);">
+                <input type="checkbox" <?php if($_SESSION["sound_fx"]){echo 'checked';} ?> onclick="handleOnClick('sound_fx');">
                 Sound Effects
             </label></p>
 
             <p><label>
-                <input type="checkbox" <?php if($_SESSION["voiceovers"]){echo 'checked';} ?> onclick="handleClick(this);">
+                <input type="checkbox" <?php if($_SESSION["voiceovers"]){echo 'checked';} ?> onclick="handleOnClick('voiceovers');">
                 Voiceovers
             </label></P>
             
             <a href="../../password/reset.php" class="button">Change Password</a>
-            <a href="../?u=<?php echo $uid ?>" class="button">Cancel</a>
+            <a href="../" class="button">Cancel</a>
             
         </section> <!-- END id user_settings -->
         <section id="testing_area">
         <?php 
         // Check if "save" button was clicked
         if(isset($_POST['save_button'])){
-            var_dump($_POST);
-            
-            //fix: 
-            if(!$_POST['sound_fx']){ $sound_fx_value = 0; } 
-            // else if ($_POST[]){ $sound_fx_value = 1; }
-
-            //if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != '1'){set to 0}
-
-            if(!$_POST['voiceovers']){ $voiceover_value = 0; } else { $voiceovers_value = 1; }
-
-
-            $voiceovers_value = $_POST['voiceovers'];
-
-            $update_preferences_sql = "UPDATE user SET sound_fx = :sound_fx_value, voiceovers = :voiceovers_value  WHERE id = :uid;";
-            $update_preferences_result = $pdo->prepare($update_preferences_sql);
-            $update_preferences_result->execute(['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'uid' => $uid]);
-            $row = $user_settings_result->fetch();
+//            var_dump($_POST);
+//
+//            //fix:
+//            if(!$_POST['sound_fx']){ $sound_fx_value = 0; }
+//            // else if ($_POST[]){ $sound_fx_value = 1; }
+//
+//            //if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != '1'){set to 0}
+//
+//            if(!$_POST['voiceovers']){ $voiceover_value = 0; } else { $voiceovers_value = 1; }
+//
+//
+//            $voiceovers_value = $_POST['voiceovers'];
+//
+//            $update_preferences_sql = "UPDATE user SET sound_fx = :sound_fx_value, voiceovers = :voiceovers_value  WHERE id = :uid;";
+//            $update_preferences_result = $pdo->prepare($update_preferences_sql);
+//            $update_preferences_result->execute(['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'uid' => $uid]);
+//            $row = $user_settings_result->fetch();
             
 
         }
