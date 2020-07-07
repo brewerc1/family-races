@@ -11,34 +11,29 @@ session_start();
 $page_title = "Login";
 
 // include the menu javascript for the template
-$javascript = <<< HERE
-$( document ).ready(function() {
-    $('#hof').addClass('active');
-});
-HERE;
+$javascript = "";
 
 
 // Self explanatory
-//$value = "";
-//if (!empty($_GET["email"])) {
-//    $value = $_GET["email"];
-//}
+$value = "";
+if (!empty($_GET["email"])) {
+    $value = $_GET["email"];
+}
 
 if (isset($_POST["login"])) {
 
-    $email = trim($_POST["email"]);
-    $password = trim($_POST["pwd"]);
+    $email = $_POST["email"];
+    $password = $_POST["pwd"];
+
 
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        $notification = "Invalid Credentials";
-        header("Location: /login/");
+        header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
-        $notification = "Invalid Credentials";
-        header("Location: /login/");
+        header("Location: /login/?login=false&message=Invalid Credentials");
 
     } else {
 
@@ -49,8 +44,7 @@ if (isset($_POST["login"])) {
 
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
-            $notification = "Invalid Credentials";
-            header("Location: /login/");
+            header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
         } else {
             $user_row = $user->fetch();
@@ -60,8 +54,7 @@ if (isset($_POST["login"])) {
 
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
-                $notification = "Invalid Credentials";
-                header("Location: /login/");
+                header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
 
             } else {
                 // Valid credentials
@@ -78,8 +71,8 @@ if (isset($_POST["login"])) {
                 $_SESSION["motto"] = $user_row["motto"];
                 $_SESSION["photo"] = $user_row["photo"];
                 $_SESSION["sound_fx"] = $user_row["sound_fx"];
-                $_SESSION["voiceovers"] = $user_row["voiceovers"]; 
-                $_SESSION["admin"] = $user_row["admin"]; 
+                $_SESSION["voiceovers"] = $user_row["voiceovers"];
+                $_SESSION["admin"] = $user_row["admin"];
 
                 // Redirect to welcome page
                 header("Location: /login/welcome/");
@@ -92,21 +85,29 @@ if (isset($_POST["login"])) {
 
 // Notification System
 $notification = "";
+if (isset($_GET["message"])) {
+    $notification = trim($_GET["message"]);
+}
 
 ?>
-{header}
-    <main role="main">
-        <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
-            <input type="email" class="is-invalid" id="validationServer01" name="email" placeholder="Email" required>
-            <input type="password" class="is-invalid" id="validationServer02" name="pwd" placeholder="Password" required>
-            <div class="invalid-feedback">
-                <?php echo $notification ?>
-            </div>
-            <input type="submit" name="login" value="Log In">
-        </form>
-        <div id="forgot_pwd">
-            <a href="/password/">Forgot Password</a>
-        </div>
+    {header}
+    <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+        <input type="email" name="email" placeholder="your@email.com"
+               value=<?php echo $value ?>>
+        <input type="password" name="pwd" placeholder="password">
+        <input type="submit" value="Login" name="login">
+    </form>
+<?php if(isset($notification) && $notification != ''){?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <?php echo $notification; ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php } ?>
+    <div id="forgot_pwd">
+        <a href="/password/">Forgot Password</a>
+    </div>
     </main>
-{footer}
+    {footer}
 <?php ob_end_flush(); ?>
