@@ -9,9 +9,10 @@ body {
 b,strong {
 	font-weight: 600;
 }
-h1 {
+h1, h2, h3 {
 	font-family: 'Playfair Display', serif;
 	font-weight: 400;
+	text-align: center;
 }
 /* Bootstrap navbar overrides */
 .navbar-nav .active>.nav-link {
@@ -23,4 +24,58 @@ h1 {
 .navbar-collapse.collapse.show li.nav-item {
 	margin-left: 10px;
 	border-top: 1px solid rgba(50,50,50,.1);
+}
+main {
+	margin: 10px 10px 0 10px;
+}
+
+/* User Profile */
+#profile_photo {
+	width: 150px;
+	height: 150px;
+	display: inline-block;
+}
+#profile_photo img {
+	border-radius: 50%;
+	width: 100%;
+}
+#edit_buttons {
+	position: absolute;
+    top: 10px;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    padding-left: 150px;
+}
+#user_name{
+    font-size: 1.3em;
+    font-weight: 600;
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  float: right;
+  width: calc( 100% - 150px );
+}
+#user_meta {
+	list-style-type: none;
+	margin-top: 20px;
+}
+#user_meta li {
+	line-height: 2em;
+}
+#user_meta li span {
+	text-transform: uppercase;
+	font-weight: 400;
+}
+
+/* Footer */
+footer {
+	font-size: .5em;
+	text-align: center;
+	position: absolute;
+	bottom: 50px;
+	left: 0;
+	text-align: center;
+	width: 100%;
 }
