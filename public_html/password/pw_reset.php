@@ -1,9 +1,11 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-
+ob_start();
+// start a session
+session_start();
 
 if (isset($_POST["reset_password"])) {
-    $email = $_POST["email"];
+    $email = trim($_POST["email"]);
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         header("Location: /password/?message=Invalid Email");
@@ -42,8 +44,8 @@ if (isset($_POST["reset_password"])) {
                     $row = $email_arguments->fetch();
                     // send reset pw code
                     $pw_reset_email_subject = "Reset Your Password";
-                    $pw_reset_email_body = "<h3>Hi " . $first_name . ",</h3> <p>We've received a request to reset your password. If you did not make this request, 
-click <a href=\"http://localhost/password/cancel.php?email=$email&code=$reset_pw_code\">here</a> to cancel the request. Otherwise, click this link to reset your password</p> <p><a href=\"http://localhost/password/reset.php?email=$email&code=$reset_pw_code\">Click here to reset your password</a></p> <p>Thanks, <br /> The Family Race!</p>";
+                    $host = $_SERVER["SERVER_NAME"];
+                    $pw_reset_email_body = "<h3>Hi " . $first_name . ",</h3> <p>We've received a request to reset your password. If you did not make this request, please ignore this. Otherwise, click this link to reset your password</p> <p><a href=\"http://$host/password/reset.php?email=$email&code=$reset_pw_code\">Click here to reset your password</a></p> <p>Thanks, <br /> The Family Race!</p>";
 
                     $is_sent = sendEmail($row["email_server"], $row["email_server_account"],
                         $row["email_server_password"], $row["email_server_port"], $row["email_from_name"],

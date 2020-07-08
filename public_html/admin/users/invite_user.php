@@ -32,7 +32,7 @@ if (isset($_POST["invite"])) {
             } else {
                 // send invite
                 $host = $_SERVER['SERVER_NAME'];
-                $invite_email_body = "<p>" . $_SESSION["site_invite_email_body"] . " <ul> <li>Code: $code</li> <li><a href=\"http://$host/onboarding/?email=$email&code=$unique_code\">family race</a></li> </ul> </p>";
+                $invite_email_body = "<p>" . $_SESSION["site_invite_email_body"] . " <ul> <li>Code: $unique_code</li> <li><a href=\"http://$host/onboarding/?email=$email&code=$unique_code\">family race</a></li> </ul> </p>";
 
                 if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
                     $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
