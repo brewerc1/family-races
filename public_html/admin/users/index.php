@@ -11,9 +11,17 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// Authentication  and Authorization System
-ob_start();
+// turn on output buffering
+ob_start('template');
+
+// start a session
 session_start();
+
+// set the page title for the template
+$page_title = "Admin | User Management";
+
+// include the menu javascript for the template
+$javascript = "";
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
@@ -37,55 +45,36 @@ $row = $display_user_result->fetch();
 // TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
 // Notification System
+$messages = array(
+    1 => "Incorrect Email",
+    2 => "User already invited",
+    3 => "DB is empty",
+    4 => "Fails to generate Code",
+    5 => "Couldn't write to DB",
+    6 => "Invite not sent",
+    7 => "Invite sent"
+);
+
+$alerts = array(
+    1 => "alert-success",
+    2 => "alert-warning"
+);
+
 $notification = "";
-if (isset($_GET["message"])) {
-    $notification = $_GET["message"];
+$alert = "";
+if (isset($_GET["message"]) && isset($_GET["alt"])) {
+    $not = $_GET["message"];
+    $al = $_GET["alt"];
+
+    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 || $not == 6 || $not == 7 )
+        $notification = $messages[$not];
+    if ($al == 1 || $al == 2 )
+        $alert = $alerts[$al];
+
 }
-
-
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Skeleton HTML</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        nav#main-navigation li {
-            display: inline-block;
-            width: 18%;
-        }
-        nav#main-navigation ul {
-            margin:0;
-            padding:0;
-        }
-    </style>
-</head>
-<body>
-<!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-<nav id="main-navigation">
-    <h1>Main Navigation</h1>
-    <ul>
-        <li><a href="http://localhost/races">Races</a></li>
-        <li><a href="http://localhost/HOF/">HOF</a></li>
-        <li><a href="http://localhost/faq/">FAQ</a></li>
-        <li><a href="http://localhost/user/">Me</a></li>
-        <?php
-        if ($_SESSION['admin']) {
-            echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-        }
-        ?>
-        <li><a href="http://localhost/logout">Log out</a></li>
-    </ul>
-</nav>
+{header}
+{main_nav}
     <main role="main">
         <section id="User_invite">
             <h1>User Management</h1>
@@ -93,12 +82,14 @@ ADMIN;
                 <input type="email" name="email" placeholder="Invite a New User" required>
                 <button type="submit" form="invite_form" name="invite" >+</button>
             </form>
-            <!-- Notification: use css or javascript to display only for few minutes-->
-            <span class="notification">
-                <?php
-                echo $notification;
-                ?>
-            </span>
+            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
+                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                    <?php echo $notification; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 
@@ -143,8 +134,5 @@ ENDUSER;
 
     </main>
 
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+{footer}
+<?php ob_end_flush(); ?>
