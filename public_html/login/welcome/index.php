@@ -20,4 +20,4 @@ if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
         echo "<h2> You are not an Admin </h2>";
 ?>
 
-<p>Displays the welcome video</p>
+<p>Displays the welcome video: <?php echo $_SESSION["site_welcome_video_url"] ?></p>

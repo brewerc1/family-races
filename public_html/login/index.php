@@ -59,7 +59,7 @@ if (isset($_POST["login"])) {
             } else {
                 // Valid credentials
 
-                // Session variables (13)
+                // USER: Session variables (13)
                 $_SESSION["id"] = $user_row["id"];
                 $_SESSION["first_name"] = $user_row["first_name"];
                 $_SESSION["last_name"] = $user_row["last_name"];
@@ -73,6 +73,37 @@ if (isset($_POST["login"])) {
                 $_SESSION["sound_fx"] = $user_row["sound_fx"];
                 $_SESSION["voiceovers"] = $user_row["voiceovers"];
                 $_SESSION["admin"] = $user_row["admin"];
+
+                // SITE SETTINGS: Session variables
+                $query = "SELECT * FROM site_settings";
+                $site_setts = $pdo->prepare($query);
+                // Question: what to do if line 81 resulted to false
+                if ($site_setts->execute() ) {
+
+                    // Question: what to do if line 84 resulted to false
+                    if ($site_setts->rowCount() > 0) {
+                        $site_row = $site_setts->fetch();
+                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+                        $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
+                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+                        $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
+                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+                        $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
+                        $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
+                        $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
+                        $_SESSION["site_welcome_video_url"] = $site_row["welcome_video_url"];
+                        $_SESSION["site_invite_email_subject"] = $site_row["invite_email_subject"];
+                        $_SESSION["site_invite_email_body"] = $site_row["invite_email_body"];
+                        $_SESSION["site_email_server"] = $site_row["email_server"];
+                        $_SESSION["site_email_server_port"] = $site_row["email_server_port"];
+                        $_SESSION["site_email_server_account"] = $site_row["email_server_account"];
+                        $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
+                        $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
+                        $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
+                    }
+                }
+
+
 
                 // Redirect to welcome page
                 header("Location: /login/welcome/");

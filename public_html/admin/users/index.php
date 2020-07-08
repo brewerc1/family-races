@@ -72,7 +72,6 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
         $alert = $alerts[$al];
 
 }
-
 ?>
 {header}
 {main_nav}
