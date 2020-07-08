@@ -5,14 +5,14 @@ if (isset($_POST["invite"])) {
     $email = trim($_POST["email"]);
 
     if (!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
-        header("Location: ./?message=1&alt=1");
+        header("Location: ./?message=1&alt=2");
     } else {
         $query = "SELECT email FROM user WHERE email = :email";
         $emails = $pdo->prepare($query);
         $emails->execute(['email' => $email]);
 
         if ($emails->rowCount() != 0) {
-            header("Location: ./?message=2&alt=1");
+            header("Location: ./?message=2&alt=2");
         } else {
             $query = "SELECT invite_email_subject, invite_email_body, email_server, email_server_port, email_server_account, email_server_password, email_from_name, email_from_address FROM site_settings";
             $email_arguments = $pdo->prepare($query);
@@ -20,7 +20,7 @@ if (isset($_POST["invite"])) {
             $row = $email_arguments->fetch();
 
             if ($email_arguments->rowCount() == 0) {
-                header("Location: ./?message=3&alt=1");
+                header("Location: ./?message=3&alt=2");
             } else {
 
                 if (empty($row["invite_email_subject"]) || empty($row["invite_email_body"]) ||
