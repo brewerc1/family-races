@@ -95,7 +95,7 @@ ENDOPTION;
                     Default Horse Count
                 </label></P>
 
-                
+                <!-- Memorial race enable -->
                 <div class="form-group">
                     <div class="form-check">                        
                         <input class="form-check-input" type="checkbox" id="memorial_race_enable" data-toggle="toggle" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
@@ -129,15 +129,17 @@ ENDOPTION;
                     <div class="col-sm-3">             
                         <input type="text" class="form-control" id="memorial_race_name" name="memorial_race_name" value="<?php echo $_SESSION['site_memorial_race_name'] ?>" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
                     </div>    
-                    <label for="memorial_race_name" class="col-sm-3 col-form-label "> Memorial Race Name </label>
+                    <label for="memorial_race_name" class="col-sm-3 col-form-label"> Memorial Race Name </label>
                 </div>  
                 
-                <!-- TODO: update to Bootstrap standards --> 
+                
                 <!-- Welcome Video URL text -->
-                <p><label>
-                    <input type="text" name="welcome_video_url" id="welcome_video_url" value="<?php echo $_SESSION['site_welcome_video_url'] ?>">
-                    Welcome Video URL
-                </label></P>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="welcome_video_url" name="welcome_video_url"  value="<?php echo $_SESSION['site_welcome_video_url'] ?>">
+                    </div>
+                    <label for="welcome_video_url" class="col-sm-3 col-form-label"> Welcome Video URL </label>
+                </div>
 
                 <!-- TODO: update to Bootstrap standards --> 
                 <!-- Invite Email Subject -->
