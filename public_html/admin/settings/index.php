@@ -8,14 +8,18 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-$page_title = "Site Settings";
-$javascript = '';
-$default_horse_selected_tag = '';
-$memorial_race_selected_tag = '';
-
-// Authentication  and Authorization System
+// turn on output buffering
 ob_start('template');
+
+// start a session
 session_start();
+
+// set the page title for the template
+$page_title = "Site Settings";
+
+// include the menu javascript for the template
+$javascript = '';
+
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
@@ -27,6 +31,9 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
+
+$default_horse_selected_tag = '';
+$memorial_race_selected_tag = '';
 
 // SQL to get site settings - needs to exist in bootstrap with conditional (!$_SESSION['id])
     $site_settings_sql = "SELECT * FROM site_settings";
