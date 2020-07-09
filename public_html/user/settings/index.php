@@ -15,8 +15,13 @@ $javascript = '';
 ob_start('template');
 session_start();
 
-if (!isset($_SESSION["id"]))
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+
+}
 
 // Get UID
 $uid = $_SESSION['id'];

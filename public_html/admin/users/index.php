@@ -23,8 +23,13 @@ $page_title = "User Management";
 // include the menu javascript for the template
 $javascript = "";
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+
+}
 
 // To be reviewed
 if (!$_SESSION["admin"]) {
