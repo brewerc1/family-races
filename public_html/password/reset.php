@@ -1,237 +1,108 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+ob_start('template');
+session_start();
 
-if (!isset($_GET["email"]) && !isset($_GET["code"])) {
-    // Current logged in user
+if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0) {
 
-    // Authentication System
-    ob_start();
-    session_start();
-
-    if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0) {
+    if (!isset($_GET["email"]) && !isset($_GET["code"])) {
         header("HTTP/1.1 401 Unauthorized");
         // An error page
         //header("Location: error401.php");
         exit;
+    }
+}
+
+$email = isset($_GET["email"]) ? trim($_GET["email"]) : $_SESSION["email"];
+$code = isset($_GET["code"]) ? trim($_GET["code"]) : NULL;
+
+// If the email passed in GET["email"] is not a valid email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header("HTTP/1.1 401 Unauthorized");
+    // An error page
+    //header("Location: error401.php");
+    exit;
+}
+
+if (isset($_POST["change_pwd"])) {
+
+    $logged_in_user_query = "SELECT password FROM user WHERE id = :id";
+    $not_logged_in_user_query = "SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code";
+    $data = is_null($code) ? array('id' => $_SESSION["id"]) : array('email' => $email, 'pw_reset_code' => $code);
+    $query = is_null($code) ? $logged_in_user_query : $not_logged_in_user_query;
+
+    $user = $pdo->prepare($query);
+    if (!$user->execute($data)) {
+        header("Location: ./?message=2&alt=2");
     } else {
 
-        if (isset($_POST["change_pwd"])) {
-            $pwd = $_POST["pwd"];
-            $confirm_pwd = $_POST["confirm_pwd"];
-
-            if (empty($pwd) || empty($confirm_pwd) || (empty($pwd) && empty($confirm_pwd))) {
-                header("Location: /password/reset.php?message=Please enter password");
-            } else {
-
-                if ($pwd != $confirm_pwd) {
-                    header("Location: /password/reset.php?message=Password did not match");
-                } else {
-
-                    $query = "SELECT * FROM user WHERE email = :email";
-                    $user = $pdo->prepare($query);
-                    $user->execute(['email' => $_SESSION["email"]]);
-                    $row = $user->fetch();
-
-                    if ($user->rowCount() != 1) {
-                        // server error: hopefully this edge case will never happen
-                        header("Location: /password/reset.php?message=Server Error: try again");
-                    } else {
-                        $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
-                        if (password_verify($pwd_peppered, $row["password"])) {
-                            // can't use the old password
-                            header("Location: /password/reset.php?message=Can't use old password");
-                        } else {
-                            $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $pwd, $pepper), PASSWORD_BCRYPT);
-                            $sql = "UPDATE user SET password=:password WHERE email=:email";
-                            if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'email' => $_SESSION["email"]])) {
-                                // server error: hopefully this edge case will never happen
-                                header("Location: /password/reset.php?message=Server error: try again");
-                            } else {
-                                header("Location: /password/reset.php?message=Password has changed");
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-} else {
-
-    // Password reset request: with code
-
-    $email = $_GET["email"];
-    $code = $_GET["code"];
-
-    $query = "SELECT email FROM user WHERE pw_reset_code = :pw_reset_code";
-
-    $invite_code = $pdo->prepare($query);
-    $invite_code->execute(['pw_reset_code' => $code]);
-
-    if ($invite_code->rowCount() != 1) {
-        header("HTTP/1.1 401 Unauthorized");
-        // An error page
-        //header("Location: error401.php");
-        exit;
-    }
-
-
-
-// Change password script
-    if (isset($_POST["change_pwd"])) {
-        $pwd = $_POST["pwd"];
-        $confirm_pwd = $_POST["confirm_pwd"];
-
-        if (empty($pwd) || empty($confirm_pwd) || (empty($pwd) && empty($confirm_pwd))) {
-            header("Location: /password/reset.php?email=" . $email . "&code=" . $code . "&message=Please enter password");
+        if ($user->rowCount() != 1) {
+            header("Location: ./?message=1&alt=2");
         } else {
-            if ($pwd != $confirm_pwd) {
-                header("Location: /password/reset.php?email=" . $email . "&code=" . $code . "&message=Password did not match");
-            } else {
-
-                $query = "SELECT * FROM user WHERE email = :email";
-                $user = $pdo->prepare($query);
-                $user->execute(['email' => $email]);
-                $row = $user->fetch();
-
-                if ($user->rowCount() != 1) {
-                    // server error: hopefully this edge case will never happen
-                    header("Location: /password/reset.php?email=" . $email . "&code=" . $code . "&message=Server Error: try again");
-                } else {
-                    $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
-                    if (password_verify($pwd_peppered, $row["password"])) {
-                        // can't use the old password
-                        header("Location: /password/reset.php?email=" . $email . "&code=" . $code . "&message=Can't use old password");
-                    } else {
-
-                        $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $pwd, $pepper), PASSWORD_BCRYPT);
-                        $sql = "UPDATE user SET password=:password WHERE email=:email";
-                        if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'email' => $email])) {
-                            // server error: hopefully this edge case will never happen
-                            header("Location: /password/reset.php?email=" . $email . "&code=" . $code . "&message=Server error: try again");
-                        } else {
-                            // start session and redirect user to welcome page?? or redirect user to login page????
-                            ob_start();
-                            session_start();
-
-                            // Session variables (13)
-                            $_SESSION["id"] = $row["id"];
-                            $_SESSION["first_name"] = $row["first_name"];
-                            $_SESSION["last_name"] = $row["last_name"];
-                            $_SESSION["email"] = $row["email"];
-                            $_SESSION["create_time"] = $row["create_time"];
-                            $_SESSION["update_time"] = $row["update_time"];
-                            $_SESSION["city"] = $row["city"];
-                            $_SESSION["state"] = $row["state"];
-                            $_SESSION["motto"] = $row["motto"];
-                            $_SESSION["photo"] = $row["photo"];
-                            $_SESSION["sound_fx"] = $row["sound_fx"] == 1; //bool
-                            $_SESSION["voiceovers"] = $row["voiceovers"] == 1; //bool
-                            $_SESSION["admin"] = $row["admin"] == 1; //bool
-
-                            // Redirect to welcome page
-                            header("Location: ../login/welcome/");
-
-
-                        }
-
-                    }
-                }
-
-            }
+            $row = $user->fetch();
+            var_dump($row);
+            //SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code
         }
 
+
     }
+
 }
+
+
+//header("Location: ./?message=3&alt=2");
+// set the page title for the template
+$page_title = "Create New Password";
+
+// include the menu javascript for the template
+$javascript = "";
 
 // Notification System
+$messages = array(
+    1 => "Something went wrong",
+    2 => "Server Error: Try again",
+    3 => "Server Error: Try again",
+    4 => "Check your email"
+);
+
+$alerts = array(
+    1 => "success",
+    2 => "warning"
+);
+
 $notification = "";
-if (isset($_GET["message"]))
-    $notification = $_GET["message"];
+$alert = "";
+if (isset($_GET["message"]) && isset($_GET["alt"])) {
+    $not = $_GET["message"];
+    $al = $_GET["alt"];
 
-$admin_link = "";
-if (isset($_SESSION["id"])) {
-    if ($_SESSION["admin"])
-        $admin_link = "<li><a href= \"http://localhost/admin/\">Admin</a></li>";
-
-echo <<< HEADER
-<!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-        <title>Skeleton HTML</title>
-
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-        <link href="/css/races.css" rel="stylesheet">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <style>
-            nav#main-navigation li {
-                display: inline-block;
-                width: 18%;
-            }
-            nav#main-navigation ul {
-                margin:0;
-                padding:0;
-            }
-        </style>
-    </head>
-    <body>
-    <!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-    <nav id="main-navigation">
-        <h1>Main Navigation</h1>
-        <ul>
-            <li><a href="http://localhost/races">Races</a></li>
-            <li><a href="http://localhost/HOF/">HOF</a></li>
-            <li><a href="http://localhost/faq/">faq</a></li>
-            <li><a href="http://localhost/user/">Me</a></li>
-            $admin_link
-            <li><a href="http://localhost/logout">Log out</a></li>
-        </ul>
-    </nav>
-HEADER;
-} else {
-echo <<< HEADER
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>New Password</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-HEADER;
+    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 )
+        $notification = $messages[$not];
+    if ($al == 1 || $al == 2 )
+        $alert = $alert_style[$alerts[$al]];
 
 }
+
 ?>
-
-
+{header}
+{main_nav}
 <main role="main">
 
         <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
             <input type="password" name="pwd" placeholder="New Password">
             <input type="password" name="confirm_pwd" placeholder="Confirm Password">
             <!--- Notification System : HTML tag may change-->
-            <span>
-                <?php
-                    echo $notification;
-                ?>
-            </span>
+            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
+                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                    <?php echo $notification; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
             <input type="submit" name="change_pwd" value="Change Password" >
         </form>
 
 </main>
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+{footer}
+<?php ob_end_flush(); ?>
