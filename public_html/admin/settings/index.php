@@ -2,8 +2,7 @@
 /**
  * Page to Display Site Settings
  * 
- * Page description
- * 
+ * Page displays and allows access to admin level settings.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -188,7 +187,7 @@ ENDOPTION;
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../" >Cancel</a>
+                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
             </form>
         </section> <!-- END id user_settings -->
     </div>
