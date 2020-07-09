@@ -153,6 +153,7 @@ if(isset($_POST['save_button'])){
 
     // PDO to update the DB 
     $update_preferences_sql = 
+    
     "UPDATE site_settings SET 
     sound_fx = :sound_fx_value, voiceovers = :voiceovers_value, terms_enable = :terms_enable_value,
     terms_text = :terms_text_value, default_horse_count = :default_horse_count_value, memorial_race_enable = :memorial_race_enable_value,
@@ -163,14 +164,12 @@ if(isset($_POST['save_button'])){
     WHERE id = 1";
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
-    $update_preferences_result->execute(
-        ['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'terms_enable' => $terms_enable_value, 
-        'terms_text' => $terms_text_value, 'default_horse_count' => $default_horse_count_value, 'memorial_race_enable' => $memorial_race_enable_value,
-        'memorial_race_number' => $memorial_race_number_value, 'memorial_race_name' => $memorial_race_name_value, 'welcome_video_url' => $welcome_video_url_value,
-        'invite_email_subject' => $invite_email_subject_value, 'invite_email_body' => $invite_email_body_value, 'email_server' => $email_server_value,
-        'email_server_port' => $email_server_port_value, 'email_server_account' => $email_server_account_value, 'email_server_password' => $email_server_password_value,
-        'email_from_name' => $email_from_name_value, 'email_from_address' => $email_from_address_value]
-    );
+    $update_preferences_result->execute(['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'terms_enable_value' => $terms_enable_value, 
+        'terms_text_value' => $terms_text_value, 'default_horse_count_value' => $default_horse_count_value, 'memorial_race_enable_value' => $memorial_race_enable_value,
+        'memorial_race_number_value' => $memorial_race_number_value, 'memorial_race_name_value' => $memorial_race_name_value, 'welcome_video_url_value' => $welcome_video_url_value,
+        'invite_email_subject_value' => $invite_email_subject_value, 'invite_email_body_value' => $invite_email_body_value, 'email_server_value' => $email_server_value,
+        'email_server_port_value' => $email_server_port_value, 'email_server_account_value' => $email_server_account_value, 'email_server_password_value' => $email_server_password_value,
+        'email_from_name_value' => $email_from_name_value, 'email_from_address_value' => $email_from_address_value]);
     
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
