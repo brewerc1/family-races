@@ -77,7 +77,6 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
         <section id="User_invite">
             <h1>User Management</h1>
 
-            
             <form method="post" action="./invite_user.php" id="invite_form">
                 <div class="form-group row">
                     <div class="col">
@@ -103,43 +102,42 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 
-            <h2>Current Users</h2>     
-             <?php
+            <h2>Current Users</h2>   
+                <ul class="List-group ">  
+                <?php
+                    if ($num_display_user_results > 0) {
+                        $invited = "";
 
-                if ($num_display_user_results > 0) {
-                    $invited = "";
+                        // loop through DB return
+                        while($row = $display_user_result->fetch()) {
 
-                    // loop through DB return
-                    while($row = $display_user_result->fetch()) {
+                            // handle user with invite but hasn't accepted
+                            if(!empty($row["invite_code"])) {
+                                $invited = "<span class='badge badge-primary badge-pill' id='invited_badge'>pending</span>";
+                                $name = $row["email"];
+                            } else {
+                                $name = $row["first_name"] . ' ' . $row["last_name"];
+                            }
+                            // handle missing photo
+                            if(empty($row["photo"])) {
+                                $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+                            } else {
+                                $photo = $row["photo"];
+                            }
 
-                        // handle user with invite but hasn't accepted
-                        if(!empty($row["invite_code"])) {
-                            $invited = "<span class='invited_chip'>pending</span>";
-                            $name = $row["email"];
-                        } else {
-                            $name = $row["first_name"] . ' ' . $row["last_name"];
-                        }
-                        // handle missing photo
-                        if(empty($row["photo"])) {
-                            $photo = "https://races.informatics.plus/images/no-user-image.jpg";
-                        } else {
-                            $photo = $row["photo"];
-                        }
-
-                        // output row of user data
+                            // output row of user data
 echo <<< ENDUSER
-            <div class="user-row">
-                <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
-            </div>
+                <li class="list-group-item">
+                    <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span>
+                    {$invited}
+                </li>
 ENDUSER;
-                    } 
-                } else {
-                    echo "0 results";
-                }         
-
-                ?>  
-
-            </div>
+                        } 
+                    } else {
+                        echo "0 results";
+                    }
+                    ?>  
+                </ul>
         </section> <!-- END display_current_users -->
 
     </main>
