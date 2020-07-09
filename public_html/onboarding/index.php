@@ -26,5 +26,28 @@ if ($invite_code->rowCount() != 1) {
 }
 
 ?>
-
-<h1>Create Account: Step 1</h1>
+{header}
+{main_nav}
+<h1>Sign Up</h1>
+  <div>  
+            <form>
+                <div class="form-group">
+                    <input  type="email" class= "form-control" id="email"  placeholder="Enter Email"></input>
+                </div>
+                <div class="form-group">
+                    <input  type="textbox" class= "form-control" id="code"  placeholder="Enter Code"></input>
+                </div>
+                <div class="form-group">
+                    <input  type="password"  class= "form-control" id="password" placeholder="Enter Password"></input>
+                </div>
+                <div class="form-group">
+                    <input  type="textbox" class= "form-control" id="confirmPassword" placeholder="Confirm Password"></input>
+                </div>
+                    <input type="submit" name="createAccount-btn" value="Create Account"></input>
+            </form>
+    
+    
+    
+    </div>
+    {footer}
+<?php ob_end_flush(); ?>
