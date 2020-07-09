@@ -18,10 +18,10 @@ ob_start('template');
 session_start();
 
 // set the page title for the template
-$page_title = "Admin | User Management";
+$page_title = "User Management";
 
 // include the menu javascript for the template
-$javascript = "";
+$javascript = '';
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
@@ -41,8 +41,6 @@ $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
-
-// TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
 
 // Notification System
 $messages = array(
@@ -78,10 +76,21 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
     <main role="main">
         <section id="User_invite">
             <h1>User Management</h1>
-            <form method="POST" action="./invite_user.php" id="invite_form">
-                <input type="email" name="email" placeholder="Invite a New User" required>
-                <button type="submit" form="invite_form" name="invite" >+</button>
+
+            
+            <form method="post" action="./invite_user.php" id="invite_form">
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email" class="sr-only"> Memorial Race Name </label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Invite a New User" required>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary" form="invite_form" name="invite" >+</button>
+                    </div>
+                </div>
             </form>
+
+            <!-- For notification system -->
             <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
                 <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
                     <?php echo $notification; ?>
@@ -90,6 +99,7 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                     </button>
                 </div>
             <?php } ?>
+
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 
