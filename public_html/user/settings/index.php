@@ -69,13 +69,13 @@ if(isset($_POST['save_button'])){
                 <form action="./index.php" method="post">
                     <!-- Sound Effects enable -->
                     <div class="form-group toggle">
-                        <input class="form-check-input" type="checkbox" id="sound_fx" name="sound_fx" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
+                        <input class="form-check-input" type="checkbox" id="sound_fx" name="sound_fx" data-toggle="toggle" data-width="75" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>             
                         <label class="form-check-label" for="sound_fx"> Sound Effects </label>
                     </div>
 
                     <!-- Voiceovers enable -->
                     <div class="form-group toggle">
-                        <input class="form-check-input" type="checkbox" id="voiceovers" name="voiceovers" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
+                        <input class="form-check-input" type="checkbox" id="voiceovers" name="voiceovers" data-toggle="toggle" data-width="75" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
                         <label class="form-check-label" for="voiceovers"> Voiceovers </label>
                     </div>
 
