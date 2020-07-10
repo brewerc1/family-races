@@ -1,60 +1,103 @@
 <?php
+/**
+ * Page to Edit User Profile
+ * 
+ * Page Decription
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-// Authentication System
-ob_start();
+
+// turn on output buffering
+ob_start('template');
+
+// start a session
 session_start();
+
+// set the page title for the template
+$page_title = "Edit User Profile";
+
+// include the menu javascript for the template
+$javascript = '';
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
+// logged in user
+$first_name = $_SESSION['first_name'];
+$last_name = $_SESSION['last_name'];
+$full_name = $_SESSION['first_name'].' '.$_SESSION['last_name'];
+$photo = $_SESSION['photo'];
+$motto = $_SESSION['motto'];
+$email = $_SESSION['email'];
+$city = $_SESSION['city'];
+$state = $_SESSION['state'];
+    
+
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Skeleton HTML</title>
+{header}
+{main_nav}
+    <main role="main">
+        <div class="container">
+            <form>
+                <section id="user_head">
+                    <div class="form-group" id="profile_photo">
+                    <label for="profile_photo">
+                        <img class="img-responsive" src="<?php echo $photo ?>" alt="User Photo"/></label>
+                        <input type="file" class="form-control-file" id="profile_photo">
+                    </div>
+                    <div class="form-group" id="user_name"><?php  ?>
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="<?php echo $_SESSION['first_name'] ?>">
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="<?php echo $_SESSION['last_name'] ?>">
+                    </div>
+                    <!-- Links not displayed if "logged in" == "displayed" -->  
+                    <?php
+                    if (!isset($_GET["u"]) || ($_GET["u"] == $_SESSION["id"])) {
+echo <<< LINKS
+                    <div id="edit_buttons">
+                        <a href="../index.php" class="btn btn-primary btn-sm active" id="edit_profile">Edit Profile</a> 
+                        <a href="../settings/" class="btn btn-primary btn-sm disabled" id="user_settings">User Settings</a>
+                    </div>
+LINKS;
+                            }
+                    ?>         
+                </section> <!-- END user_head -->
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        nav#main-navigation li {
-            display: inline-block;
-            width: 18%;
-        }
-        nav#main-navigation ul {
-            margin:0;
-            padding:0;
-        }
-    </style>
-</head>
-<body>
-<!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-<nav id="main-navigation">
-    <h1>Main Navigation</h1>
-    <ul>
-        <li><a href="http://localhost/races">Races</a></li>
-        <li><a href="http://localhost/HOF/">HOF</a></li>
-        <li><a href="http://localhost/faq/">FAQ</a></li>
-        <li><a href="http://localhost/user/">Me</a></li>
-        <?php
-        if ($_SESSION['admin']) {
-            echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-        }
-        ?>
-        <li><a href="http://localhost/logout">Log out</a></li>
-    </ul>
-</nav>
-
-<h1>User Edit</h1>
-
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+                <section id="user_meta">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Motto:</th>
+                                <td><input type="text" class="form-control" id="motto" name="motto" placeholder="<?php echo $_SESSION['motto'] ?>"></td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td><input type="text" class="form-control" id="email" name="email" placeholder="<?php echo $_SESSION['email'] ?>"></td>
+                            </tr>
+                            <tr>
+                                <th>City:</th>
+                                <td><input type="text" class="form-control" id="city" name="city" placeholder="<?php echo $_SESSION['city'] ?>"></td>
+                            </tr>
+                            <tr>
+                                <th>State:</th>
+                                <td><input type="text" class="form-control" id="state" name="state" placeholder="<?php echo $_SESSION['state'] ?>"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section><!-- END user_meta -->
+            </form>
+            <section id="user_records">
+                <h1>Keenland Records</h1>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <!-- TODO: Need to create 'records' field in user table. -->                  
+                            <td><?php //echo $row['records'] ?></td>
+                            <td>Reunion 2022: 9th place</td> <!-- Placeholder -->
+                        </tr>
+                    </tbody>
+                </table>
+            </section> <!-- END user_records -->
+        </div> <!-- END container -->
+    </main>
+{footer}
+<?php ob_end_flush(); ?>
