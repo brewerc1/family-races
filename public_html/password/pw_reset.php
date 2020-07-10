@@ -16,7 +16,7 @@ if (isset($_POST["reset_password"])) {
         $user->execute(['email' => $email]);
 
         if ($user->rowCount() != 1) {
-            header("Location: /password/?message=2&alt=2");
+            header("Location: /password/?message=3&alt=1&email=" . $email);
         } else {
 
             $first_name = $user->fetch()["first_name"];
@@ -26,19 +26,19 @@ if (isset($_POST["reset_password"])) {
             $email_arguments->execute();
 
             if ($email_arguments->rowCount() == 0) {
-                header("Location: ./?message=3&alt=2");
+                header("Location: /password/?message=2&alt=2");
             } else {
                 // reset code: throws an exception
                 try {
                     $reset_pw_code = generateCode();
                 } catch (Exception $e) {
-                    header("Location: /password/?message=3&alt=2");
+                    header("Location: /password/?message=2&alt=2");
                 }
 
                 // Write to DB: update pw_reset_code
                 $sql = "UPDATE user SET pw_reset_code=:pw_reset_code WHERE email=:email";
                 if (!$pdo->prepare($sql)->execute(['pw_reset_code' => $reset_pw_code, 'email' => $email])) {
-                    header("Location: /password/?message=3&alt=2");
+                    header("Location: /password/?message=2&alt=2");
                 } else {
 
                     $row = $email_arguments->fetch();
@@ -52,9 +52,9 @@ if (isset($_POST["reset_password"])) {
                         $row["email_from_address"], $pw_reset_email_subject, $pw_reset_email_body, $email);
 
                     if (!$is_sent) {
-                        header("Location: /password/?message=3&alt=2");
+                        header("Location: /password/?message=2&alt=2");
                     } else {
-                        header("Location: /password/?message=4&alt=1");
+                        header("Location: /password/?message=3&alt=1&email=" . $email);
                     }
                 }
 

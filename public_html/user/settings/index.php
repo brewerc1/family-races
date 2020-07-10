@@ -8,7 +8,7 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-$page_title = "User Profile";
+$page_title = "User Settings";
 $javascript = '';
 
 // Authentication System
@@ -77,7 +77,7 @@ if(isset($_POST['save_button'])){
                 </label></P>
                 <input type="submit" value="Save" name="save_button">
             </form>
-            <p><a href="../../password/reset.php" >Change Password</a></p>
+            <p><a href="./reset.php" >Change Password</a></p>
             <p><a href="../?u=<?php echo $uid ?>" >Cancel</a></p>
             
         </section> <!-- END id user_settings -->

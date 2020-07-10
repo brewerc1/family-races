@@ -11,11 +11,15 @@ $javascript = "";
 
 
 // Notification System
+$msg = "";
+if (isset($_GET["email"])) {
+    $email = trim($_GET["email"]);
+    $msg = filter_var($email, FILTER_VALIDATE_EMAIL) ? "An email has been sent to " . $email : "Email sent" ;
+}
 $messages = array(
     1 => "Invalid Email",
-    2 => "Email Address not associated to an account",
-    3 => "Server Error: Try again",
-    4 => "Check your email"
+    2 => "Server Error: Try again",
+    3 => $msg
 );
 
 $alerts = array(

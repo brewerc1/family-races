@@ -1,20 +1,17 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 ob_start('template');
-session_start();
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0) {
 
-    if (!isset($_GET["email"]) && !isset($_GET["code"])) {
-        header("HTTP/1.1 401 Unauthorized");
-        // An error page
-        //header("Location: error401.php");
-        exit;
-    }
+if (!isset($_GET["email"]) && !isset($_GET["code"])) {
+    header("HTTP/1.1 401 Unauthorized");
+    // An error page
+    //header("Location: error401.php");
+    exit;
 }
 
-$email = isset($_GET["email"]) ? trim($_GET["email"]) : $_SESSION["email"];
-$code = isset($_GET["code"]) ? trim($_GET["code"]) : NULL;
+$email = trim($_GET["email"]);
+$code = trim($_GET["code"]);
 
 // If the email passed in GET["email"] is not a valid email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -24,24 +21,55 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+
 if (isset($_POST["change_pwd"])) {
 
-    $logged_in_user_query = "SELECT password FROM user WHERE id = :id";
-    $not_logged_in_user_query = "SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code";
-    $data = is_null($code) ? array('id' => $_SESSION["id"]) : array('email' => $email, 'pw_reset_code' => $code);
-    $query = is_null($code) ? $logged_in_user_query : $not_logged_in_user_query;
+    $query = "SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code";
 
     $user = $pdo->prepare($query);
-    if (!$user->execute($data)) {
-        header("Location: ./?message=2&alt=2");
+    if (!$user->execute(['email' => $email, 'pw_reset_code' => $code])) {
+        header("Location: /password/reset.php?message=2&alt=2&email=" . $email ."&code=" . $code);
     } else {
 
         if ($user->rowCount() != 1) {
-            header("Location: ./?message=1&alt=2");
+            header("Location: /password/reset.php?message=1&alt=2&email=" . $email ."&code=" . $code);
         } else {
             $row = $user->fetch();
-            var_dump($row);
-            //SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code
+            //var_dump($row);
+            $pwd = trim($_POST["pwd"]);
+            $confirm_pwd = trim($_POST["confirm_pwd"]);
+
+            // At least one of these is empty: Password cannot be empty
+            if (empty($pwd) || empty($confirm_pwd)) {
+                header("Location: /password/reset.php?message=3&alt=2&email=" . $email ."&code=" . $code);
+
+            } else {
+
+                if ($pwd != $confirm_pwd) {
+                    header("Location: /password/reset.php?message=4&alt=2&email=" . $email ."&code=" . $code);
+                } else {
+                    // Check if old password
+                    $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
+                    if (password_verify($pwd_peppered, $row["password"])) {
+                        // can't use the old password
+                        header("Location: /password/reset.php?message=5&alt=2&email=" . $email ."&code=" . $code);
+                    } else {
+                        // Update the password
+                        $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $pwd, $pepper), PASSWORD_BCRYPT);
+                        $sql = "UPDATE user SET password=:password, pw_reset_code= :pw_reset_code WHERE email=:email";
+                        if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'pw_reset_code' => NULL, 'email' => $email])) {
+                            // server error: hopefully this edge case will never happen
+                            header("Location: /password/reset.php?message=2&alt=2&email=" . $email ."&code=" . $code);
+                        } else {
+                            // Redirect back to login with a success message and email inside the email input
+                            header("Location: /login/?message=3&alt=1&email=" . $email);
+                        }
+                    }
+
+                }
+
+            }
+
         }
 
 
@@ -61,8 +89,9 @@ $javascript = "";
 $messages = array(
     1 => "Something went wrong",
     2 => "Server Error: Try again",
-    3 => "Server Error: Try again",
-    4 => "Check your email"
+    3 => "Password cannot be empty",
+    4 => "Passwords did not match",
+    5 => "Can't use old password"
 );
 
 $alerts = array(
@@ -73,10 +102,10 @@ $alerts = array(
 $notification = "";
 $alert = "";
 if (isset($_GET["message"]) && isset($_GET["alt"])) {
-    $not = $_GET["message"];
-    $al = $_GET["alt"];
+    $not = trim($_GET["message"]);
+    $al = trim($_GET["alt"]);
 
-    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 )
+    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 )
         $notification = $messages[$not];
     if ($al == 1 || $al == 2 )
         $alert = $alert_style[$alerts[$al]];
@@ -85,7 +114,6 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 
 ?>
 {header}
-{main_nav}
 <main role="main">
 
         <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
