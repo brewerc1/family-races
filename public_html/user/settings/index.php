@@ -8,14 +8,19 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-$page_title = "User Profile";
-$javascript = '';
-
-// Authentication System
+// turn on output buffering
 ob_start('template');
+
+// start a session
 session_start();
 
-if (!isset($_SESSION["id"]))
+// set the page title for the template
+$page_title = "User Profile";
+
+// include the menu javascript for the template
+$javascript = '';
+
+if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
 
 // Get UID
@@ -57,25 +62,32 @@ if(isset($_POST['save_button'])){
 {header}
 {main_nav}
     <main role="main">
-        <section id="user_settings">
-            <h1>Settings</h1>
-            
-            <form action="./index.php" method="post">
-            <div class="checkbox"><p><label>
-                    <input type="checkbox" data-toggle="toggle" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
-                    Sound Effects
-                </label></p></div>
+        <div class="container">
+            <section id="user_settings">
+                <h1>Settings</h1>
 
-                <p><label>
-                    <input type="checkbox" data-toggle="toggle" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
-                    Voiceovers
-                </label></P>
-                <input type="submit" value="Save" name="save_button">
-            </form>
-            <p><a href="../../password/reset.php" >Change Password</a></p>
-            <p><a href="../?u=<?php echo $uid ?>" >Cancel</a></p>
-            
-        </section> <!-- END id user_settings -->
+                <form action="./index.php" method="post">
+                    <!-- Sound Effects enable -->
+                    <div class="form-group toggle">
+                        <input class="form-check-input" type="checkbox" id="sound_fx" name="sound_fx" data-toggle="toggle" data-width="75" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>             
+                        <label class="form-check-label" for="sound_fx"> Sound Effects </label>
+                    </div>
+
+                    <!-- Voiceovers enable -->
+                    <div class="form-group toggle">
+                        <input class="form-check-input" type="checkbox" id="voiceovers" name="voiceovers" data-toggle="toggle" data-width="75" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                        <label class="form-check-label" for="voiceovers"> Voiceovers </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" name="save_button">Save</button>
+                </form>
+                <div id="bottom_links">
+                    <a href="../../password/reset.php" >Change Password</a>
+                    <a href="../index.php" >Cancel</a>
+                </div>
+                
+            </section> <!-- END id user_settings -->
+        </div>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
