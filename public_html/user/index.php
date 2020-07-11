@@ -4,6 +4,8 @@
  * 
  * This page is used to display any user profile.
  * Logged in users have access to "edit" and "settings" links.
+ * User data for logged in user is stored in $_SESSION.email
+ * Page checks for $_GET
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -37,6 +39,7 @@ $city = $_SESSION['city'];
 $state = $_SESSION['state'];
 
 // get selected UID: Don't run if the GET["u"] is SESSION["id"]
+// TODO: protect this better
 if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
     $display_uid = $_GET["u"]; // Replace 1 with $_GET['u']
     $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";

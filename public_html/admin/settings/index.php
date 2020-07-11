@@ -2,8 +2,7 @@
 /**
  * Page to Display Site Settings
  * 
- * Page description
- * 
+ * Page displays and allows access to admin level settings.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -36,6 +35,179 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+// Check if "save" button was clicked
+if(isset($_POST['save_button'])){
+
+    // If the sound_fx variable was not sent, or is not what is expected, set to 0
+    if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
+        $sound_fx_value = 0;
+    } else {
+        $sound_fx_value = 1;
+    }
+
+    // Same process for voiceovers. Any future 'boolean' settings follow this logic
+    if(!isset($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
+        $voiceovers_value = 0;
+    } else {
+        $voiceovers_value = 1;
+    }
+
+    // Terms and Conditions
+    if(!isset($_POST['terms_enable']) || $_POST['terms_enable'] != 'on'){
+        $terms_enable_value = 0;
+    } else {
+        $terms_enable_value = 1;
+    }
+
+    // Terms and Conditions Text
+    if(!isset($_POST['terms_text'])){
+        $terms_text_value = $_SESSION['site_terms_text'];
+    } else {
+        $terms_text_value = htmlentities($_POST['terms_text']);
+    }
+    
+    // Default Horse Count
+    if(!isset($_POST['default_horse_count']) || !is_int($_POST['default_horse_count'])){
+        $default_horse_count_value = $_SESSION['site_default_horse_count'];
+    } else {
+        $default_horse_count_value = $_POST['default_horse_count'];
+    }
+
+    // Memorial Race Enable
+    if(!isset($_POST['memorial_race_enable']) || $_POST['memorial_race_enable'] != 'on'){
+        $memorial_race_enable_value = 0;
+    } else {
+        $memorial_race_enable_value = 1;
+    }
+        
+    // Memorial Race Number
+    if(!isset($_POST['memorial_race_number']) || !is_int($_POST['memorial_race_number'])){
+        $memorial_race_number_value = $_SESSION['site_memorial_race_number'];
+    } else {
+        $memorial_race_number_value = $_POST['memorial_race_number'];
+    }
+
+    // Memorial Race Name Text
+    if(!isset($_POST['memorial_race_name'])){
+        $memorial_race_name_value = $_SESSION['site_memorial_race_name'];
+    } else {
+        $memorial_race_name_value = htmlentities($_POST['memorial_race_name']);
+    }
+    // Welcome Video URL Text
+    if(!isset($_POST['welcome_video_url'])){
+        $welcome_video_url_value = $_SESSION['site_welcome_video_url'];
+    } else {
+        $welcome_video_url_value = htmlentities($_POST['welcome_video_url']);
+    }
+
+    // Invite Email Subject Text
+    if(!isset($_POST['invite_email_subject'])){
+        $invite_email_subject_value = $_SESSION['site_invite_email_subject'];
+    } else {
+        $invite_email_subject_value = htmlentities($_POST['invite_email_subject']);
+    }
+
+    // Invite Email Body Text
+    if(!isset($_POST['invite_email_body'])){
+        $invite_email_body_value = $_SESSION['site_invite_email_body'];
+    } else {
+        $invite_email_body_value = htmlentities($_POST['invite_email_body']);
+    }
+
+    // Invite Email Server Text
+    if(!isset($_POST['email_server'])){
+        $email_server_value = $_SESSION['site_email_server'];
+    } else {
+        $email_server_value = htmlentities($_POST['email_server']);
+    }
+
+    // Invite Email Server Port Text
+    if(!isset($_POST['email_server_port'])){
+        $email_server_port_value = $_SESSION['site_email_server_port'];
+    } else {
+        $email_server_port_value = htmlentities($_POST['email_server_port']);
+    }
+
+    // Invite Email Server Account Text
+    if(!isset($_POST['email_server_account'])){
+        $email_server_account_value = $_SESSION['site_email_server_account'];
+    } else {
+        $email_server_account_value = htmlentities($_POST['email_server_account']);
+    }
+
+    // Invite Email Server Password Text
+    if(!isset($_POST['email_server_password'])){
+        $email_server_password_value = $_SESSION['site_email_server_password'];
+    } else {
+        $email_server_password_value = htmlentities($_POST['email_server_password']);
+    }
+
+    // Invite Email From Name Text
+    if(!isset($_POST['email_from_name'])){
+        $email_from_name_value = $_SESSION['site_email_from_name'];
+    } else {
+        $email_from_name_value = htmlentities($_POST['email_from_name']);
+    }
+   
+    // Invite Email From Address Text
+    if(!isset($_POST['email_from_address'])){
+        $email_from_address_value = $_SESSION['site_email_from_address'];
+    } else {
+        $email_from_address_value = htmlentities($_POST['email_from_address']);
+    }
+
+    // PDO to update the DB 
+    $update_preferences_sql = 
+    
+    "UPDATE site_settings SET 
+    sound_fx = :sound_fx_value, voiceovers = :voiceovers_value, terms_enable = :terms_enable_value,
+    terms_text = :terms_text_value, default_horse_count = :default_horse_count_value, memorial_race_enable = :memorial_race_enable_value,
+    memorial_race_number = :memorial_race_number_value, memorial_race_name = :memorial_race_name_value, welcome_video_url = :welcome_video_url_value,
+    invite_email_subject = :invite_email_subject_value, invite_email_body = :invite_email_body_value, email_server = :email_server_value,
+    email_server_port = :email_server_port_value, email_server_account = :email_server_account_value, email_server_password = :email_server_password_value,
+    email_from_name = :email_from_name_value, email_from_address = :email_from_address_value
+    WHERE id = 1";
+
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['sound_fx_value' => $sound_fx_value, 'voiceovers_value' => $voiceovers_value, 'terms_enable_value' => $terms_enable_value, 
+        'terms_text_value' => $terms_text_value, 'default_horse_count_value' => $default_horse_count_value, 'memorial_race_enable_value' => $memorial_race_enable_value,
+        'memorial_race_number_value' => $memorial_race_number_value, 'memorial_race_name_value' => $memorial_race_name_value, 'welcome_video_url_value' => $welcome_video_url_value,
+        'invite_email_subject_value' => $invite_email_subject_value, 'invite_email_body_value' => $invite_email_body_value, 'email_server_value' => $email_server_value,
+        'email_server_port_value' => $email_server_port_value, 'email_server_account_value' => $email_server_account_value, 'email_server_password_value' => $email_server_password_value,
+        'email_from_name_value' => $email_from_name_value, 'email_from_address_value' => $email_from_address_value]);
+    
+    //requery DB to update $_SESSION. Ensures current settings are always displayed
+    if ($update_preferences_result){    
+    $update_session_sql = 
+    "SELECT sound_fx, voiceovers, terms_enable, terms_text, default_horse_count, memorial_race_enable, memorial_race_number, memorial_race_name,
+    welcome_video_url, invite_email_subject, invite_email_body, email_server, email_server_port, email_server_account, email_server_password,
+    email_from_name, email_from_address
+    FROM site_settings WHERE id = 1";
+    $update_session_result = $pdo->prepare($update_session_sql);
+    $update_session_result->execute();
+    $row = $update_session_result->fetch();
+    
+    $_SESSION['site_sound_fx'] = $row['sound_fx'];
+    $_SESSION['site_voiceovers'] = $row['voiceovers'];
+    $_SESSION['site_terms_enable'] = $row['terms_enable'];
+    $_SESSION['site_terms_text'] = $row['terms_text'];
+    $_SESSION['site_default_horse_count'] = $row['default_horse_count'];
+    $_SESSION['site_memorial_race_enable'] = $row['memorial_race_enable'];
+    $_SESSION['site_memorial_race_number'] = $row['memorial_race_number'];
+    $_SESSION['site_memorial_race_name'] = $row['memorial_race_name'];
+    $_SESSION['site_welcome_video_url'] = $row['welcome_video_url'];
+    $_SESSION['site_invite_email_subject'] = $row['invite_email_subject'];
+    $_SESSION['site_invite_email_body'] = $row['invite_email_body'];
+    $_SESSION['site_email_server'] = $row['email_server'];
+    $_SESSION['site_email_server_port'] = $row['email_server_port'];
+    $_SESSION['site_email_server_account'] = $row['email_server_account'];
+    $_SESSION['site_email_server_password'] = $row['email_server_password'];
+    $_SESSION['site_email_from_name'] = $row['email_from_name'];
+    $_SESSION['site_email_from_address'] = $row['email_from_address'];
+    }
+}
+
+// HTML tag declarations
 $default_horse_selected_tag = '';
 $memorial_race_selected_tag = '';
 
@@ -68,8 +240,9 @@ $memorial_race_selected_tag = '';
                 <!-- terms text area - disabled if terms_enable is 0 -->
                 <div class="form-group row">
                     <div class="col">
-                        <label for="terms_enable_text" class="sr-only"> Terms & Conditions </label>
-                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" ><?php if(isset($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?>
+                        <label for="terms_text" class="sr-only"> Terms & Conditions </label>
+                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" >
+                            <?php if(isset($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?>
                         </textarea>
                     </div>
                 </div>
@@ -145,7 +318,7 @@ ENDOPTION;
                     </div>
                 </div>
 
-                <!-- Invite email Body -->
+                <!-- Invite Email Body -->
                 <div class="form-group row">
                     <div class="col">
                         <label for="invite_email_body" class="col-form-label"> Email Body </label>
@@ -153,47 +326,55 @@ ENDOPTION;
                     </div>
                 </div>
 
-                <!-- Invite email server port -->
+                <!-- Email Server -->
                 <div class="form-group row">
                     <div class="col"> 
-                        <label for="invite_email_server_port" class="col-form-label"> Invite Email Server Port </label>
-                        <input type="text" class="form-control" id="invite_email_server_port" name="invite_email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
+                        <label for="email_server" class="col-form-label"> Email Server </label>
+                        <input type="text" class="form-control" id="email_server" name="email_server" value="<?php echo $_SESSION["site_email_server"] ?>">
                     </div>
                 </div>
 
-                <!-- Invite email server account -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="invite_email_server_account" class="col-form-label"> Invite Email Server Account </label>
-                        <input type="text" class="form-control" id="invite_email_server_account" name="invite_email_server_account" value="<?php echo $_SESSION["site_email_server_account"] ?>">
-                    </div>
-                </div>
-
-                <!-- Invite email server password -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="invite_email_server_password" class="col-form-label"> Invite Email Server Password </label>
-                        <input type="text" class="form-control" id="invite_email_server_password" name="invite_email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
-                    </div>
-                </div>
-
-                <!-- Invite email from name -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="invite_email_from_name" class="col-form-label"> Invite Email From Name </label>
-                        <input type="text" class="form-control" id="invite_email_from_name" name="invite_email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
-                    </div>
-                </div>
-
-                <!-- Invite email from address -->
+                <!-- Email Server Port -->
                 <div class="form-group row">
                     <div class="col"> 
-                        <label for="invite_email_from_address" class="col-form-label"> Invite Email From Address </label>
-                        <input type="text" class="form-control" id="invite_email_from_address" name="invite_email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
+                        <label for="email_server_port" class="col-form-label"> Email Server Port </label>
+                        <input type="text" class="form-control" id="email_server_port" name="email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../" >Cancel</a>
+                <!-- Email Server Account -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_server_account" class="col-form-label"> Email Server Account </label>
+                        <input type="text" class="form-control" id="email_server_account" name="email_server_account" value="<?php echo $_SESSION["site_email_server_account"] ?>">
+                    </div>
+                </div>
+
+                <!-- Email Server Password -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_server_password" class="col-form-label"> Email Server Password </label>
+                        <input type="text" class="form-control" id="email_server_password" name="email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
+                    </div>
+                </div>
+
+                <!-- Email From Name -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_name" class="col-form-label"> Email From Name </label>
+                        <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
+                    </div>
+                </div>
+
+                <!-- Email From Address -->
+                <div class="form-group row">
+                    <div class="col"> 
+                        <label for="email_from_address" class="col-form-label"> Email From Address </label>
+                        <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
             </form>
         </section> <!-- END id user_settings -->
     </div>

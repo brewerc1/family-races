@@ -93,6 +93,7 @@ if (isset($_POST["login"])) {
                         $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
                         $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
                         $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
+                        $_SESSION["site_memorial_race_number"] = $site_row["memorial_race_number"];
                         $_SESSION["site_welcome_video_url"] = $site_row["welcome_video_url"];
                         $_SESSION["site_invite_email_subject"] = $site_row["invite_email_subject"];
                         $_SESSION["site_invite_email_body"] = $site_row["invite_email_body"];
