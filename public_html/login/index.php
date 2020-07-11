@@ -13,7 +13,6 @@ $page_title = "Login";
 // include the menu javascript for the template
 $javascript = "";
 
-
 // Get the email from and put it in the email input
 $value = "";
 if (!empty($_GET["email"])) {
@@ -32,9 +31,15 @@ if (isset($_POST["login"])) {
         // Redirect to login with email, if not empty, inside the placeholder
         header("Location: /login/?login=false&email=" . $email . "&message=2&alt=2");
 
+        // Make sure the rest of code is not gonna be executed
+        exit;
+
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
         header("Location: /login/?login=false&message=1&alt=2");
+
+        // Make sure the rest of code is not gonna be executed
+        exit;
 
     } else {
 
@@ -47,6 +52,9 @@ if (isset($_POST["login"])) {
             // Redirect to login if rowcount is not 1
             header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
 
+            // Make sure the rest of code is not gonna be executed
+            exit;
+
         } else {
             $user_row = $user->fetch();
             $pwd = $user_row["password"];
@@ -56,6 +64,9 @@ if (isset($_POST["login"])) {
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
                 header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
+
+                // Make sure the rest of code is not gonna be executed
+                exit;
 
             } else {
                 // Valid credentials
@@ -79,17 +90,17 @@ if (isset($_POST["login"])) {
                 // SITE SETTINGS: Session variables
                 $query = "SELECT * FROM site_settings";
                 $site_setts = $pdo->prepare($query);
-                // Question: what to do if line 81 resulted to false
+
+                // For every Site Settings Session Variable, please check if it's set
                 if ($site_setts->execute() ) {
 
-                    // Question: what to do if line 84 resulted to false
                     if ($site_setts->rowCount() > 0) {
+
                         $site_row = $site_setts->fetch();
                         $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
-                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
-                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+                        $_SESSION["site_terms_text"] = $site_row["terms_text"];
                         $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
                         $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
                         $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
@@ -103,13 +114,25 @@ if (isset($_POST["login"])) {
                         $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
                         $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
                         $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
+
                     }
+
                 }
 
-
+                // Current event session variable: Please check if it's set
+                $query = "SELECT id FROM event ORDER BY date DESC LIMIT 1";
+                $current_event = $pdo->prepare($query);
+                if ($current_event->execute()) {
+                     if ($current_event->rowCount() > 0) {
+                         $_SESSION["current_event"] = $current_event->fetch()["id"];
+                     }
+                }
 
                 // Redirect to welcome page
                 header("Location: /login/welcome/");
+
+                // Make sure the rest of code is not gonna be executed
+                exit;
             }
 
         }
@@ -144,23 +167,24 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 
 ?>
 {header}
-    <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
-        <input type="email" name="email" placeholder="your@email.com"
-               value=<?php echo $value ?>>
-        <input type="password" name="pwd" placeholder="password">
-        <input type="submit" value="Login" name="login">
-    </form>
-<?php if(isset($notification) && $notification != ''){?>
-    <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-        <?php echo $notification; ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-<?php } ?>
-    <div id="forgot_pwd">
-        <a href="/password/">Forgot Password</a>
-    </div>
+    <main role="main">
+        <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+            <input type="email" name="email" placeholder="your@email.com"
+                   value=<?php echo $value ?>>
+            <input type="password" name="pwd" placeholder="password">
+            <input type="submit" value="Login" name="login">
+        </form>
+            <?php if(isset($notification) && $notification != ''){?>
+                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                    <?php echo $notification; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
+        <div id="forgot_pwd">
+            <a href="/password/">Forgot Password</a>
+        </div>
     </main>
 {footer}
 <?php ob_end_flush(); ?>

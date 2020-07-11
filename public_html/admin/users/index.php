@@ -111,13 +111,14 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                 <ul class="List-group ">  
                 <?php
                     if ($num_display_user_results > 0) {
-                        $invited = "";
 
                         // loop through DB return
                         while($row = $display_user_result->fetch()) {
+                            // Has to be inside the loop so in every iteration, it's gonna be empty
+                            $invited = "";
 
                             // handle user with invite but hasn't accepted
-                            if(!empty($row["invite_code"])) {
+                            if(!is_null($row["invite_code"])) {
                                 $invited = "<span class='badge badge-primary badge-pill' id='invited_badge'>pending</span>";
                                 $name = $row["email"];
                             } else {

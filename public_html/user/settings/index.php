@@ -82,8 +82,8 @@ if(isset($_POST['save_button'])){
                     <button type="submit" class="btn btn-primary" name="save_button">Save</button>
                 </form>
                 <div id="bottom_links">
-                    <a href="../../password/reset.php" >Change Password</a>
-                    <a href="../index.php" >Cancel</a>
+                    <a href="./reset.php" >Change Password</a>
+                    <a href="/user/" >Cancel</a>
                 </div>
 
             </section> <!-- END id user_settings -->

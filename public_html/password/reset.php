@@ -29,10 +29,14 @@ if (isset($_POST["change_pwd"])) {
     $user = $pdo->prepare($query);
     if (!$user->execute(['email' => $email, 'pw_reset_code' => $code])) {
         header("Location: /password/reset.php?message=2&alt=2&email=" . $email ."&code=" . $code);
+        // Make sure the rest of code is not gonna be executed
+        exit;
     } else {
 
         if ($user->rowCount() != 1) {
             header("Location: /password/reset.php?message=1&alt=2&email=" . $email ."&code=" . $code);
+            // Make sure the rest of code is not gonna be executed
+            exit;
         } else {
             $row = $user->fetch();
             //var_dump($row);
@@ -42,17 +46,23 @@ if (isset($_POST["change_pwd"])) {
             // At least one of these is empty: Password cannot be empty
             if (empty($pwd) || empty($confirm_pwd)) {
                 header("Location: /password/reset.php?message=3&alt=2&email=" . $email ."&code=" . $code);
+                // Make sure the rest of code is not gonna be executed
+                exit;
 
             } else {
 
                 if ($pwd != $confirm_pwd) {
                     header("Location: /password/reset.php?message=4&alt=2&email=" . $email ."&code=" . $code);
+                    // Make sure the rest of code is not gonna be executed
+                    exit;
                 } else {
                     // Check if old password
                     $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
                     if (password_verify($pwd_peppered, $row["password"])) {
                         // can't use the old password
                         header("Location: /password/reset.php?message=5&alt=2&email=" . $email ."&code=" . $code);
+                        // Make sure the rest of code is not gonna be executed
+                        exit;
                     } else {
                         // Update the password
                         $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $pwd, $pepper), PASSWORD_BCRYPT);
@@ -60,9 +70,13 @@ if (isset($_POST["change_pwd"])) {
                         if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'pw_reset_code' => NULL, 'email' => $email])) {
                             // server error: hopefully this edge case will never happen
                             header("Location: /password/reset.php?message=2&alt=2&email=" . $email ."&code=" . $code);
+                            // Make sure the rest of code is not gonna be executed
+                            exit;
                         } else {
                             // Redirect back to login with a success message and email inside the email input
                             header("Location: /login/?message=3&alt=1&email=" . $email);
+                            // Make sure the rest of code is not gonna be executed
+                            exit;
                         }
                     }
 

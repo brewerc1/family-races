@@ -12,6 +12,8 @@ if (!isset($_SESSION["id"])) {
 
 }
 
+// Testing
+echo "The current event id is " . $_SESSION["current_event"];
 ?>
 
 <h1>Welcome <?php echo $_SESSION["first_name"] . " " . $_SESSION["last_name"] ?></h1>

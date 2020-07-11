@@ -1,14 +1,17 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-ob_start();
-// start a session
-session_start();
+//ob_start();
+//// start a session
+//session_start();
 
 if (isset($_POST["reset_password"])) {
     $email = trim($_POST["email"]);
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         header("Location: /password/?message=1&alt=2");
+
+        // Make sure the rest of code is not gonna be executed
+        exit;
     } else {
 
         $query = "SELECT * FROM user WHERE email = :email";
@@ -17,6 +20,9 @@ if (isset($_POST["reset_password"])) {
 
         if ($user->rowCount() != 1) {
             header("Location: /password/?message=3&alt=1&email=" . $email);
+
+            // Make sure the rest of code is not gonna be executed
+            exit;
         } else {
 
             $first_name = $user->fetch()["first_name"];
@@ -27,18 +33,27 @@ if (isset($_POST["reset_password"])) {
 
             if ($email_arguments->rowCount() == 0) {
                 header("Location: /password/?message=2&alt=2");
+
+                // Make sure the rest of code is not gonna be executed
+                exit;
             } else {
                 // reset code: throws an exception
                 try {
                     $reset_pw_code = generateCode();
                 } catch (Exception $e) {
                     header("Location: /password/?message=2&alt=2");
+
+                    // Make sure the rest of code is not gonna be executed
+                    exit;
                 }
 
                 // Write to DB: update pw_reset_code
                 $sql = "UPDATE user SET pw_reset_code=:pw_reset_code WHERE email=:email";
                 if (!$pdo->prepare($sql)->execute(['pw_reset_code' => $reset_pw_code, 'email' => $email])) {
                     header("Location: /password/?message=2&alt=2");
+
+                    // Make sure the rest of code is not gonna be executed
+                    exit;
                 } else {
 
                     $row = $email_arguments->fetch();
@@ -53,8 +68,14 @@ if (isset($_POST["reset_password"])) {
 
                     if (!$is_sent) {
                         header("Location: /password/?message=2&alt=2");
+
+                        // Make sure the rest of code is not gonna be executed
+                        exit;
                     } else {
                         header("Location: /password/?message=3&alt=1&email=" . $email);
+
+                        // Make sure the rest of code is not gonna be executed
+                        exit;
                     }
                 }
 
