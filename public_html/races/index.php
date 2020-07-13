@@ -1,21 +1,46 @@
 <?php
+/**
+ * Page to display Races
+ * 
+ * This page displays races of the current event.
+ * Logged in users can place bets and view results.
+ * User data for logged in user is stored in $_SESSION.email
+ * Page checks for $_GET
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-//include '../template/header.php';
+// turn on output buffering
+ob_start('template');
 
-// Authentication System
-ob_start();
+// start a session
 session_start();
 
+// Test for authorized user
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
+
+// Set the page title for the template
+$page_title = "Races";
+
+// Include the race picker javascript
+$javascript = <<< JAVASCRIPT
+$(function(){
+// bind change event to select
+    $('#race_picker').on('change', function () {
+        var url = "/races/?" + $(this).val(); // get selected value
+        if (url) { // require a URL
+            window.location = url; // redirect
+        }
+    return false;
+    });
+});
+JAVASCRIPT;
 
 // Get UID
 $uid = $_SESSION['id'];
@@ -57,60 +82,12 @@ $num_races = $num_races_result->rowCount();
 // TODO: Conditional statement to check if window not open yet
 
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"> 
-    <title>Races</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        /* DEVELOPMENT CSS */
-        html,body {
-            margin: 0;
-            padding: 0;
-        }
-        div {
-            border: 1px solid rgba(0,0,0,.1);
-        }
-        div div {
-            margin: 2px;
-        }
-        pre {
-            border: 1px solid #ccc;
-            background-color: rgba(0,0,0,.05);
-            color: rgba(0,0,0,.65);
-            padding-left: 5px;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-    </style>
-    <script>
-        $(document).ready(function(){
-            $(function(){
-            // bind change event to select
-                $('#race_picker').on('change', function () {
-                    var url = "/races/?" + $(this).val(); // get selected value
-                    if (url) { // require a URL
-                        window.location = url; // redirect
-                    }
-                return false;
-                });
-            });
-        });
-  </script>
-</head>
-<body>
-
-<div id="page-wrapper">
-    <form method="post" action="./invite.php" id="race"> <!-- Race Select Menu -->
-        <select id="race_picker">
+{header}
+{main_nav}
+<main role="main">
+	<div id="page-wrapper">
+    	<form method="post" action="./invite.php" id="race"> <!-- Race Select Menu -->
+        	<select id="race_picker">
 <?php 
 // Builds the select menu based on number of races
     // TODO: "all" option to display event standings
@@ -124,16 +101,16 @@ for($i = 1; $i <= $num_races; $i++){
     echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
 }
 ?>
-            <option value="e=$event&r=all&u=$uid">All Races</option>
-        </select>
-    </form> <!-- END id race_picker -->
+            	<option value="e=$event&r=all&u=$uid">All Races</option>
+        	</select>
+    	</form> <!-- END id race_picker -->
 
-    <div id="user_bet"> <!-- Display User's Bet -->
-    <!-- TODO: select menu's to display user pick options, defaul to current pick -->
-    <p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
-    <strong>Purse:</strong> $<?php //echo $purse;?></p>
-    </div> <!-- END id user_bet -->
-    <div id="race_leaderboard">
+		<div id="user_bet"> <!-- Display User's Bet -->
+			<!-- TODO: select menu's to display user pick options, defaul to current pick -->
+			<p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
+			<strong>Purse:</strong> $<?php //echo $purse;?></p>
+		</div> <!-- END id user_bet -->
+		<div id="race_leaderboard">
 <?php
 
 if ($num_race_results > 0) {
@@ -158,12 +135,6 @@ if ($num_race_results > 0) {
 ?>
     </div> <!-- END id race_leaderboard -->
 </div> <!-- end id page-wrapper -->
-
-
-<!-- In support of Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-
-<?php
-include '../template/footer.php';
-?>
+</main>
+{footer}
+<?php ob_end_flush(); ?>
