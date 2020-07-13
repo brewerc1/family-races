@@ -23,21 +23,22 @@ if (!$_SESSION["admin"]) {
 {main_nav}
 
        <?php
-//Does this need to be here or added to the header file?
-       if ($_SESSION['admin']) {
+    /*I did not delete this as I did not write this. Leaving here, commented out, pending reply from Jonathan
+        if ($_SESSION['admin']) {
             echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-        }
+    <li><a href= "http://localhost/admin/">Admin</a></li>
+    ADMIN;
+        }*/
         ?>
+
     <main role="main">
         <section>
             <h1>Admin</h1>
             <ul>
-                <li><a href="link to current event"> Current Event </a></li>
-                <li><a href="link to event and race management page">Event & Race Managment</a></li>
-                <li><a href="./users">User Management</a></li>
-                <li><a href="./settings">Site Settings</a></li>
+                <li><a href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
+                <li><a href="./races/">Event & Race Managment</a></li>
+                <li><a href="./users/">User Management</a></li>
+                <li><a href="./settings/">Site Settings</a></li>
             </ul>
         </section> 
     </main>
