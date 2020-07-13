@@ -12,9 +12,9 @@ return <<< HTML
     <link href="/css/races.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
-    <!-- For Toggles -->
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <!-- Bootstrap4 Toggle: https://gitbrent.github.io/bootstrap4-toggle/ -->
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
     
     <script>
@@ -27,5 +27,50 @@ return <<< HTML
 </head>
 <body>
 
+<!-- Modal -->
+<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" data-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mainModalLabel">Modal Title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="message"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#mainModal').on('show.bs.modal', function (event) {
+    // Link or Button that triggered the modal
+    var button = $(event.relatedTarget);
+    
+    // Extract info from data-* attributes
+    var title = button.data('title');
+    var message = button.data('message');
+    var button_primary_text = button.data('button-primary-text');
+    var button_primary_action = button.data('button-primary-action');
+    var button_secondary_text = button.data('button-secondary-text');
+    var button_secondary_action = button.data('button-secondary-action');
+
+    var modal = $(this);
+    modal.find('.modal-title').text(title);
+    modal.find('#message').html(message);
+    modal.find('.btn.btn-primary').html(button_primary_text);
+    modal.find('.btn.btn-primary').attr("onclick",button_primary_action);
+    modal.find('.btn.btn-secondary').html(button_secondary_text);
+
+    // Close main_nav when modal is active
+    $('#main-navigation button.navbar-toggler').toggleClass("collapsed");
+})
+</script>
 HTML;
 ?>

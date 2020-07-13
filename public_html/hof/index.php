@@ -5,6 +5,7 @@ $javascript = <<<HERE
 HERE;
 // turn on output buffering 
 ob_start('template');
+session_start();
 ?>
 {header}
 {main_nav}
