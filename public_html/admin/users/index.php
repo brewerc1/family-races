@@ -23,8 +23,15 @@ $page_title = "User Management";
 // include the menu javascript for the template
 $javascript = '';
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+}
 
 // To be reviewed
 if (!$_SESSION["admin"]) {
@@ -44,7 +51,7 @@ $row = $display_user_result->fetch();
 
 // Notification System
 $messages = array(
-    1 => "Incorrect Email",
+    1 => "Invalid Email",
     2 => "User already invited",
     3 => "DB is empty",
     4 => "Fails to generate Code",
@@ -54,8 +61,8 @@ $messages = array(
 );
 
 $alerts = array(
-    1 => "alert-success",
-    2 => "alert-warning"
+    1 => "success",
+    2 => "warning"
 );
 
 $notification = "";
@@ -67,7 +74,7 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
     if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 || $not == 6 || $not == 7 )
         $notification = $messages[$not];
     if ($al == 1 || $al == 2 )
-        $alert = $alerts[$al];
+        $alert = $alert_style[$alerts[$al]];
 
 }
 ?>
@@ -106,13 +113,14 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                 <ul class="List-group ">  
                 <?php
                     if ($num_display_user_results > 0) {
-                        $invited = "";
 
                         // loop through DB return
                         while($row = $display_user_result->fetch()) {
+                            // Has to be inside the loop so in every iteration, it's gonna be empty
+                            $invited = "";
 
                             // handle user with invite but hasn't accepted
-                            if(!empty($row["invite_code"])) {
+                            if(!is_null($row["invite_code"])) {
                                 $invited = "<span class='badge badge-primary badge-pill' id='invited_badge'>pending</span>";
                                 $name = $row["email"];
                             } else {
