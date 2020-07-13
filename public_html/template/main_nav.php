@@ -21,7 +21,7 @@ $nav = <<< HTML
  
 HTML;
 
-if(true){
+if($_SESSION["admin"]){
 $nav .= <<< HTML
                 <li class="nav-item" id="admin">
                     <a class="nav-link" href="/admin/">Admin</a>
