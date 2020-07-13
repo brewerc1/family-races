@@ -19,8 +19,15 @@ $page_title = "Site Settings";
 // include the menu javascript for the template
 $javascript = '';
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+}
 
 // To be reviewed
 if (!$_SESSION["admin"]) {
