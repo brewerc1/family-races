@@ -1,14 +1,20 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-$page_title = "Admin";
-$javascript = <<<HERE
-HERE;
-// Authentication  and Authorization System
+
+// turn on output buffering
 ob_start('template');
+
+// start a session
 session_start();
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+// Test for authorized user
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    exit;
+}
 
 // To be reviewed
 if (!$_SESSION["admin"]) {
@@ -17,20 +23,15 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
-?>
 
+// Set the page title for the template
+$page_title = "Admin";
+
+// Include the race picker javascript
+$javascript = '';
+?>
 {header}
 {main_nav}
-
-       <?php
-    /*I did not delete this as I did not write this. Leaving here, commented out, pending reply from Jonathan
-        if ($_SESSION['admin']) {
-            echo <<< ADMIN
-    <li><a href= "http://localhost/admin/">Admin</a></li>
-    ADMIN;
-        }*/
-        ?>
-
     <main role="main">
         <section>
             <h1>Admin</h1>
@@ -42,5 +43,5 @@ if (!$_SESSION["admin"]) {
             </ul>
         </section> 
     </main>
-    {footer}
-    <?php ob_end_flush(); ?>
+{footer}
+<?php ob_end_flush(); ?>
