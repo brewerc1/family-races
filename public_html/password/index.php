@@ -1,26 +1,46 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+ob_start('template');
+
+
+// set the page title for the template
+$page_title = "Forgot Password";
+
+// include the menu javascript for the template
+$javascript = "";
+
 
 // Notification System
+$msg = "";
+if (isset($_GET["email"])) {
+    $email = trim($_GET["email"]);
+    $msg = filter_var($email, FILTER_VALIDATE_EMAIL) ? "An email has been sent to " . $email : "Email sent" ;
+}
+$messages = array(
+    1 => "Invalid Email",
+    2 => "Server Error: Try again",
+    3 => $msg
+);
+
+$alerts = array(
+    1 => "success",
+    2 => "warning"
+);
+
 $notification = "";
-if (isset($_GET["message"]))
-    $notification = $_GET["message"];
+$alert = "";
+if (isset($_GET["message"]) && isset($_GET["alt"])) {
+    $not = $_GET["message"];
+    $al = $_GET["alt"];
+
+    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 )
+        $notification = $messages[$not];
+    if ($al == 1 || $al == 2 )
+        $alert = $alert_style[$alerts[$al]];
+
+}
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Forgot Password</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-
+{header}
 <main role="main">
     <section>
         <h1>Recover Your Password</h1>
@@ -33,11 +53,14 @@ if (isset($_GET["message"]))
         <form action="./pw_reset.php" method="POST">
             <input type="email" name="email" placeholder="Email">
             <!--- Notification System : HTML tag may change-->
-            <span>
-                <?php
-                echo $notification;
-                ?>
-            </span>
+            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
+                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                    <?php echo $notification; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
             <input type="submit" name="reset_password" value="Reset Password">
         </form>
         <p>
@@ -45,9 +68,5 @@ if (isset($_GET["message"]))
         </p>
     </section>
 </main>
-
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+{footer}
+<?php ob_end_flush(); ?>
