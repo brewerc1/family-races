@@ -71,8 +71,8 @@ if(isset($_POST['save_button'])){
         $extensions_arr = array("jpg","jpeg","png","gif");
 
         if(in_array($image_file_type, $extensions_arr)){
-            move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id);
-            $photo_value = "/uploads/$name"; 
+            move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type);
+            $photo_value = "/uploads/$user_id.$image_file_type"; 
         }
     }
     // First Name Text
