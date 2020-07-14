@@ -42,7 +42,6 @@ $state = $_SESSION['state'];
 
 // State Select Array
 $state_array = array(
-
     "AK" => "Alaska",
     "AL" => "Alabama",
     "AR" => "Arkansas",
@@ -57,7 +56,7 @@ $state_array = array(
     "HI" => "Hawaii",
     "IA" => "Iowa",
     "ID" => "Idaho",
-     "IL" => "Illinois",
+    "IL" => "Illinois",
     "IN" => "Indiana",
     "KS" => "Kansas",
     "KY" => "Kentucky",
@@ -129,47 +128,48 @@ if(isset($_POST['save_button'])){
     if(!isset($_POST['email'])){
         $email_value = $_SESSION['email'];
     } else {
-        $email_value = htmlentities($_POST['email']);
+        $email_value = $_POST['email'];
     }
 
     // City Text
     if(!isset($_POST['city'])){
+        echo "here"; 
         $city_value = $_SESSION['city'];
     } else {
+        echo "there";
         $city_value = htmlentities($_POST['city']);
     }
 
     // State Text
-    if(!isset($_POST['state'])){
-        $state_value = $_SESSION['state'];
-    } else {
+    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
         $state_value = htmlentities($_POST['state']);
+    } else {
+        $state_value = "not a state"; //$_SESSION['state'];
     }
 
 
 
     // PDO to update the DB 
     $update_preferences_sql = 
-    
-    "UPDATE user SET 
-    photo = :photo_value, first_name = :first_name_value, last_name = :last_name_value,
+    'UPDATE user SET 
+    first_name = :first_name_value, last_name = :last_name_value,
     motto = :motto_value, email = :email_value, city = :city_value, state = :state_value
-    WHERE id = :user_id";
+    WHERE id = 1';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
-    $update_preferences_result->execute(['photo' => $photo_value, 'first_name' => $first_name_value, 'last_name' => $last_name_value,
-    'motto' => $motto_value, 'email' => $email_value, 'city' => $city_value, 'state' => $state_value, 'user_id' => $user_id]);
+    $update_preferences_result->execute(['first_name_value' => $first_name_value, 'last_name_value' => $last_name_value,
+    'motto_value' => $motto_value, 'email_value' => $email_value, 'city_value' => $city_value, 'state_value' => $state_value ]);
     
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
     $update_session_sql = 
-    "SELECT photo, first_name, last_name, motto, email, city, state, id
+    "SELECT first_name, last_name, motto, email, city, state, id
     FROM user WHERE id = :user_id";
     $update_session_result = $pdo->prepare($update_session_sql);
-    $update_session_result->execute(['id' => $user_id]);
+    $update_session_result->execute(['user_id' => $user_id]);
     $row = $update_session_result->fetch();
     
-    $_SESSION['photo'] = $row['photo'];
+    //$_SESSION['photo'] = $row['photo'];
     $_SESSION['first_name'] = $row['first_name'];
     $_SESSION['last_name'] = $row['last_name'];
     $_SESSION['motto'] = $row['motto'];
@@ -196,9 +196,9 @@ if(isset($_POST['save_button'])){
                         </div>
                         <div class="col-auto" id="user_name">
                             <label for="first_name" class="col-form-label sr-only">First Name </label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="<?php echo $_SESSION['first_name'] ?>">
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>">
                             <label for="last_name" class="col-form-label sr-only">First Name </label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="<?php echo $_SESSION['last_name'] ?>">
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>">
                         </div>
                     </div>
                     <!-- Links not displayed if "logged in" == "displayed" -->  
@@ -219,21 +219,21 @@ LINKS;
                     <div class="form-group row">
                         <div class="col-auto">
                             <label for="motto" class="col-form-label" >Motto:</label> 
-                            <input type="text" class="form-control" id="motto" name="motto" placeholder="<?php echo $_SESSION['motto'] ?>">
+                            <input type="text" class="form-control" id="motto" name="motto" value="<?php echo $_SESSION['motto'] ?>">
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <div class="col-auto">
                             <label for="email" class="col-form-label" >Email:</label> 
-                            <input type="text" class="form-control" id="email" name="email" placeholder="<?php echo $_SESSION['email'] ?>">
+                            <input type="text" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <div class="col-auto">
                             <label for="city" class="col-form-label" >City:</label> 
-                            <input type="text" class="form-control" id="city" name="city" placeholder="<?php echo $_SESSION['city'] ?>">
+                            <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>">
                         </div>
                     </div>
 
@@ -249,7 +249,7 @@ LINKS;
                                         $state_selected_tag = '';
                                     }
 echo <<<ENDOPTION
-                                    <option value="$value" $state_selected_tag>$key</option>
+                                    <option value="$key" $state_selected_tag>$value</option>
 ENDOPTION;
                                 }
                                 ?>
