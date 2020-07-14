@@ -21,6 +21,13 @@ $javascript = '';
 
 if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
     header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+}
 
 // logged in user
 $first_name = $_SESSION['first_name'];
