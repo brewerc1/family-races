@@ -51,3 +51,62 @@ if ($invite_code->rowCount() != 1) {
     </div>
     {footer}
 <?php ob_end_flush(); ?>
+<?php
+$errors = array();
+$email = "";
+$code = "";
+$password = "";
+$confirmPassword = "";
+session_start();
+// Check if the CreateAccount button is clicked
+if (isset($_POST['createAccount-btn'])) {
+    $email = $_POST ['email'];
+    $code = $_POST ['code'];
+//Validation Email
+    if (empty('email')){
+        $errors ['email'] = 'Email Required';
+    }
+//Check if email exist
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors ['email'] = 'Email address is invalid';
+    }
+//Validation Code
+    if(empty('code')){
+        $errors ['code'] = 'Code Required';
+    }
+//Validation Password
+    if(empty('password')) {
+        $errors ['password'] = 'Password Required';
+    }
+//Check if passwords and confirmation match
+    if($password !== $confirmPassword) {
+        $errors ['password'] = 'The two passwords do not match';
+    }
+    //echo "email is $email";
+    //exit;
+    
+    //Check for errors before writing to database
+    if (count($errors === 0)){
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $verified = FALSE;
+
+        $sql = "INSERT INTO users (password) WHERE invite_code = $code AND email = $email";
+        $stmt = $dbconnect->prepare($sql);
+        $stmt->bind_param('s', $password);
+        $stmt->execute();
+
+    if ($stmt->execute()) {
+        //Login user 
+        $user_id = $dbconnect->insert_id;
+        $_SESSION ['id'] = $user_id;
+        $_SESSION['email'] = $email;
+        $_SESSION['password'] = $password;
+
+    } else {
+        $errors['db_error'] = "Database error: Failed to Register";
+    }
+    }
+}
+
+
+?>
