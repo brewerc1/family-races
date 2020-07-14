@@ -164,8 +164,9 @@ set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/
 		<!-- TODO: select menu's to display user pick options, defaul to current pick -->
 		<p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
 		<strong>Purse:</strong> $<?php //echo $purse;?></p>
-	</div> <!-- END id user_bet -->
-	<ul class="list-group list-group-flush" id="race_leaderboard">
+    </div> <!-- END id user_bet -->
+    
+	<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
 if ($num_race_results > 0) {
     $invited = "";
@@ -185,7 +186,7 @@ if ($num_race_results > 0) {
                 <a href="/user/?u={$row["user_id"]}">
                     <img src="$photo" alt="photo" class="rounded-circle">
                 </a>
-                <div class="media-body"><span class="user_name">$name</span> <span class="earnings badge badge-success">\${$row["earnings"]}</span></div>
+                <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> <span class="earnings badge badge-success float-right px-2">\${$row["earnings"]}</span></div>
             </div>
         </li>
 HERE;

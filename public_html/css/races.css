@@ -5,6 +5,7 @@ html,body {
 body {
 	font-family: 'Raleway', sans-serif;
 	font-weight: 300;
+	background-color: rgba(0,0,0,.05);
 }
 b,strong {
 	font-weight: 600;
@@ -35,10 +36,18 @@ label, .col-form-label {
 	transform: translate(-50%, -50%);
 }
 main {
-	margin: 10px 10px 0 10px;
-	padding-bottom: 85px;
-
+	padding: 20px 20px 85px 20px;
+	background-color: rgba(255,255,255,1);
 }
+@media (min-width: 768px) { 
+	main {
+		max-width: 768px;
+		margin: 0 auto;
+		border-color: rgba(0,0,0,.1);
+		border-width: 0 1px;
+		border-style: solid;
+	}
+ }
 
 /* Animations */
 .fade-in {
@@ -152,31 +161,19 @@ span.navbar-text {
 
 
 /* Lists of Users */
-.media {
-	position: relative;
+.user-list.list-group .media {
+	align-items: center;
+	justify-content: center;
 }
 .list-group .media-body {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	right: 0;
-	width: calc( 100% - 80px);
-	-ms-transform: translate(0%, -50%);
-	transform: translate(0%, -50%);
 }
 .list-group .media img {
-	border-radius: 50%;
 	width: 70px;
 }
 .earnings {
-	float: right;
-	padding: 10px;
 	font-size: 100%;
 }
 .user_name {
-	display: inline-block;
-	float: left;
-	padding: 10px;
 }
 
 
