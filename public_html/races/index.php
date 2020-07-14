@@ -155,7 +155,7 @@ set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/
         </div>
     </div>
 
-    <form method="post" action="<?php echo basename($_SERVER['PHP_SELF']); ?>" id="race">
+    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="race">
         <!-- Race Select Menu -->
         
     </form> <!-- END id race_picker -->

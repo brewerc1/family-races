@@ -105,15 +105,42 @@ function debug( $content='' ){
     <button class="btn btn-link btn-sm" id="debug_button" type="button" data-toggle="collapse" data-target="#debug" aria-expanded="false" aria-controls="debug">debug</button>
     <div class="collapse" id="debug">
         <div class="card card-body" id="debug_card">
-        <nav>
-            <div class="nav nav-pills nav-justified" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="true">\$_SESSION</a>
-                <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">My Debug</a>
+            <nav>
+                <div class="nav nav-pills nav-justified" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="true">\$_SESSION</a>
+                    <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">My Debug</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">$session_content;</div>
+                <div class="tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">$content</div>
             </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">$session_content;</div>
-            <div class="tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">$content</div>
         </div>
+    </div>
 HERE;
+}
+
+/* Notification System */
+
+
+$messages = array(
+    1 => "Invalid Credentials",
+    2 => "Email or Password cannot be empty",
+    3 => "Password has been changed. Please log in again."
+);
+
+$notification = '';
+$alert_style = '';
+
+if (isset($_GET['m']) && isset($_GET['s'])) {
+    $message = trim($_GET['m']);
+    $style = trim($_GET["s"]);
+
+    if ($message == 1 || $message == 2 || $message == 3 )
+        $notification = $messages[$message];
+    if (array_key_exists($style, $alert_styles)){
+        $alert_style = $alert_styles[$style];
+    } else {
+        $alert_style = $alert_styles['primary'];
+    }
 }
