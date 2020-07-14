@@ -98,6 +98,9 @@ function debug( $content='' ){
     if(isset($_SESSION)) {
         $session_content = "<pre>" . print_r($_SESSION, TRUE) . "</pre>";
     }
+    if(is_array($content)){
+        $content = "<pre>" . print_r($content, TRUE) . "</pre>";
+    }
     return <<< HERE
     <button class="btn btn-link btn-sm" id="debug_button" type="button" data-toggle="collapse" data-target="#debug" aria-expanded="false" aria-controls="debug">debug</button>
     <div class="collapse" id="debug">
@@ -105,7 +108,7 @@ function debug( $content='' ){
         <nav>
             <div class="nav nav-pills nav-justified" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="true">\$_SESSION</a>
-                <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">Debug</a>
+                <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">My Debug</a>
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
