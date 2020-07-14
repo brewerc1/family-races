@@ -29,6 +29,10 @@ if (!isset($_SESSION["id"])){
     exit;
 }
 
+///// DEBUG
+$debug = debug("");
+///// end DEBUG
+
 // logged in user
 $user_id = $_SESSION['id'];
 $first_name = $_SESSION['first_name'];
@@ -49,26 +53,31 @@ $state_array = array(
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
+    echo "<pre>";
+    print_r($_FILES);
+    var_dump($_POST);
+    echo "</pre>";
     // TODO: User Photo Upload
     // this will look just like the upload a photo challenge
-    if(!isset($_POST['photo'])){
+    if(!isset($_FILES['profile_photo'])){
         $photo_value = $_SESSION['photo'];
+        echo "path1";
     } else {
-        $name = $_FILES['file']['name'];
-        $target_dir = "localhost/uploads/";
-        $target_file = $target_dir . basename($_FILES['file']['name']);
+        echo "path2";
+        $name = $_FILES['profile_photo']['name'];
+        $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
+        $target_file = $target_dir . basename($_FILES['profile_photo']['name']);
         $image_file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         $extensions_arr = array("jpg","jpeg","png","gif");
 
         if(in_array($image_file_type, $extensions_arr)){
-            $photo_value = $target_dir . $name;
-
-            move_uploaded_file($_FILES['file']['tmp_name'], $target_dir . $name);       
+            move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id);
+            $photo_value = "/uploads/$name"; 
         }
     }
     // First Name Text
     if(!isset($_POST['first_name'])){
-        $first_name_value = $_SESSION['first_name'];
+        $first_name_value = $_SESSION['first_name']; 
     } else {
         $first_name_value = htmlentities($_POST['first_name'], ENT_QUOTES);
     }
@@ -77,7 +86,9 @@ if(isset($_POST['save_button'])){
     if(!isset($_POST['last_name'])){
        $last_name_value = $_SESSION['last_name'];
     } else {
-       $last_name_value = htmlentities($_POST['last_name'], ENT_QUOTES);
+        //$last_name_value = htmlentities($_POST['last_name'], ENT_QUOTES);
+        $last_name_value = filter_var( $_POST['last_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        //$last_name_value = $_POST['last_name'];
     }
 
     // Motto Text
@@ -146,14 +157,14 @@ if(isset($_POST['save_button'])){
 {main_nav}
     <main role="main">
         <div class="container">
-            <form action="./index.php" method="post">
+            <form action="./index.php" method="post" enctype="multipart/form-data">
                 <section id="user_head">
                     <div class="form-group row">
                         <div class="col-auto" id="profile_photo">
                             <label for="profile_photo">
                                 <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
                             </label>
-                            <input type="file" class="form-control-file" id="profile_photo">
+                            <input type="file" class="form-control-file" id="profile_photo" name="profile_photo">
                         </div>
                         <div class="col-auto" id="user_name">
                             <label for="first_name" class="col-form-label sr-only">First Name </label>
@@ -220,7 +231,7 @@ ENDOPTION;
 
                 </section><!-- END user_meta -->
 
-                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
+                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
            
             </form>
             <section id="user_records">
