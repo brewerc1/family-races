@@ -1,16 +1,16 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// turn on output buffering
+// Turn on output buffering
 ob_start('template');
 
-// start a session
+// Start a session
 session_start();
 
-// set the page title for the template
+// Set the page title for the template
 $page_title = "Login";
 
-// include the menu javascript for the template
+// Include the menu javascript for the template
 $javascript = "";
 
 // Get the email from and put it in the email input
@@ -120,7 +120,7 @@ if (isset($_POST["login"])) {
                 }
 
                 // Current event session variable: Please check if it's set
-                $query = "SELECT id FROM event ORDER BY date DESC LIMIT 1";
+                $query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
                 $current_event = $pdo->prepare($query);
                 if ($current_event->execute()) {
                      if ($current_event->rowCount() > 0) {
@@ -128,10 +128,8 @@ if (isset($_POST["login"])) {
                      }
                 }
 
-                // Redirect to welcome page
-                header("Location: /login/welcome/");
-
-                // Make sure the rest of code is not gonna be executed
+                // Redirect to races page
+                header("Location: /races/");
                 exit;
             }
 
@@ -168,11 +166,26 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 ?>
 {header}
     <main role="main">
-        <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
-            <input type="email" name="email" placeholder="your@email.com"
-                   value=<?php echo $value ?>>
-            <input type="password" name="pwd" placeholder="password">
-            <input type="submit" value="Login" name="login">
+        <form class="horizontal-center" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+            <div class="text-center mb-4">
+                <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
+            </div>
+            <div class="form-group">
+                <label for="email" class="sr-only">Email address</label>
+                <input type="email"  id="email" class="form-control" name="email" placeholder="email" required autofocus value=<?php echo $value ?>>
+                
+            </div>
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" class="form-control" id="password" name="pwd" placeholder="password" aria-describedby="passwordHelpBlock">
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                </small>
+            </div>
+            <input type="submit" value="Login" name="login" class="btn btn-primary btn-block">
+            <div id="forgot_pwd">
+                <a href="/password/">Forgot Password</a>
+            </div>
         </form>
             <?php if(isset($notification) && $notification != ''){?>
                 <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
@@ -182,9 +195,6 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                     </button>
                 </div>
             <?php } ?>
-        <div id="forgot_pwd">
-            <a href="/password/">Forgot Password</a>
-        </div>
     </main>
 {footer}
 <?php ob_end_flush(); ?>

@@ -51,4 +51,3 @@ $nav .= <<< HTML
     </nav>
 HTML;
 return $nav;
-?>
