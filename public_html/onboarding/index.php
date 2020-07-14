@@ -60,8 +60,8 @@ $confirmPassword = "";
 session_start();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
-    $email = $_POST ['email'];
-    $code = $_POST ['code'];
+    $email = trim($_POST ['email']);
+    $code = trim($_POST ['code']);
 //Validation Email
     if (empty('email')){
         $errors ['email'] = 'Email Required';
