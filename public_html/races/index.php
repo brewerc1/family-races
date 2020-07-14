@@ -131,11 +131,12 @@ set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/
                     <label class="input-group-text" for="inputGroupSelect01">Pick</label>
                 </div>
                 <select class="custom-select" id="inputGroupSelect01">
-                    <?php // TODO: Add the Place picker. ?>
+                    <?php // TODO: Add the Horse picker. ?>
                     <option selected>Horse...</option>
-                    <option value="1">Win</option>
-                    <option value="2">Place</option>
-                    <option value="3">Show</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">Need to show horses in this race! </option>
                 </select>
             </div>
             <div class="input-group input-group-lg mb-3">
@@ -145,9 +146,9 @@ set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/
                 <select class="custom-select" id="inputGroupSelect01">
                     <?php // TODO: Add the Place picker. ?>
                     <option selected>Choose...</option>
-                    <option value="1">Win</option>
-                    <option value="2">Place</option>
-                    <option value="3">Show</option>
+                    <option value="w">Win</option>
+                    <option value="p">Place</option>
+                    <option value="s">Show</option>
                 </select>
             </div>
             <a href="#" class="btn btn-primary">Do something</a>
