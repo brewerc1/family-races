@@ -117,3 +117,37 @@ function debug( $content='' ){
         </div>
 HERE;
 }
+
+/* Notification System */
+$alert_styles = array(
+    'primary' => 'alert-primary',
+    'secondary' => 'alert-secondary',
+    'success' => 'alert-success',
+    'danger' => 'alert-danger',
+    'warning' => 'alert-warning',
+    'info' => 'alert-info',
+    'light' => 'alert-light',
+    'dark' => 'alert-dark',
+);
+
+$messages = array(
+    1 => "Invalid Credentials",
+    2 => "Email or Password cannot be empty",
+    3 => "Password has been changed. Please log in again."
+);
+
+$notification = "";
+$alert_style = "";
+
+if (isset($_GET['m']) && isset($_GET['s'])) {
+    $message = trim($_GET['m']);
+    $style = trim($_GET["s"]);
+
+    if ($message == 1 || $message == 2 || $message == 3 )
+        $notification = $messages[$message];
+    if (array_key_exists($style, $alert_styles)){
+        $alert_style = $alert_styles[$style];
+    } else {
+        $alert_style = $alert_styles['primary'];
+    }
+}
