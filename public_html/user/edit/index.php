@@ -19,7 +19,7 @@ $page_title = "Edit User Profile";
 // include the menu javascript for the template
 $javascript = '';
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"])){
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
@@ -49,7 +49,7 @@ $state = $_SESSION['state'];
                 <section id="user_head">
                     <div class="form-group" id="profile_photo">
                     <label for="profile_photo">
-                        <img class="img-responsive" src="<?php echo $photo ?>" alt="User Photo"/></label>
+                        <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/></label>
                         <input type="file" class="form-control-file" id="profile_photo">
                     </div>
                     <div class="form-group" id="user_name"><?php  ?>

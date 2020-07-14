@@ -65,7 +65,7 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
         <div class="container">
             <section id="user_head">
                 <div id="profile_photo">
-                    <img class="img-responsive" src="<?php echo $photo ?>" alt="User Photo"/>
+                    <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
                 </div>
                 <div id="user_name"><?php echo $full_name ?></div>
                 <!-- Links not displayed if "logged in" == "displayed" -->  
