@@ -21,11 +21,9 @@ $javascript = '';
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
 
@@ -36,6 +34,10 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
+
+///// DEBUG
+$debug = debug($_POST);
+///// end DEBUG
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
@@ -224,19 +226,19 @@ $memorial_race_selected_tag = '';
             
             <form action="./index.php" method="post">
                 <!-- Sound Effects enable -->
-                <div class="form-group toggle">
-                    <input class="form-check-input" type="checkbox" id="sound_fx" name="sound_fx" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
-                    <label class="form-check-label" for="sound_fx"> Sound Effects </label>
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
+                    <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
                 </div>
                 <!-- Voiceovers enable -->
-                <div class="form-group toggle">
-                    <input class="form-check-input" type="checkbox" id="voiceovers" name="voiceovers" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
-                    <label class="form-check-label" for="voiceovers"> Voiceovers </label>
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
+                    <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
                 </div>
                 <!-- Terms and Conditions enable -->
-                <div class="form-group toggle">
-                    <input class="form-check-input" type="checkbox" id="terms_enable" name="terms_enable" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
-                    <label class="form-check-label" for="terms_enable"> Enable Terms & Conditions </label>
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="terms_enable" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
+                    <label class="custom-control-label" for="terms_enable"> Enable Terms & Conditions </label>
                 </div>
 
                 <!-- terms text area - disabled if terms_enable is 0 -->
@@ -271,9 +273,9 @@ ENDOPTION;
                 </div>
 
                 <!-- Memorial race enable -->
-                <div class="form-group toggle">
-                    <input class="form-check-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" data-toggle="toggle" data-width="75" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
-                    <label class="form-check-label" for="memorial_race_enable"> Enable Memorial Race </label>
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
+                    <label class="custom-control-label" for="memorial_race_enable"> Enable Memorial Race </label>
                 </div>
 
                 <!-- Memorial race number -->

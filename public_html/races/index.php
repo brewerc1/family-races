@@ -194,7 +194,6 @@ HERE;
 } else {
     echo "<p>0 results</p>";
 }
-echo $debug;
 ?>
     </ul> <!-- END id race_leaderboard -->
 </main>
