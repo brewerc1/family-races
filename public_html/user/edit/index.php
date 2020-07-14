@@ -42,109 +42,70 @@ $state = $_SESSION['state'];
 
 // State Select Array
 $state_array = array(
-    "AK" => "Alaska",
-    "AL" => "Alabama",
-    "AR" => "Arkansas",
-    "AZ" => "Arizona",
-    "CA" => "California",
-    "CO" => "Colorado",
-    "CT" => "Connecticut",
-    "DC" => "District of Columbia",
-    "DE" => "Delaware",
-    "FL" => "Florida",
-    "GA" => "Georgia",
-    "HI" => "Hawaii",
-    "IA" => "Iowa",
-    "ID" => "Idaho",
-    "IL" => "Illinois",
-    "IN" => "Indiana",
-    "KS" => "Kansas",
-    "KY" => "Kentucky",
-    "LA" => "Louisiana",
-    "MA" => "Massachusetts",
-    "MD" => "Maryland",
-    "ME" => "Maine",
-    "MI" => "Michigan",
-    "MN" => "Minnesota",
-    "MO" => "Missouri",
-    "MS" => "Mississippi",
-    "MT" => "Montana",
-    "NC" => "North Carolina",
-    "ND" => "North Dakota",
-    "NE" => "Nebraska",
-    "NH" => "New Hampshire",
-    "NJ" => "New Jersey",
-    "NM" => "New Mexico",
-    "NV" => "Nevada",
-    "NY" => "New York",
-    "OH" => "Ohio",
-    "OK" => "Oklahoma",
-    "OR" => "Oregon",
-    "PA" => "Pennsylvania",
-    "PR" => "Puerto Rico",
-    "RI" => "Rhode Island",
-    "SC" => "South Carolina",
-    "SD" => "South Dakota",
-    "TN" => "Tennessee",
-    "TX" => "Texas",
-    "UT" => "Utah",
-    "VA" => "Virginia",
-    "VT" => "Vermont",
-    "WA" => "Washington",
-    "WI" => "Wisconsin",
-    "WV" => "West Virginia",
-    "WY" => "Wyoming"
-);
+    "AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL",
+    "IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE",
+    "NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX",
+    "UT","VT","WA","WI","WV","WY");
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
-    // User Photo Upload
+    // TODO: User Photo Upload
+    // this will look just like the upload a photo challenge
+    if(!isset($_POST['photo'])){
+        $photo_value = $_SESSION['photo'];
+    } else {
+        $name = $_FILES['file']['name'];
+        $target_dir = "localhost/uploads/";
+        $target_file = $target_dir . basename($_FILES['file']['name']);
+        $image_file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $extensions_arr = array("jpg","jpeg","png","gif");
 
+        if(in_array($image_file_type, $extensions_arr)){
+            $photo_value = $target_dir . $name;
 
-
-
+            move_uploaded_file($_FILES['file']['tmp_name'], $target_dir . $name);       
+        }
+    }
     // First Name Text
     if(!isset($_POST['first_name'])){
         $first_name_value = $_SESSION['first_name'];
     } else {
-        $first_name_value = htmlentities($_POST['first_name']);
+        $first_name_value = htmlentities($_POST['first_name'], ENT_QUOTES);
     }
 
     // Last Name Text
     if(!isset($_POST['last_name'])){
        $last_name_value = $_SESSION['last_name'];
     } else {
-       $last_name_value = htmlentities($_POST['last_name']);
+       $last_name_value = htmlentities($_POST['last_name'], ENT_QUOTES);
     }
 
     // Motto Text
     if(!isset($_POST['motto'])){
         $motto_value = $_SESSION['motto'];
     } else {
-        $motto_value = htmlentities($_POST['motto']);
+        $motto_value = htmlentities($_POST['motto'], ENT_QUOTES);
     }
 
     // Email Text
     if(!isset($_POST['email'])){
         $email_value = $_SESSION['email'];
     } else {
-        $email_value = $_POST['email'];
+        $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
     // City Text
     if(!isset($_POST['city'])){
-        echo "here"; 
         $city_value = $_SESSION['city'];
     } else {
-        echo "there";
-        $city_value = htmlentities($_POST['city']);
+        $city_value = htmlentities($_POST['city'], ENT_QUOTES);
     }
 
     // State Text
-    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
-        $state_value = htmlentities($_POST['state']);
+    if(isset($_POST['state']) && in_array($_POST['state'], $state_array)){
+        $state_value = htmlentities($_POST['state'], ENT_QUOTES);
     } else {
-        $state_value = "not a state"; //$_SESSION['state'];
+        $state_value = $_SESSION['state'];
     }
 
 
@@ -152,31 +113,31 @@ if(isset($_POST['save_button'])){
     // PDO to update the DB 
     $update_preferences_sql = 
     'UPDATE user SET 
-    first_name = :first_name_value, last_name = :last_name_value,
+    photo = :photo_value, first_name = :first_name_value, last_name = :last_name_value,
     motto = :motto_value, email = :email_value, city = :city_value, state = :state_value
-    WHERE id = 1';
+    WHERE id = :user_id';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute(['first_name_value' => $first_name_value, 'last_name_value' => $last_name_value,
-    'motto_value' => $motto_value, 'email_value' => $email_value, 'city_value' => $city_value, 'state_value' => $state_value ]);
+    'motto_value' => $motto_value, 'email_value' => $email_value, 'city_value' => $city_value, 'state_value' => $state_value,
+    'user_id' => $user_id, 'photo_value' => $photo_value ]);
     
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
     $update_session_sql = 
-    "SELECT first_name, last_name, motto, email, city, state, id
+    "SELECT first_name, last_name, motto, email, city, state, photo
     FROM user WHERE id = :user_id";
     $update_session_result = $pdo->prepare($update_session_sql);
     $update_session_result->execute(['user_id' => $user_id]);
     $row = $update_session_result->fetch();
     
-    //$_SESSION['photo'] = $row['photo'];
+    $_SESSION['photo'] = $row['photo'];
     $_SESSION['first_name'] = $row['first_name'];
     $_SESSION['last_name'] = $row['last_name'];
     $_SESSION['motto'] = $row['motto'];
     $_SESSION['email'] = $row['email'];
     $_SESSION['city'] = $row['city'];
     $_SESSION['state'] = $row['state'];
-    
     }
 }
 
@@ -226,7 +187,7 @@ LINKS;
                     <div class="form-group row">
                         <div class="col-auto">
                             <label for="email" class="col-form-label" >Email:</label> 
-                            <input type="text" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
+                            <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
                         </div>
                     </div>
 
@@ -242,14 +203,14 @@ LINKS;
                             <label for="state" class="col-form-label" >State:</label> 
                             <select class="form-control" id="state" name="state">
                                 <?php
-                                foreach ($state_array as $key => $value) {
-                                    if($_SESSION['state'] == $key){
+                                foreach ($state_array as $value) {
+                                    if($_SESSION['state'] == $value){
                                         $state_selected_tag = 'selected';
                                     } else {
                                         $state_selected_tag = '';
                                     }
 echo <<<ENDOPTION
-                                    <option value="$key" $state_selected_tag>$value</option>
+                                    <option value="$value" $state_selected_tag>$value</option>
 ENDOPTION;
                                 }
                                 ?>

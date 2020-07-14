@@ -53,7 +53,7 @@ if(isset($_GET['e']) && is_numeric($_GET['e'])){
     $event = $_SESSION['current_event'];
 }
 
-// Handle Race
+// Handle Race TODO: impliment $_SESSION['current_race']
 if(isset($_GET['r']) && is_numeric($_GET['r'])){
     $race = $_GET['r'];
 }else{
