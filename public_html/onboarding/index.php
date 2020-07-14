@@ -43,7 +43,7 @@ if ($invite_code->rowCount() != 1) {
                 <div class="form-group">
                     <input  type="textbox" class= "form-control" id="confirmPassword" placeholder="Confirm Password"></input>
                 </div>
-                    <input type="submit" name="createAccount-btn" value="Create Account"></input>
+                    <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
             </form>
     
     
