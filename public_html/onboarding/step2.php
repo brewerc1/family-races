@@ -26,3 +26,13 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     </form>
     {footer}
 <?php ob_end_flush(); ?>
+<?php
+if (isset($_POST['next-btn'])) {
+    $FN = $_POST['FN'];
+    $LN = $_POST['LN'];
+    $city = $_POST['city'];
+    $state = $_POST['state'];
+    $motto = $_POST['motto'];
+
+}
+?>
