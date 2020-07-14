@@ -8,10 +8,10 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 <form>
                 <div class="form-group">
-                    <input  type="text" class= "form-control" id="FN" name="FN"  placeholder="First Name"></input>
+                    <input  type="text" class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="text" class= "form-control" id="LN" name="LN"  placeholder="Last Name"></input>
+                    <input  type="text" class= "form-control" id="last_name" name="last_name"  placeholder="Last Name"></input>
                 </div>
                 <div class="form-group">
                     <input  type="text"  class= "form-control" id="city" name="city" placeholder="City"></input>
@@ -22,7 +22,7 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
                 <div class="form-group">
                     <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
                 </div>
-                    <input type="submit" name="next-btn" value="Next"></input>
+                    <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
     </form>
     {footer}
 <?php ob_end_flush(); ?>
