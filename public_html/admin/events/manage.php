@@ -1,13 +1,17 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-// Authentication  and Authorization System
-ob_start();
+
+// turn on output buffering
+ob_start('template');
 session_start();
+
+$page_title = "Create Event";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
+
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
@@ -24,54 +28,44 @@ if (!$_SESSION["admin"]) {
 
 
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Skeleton HTML</title>
+{header}
+{main_nav}
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
+<main role="main">
+    <section>
+        <h1>Create an Events</h1>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        nav#main-navigation li {
-            display: inline-block;
-            width: 18%;
-        }
-        nav#main-navigation ul {
-            margin:0;
-            padding:0;
-        }
-    </style>
-</head>
-<body>
-<!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-<nav id="main-navigation">
-    <h1>Main Navigation</h1>
-    <ul>
-        <li><a href="http://localhost/races">Races</a></li>
-        <li><a href="http://localhost/HOF/">HOF</a></li>
-        <li><a href="http://localhost/faq/">FAQ</a></li>
-        <li><a href="http://localhost/user/">Me</a></li>
-        <?php
-        if ($_SESSION['admin']) {
-            echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-        }
-        ?>
-        <li><a href="http://localhost/logout">Log out</a></li>
-    </ul>
-</nav>
+        <div class="text-center">
+            <h2>Reunion 2022</h2>
+            <span>November 10, 2022</span>
+        </div>
 
-<h1>Admin Manage an Event Page</h1>
-<p>Edit an event, horses, or input race results.</p>
+        <fieldset class="accordion border border-dark" id="accordionExample">
+            <legend class="text-center w-auto">Races</legend>
+                <div>
+                    <button id="headingOne" class="btn btn-block dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapseOne">
+                            Race 1
+                    </button>
+                    <div id="collapse1" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="form-row">
+                                    <label>Number of horses:</label>
+                                    <select class="custom-select" name="horse_num" required>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </fieldset>
 
-<footer>
-    <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-</footer>
-</body>
-</html>
+    </section>
+</main>
+
+{footer}
+<?php ob_end_flush(); ?>

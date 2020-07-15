@@ -39,7 +39,7 @@ $javascript = '';
             <h1>Admin</h1>
             <ul class="list-unstyled text-center mt-5">
                 <li><a class="btn btn-primary mb-4" href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
-                <li><a class="btn btn-primary mb-4" href="./races/">Event & Race Managment</a></li>
+                <li><a class="btn btn-primary mb-4" href="./events/">Event & Race Managment</a></li>
                 <li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
                 <li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
             </ul>

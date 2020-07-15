@@ -1,8 +1,11 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-// Authentication  and Authorization System
-ob_start();
+
+// turn on output buffering
+ob_start('template');
 session_start();
+
+$page_title = "Create Event";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -13,7 +16,6 @@ if (!isset($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
-
 }
 
 // To be reviewed
@@ -24,55 +26,59 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+
 ?>
-<!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-        <title>Skeleton HTML</title>
+{header}
+{main_nav}
 
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-        <link href="/css/races.css" rel="stylesheet">
+    <main role="main">
+        <section>
+            <h1>Create an Events</h1>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <style>
-            nav#main-navigation li {
-                display: inline-block;
-                width: 18%;
-            }
-            nav#main-navigation ul {
-                margin:0;
-                padding:0;
-            }
-        </style>
-    </head>
-    <body>
-    <!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-    <nav id="main-navigation">
-        <h1>Main Navigation</h1>
-        <ul>
-            <li><a href="http://localhost/races">Races</a></li>
-            <li><a href="http://localhost/HOF/">HOF</a></li>
-            <li><a href="http://localhost/faq/">FAQ</a></li>
-            <li><a href="http://localhost/user/">Me</a></li>
-            <?php
-            if ($_SESSION['admin']) {
-                echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-            }
-            ?>
-            <li><a href="http://localhost/logout">Log out</a></li>
-        </ul>
-    </nav>
+            <form method="POST">
+                <!-- Event Name -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> Event Name </label>
+                        <input type="text" class="form-control" id="e_name" name="name" placeholder="Reunin 2022">
+                    </div>
+                </div>
+                <!-- Event Date -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> Date </label>
+                        <input type="text" class="form-control" id="date" name="date" placeholder="Date">
+                    </div>
+                </div>
 
-    <h1>Admin Create an Event Page</h1>
-    <p>Create a new event</p>
+                <!-- Event POT -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> POT </label>
+                        <input type="text" class="form-control" id="pot" name="pot" placeholder="Jackpot">
+                    </div>
+                </div>
 
-    <footer>
-        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-    </footer>
-    </body>
-</html>
+                <!-- Event Video URL -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> Video URL </label>
+                        <input type="text" class="form-control" id="url" name="url" placeholder="youtu.be/1234123">
+                    </div>
+                </div>
+
+                <!-- Betting window -->
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="w-bet" name="w_bet">
+                    <label class="custom-control-label" for="sound_fx"> Betting Windows open sequentially </label>
+                </div>
+
+                <!-- submit -->
+                <input type="submit" name="submit" class="btn btn-primary btn-block" value="Create Event">
+
+            </form>
+        </section>
+    </main>
+
+{footer}
+<?php ob_end_flush(); ?>
