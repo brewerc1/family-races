@@ -128,8 +128,8 @@ if (isset($_POST["login"])) {
                      }
                 }
 
-                // Redirect to races page
-                header("Location: /races/");
+                // Redirect to welcome page
+                header("Location: /login/welcome");
                 exit;
             }
 
@@ -173,11 +173,10 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
             <div class="form-group">
                 <label for="email" class="sr-only">Email address</label>
                 <input type="email"  id="email" class="form-control" name="email" placeholder="email" required autofocus value=<?php echo $value ?>>
-                
             </div>
             <div class="form-group">
                 <label for="password" class="sr-only">Password</label>
-                <input type="password" class="form-control" id="password" name="pwd" placeholder="password" aria-describedby="passwordHelpBlock">
+                <input type="password" class="form-control" id="password" name="pwd" placeholder="password" required aria-describedby="passwordHelpBlock">
                 <small id="passwordHelpBlock" class="form-text text-muted">
                     Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                 </small>

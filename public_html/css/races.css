@@ -106,8 +106,6 @@ main {
 
 
 /* Forms */
-form {
-}
 .cancel {
 	display: block;
 	text-align: center;
@@ -165,9 +163,6 @@ form {
 }
 
 /* Footer */
-footer {
-	
-}
 span.navbar-text {
     font-size: .5em;
 }
@@ -178,17 +173,12 @@ span.navbar-text {
 	align-items: center;
 	justify-content: center;
 }
-.list-group .media-body {
-}
 .list-group .media img {
 	width: 70px;
 }
 .earnings {
 	font-size: 100%;
 }
-.user_name {
-}
-
 
 /* Custom Switch Overrides: Provides sizes for Bootstrap 4's built in switches */
 /* for sm */
