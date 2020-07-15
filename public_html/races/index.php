@@ -1,24 +1,72 @@
 <?php
+/**
+ * Page to display Races
+ * 
+ * This page displays races of the current event.
+ * Logged in users can place bets and view results.
+ * User data for logged in user is stored in $_SESSION.email
+ * Page checks for $_GET
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-//include '../template/header.php';
+// turn on output buffering
+ob_start('template');
 
-// Authentication System
-ob_start();
+// start a session
 session_start();
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+// Test for authorized user
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    exit;
+}
+
+// Set the page title for the template
+$page_title = "Races";
+
+// Include the race picker javascript
+$javascript = <<< JAVASCRIPT
+$(function(){
+// bind change event to select
+    $('#race_picker').on('change', function () {
+        var url = "/races/?" + $(this).val(); // get selected value
+        if (url) { // require a URL
+            window.location = url; // redirect
+        }
+    return false;
+    });
+});
+JAVASCRIPT;
 
 // Get UID
 $uid = $_SESSION['id'];
 
 // URL needs to have the GET variables to work ex: http://localhost/races/?e=1&r=3
-// Get event
-$event = $_GET['e'];
+// Handle Event
+if(isset($_GET['e']) && is_numeric($_GET['e'])){
+    $event = $_GET['e'];
+}else{
+    $event = $_SESSION['current_event'];
+}
 
-// Get race
-$race = $_GET['r'];
+// Handle Race
+if(isset($_GET['r']) && is_numeric($_GET['r'])){
+    $race = $_GET['r'];
+}else{
+    $race = 1;
+}
+
+if($_SESSION['site_memorial_race_enable'] == '1'){
+    $memorial_race = '';
+}
+
+///// DEBUG
+$debug = debug("UID: $uid<br>Event: $event");
+///// end DEBUG
 
 // Gather data for this page
 // SQL to retrieve race results
@@ -44,91 +92,82 @@ $num_races_result = $pdo->prepare($num_races_sql);
 $num_races_result->execute(['event' => $event]);
 $num_races = $num_races_result->rowCount();
 
-// TODO: Check session variable for current user info
-// TODO: Get current event info from db
-// TODO: Conditional statements to check if window closed (display results)
-// TODO: Conditional statement to check if window not open yet
-
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"> 
-    <title>Races</title>
+{header}
+{main_nav}
+<main role="main">
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-    <link href="/css/races.css" rel="stylesheet">
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        /* DEVELOPMENT CSS */
-        html,body {
-            margin: 0;
-            padding: 0;
+    <div class="card" style=" margin: 0 auto;">
+        <div class="input-group input-group-lg mb-3 pt-2 pl-2 pr-2">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="race_picker">Race</label>
+            </div>
+            <select class="custom-select" id="race_picker">
+    <?php 
+    // Builds the select menu based on number of races
+        // TODO: "all" option to display event standings
+        // TODO: Replace "race #" display with memorial race title
+    for($i = 1; $i <= $num_races; $i++){
+        if($i == $race){
+            $attr = "selected='selected' disabled='disabled'";
+        }else{
+            $attr = "";
         }
-        div {
-            border: 1px solid rgba(0,0,0,.1);
-        }
-        div div {
-            margin: 2px;
-        }
-        pre {
-            border: 1px solid #ccc;
-            background-color: rgba(0,0,0,.05);
-            color: rgba(0,0,0,.65);
-            padding-left: 5px;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-    </style>
-    <script>
-        $(document).ready(function(){
-            $(function(){
-            // bind change event to select
-                $('#race_picker').on('change', function () {
-                    var url = "/races/?" + $(this).val(); // get selected value
-                    if (url) { // require a URL
-                        window.location = url; // redirect
-                    }
-                return false;
-                });
-            });
-        });
-  </script>
-</head>
-<body>
-
-<div id="page-wrapper">
-    <form method="post" action="./invite.php" id="race"> <!-- Race Select Menu -->
-        <select id="race_picker">
-<?php 
-// Builds the select menu based on number of races
-    // TODO: "all" option to display event standings
-    // TODO: Replace "race #" display with memorial race title
-for($i = 1; $i <= $num_races; $i++){
-    if($i == $race){
-        $attr = "selected='selected' disabled='disabled'";
-    }else{
-        $attr = "";
+        echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
     }
-    echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
-}
+    ?>
+                <option value="e=$event&r=0&u=$uid">All Races</option>
+            </select>
+        </div>
+        <div class="card-body">
+            <?php // TODO: Conditional statements to check if window closed (display results)
+// TODO: Conditional statement to check if window not open yet
+/* CONSIDER: If window is closed, perhaps the best way to show the user's bet is to use the select menu choices
+set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/components/forms/#readonly-plain-text
+*/
 ?>
-            <option value="e=$event&r=all&u=$uid">All Races</option>
-        </select>
+            <div class="input-group input-group-lg mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Pick</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <?php // TODO: Add the Horse picker. ?>
+                    <option selected>Horse...</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">Need to show horses in this race! </option>
+                </select>
+            </div>
+            <div class="input-group input-group-lg mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Finish</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <?php // TODO: Add the Place picker. ?>
+                    <option selected>Choose...</option>
+                    <option value="w">Win</option>
+                    <option value="p">Place</option>
+                    <option value="s">Show</option>
+                </select>
+            </div>
+            <a href="#" class="btn btn-primary">Do something</a>
+        </div>
+    </div>
+
+    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="race">
+        <!-- Race Select Menu -->
+        
     </form> <!-- END id race_picker -->
 
-    <div id="user_bet"> <!-- Display User's Bet -->
-    <!-- TODO: select menu's to display user pick options, defaul to current pick -->
-    <p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
-    <strong>Purse:</strong> $<?php //echo $purse;?></p>
+	<div id="user_bet"> <!-- Display User's Bet -->
+		<!-- TODO: select menu's to display user pick options, defaul to current pick -->
+		<p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
+		<strong>Purse:</strong> $<?php //echo $purse;?></p>
     </div> <!-- END id user_bet -->
-    <div id="race_leaderboard">
+    
+	<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
-
 if ($num_race_results > 0) {
     $invited = "";
 
@@ -141,22 +180,22 @@ if ($num_race_results > 0) {
         }else{
             $photo = $row["photo"];
         }
-        echo "<div class='user-row'><a href='/user/user_profile?uid=" . $row["user_id"] . "'><img src='$photo' alt='photo'></a><span>$name</span> <span class='earnings'>\${$row["earnings"]}</span></div>";
+        echo <<< HERE
+        <li class="list-group-item">
+            <div class="media">
+                <a href="/user/?u={$row["user_id"]}">
+                    <img src="$photo" alt="photo" class="rounded-circle">
+                </a>
+                <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> <span class="earnings badge badge-success float-right px-2">\${$row["earnings"]}</span></div>
+            </div>
+        </li>
+HERE;
     }
-    } else {
-        echo "0 results";
-    }
-
-//echo "<pre><b>UID:</b> $uid<br><b>Event:</b> $event<br><b>Race:</b> $race</pre>";
+} else {
+    echo "<p>0 results</p>";
+}
 ?>
-    </div> <!-- END id race_leaderboard -->
-</div> <!-- end id page-wrapper -->
-
-
-<!-- In support of Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-
-<?php
-include '../template/footer.php';
-?>
+    </ul> <!-- END id race_leaderboard -->
+</main>
+{footer}
+<?php ob_end_flush(); ?>

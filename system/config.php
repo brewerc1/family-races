@@ -17,7 +17,7 @@ $config = array(
     'path_to_system' => __DIR__,
 );
 
-$alert_style = array(
+$alert_styles = array(
     'primary' => "alert-primary",
     'secondary' => "alert-secondary",
     'success' => "alert-success",

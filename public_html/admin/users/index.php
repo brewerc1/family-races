@@ -18,13 +18,20 @@ ob_start('template');
 session_start();
 
 // set the page title for the template
-$page_title = "Admin | User Management";
+$page_title = "User Management";
 
 // include the menu javascript for the template
-$javascript = "";
+$javascript = '';
 
-if (!isset($_SESSION["id"]) || $_SESSION["id"] == 0)
+if (!isset($_SESSION["id"])) {
     header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+}
 
 // To be reviewed
 if (!$_SESSION["admin"]) {
@@ -42,11 +49,9 @@ $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
 
-// TODO: interact with session variables to determine logged in user, if user is admin, maintain session, etc.
-
 // Notification System
 $messages = array(
-    1 => "Incorrect Email",
+    1 => "Invalid Email",
     2 => "User already invited",
     3 => "DB is empty",
     4 => "Fails to generate Code",
@@ -56,8 +61,8 @@ $messages = array(
 );
 
 $alerts = array(
-    1 => "alert-success",
-    2 => "alert-warning"
+    1 => "success",
+    2 => "warning"
 );
 
 $notification = "";
@@ -69,7 +74,7 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
     if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 || $not == 6 || $not == 7 )
         $notification = $messages[$not];
     if ($al == 1 || $al == 2 )
-        $alert = $alerts[$al];
+        $alert = $alert_style[$alerts[$al]];
 
 }
 ?>
@@ -78,10 +83,20 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
     <main role="main">
         <section id="User_invite">
             <h1>User Management</h1>
-            <form method="POST" action="./invite_user.php" id="invite_form">
-                <input type="email" name="email" placeholder="Invite a New User" required>
-                <button type="submit" form="invite_form" name="invite" >+</button>
+
+            <form method="post" action="./invite_user.php" id="invite_form">
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email" class="sr-only"> Memorial Race Name </label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Invite a New User" required>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary" form="invite_form" name="invite" >+</button>
+                    </div>
+                </div>
             </form>
+
+            <!-- For notification system -->
             <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
                 <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
                     <?php echo $notification; ?>
@@ -90,46 +105,47 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                     </button>
                 </div>
             <?php } ?>
+
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 
-            <h2>Current Users</h2>     
-             <?php
+            <h2>Current Users</h2>   
+                <ul class="List-group ">  
+                <?php
+                    if ($num_display_user_results > 0) {
 
-                if ($num_display_user_results > 0) {
-                    $invited = "";
+                        // loop through DB return
+                        while($row = $display_user_result->fetch()) {
+                            // Has to be inside the loop so in every iteration, it's gonna be empty
+                            $invited = "";
 
-                    // loop through DB return
-                    while($row = $display_user_result->fetch()) {
+                            // handle user with invite but hasn't accepted
+                            if(!is_null($row["invite_code"])) {
+                                $invited = "<span class='badge badge-primary badge-pill' id='invited_badge'>pending</span>";
+                                $name = $row["email"];
+                            } else {
+                                $name = $row["first_name"] . ' ' . $row["last_name"];
+                            }
+                            // handle missing photo
+                            if(empty($row["photo"])) {
+                                $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+                            } else {
+                                $photo = $row["photo"];
+                            }
 
-                        // handle user with invite but hasn't accepted
-                        if(!empty($row["invite_code"])) {
-                            $invited = "<span class='invited_chip'>pending</span>";
-                            $name = $row["email"];
-                        } else {
-                            $name = $row["first_name"] . ' ' . $row["last_name"];
-                        }
-                        // handle missing photo
-                        if(empty($row["photo"])) {
-                            $photo = "https://races.informatics.plus/images/no-user-image.jpg";
-                        } else {
-                            $photo = $row["photo"];
-                        }
-
-                        // output row of user data
+                            // output row of user data
 echo <<< ENDUSER
-            <div class="user-row">
-                <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span> {$invited}
-            </div>
+                <li class="list-group-item">
+                    <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span>
+                    {$invited}
+                </li>
 ENDUSER;
-                    } 
-                } else {
-                    echo "0 results";
-                }         
-
-                ?>  
-
-            </div>
+                        } 
+                    } else {
+                        echo "0 results";
+                    }
+                    ?>  
+                </ul>
         </section> <!-- END display_current_users -->
 
     </main>
