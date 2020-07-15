@@ -58,10 +58,6 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
     $state = $row['state'];
 }
  
-// Links to "edit" and "settings" page
-$settings_link = "<a href='./settings/?u=" . $_SESSION['id'] . "' id='settings_link' class='button'>User Settings</a>";
-$edit_link = "<a href='./edit/?u=" . $_SESSION['id'] . "' id='edit_link' class='button'>Edit Profile</a> "    
-
 ?>
 {header}
 {main_nav}
@@ -69,7 +65,7 @@ $edit_link = "<a href='./edit/?u=" . $_SESSION['id'] . "' id='edit_link' class='
         <div class="container">
             <section id="user_head">
                 <div id="profile_photo">
-                    <img class="img-responsive" src="<?php echo $photo ?>" alt="User Photo"/>
+                    <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
                 </div>
                 <div id="user_name"><?php echo $full_name ?></div>
                 <!-- Links not displayed if "logged in" == "displayed" -->  
@@ -77,8 +73,8 @@ $edit_link = "<a href='./edit/?u=" . $_SESSION['id'] . "' id='edit_link' class='
                 if (!isset($_GET["u"]) || ($_GET["u"] == $_SESSION["id"])) {
 echo <<< LINKS
                 <div id="edit_buttons">
-                    <a href="./edit" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
-                    <a href="./settings/" class="btn btn-primary btn-sm" id="user_settings">User Settings</a>
+                    <a href="./edit/index.php" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
+                    <a href="./settings/index.php" class="btn btn-primary btn-sm" id="user_settings">User Settings</a>
                 </div>
 LINKS;
                         }
