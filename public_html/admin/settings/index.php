@@ -162,7 +162,6 @@ if(isset($_POST['save_button'])){
 
     // PDO to update the DB 
     $update_preferences_sql = 
-    
     "UPDATE site_settings SET 
     sound_fx = :sound_fx_value, voiceovers = :voiceovers_value, terms_enable = :terms_enable_value,
     terms_text = :terms_text_value, default_horse_count = :default_horse_count_value, memorial_race_enable = :memorial_race_enable_value,
@@ -182,15 +181,17 @@ if(isset($_POST['save_button'])){
     
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
-    $update_session_sql = 
-    "SELECT sound_fx, voiceovers, terms_enable, terms_text, default_horse_count, memorial_race_enable, memorial_race_number, memorial_race_name,
-    welcome_video_url, invite_email_subject, invite_email_body, email_server, email_server_port, email_server_account, email_server_password,
-    email_from_name, email_from_address
-    FROM site_settings WHERE id = 1";
+    $update_session_sql = "SELECT * FROM site_settings WHERE id = 1";
     $update_session_result = $pdo->prepare($update_session_sql);
     $update_session_result->execute();
     $row = $update_session_result->fetch();
-    
+
+    foreach($row as $key => $value){
+        if($key != 'id'){
+            $_SESSION["site_$key"] = $value;
+        }
+    }
+/*
     $_SESSION['site_sound_fx'] = $row['sound_fx'];
     $_SESSION['site_voiceovers'] = $row['voiceovers'];
     $_SESSION['site_terms_enable'] = $row['terms_enable'];
@@ -208,6 +209,7 @@ if(isset($_POST['save_button'])){
     $_SESSION['site_email_server_password'] = $row['email_server_password'];
     $_SESSION['site_email_from_name'] = $row['email_from_name'];
     $_SESSION['site_email_from_address'] = $row['email_from_address'];
+    */
     }
 }
 
@@ -224,7 +226,7 @@ $memorial_race_selected_tag = '';
         <section id="site_settings">
             <h1>Settings</h1>
             
-            <form action="./index.php" method="post">
+            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" class="mt-5">
                 <!-- Sound Effects enable -->
                 <div class="form-group custom-control custom-switch custom-switch-lg">
                     <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
@@ -378,7 +380,8 @@ ENDOPTION;
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
+                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                <a href="../index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
             </form>
         </section> <!-- END id user_settings -->
     </div>

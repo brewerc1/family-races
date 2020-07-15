@@ -13,6 +13,8 @@ $page_title = "Login";
 // Include the menu javascript for the template
 $javascript = "";
 
+$debug = debug();
+
 // Get the email from and put it in the email input
 $value = "";
 if (!empty($_GET["email"])) {
@@ -29,18 +31,12 @@ if (isset($_POST["login"])) {
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        header("Location: /login/?login=false&email=" . $email . "&message=2&alt=2");
-
-        // Make sure the rest of code is not gonna be executed
+        header("Location: /login/?login=false&email=" . $email . "&m=2&s=warning");
         exit;
-
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
-        header("Location: /login/?login=false&message=1&alt=2");
-
-        // Make sure the rest of code is not gonna be executed
+        header("Location: /login/?login=false&m=1&s=warning");
         exit;
-
     } else {
 
         $query = "SELECT * FROM user WHERE email = :email";
@@ -50,11 +46,8 @@ if (isset($_POST["login"])) {
 
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
-            header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
-
-            // Make sure the rest of code is not gonna be executed
+            header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
             exit;
-
         } else {
             $user_row = $user->fetch();
             $pwd = $user_row["password"];
@@ -63,15 +56,16 @@ if (isset($_POST["login"])) {
 
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
-                header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
-
-                // Make sure the rest of code is not gonna be executed
+                header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
                 exit;
-
             } else {
                 // Valid credentials
 
-                // USER: Session variables (13)
+                // USER: Session variables
+                foreach($user_row as $key => $value){
+                    $_SESSION[$key] = $value;
+                }
+                /*
                 $_SESSION["id"] = $user_row["id"];
                 $_SESSION["first_name"] = $user_row["first_name"];
                 $_SESSION["last_name"] = $user_row["last_name"];
@@ -86,17 +80,25 @@ if (isset($_POST["login"])) {
                 $_SESSION["voiceovers"] = $user_row["voiceovers"];
                 $_SESSION["admin"] = $user_row["admin"];
                 $_SESSION["password"] = $user_row["password"];
+                */
 
                 // SITE SETTINGS: Session variables
                 $query = "SELECT * FROM site_settings";
-                $site_setts = $pdo->prepare($query);
+                $site_settings = $pdo->prepare($query);
 
                 // For every Site Settings Session Variable, please check if it's set
-                if ($site_setts->execute() ) {
+                if ($site_settings->execute() ) {
 
-                    if ($site_setts->rowCount() > 0) {
+                    if ($site_settings->rowCount() > 0) {
 
-                        $site_row = $site_setts->fetch();
+                        $site_row = $site_settings->fetch();
+
+                        foreach($site_row as $key => $value){
+                            if($key != 'id'){
+                                $_SESSION["site_$key"] = $value;
+                            }
+                        }
+                        /*
                         $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
                         $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
@@ -114,7 +116,7 @@ if (isset($_POST["login"])) {
                         $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
                         $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
                         $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
-
+                        */
                     }
 
                 }
@@ -138,31 +140,6 @@ if (isset($_POST["login"])) {
 
 }
 
-// Notification System
-$messages = array(
-    1 => "Invalid Credentials",
-    2 => "Email or Password cannot be empty",
-    3 => "Password has been changed, please log in"
-);
-
-$alerts = array(
-    1 => "success",
-    2 => "warning"
-);
-
-$notification = "";
-$alert = "";
-if (isset($_GET["message"]) && isset($_GET["alt"])) {
-    $not = trim($_GET["message"]);
-    $al = trim($_GET["alt"]);
-
-    if ($not == 1 || $not == 2 || $not == 3 )
-        $notification = $messages[$not];
-    if ($al == 1 || $al == 2 )
-        $alert = $alert_style[$alerts[$al]];
-
-}
-
 ?>
 {header}
     <main role="main">
@@ -182,19 +159,9 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                     Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                 </small>
             </div>
-            <input type="submit" value="Login" name="login" class="btn btn-primary btn-block">
-            <div id="forgot_pwd">
-                <a href="/password/">Forgot Password</a>
-            </div>
+            <input type="submit" class="btn btn-primary btn-block" value="Login" name="login">
+            <a class="text-secondary d-block mt-2 text-center" href="/password/">Forgot Password</a>
         </form>
-            <?php if(isset($notification) && $notification != ''){?>
-                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-                    <?php echo $notification; ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            <?php } ?>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
