@@ -1,4 +1,19 @@
 <?php
+
+/*
+if I get post, then:
+    a) make sure fields are filled in and good.
+    b) query db select * from users where email=post[emakil] and code=post[code];
+    c) If 0 result, then they don't match. So handle error (see login/index.php for messages for how errors work). 
+    d) If I get single row result, then they match and continue processing.
+    e) set session vars for id=row_result[id], email=row_result[email], session[photo]=/images/no-user-image.jpg, etc.
+    f) update row with hashed password and photo to session[photo] and set invite_code to null
+    g) forward (header) to step2
+
+
+
+
+*/
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Authorization System
@@ -32,16 +47,16 @@ if ($invite_code->rowCount() != 1) {
   <div>  
             <form>
                 <div class="form-group">
-                    <input  type="email" class= "form-control" id="email"  placeholder="Enter Email"></input>
+                    <input  type="email" required class="form-control" id="email"  placeholder="Enter Email"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="textbox" class= "form-control" id="code"  placeholder="Enter Code"></input>
+                    <input  type="textbox" required class="form-control" id="code"  placeholder="Enter Code"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="password"  class= "form-control" id="password" placeholder="Enter Password"></input>
+                    <input  type="password"  required class="form-control" id="password" placeholder="Enter Password"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="textbox" class= "form-control" id="confirmPassword" placeholder="Confirm Password"></input>
+                    <input  type="textbox" required class="form-control" id="confirmPassword" placeholder="Confirm Password"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
             </form>
@@ -90,7 +105,7 @@ if (isset($_POST['createAccount-btn'])) {
         $password = password_hash($password, PASSWORD_DEFAULT);
         $verified = FALSE;
 
-        $sql = "INSERT INTO users (password) WHERE invite_code = $code AND email = $email";
+        $sql = "UPDATE INTO users (password) WHERE invite_code = $code AND email = $email";
         $stmt = $dbconnect->prepare($sql);
         $stmt->bind_param('s', $password);
         $stmt->execute();
