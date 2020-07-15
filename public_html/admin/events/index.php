@@ -26,7 +26,7 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
-
+$debug = debug();
 
 ?>
 {header}

@@ -25,7 +25,7 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
-
+$debug = debug();
 
 ?>
 {header}
@@ -70,7 +70,7 @@ if (!$_SESSION["admin"]) {
                 <!-- Betting window -->
                 <div class="form-group custom-control custom-switch custom-switch-lg">
                     <input class="custom-control-input" type="checkbox" id="w-bet" name="w_bet">
-                    <label class="custom-control-label" for="sound_fx"> Betting Windows open sequentially </label>
+                    <label class="custom-control-label" for="w_bet"> Betting Windows open sequentially </label>
                 </div>
 
                 <!-- submit -->

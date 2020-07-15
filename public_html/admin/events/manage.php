@@ -6,6 +6,13 @@ ob_start('template');
 session_start();
 
 $page_title = "Create Event";
+$javascript = "
+$('#example-6').multifield({
+        section: '.group',
+        btnAdd:'#btnAdd-6',
+        btnRemove:'.btnRemove',
+    });
+";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -25,47 +32,50 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
-
+$debug = debug();
 
 ?>
 {header}
 {main_nav}
-
-<main role="main">
-    <section>
-        <h1>Create an Events</h1>
-
-        <div class="text-center">
-            <h2>Reunion 2022</h2>
-            <span>November 10, 2022</span>
+<form method="post">
+    <div id="example-6" class="content">
+        <div class="row">
+            <div class="col-md-12"><button type="button" id="btnAdd-6" class="btn btn-primary">Add Employee</button></div>
         </div>
-
-        <fieldset class="accordion border border-dark" id="accordionExample">
-            <legend class="text-center w-auto">Races</legend>
-                <div>
-                    <button id="headingOne" class="btn btn-block dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapseOne">
-                            Race 1
-                    </button>
-                    <div id="collapse1" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                        <div class="card-body">
-                            <form method="POST">
-                                <div class="form-row">
-                                    <label>Number of horses:</label>
-                                    <select class="custom-select" name="horse_num" required>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
+        <div class="row group">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Name<input class="form-control" class="form-control" type="text" name="user_name[]"></label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Gender
+                    <select name="user_gender[]" class="form-control">
+                        <option value="">Please select..</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </label>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-2">
+                    <div class="radio">
+                        <label><input type="radio" name="user_role[0]" value="manager"> Manager </label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="user_role[0]" value="editor"> Editor </label>
+                    </div>
+                    <div class="radio">
+                        <label class="checkbox-inline"><input type="radio" name="user_role[0]" value="writer"> Writer </label>
                     </div>
                 </div>
-        </fieldset>
-
-    </section>
-</main>
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn btn-danger btnRemove">Remove</button>
+            </div>
+        </div>
+    </div>
+</form>
 
 {footer}
 <?php ob_end_flush(); ?>
