@@ -97,6 +97,7 @@ if (isset($_POST["login"])) {
                     if ($site_setts->rowCount() > 0) {
 
                         $site_row = $site_setts->fetch();
+                        $_SESSION["site_name"] = $site_row["name"];
                         $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
                         $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
