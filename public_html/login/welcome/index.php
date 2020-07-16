@@ -43,7 +43,9 @@ $debug = debug();
 {main_nav}
 <main role="main">
     <h1>Welcome to <?php echo $_SESSION['site_name'];?></h1>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="mt-5 embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
     <div class="text-center">
         <a href="/races/" class="btn btn-primary mt-2">Skip</a>
     </div>
