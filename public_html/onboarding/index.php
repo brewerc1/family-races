@@ -86,11 +86,11 @@ if (isset($_POST['createAccount-btn'])) {
     }
 //Validation Password
     if(empty('password')) {
-        $errors ['password'] = 'Password Required';
+        $notification ['password'] = 'Password Required';
     }
 //Check if passwords and confirmation match
     if($password !== $confirmPassword) {
-        $errors ['password'] = 'The two passwords do not match';
+        $notification ['password'] = 'The two passwords do not match';
     }
     //echo "email is $email";
     //exit;
