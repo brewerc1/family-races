@@ -81,36 +81,28 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 {header}
 {main_nav}
     <main role="main">
-        <section id="User_invite">
-            <h1>User Management</h1>
-
-            <form method="post" action="./invite_user.php" id="invite_form">
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="email" class="sr-only"> Memorial Race Name </label>
-                        <input type="email" class="form-control" name="email" id="email" placeholder="Invite a New User" required>
+        <h1>User Management</h1>
+        <section id="User_invite" class="mt-3 mb-4" method="post" >
+            <form action="./invite_user.php" id="invite_form">
+                <div class="form-row align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <label class="sr-only" for="inlineFormInputName">Email address</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@</div>
+                            </div>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Email address to invite" required>
+                        </div>
                     </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary" form="invite_form" name="invite" >+</button>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary font-weight-bold" form="invite_form" name="invite" >Invite</button>
                     </div>
                 </div>
             </form>
-
-            <!-- For notification system -->
-            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
-                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-                    <?php echo $notification; ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            <?php } ?>
-
         </section><!-- END user invite section -->
 
         <section id="display_current_users"> 
-            <h2>Current Users</h2>   
-                <ul class="List-group ">  
+                <ul class="user-list list-group list-group-flush">  
                 <?php
                     if ($num_display_user_results > 0) {
 
@@ -121,7 +113,7 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 
                             // handle user with invite but hasn't accepted
                             if(!is_null($row["invite_code"])) {
-                                $invited = "<span class='badge badge-primary badge-pill' id='invited_badge'>pending</span>";
+                                $invited = "<span class='badge badge-primary badge-pill float-right px-2' id='invited_badge'>pending</span>";
                                 $name = $row["email"];
                             } else {
                                 $name = $row["first_name"] . ' ' . $row["last_name"];
@@ -136,8 +128,12 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                             // output row of user data
 echo <<< ENDUSER
                 <li class="list-group-item">
-                    <a href="../../user/?u={$row["id"]}"><img src="{$photo}" alt="photo"></a><span>{$name}</span>
-                    {$invited}
+                    <div class="media">
+                        <a href="/user/?u={$row["id"]}">
+                            <img src="$photo" alt="photo" class="rounded-circle">
+                        </a>
+                        <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> {$invited}</div>
+                    </div>
                 </li>
 ENDUSER;
                         } 
