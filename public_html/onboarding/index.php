@@ -67,27 +67,22 @@ if ($invite_code->rowCount() != 1) {
     {footer}
 <?php ob_end_flush(); ?>
 <?php
-$errors = array();
-$email = "";
-$code = "";
-$password = "";
-$confirmPassword = "";
-session_start();
+$notification = array();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
-    $email = trim($_POST ['email']);
-    $code = trim($_POST ['code']);
-//Validation Email
-    if (empty('email')){
-        $errors ['email'] = 'Email Required';
+    //$email = trim($_POST ['email']);
+    //$code = trim($_POST ['code']);
+//Validation Email filed filled and email exist
+    if ((empty('email')) && (!filter_var($email, FILTER_VALIDATE_EMAIL))) {
+        $notification ['email'] = 'Email Required and must be valid';
     }
 //Check if email exist
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors ['email'] = 'Email address is invalid';
-    }
+    //if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+       // $errors ['email'] = 'Email address is invalid';
+   // }
 //Validation Code
     if(empty('code')){
-        $errors ['code'] = 'Code Required';
+        $notification ['code'] = 'Code Required';
     }
 //Validation Password
     if(empty('password')) {
