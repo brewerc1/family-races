@@ -1,39 +1,45 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// turn on output buffering
+// Turn on output buffering
 ob_start('template');
 
-// start a session
+// Start a session
 session_start();
 
-// set the page title for the template
+// Set the page title for the template
 $page_title = "Login";
 
-// include the menu javascript for the template
+// Include the menu javascript for the template
 $javascript = "";
 
-
-// Self explanatory
+// Get the email from and put it in the email input
 $value = "";
 if (!empty($_GET["email"])) {
-    $value = $_GET["email"];
+    $val = trim($_GET["email"]);
+    $value = filter_var($val, FILTER_VALIDATE_EMAIL) ? $val : "";
 }
 
 if (isset($_POST["login"])) {
 
-    $email = $_POST["email"];
-    $password = $_POST["pwd"];
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["pwd"]);
 
-
+    // at least one of those is empty
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
+        header("Location: /login/?login=false&email=" . $email . "&message=2&alt=2");
+
+        // Make sure the rest of code is not gonna be executed
+        exit;
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
-        header("Location: /login/?login=false&message=Invalid Credentials");
+        header("Location: /login/?login=false&message=1&alt=2");
+
+        // Make sure the rest of code is not gonna be executed
+        exit;
 
     } else {
 
@@ -44,7 +50,10 @@ if (isset($_POST["login"])) {
 
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
-            header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
+            header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
+
+            // Make sure the rest of code is not gonna be executed
+            exit;
 
         } else {
             $user_row = $user->fetch();
@@ -54,7 +63,10 @@ if (isset($_POST["login"])) {
 
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
-                header("Location: /login/?login=false&email=" . $email . "&message=Invalid Credentials");
+                header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
+
+                // Make sure the rest of code is not gonna be executed
+                exit;
 
             } else {
                 // Valid credentials
@@ -73,24 +85,27 @@ if (isset($_POST["login"])) {
                 $_SESSION["sound_fx"] = $user_row["sound_fx"];
                 $_SESSION["voiceovers"] = $user_row["voiceovers"];
                 $_SESSION["admin"] = $user_row["admin"];
+                $_SESSION["password"] = $user_row["password"];
 
                 // SITE SETTINGS: Session variables
                 $query = "SELECT * FROM site_settings";
                 $site_setts = $pdo->prepare($query);
-                // Question: what to do if line 81 resulted to false
+
+                // For every Site Settings Session Variable, please check if it's set
                 if ($site_setts->execute() ) {
 
-                    // Question: what to do if line 84 resulted to false
                     if ($site_setts->rowCount() > 0) {
+
                         $site_row = $site_setts->fetch();
+                        $_SESSION["site_name"] = $site_row["name"];
                         $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
-                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
                         $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
-                        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+                        $_SESSION["site_terms_text"] = $site_row["terms_text"];
                         $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
                         $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
                         $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
+                        $_SESSION["site_memorial_race_number"] = $site_row["memorial_race_number"];
                         $_SESSION["site_welcome_video_url"] = $site_row["welcome_video_url"];
                         $_SESSION["site_invite_email_subject"] = $site_row["invite_email_subject"];
                         $_SESSION["site_invite_email_body"] = $site_row["invite_email_body"];
@@ -100,13 +115,23 @@ if (isset($_POST["login"])) {
                         $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
                         $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
                         $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
+
                     }
+
                 }
 
-
+                // Current event session variable: Please check if it's set
+                $query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
+                $current_event = $pdo->prepare($query);
+                if ($current_event->execute()) {
+                     if ($current_event->rowCount() > 0) {
+                         $_SESSION["current_event"] = $current_event->fetch()["id"];
+                     }
+                }
 
                 // Redirect to welcome page
-                header("Location: /login/welcome/");
+                header("Location: /login/welcome");
+                exit;
             }
 
         }
@@ -115,30 +140,61 @@ if (isset($_POST["login"])) {
 }
 
 // Notification System
+$messages = array(
+    1 => "Invalid Credentials",
+    2 => "Email or Password cannot be empty",
+    3 => "Password has been changed, please log in"
+);
+
+$alerts = array(
+    1 => "success",
+    2 => "warning"
+);
+
 $notification = "";
-if (isset($_GET["message"])) {
-    $notification = trim($_GET["message"]);
+$alert = "";
+if (isset($_GET["message"]) && isset($_GET["alt"])) {
+    $not = trim($_GET["message"]);
+    $al = trim($_GET["alt"]);
+
+    if ($not == 1 || $not == 2 || $not == 3 )
+        $notification = $messages[$not];
+    if ($al == 1 || $al == 2 )
+        $alert = $alert_style[$alerts[$al]];
+
 }
 
 ?>
-    {header}
-    <form method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
-        <input type="email" name="email" placeholder="your@email.com"
-               value=<?php echo $value ?>>
-        <input type="password" name="pwd" placeholder="password">
-        <input type="submit" value="Login" name="login">
-    </form>
-<?php if(isset($notification) && $notification != ''){?>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <?php echo $notification; ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-<?php } ?>
-    <div id="forgot_pwd">
-        <a href="/password/">Forgot Password</a>
-    </div>
+{header}
+    <main role="main">
+        <form class="horizontal-center" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+            <div class="text-center mb-4">
+                <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
+            </div>
+            <div class="form-group">
+                <label for="email" class="sr-only">Email address</label>
+                <input type="email"  id="email" class="form-control" name="email" placeholder="email" required autofocus value=<?php echo $value ?>>
+            </div>
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" class="form-control" id="password" name="pwd" placeholder="password" required aria-describedby="passwordHelpBlock">
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                </small>
+            </div>
+            <input type="submit" value="Login" name="login" class="btn btn-primary btn-block">
+            <div id="forgot_pwd">
+                <a href="/password/">Forgot Password</a>
+            </div>
+        </form>
+            <?php if(isset($notification) && $notification != ''){?>
+                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                    <?php echo $notification; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php } ?>
     </main>
-    {footer}
+{footer}
 <?php ob_end_flush(); ?>

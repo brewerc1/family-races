@@ -5,22 +5,302 @@ html,body {
 body {
 	font-family: 'Raleway', sans-serif;
 	font-weight: 300;
+	background-color: rgba(0,0,0,.05);
 }
 b,strong {
 	font-weight: 600;
 }
-h1 {
+h1, h2, h3 {
 	font-family: 'Playfair Display', serif;
 	font-weight: 400;
+	text-align: center;
 }
+label, .col-form-label {
+	font-weight: 600;
+	font-size: .7em;
+}
+.custom-control-label {
+	font-size: 1em;
+	font-weight: inherit;
+	padding-top: 4px;
+}
+.horizontal-center {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+main {
+	padding: 20px 20px 85px 20px;
+	background-color: rgba(255,255,255,1);
+	min-height: 100vh;
+}
+@media (min-width: 768px) { 
+	main {
+		max-width: 768px;
+		margin: 0 auto;
+		border-color: rgba(0,0,0,.1);
+		border-width: 0 1px;
+		border-style: solid;
+	}
+ }
+
+/* Animations */
+.fade-in {
+	animation-name: fadeIn;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: .5s;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.fade-out {
+	animation-name: fadeOut;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: .5s;
+}
+
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.floating-alert {
+	box-shadow: 0px 3px 16px -4px rgba(0,0,0,.3);
+}
+
 /* Bootstrap navbar overrides */
+#main-navigation{
+	box-shadow: 0px -7px 8px -7px rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(50,50,50,.2);
+}
 .navbar-nav .active>.nav-link {
 	font-weight: 600;
 }
 .navbar-collapse.collapse.show li.nav-item:first-of-type {
 	margin-top: 10px;
 }
+.navbar-collapse.collapse.show li.nav-item:last-of-type {
+	margin-bottom: 30px;
+	border-bottom: 1px solid rgba(50,50,50,.2);
+}
 .navbar-collapse.collapse.show li.nav-item {
 	margin-left: 10px;
 	border-top: 1px solid rgba(50,50,50,.1);
+}
+
+
+/* Forms */
+.cancel {
+	display: block;
+	text-align: center;
+	margin-top: 10px;
+	font-size: 0.9em;
+}
+
+/* Login */
+#login {
+	max-width: 400px;
+	margin: 0 auto;
+}
+#forgot_pwd {
+	margin-top: 20px;
+}
+
+/* User Profile */
+#profile_photo {
+	width: 150px;
+	height: 150px;
+	display: inline-block;
+}
+#profile_photo img {
+	border-radius: 50%;
+	width: 100%;
+}
+#edit_buttons {
+	position: absolute;
+    top: 10px;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    padding-left: 150px;
+}
+#user_name{
+    font-size: 1.3em;
+    font-weight: 600;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 150px;
+	float: right;
+	width: calc( 100% - 150px );
+}
+#user_meta {
+	list-style-type: none;
+	margin-top: 20px;
+}
+#user_meta li {
+	line-height: 2em;
+}
+#user_meta li span {
+	text-transform: uppercase;
+	font-weight: 400;
+}
+
+/* Footer */
+span.navbar-text {
+    font-size: .5em;
+}
+
+
+/* Lists of Users */
+.user-list.list-group .media {
+	align-items: center;
+	justify-content: center;
+}
+.list-group .media img {
+	width: 70px;
+}
+.earnings {
+	font-size: 100%;
+}
+
+/* Custom Switch Overrides: Provides sizes for Bootstrap 4's built in switches */
+/* for sm */
+
+.custom-switch.custom-switch-sm .custom-control-label {
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+}
+
+.custom-switch.custom-switch-sm .custom-control-label::before {
+    height: 1rem;
+    width: calc(1rem + 0.75rem);
+    border-radius: 2rem;
+}
+
+.custom-switch.custom-switch-sm .custom-control-label::after {
+    width: calc(1rem - 4px);
+    height: calc(1rem - 4px);
+    border-radius: calc(1rem - (1rem / 2));
+}
+
+.custom-switch.custom-switch-sm .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(calc(1rem - 0.25rem));
+}
+
+/* for md */
+
+.custom-switch.custom-switch-md .custom-control-label {
+    padding-left: 2rem;
+    padding-bottom: 1.5rem;
+}
+
+.custom-switch.custom-switch-md .custom-control-label::before {
+    height: 1.5rem;
+    width: calc(2rem + 0.75rem);
+    border-radius: 3rem;
+}
+
+.custom-switch.custom-switch-md .custom-control-label::after {
+    width: calc(1.5rem - 4px);
+    height: calc(1.5rem - 4px);
+    border-radius: calc(2rem - (1.5rem / 2));
+}
+
+.custom-switch.custom-switch-md .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(calc(1.5rem - 0.25rem));
+}
+
+/* for lg */
+
+.custom-switch.custom-switch-lg .custom-control-label {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::before {
+    height: 2rem;
+    width: calc(3rem + 0.75rem);
+    border-radius: 4rem;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::after {
+    width: calc(2rem - 4px);
+    height: calc(2rem - 4px);
+    border-radius: calc(3rem - (2rem / 2));
+}
+
+.custom-switch.custom-switch-lg .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(calc(2rem - 0.25rem));
+}
+
+/* for xl */
+
+.custom-switch.custom-switch-xl .custom-control-label {
+    padding-left: 4rem;
+    padding-bottom: 2.5rem;
+}
+
+.custom-switch.custom-switch-xl .custom-control-label::before {
+    height: 2.5rem;
+    width: calc(4rem + 0.75rem);
+    border-radius: 5rem;
+}
+
+.custom-switch.custom-switch-xl .custom-control-label::after {
+    width: calc(2.5rem - 4px);
+    height: calc(2.5rem - 4px);
+    border-radius: calc(4rem - (2.5rem / 2));
+}
+
+.custom-switch.custom-switch-xl .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(calc(2.5rem - 0.25rem));
+}
+
+/* DEBUG */
+#debug_button {
+	position: fixed;
+	top: 2px;
+	right: 2px;
+	background-color: rgba(0,0,0,.6);
+	color: #fff;
+}
+#debug {
+	position: fixed;
+	top: 33px;
+	right: 0px;
+	width: 100%;
+	max-width: 600px;
+	color: #fff;
+}
+#debug pre {
+	color: #fff;
+	font-size: 0.7em;
+}
+#debug .nav-item.nav-link {
+	color: #fff;
+	font-weight: 600;
+}
+#debug_card {
+	width: 100%;
+	max-width: 600px;
+	font-size: .8em;
+	backdrop-filter: blur(6px);
+	background-color:rgba(0,0,0,.6);
 }
