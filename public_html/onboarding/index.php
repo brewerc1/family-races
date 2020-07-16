@@ -74,7 +74,7 @@ if (isset($_POST['createAccount-btn'])) {
     //$code = trim($_POST ['code']);
 //Validation Email filed filled and email exist
     if ((empty('email')) && (!filter_var($email, FILTER_VALIDATE_EMAIL))) {
-        $notification ['email'] = 'Email Required and must be valid';
+        $notification ['email'] = 'Email is Required and must be valid';
     }
 //Check if email exist
     //if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
