@@ -90,10 +90,10 @@ if(isset($_POST['save_button'])){
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                    <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
                 </form>
                 <div id="bottom_links">
-                    <a href="./reset.php" >Change Password</a>
-                    <a href="../index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+                    <a href="/user/settings/reset.php" >Change Password</a>
                 </div>
 
             </section> <!-- END id user_settings -->
