@@ -104,7 +104,6 @@ if(isset($_POST['save_button'])){
     //TODO: Impliment Cropper or similar plugin
     $photo_value = $_SESSION['photo'];
     if ($_FILES['profile_photo']['error'] == 0 && isset($_FILES['profile_photo'])) {
-        echo "path2";
         $name = $_FILES['profile_photo']['name'];
         $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
         $target_file = $target_dir . basename($_FILES['profile_photo']['name']);
@@ -112,7 +111,9 @@ if(isset($_POST['save_button'])){
         $extensions_arr = array("jpg","jpeg","png","gif");
 
         if(in_array($image_file_type, $extensions_arr)){
-            move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type);
+            $unlink_result=unlink($_SERVER['DOCUMENT_ROOT'] . $photo_value);
+            $debug = debug($unlink_result); 
+            if(move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type))
             $photo_value = "/uploads/$user_id.$image_file_type"; 
         }
     }
@@ -165,8 +166,8 @@ if(isset($_POST['save_button'])){
     // PDO to update the DB 
     $update_preferences_sql = 
     'UPDATE user SET 
-    photo = :photo_value, first_name = :first_name_value, last_name = :last_name_value,
-    motto = :motto_value, email = :email_value, city = :city_value, state = :state_value
+    first_name = :first_name_value, last_name = :last_name_value, motto = :motto_value,
+    email = :email_value, city = :city_value, state = :state_value, photo = :photo_value 
     WHERE id = :user_id';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
@@ -183,6 +184,7 @@ if(isset($_POST['save_button'])){
     $update_session_result->execute(['user_id' => $user_id]);
     $row = $update_session_result->fetch();
     
+    $debug = debug($row);
     $_SESSION['photo'] = $row['photo'];
     $_SESSION['first_name'] = $row['first_name'];
     $_SESSION['last_name'] = $row['last_name'];
