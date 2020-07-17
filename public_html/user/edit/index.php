@@ -43,11 +43,60 @@ $city = $_SESSION['city'];
 $state = $_SESSION['state'];
 
 // State Select Array
-$state_array = array(
-    "AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL",
-    "IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE",
-    "NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX",
-    "UT","VT","WA","WI","WV","WY");
+$state_array = array(	
+    "AK" => "Alaska",
+    "AL" => "Alabama",
+    "AR" => "Arkansas",
+    "AZ" => "Arizona",	    
+    "CA" => "California",
+    "CO" => "Colorado",	
+    "CT" => "Connecticut",	
+    "DC" => "District of Columbia",	
+    "DE" => "Delaware",	
+    "FL" => "Florida",	
+    "GA" => "Georgia",	
+    "HI" => "Hawaii",	
+    "IA" => "Iowa",	
+    "ID" => "Idaho",	
+    "IL" => "Illinois",	
+    "IN" => "Indiana",	
+    "KS" => "Kansas",	
+    "KY" => "Kentucky",	
+    "LA" => "Louisiana",	
+    "MA" => "Massachusetts",	
+    "MD" => "Maryland",	
+    "ME" => "Maine",	
+    "MI" => "Michigan",	
+    "MN" => "Minnesota",	
+    "MO" => "Missouri",	
+    "MS" => "Mississippi",	
+    "MT" => "Montana",	
+    "NC" => "North Carolina",	
+    "ND" => "North Dakota",	
+    "NE" => "Nebraska",	
+    "NH" => "New Hampshire",	
+    "NJ" => "New Jersey",	
+    "NM" => "New Mexico",	
+    "NV" => "Nevada",	
+    "NY" => "New York",	
+    "OH" => "Ohio",	
+    "OK" => "Oklahoma",	
+    "OR" => "Oregon",	
+    "PA" => "Pennsylvania",	
+    "PR" => "Puerto Rico",	
+    "RI" => "Rhode Island",	
+    "SC" => "South Carolina",	
+    "SD" => "South Dakota",	
+    "TN" => "Tennessee",	
+    "TX" => "Texas",	
+    "UT" => "Utah",	
+    "VA" => "Virginia",	
+    "VT" => "Vermont",	
+    "WA" => "Washington",	
+    "WI" => "Wisconsin",	
+    "WV" => "West Virginia",	
+    "WY" => "Wyoming"	
+);
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
@@ -212,14 +261,14 @@ LINKS;
                             <label for="state" class="col-form-label" >State:</label> 
                             <select class="form-control" id="state" name="state">
                                 <?php
-                                foreach ($state_array as $value) {
-                                    if($_SESSION['state'] == $value){
+                                foreach ($state_array as $key => $value) {
+                                    if($_SESSION['state'] == $key){
                                         $state_selected_tag = 'selected';
                                     } else {
                                         $state_selected_tag = '';
                                     }
 echo <<<ENDOPTION
-                                    <option value="$value" $state_selected_tag>$value</option>
+                                    <option value="$key" $state_selected_tag>$value</option>
 ENDOPTION;
                                 }
                                 ?>
