@@ -21,16 +21,14 @@ $javascript = '';
 
 if (!isset($_SESSION["id"])){
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
 
 ///// DEBUG
-$debug = debug("");
+$debug = debug();
 ///// end DEBUG
 
 // logged in user
@@ -157,7 +155,7 @@ if(isset($_POST['save_button'])){
 {main_nav}
     <main role="main">
         <div class="container">
-            <form action="./index.php" method="post" enctype="multipart/form-data">
+            <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
                 <section id="user_head">
                     <div class="form-group row">
                         <div class="col-auto" id="profile_photo">
@@ -231,7 +229,8 @@ ENDOPTION;
 
                 </section><!-- END user_meta -->
 
-                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
+                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                <a class="text-secondary d-block mt-2 text-center" href="../index.php">Cancel</a>
            
             </form>
             <section id="user_records">
