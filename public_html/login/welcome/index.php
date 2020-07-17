@@ -1,30 +1,54 @@
 <?php
+/**
+ * Page to display Races
+ * 
+ * This page displays races of the current event.
+ * Logged in users can place bets and view results.
+ * User data for logged in user is stored in $_SESSION.email
+ * Page checks for $_GET
+ */
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-ob_start();
+// turn on output buffering
+ob_start('template');
+
+// start a session
 session_start();
 
+// Test for authorized user
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-
+    exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-
+    exit;
 }
 
-// Testing
-echo "The current event id is " . $_SESSION["current_event"];
+// Set the page title for the template
+$page_title = "Welcome";
+
+// Include the race picker javascript
+$javascript = '';
+
+// Get UID
+$uid = $_SESSION['id'];
+
+///// DEBUG
+$debug = debug();
+///// end DEBUG
+
 ?>
-
-<h1>Welcome <?php echo $_SESSION["first_name"] . " " . $_SESSION["last_name"] ?></h1>
-
-
-<?php
-// Testing the admin
-    if ($_SESSION["admin"])
-        echo "<h2> You are an Admin </h2>";
-    else
-        echo "<h2> You are not an Admin </h2>";
-?>
-
-<p>Displays the welcome video: <?php echo $_SESSION["site_welcome_video_url"] ?></p>
+{header}
+{main_nav}
+<main role="main">
+    <h1>Welcome to <?php echo $_SESSION['site_name'];?></h1>
+    <div class="mt-5 embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="text-center">
+        <a href="/races/" class="btn btn-primary mt-2">Skip</a>
+    </div>
+</main>
+{footer}
+<?php ob_end_flush(); ?>

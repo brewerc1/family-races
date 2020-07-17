@@ -1,3 +1,4 @@
+
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
@@ -24,10 +25,12 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+$debug = debug();
+
+
 // Set the page title for the template
 $page_title = "Admin";
 
-// Include the race picker javascript
 $javascript = '';
 ?>
 {header}
@@ -35,11 +38,11 @@ $javascript = '';
     <main role="main">
         <section>
             <h1>Admin</h1>
-            <ul>
-                <li><a href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
-                <li><a href="./races/">Event & Race Managment</a></li>
-                <li><a href="./users/">User Management</a></li>
-                <li><a href="./settings/">Site Settings</a></li>
+            <ul class="list-unstyled text-center mt-5">
+                <li><a class="btn btn-primary mb-4" href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
+                <li><a class="btn btn-primary mb-4" href="./races/">Event & Race Managment</a></li>
+                <li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
+                <li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
             </ul>
         </section> 
     </main>

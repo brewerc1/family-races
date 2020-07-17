@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 01, 2020 at 07:11 PM
+-- Generation Time: Jul 16, 2020 at 06:05 PM
 -- Server version: 10.2.10-MariaDB
 -- PHP Version: 7.2.30
 
@@ -419,6 +419,7 @@ INSERT INTO `race_standings` (`race_event_id`, `race_race_number`, `user_id`, `e
 
 CREATE TABLE `site_settings` (
   `id` tinyint(4) NOT NULL,
+  `name` varchar(45) NOT NULL,
   `sound_fx` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `voiceovers` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `terms_enable` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Boolean, 1 means enabled.',
@@ -442,8 +443,8 @@ CREATE TABLE `site_settings` (
 -- Dumping data for table `site_settings`
 --
 
-INSERT INTO `site_settings` (`id`, `sound_fx`, `voiceovers`, `terms_enable`, `terms_text`, `default_horse_count`, `memorial_race_enable`, `memorial_race_number`, `memorial_race_name`, `welcome_video_url`, `invite_email_subject`, `invite_email_body`, `email_server`, `email_server_port`, `email_server_account`, `email_server_password`, `email_from_name`, `email_from_address`) VALUES
-(1, 1, 1, 1, 'Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\r\n\r\nEtiam porta sem malesuada magna mollis euismod. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor.\r\n\r\nNullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.\r\n\r\nMaecenas faucibus mollis interdum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas sed diam eget risus varius blandit sit amet non magna. Vestibulum id ligula porta felis euismod semper. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula porta felis euismod semper.', 9, 1, 3, 'Denny Jones Memorial', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'You\'re Invited!', 'Here\'s your invite link to get started using Family Races!', 'smtp.gmail.com', '587', 'cscdevemail@gmail.com', 'nku1234!', 'Family Races', 'cscdevemail@gmail.com');
+INSERT INTO `site_settings` (`id`, `name`, `sound_fx`, `voiceovers`, `terms_enable`, `terms_text`, `default_horse_count`, `memorial_race_enable`, `memorial_race_number`, `memorial_race_name`, `welcome_video_url`, `invite_email_subject`, `invite_email_body`, `email_server`, `email_server_port`, `email_server_account`, `email_server_password`, `email_from_name`, `email_from_address`) VALUES
+(1, 'Family Races', 1, 1, 1, 'Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\r\n\r\nEtiam porta sem malesuada magna mollis euismod. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor.\r\n\r\nNullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.\r\n\r\nMaecenas faucibus mollis interdum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas sed diam eget risus varius blandit sit amet non magna. Vestibulum id ligula porta felis euismod semper. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ligula porta felis euismod semper.', 9, 1, 3, 'Denny Jones Memorial', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'You\'re Invited!', 'Here\'s your invite link to get started using Family Races!', 'smtp.gmail.com', '587', 'cscdevemail@gmail.com', 'nku1234!', 'Family Races', 'cscdevemail@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -456,7 +457,7 @@ CREATE TABLE `user` (
   `first_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
   `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `city` varchar(45) DEFAULT NULL,
@@ -475,17 +476,17 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `create_time`, `update_time`, `city`, `state`, `motto`, `photo`, `sound_fx`, `voiceovers`, `pw_reset_code`, `invite_code`, `admin`) VALUES
-(1, 'Boss', 'O\'Dasyte', 'admin@mysite.com', 'dont-store-plaintext-passwords', '2020-06-17 15:48:06', '2020-06-19 16:49:41', 'Florence', 'KY', 'Whatever, man!', 'https://races.informatics.plus/uploads/1.jpg', 1, 1, NULL, NULL, 1),
-(2, 'Joe', 'Blow', 'joe@blow.com', 'readable-by-db-admin=bad', '2020-06-17 15:48:06', '2020-06-19 16:49:37', 'Fort Thomas', 'KY', 'Everything in moderation, including moderation.', 'https://races.informatics.plus/uploads/2.jpg', 1, 1, NULL, NULL, 0),
-(3, 'Amy', 'Adams', 'amy123@gmaily.com', 'flibbity-gibbit', '2020-06-17 15:51:01', '2020-06-19 16:49:45', 'Boston', 'MA', 'We may encounter many defeats but we must not be defeated.', 'https://races.informatics.plus/uploads/3.jpg', 1, 1, NULL, NULL, 0),
-(4, 'Habernathy', 'Olathe', 'hab@habbieshobbies.com', 'password1324', '2020-06-17 15:51:01', '2020-06-19 16:49:51', 'Barstow', 'CA', 'Draco Dormiens Nunquam Titillandus', 'https://races.informatics.plus/uploads/4.jpg', 1, 1, NULL, NULL, 0),
-(5, 'Cornelius', 'Frank', 'cfrank@enkayewe.edu', 'corneliusgreatpw', '2020-06-17 15:54:39', '2020-06-19 16:49:48', 'Zyzzx', 'CA', 'The gull sees farthest who flies highest', 'https://races.informatics.plus/uploads/5.jpg', 1, 1, NULL, NULL, 0),
-(6, 'Beth', 'Wilson', 'beth@wilson.com', 'bethpassword', '2020-06-17 15:54:39', '2020-06-19 16:49:55', 'Bethel', 'AK', 'Be sweet and carry a sharp knife.', 'https://races.informatics.plus/uploads/6.jpg', 1, 1, NULL, NULL, 0),
-(7, 'Lemuel', 'Cricketbritches', 'cricketbritches@lemmy.com', 'lemspw122', '2020-06-17 15:57:12', '2020-06-19 16:50:00', 'St John\'s Wood', 'UK', 'If you\'ve already dug yourself a hole too deep to climb out of, you may as well keep digging.', 'https://races.informatics.plus/uploads/7.jpg', 1, 1, NULL, NULL, 0),
-(8, 'John', 'Smith', 'jsmith@gmailzzz.com', 'zzzzjsmithpw', '2020-06-17 15:57:12', '2020-06-18 19:28:32', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '', 1, 1, NULL, NULL, 0),
-(9, 'Jane', 'Doe', 'jane@doe.com', 'janespw', '2020-06-17 15:59:34', '2020-06-19 16:50:05', 'Monkey\'s Eyebrow', 'KY', 'Eight hours work, eight hours sleep, and ten hours recreation; Now that\'s a good day!', 'https://races.informatics.plus/uploads/9.jpg', 1, 1, NULL, NULL, 0),
-(10, 'Larry', 'Noble', 'larrythenoble@primordialooze.org', 'larry-larry-larry!', '2020-06-17 16:02:16', '2020-06-19 16:50:09', 'Scratch Ankle', 'AL', 'Envy is honor\'s foe.', 'https://races.informatics.plus/uploads/10.jpg', 1, 1, NULL, NULL, 0),
-(11, 'Babbette', 'Lloyd', 'babs@glitterfusion.xyz', 'babsglitterfusionpw', '2020-06-17 16:06:58', '2020-06-19 16:50:14', 'Truth or Consequences', 'NM', 'Truth and virtue conquer.', 'https://races.informatics.plus/uploads/11.jpg', 1, 1, NULL, NULL, 0),
+(1, 'Boss', 'O&#039;Dasyte', 'admin@mysite.com', '$2y$10$3oagwP1YGgYpbyr6uCrTXOCB7pyaFEnfmV8pATvSnHo4W6h6aIbR6', '2020-06-17 15:48:06', '2020-07-14 21:50:53', 'Florence', 'KY', 'Whatever, man!', '/uploads/1.jpg', 1, 1, NULL, NULL, 1),
+(2, 'Joe', 'Blow', 'joe@blow.com', '$2y$10$pw2q39Sm3QgsLKQVsULmOeG/.8jNfnqcS/WLrbnrAlf8rI0X5hz/.', '2020-06-17 15:48:06', '2020-07-14 21:59:04', 'Fort Thomas', 'KY', 'Everything in moderation, including moderation.', '/uploads/2.jpg', 1, 1, NULL, NULL, 0),
+(3, 'Amy', 'Adams', 'amy123@gmaily.com', '$2y$10$..QfModlnxZJpu6j3GIghOqQ3aFqC6taGpXaZIy6OAaYfDtjsdQ4q', '2020-06-17 15:51:01', '2020-07-14 21:51:13', 'Boston', 'MA', 'We may encounter many defeats but we must not be defeated.', '/uploads/3.jpg', 1, 1, NULL, NULL, 0),
+(4, 'Habernathy', 'Olathe', 'hab@habbieshobbies.com', '$2y$10$pAvFnyXIfQNuzZlPrV7ngu8I33LErjK3CyRmjk2E9MRqiJkXiiwBm', '2020-06-17 15:51:01', '2020-07-14 21:51:22', 'Barstow', 'CA', 'Draco Dormiens Nunquam Titillandus', '/uploads/4.jpg', 1, 1, NULL, NULL, 0),
+(5, 'Cornelius', 'Frank', 'cfrank@enkayewe.edu', '$2y$10$FqQp9Qc9Dou1xHsNpucvMujl1PU0UvonPMdUdU/czlEndZr4f4qx.', '2020-06-17 15:54:39', '2020-07-14 21:51:28', 'Zyzzx', 'CA', 'The gull sees farthest who flies highest', '/uploads/5.jpg', 1, 1, NULL, NULL, 0),
+(6, 'Beth', 'Wilson', 'beth@wilson.com', '$2y$10$D0XWQKDM.gvRjD6/lyiG3u3kJEHbeyUmHatDhymEluaFO.ywOvL7u', '2020-06-17 15:54:39', '2020-07-14 21:51:34', 'Bethel', 'AK', 'Be sweet and carry a sharp knife.', '/uploads/6.jpg', 1, 1, NULL, NULL, 0),
+(7, 'Lemuel', 'Cricketbritches', 'cricketbritches@lemmy.com', '$2y$10$Hofalv7IJPRj07D1FQBp1ebF7zu0X7UbdrpTaORHJIq5ECdfOGI9O', '2020-06-17 15:57:12', '2020-07-14 21:51:55', 'St John\'s Wood', 'UK', 'If you\'ve already dug yourself a hole too deep to climb out of, you may as well keep digging.', '/uploads/7.jpg', 1, 1, NULL, NULL, 0),
+(8, 'John', 'Smith', 'jsmith@gmailzzz.com', '$2y$10$2cV.S5TLZ9QW9XHdXSq77e9ubKnCzv9Yh8clbsBcTJyNoj78sSjqO', '2020-06-17 15:57:12', '2020-07-10 01:38:10', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '', 1, 1, NULL, NULL, 0),
+(9, 'Jane', 'Doe', 'jane@doe.com', '$2y$10$NjspBSMZXfTsFtnYu.totO38diKzigfuEakbanIyqiOpzzr2r0Bhu', '2020-06-17 15:59:34', '2020-07-14 21:52:03', 'Monkey\'s Eyebrow', 'KY', 'Eight hours work, eight hours sleep, and ten hours recreation; Now that\'s a good day!', '/uploads/9.jpg', 1, 1, NULL, NULL, 0),
+(10, 'Larry', 'Noble', 'larrythenoble@primordialooze.org', '$2y$10$1XiQQ55K7yTgO4NEZz9IxuWuLsIjejtQVqclmuhB9.4KZfXKvcEGK', '2020-06-17 16:02:16', '2020-07-14 21:52:08', 'Scratch Ankle', 'AL', 'Envy is honor\'s foe.', '/uploads/10.jpg', 1, 1, NULL, NULL, 0),
+(11, 'Babbette', 'Lloyd', 'babs@glitterfusion.xyz', '$2y$10$5M.osBVngZBufDbjJvNu/OcgNwbqUQgsEb/b2MnJZupucbt9vf8LS', '2020-06-17 16:06:58', '2020-07-14 21:52:20', 'Truth or Consequences', 'NM', 'Truth and virtue conquer.', '/uploads/11.jpg', 1, 1, NULL, NULL, 0),
 (12, NULL, NULL, 'ashoemaker@gmail.com', '', '2020-06-17 16:06:58', '2020-06-19 15:32:11', NULL, NULL, NULL, NULL, 1, 1, NULL, 'b696aa76', 0);
 
 --
