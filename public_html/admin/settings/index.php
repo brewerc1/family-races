@@ -224,7 +224,7 @@ $memorial_race_selected_tag = '';
         <section id="site_settings">
             <h1>Settings</h1>
             
-            <form action="./index.php" method="post">
+            <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                 <!-- Sound Effects enable -->
                 <div class="form-group custom-control custom-switch custom-switch-lg">
                     <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
@@ -378,7 +378,8 @@ ENDOPTION;
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" name="save_button">Save</button> <a href="../index.php" >Cancel</a>
+                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                <a href="../index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
             </form>
         </section> <!-- END id user_settings -->
     </div>
