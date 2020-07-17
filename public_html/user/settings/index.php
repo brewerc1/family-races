@@ -15,7 +15,7 @@ ob_start('template');
 session_start();
 
 // set the page title for the template
-$page_title = "User Profile";
+$page_title = "User Settings";
 
 // include the menu javascript for the template
 $javascript = '';
