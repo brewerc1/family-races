@@ -15,7 +15,7 @@ ob_start('template');
 session_start();
 
 // set the page title for the template
-$page_title = "User Profile";
+$page_title = "User Settings";
 
 // include the menu javascript for the template
 $javascript = '';
@@ -29,6 +29,9 @@ if (!isset($_SESSION["id"])) {
     // Make sure the rest of code is not gonna be executed
     exit;
 }
+///// DEBUG
+$debug = debug();
+///// end DEBUG
 
 // Get UID
 $uid = $_SESSION['id'];
@@ -73,24 +76,24 @@ if(isset($_POST['save_button'])){
             <section id="user_settings">
                 <h1>Settings</h1>
 
-                <form action="./index.php" method="post">
+                <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                     <!-- Sound Effects enable -->
-                    <div class="form-group toggle">
-                        <input class="form-check-input" type="checkbox" id="sound_fx" name="sound_fx" data-toggle="toggle" data-width="75" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
-                        <label class="form-check-label" for="sound_fx"> Sound Effects </label>
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
+                        <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
                     </div>
 
                     <!-- Voiceovers enable -->
-                    <div class="form-group toggle">
-                        <input class="form-check-input" type="checkbox" id="voiceovers" name="voiceovers" data-toggle="toggle" data-width="75" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
-                        <label class="form-check-label" for="voiceovers"> Voiceovers </label>
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                        <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" name="save_button">Save</button>
+                    <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                    <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
                 </form>
                 <div id="bottom_links">
-                    <a href="./reset.php" >Change Password</a>
-                    <a href="/user/" >Cancel</a>
+                    <a href="/user/settings/reset.php" >Change Password</a>
                 </div>
 
             </section> <!-- END id user_settings -->

@@ -43,25 +43,67 @@ $city = $_SESSION['city'];
 $state = $_SESSION['state'];
 
 // State Select Array
-$state_array = array(
-    "AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL",
-    "IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE",
-    "NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX",
-    "UT","VT","WA","WI","WV","WY");
+$state_array = array(	
+    "AK" => "Alaska",
+    "AL" => "Alabama",
+    "AR" => "Arkansas",
+    "AZ" => "Arizona",	    
+    "CA" => "California",
+    "CO" => "Colorado",	
+    "CT" => "Connecticut",	
+    "DC" => "District of Columbia",	
+    "DE" => "Delaware",	
+    "FL" => "Florida",	
+    "GA" => "Georgia",	
+    "HI" => "Hawaii",	
+    "IA" => "Iowa",	
+    "ID" => "Idaho",	
+    "IL" => "Illinois",	
+    "IN" => "Indiana",	
+    "KS" => "Kansas",	
+    "KY" => "Kentucky",	
+    "LA" => "Louisiana",	
+    "MA" => "Massachusetts",	
+    "MD" => "Maryland",	
+    "ME" => "Maine",	
+    "MI" => "Michigan",	
+    "MN" => "Minnesota",	
+    "MO" => "Missouri",	
+    "MS" => "Mississippi",	
+    "MT" => "Montana",	
+    "NC" => "North Carolina",	
+    "ND" => "North Dakota",	
+    "NE" => "Nebraska",	
+    "NH" => "New Hampshire",	
+    "NJ" => "New Jersey",	
+    "NM" => "New Mexico",	
+    "NV" => "Nevada",	
+    "NY" => "New York",	
+    "OH" => "Ohio",	
+    "OK" => "Oklahoma",	
+    "OR" => "Oregon",	
+    "PA" => "Pennsylvania",	
+    "PR" => "Puerto Rico",	
+    "RI" => "Rhode Island",	
+    "SC" => "South Carolina",	
+    "SD" => "South Dakota",	
+    "TN" => "Tennessee",	
+    "TX" => "Texas",	
+    "UT" => "Utah",	
+    "VA" => "Virginia",	
+    "VT" => "Vermont",	
+    "WA" => "Washington",	
+    "WI" => "Wisconsin",	
+    "WV" => "West Virginia",	
+    "WY" => "Wyoming"	
+);
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
-    echo "<pre>";
-    print_r($_FILES);
-    var_dump($_POST);
-    echo "</pre>";
-    // TODO: User Photo Upload
-    // this will look just like the upload a photo challenge
-    if(!isset($_FILES['profile_photo'])){
-        $photo_value = $_SESSION['photo'];
-        echo "path1";
-    } else {
-        echo "path2";
+    //User Photo Upload
+    //TODO: Impliment Cropper or similar plugin
+    $photo_value = $_SESSION['photo'];
+    if ($_FILES['profile_photo']['error'] == 0 && isset($_FILES['profile_photo'])) {
         $name = $_FILES['profile_photo']['name'];
         $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
         $target_file = $target_dir . basename($_FILES['profile_photo']['name']);
@@ -69,7 +111,9 @@ if(isset($_POST['save_button'])){
         $extensions_arr = array("jpg","jpeg","png","gif");
 
         if(in_array($image_file_type, $extensions_arr)){
-            move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type);
+            $unlink_result=unlink($_SERVER['DOCUMENT_ROOT'] . $photo_value);
+            $debug = debug($unlink_result); 
+            if(move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type))
             $photo_value = "/uploads/$user_id.$image_file_type"; 
         }
     }
@@ -111,7 +155,7 @@ if(isset($_POST['save_button'])){
     }
 
     // State Text
-    if(isset($_POST['state']) && in_array($_POST['state'], $state_array)){
+    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
         $state_value = htmlentities($_POST['state'], ENT_QUOTES);
     } else {
         $state_value = $_SESSION['state'];
@@ -122,8 +166,8 @@ if(isset($_POST['save_button'])){
     // PDO to update the DB 
     $update_preferences_sql = 
     'UPDATE user SET 
-    photo = :photo_value, first_name = :first_name_value, last_name = :last_name_value,
-    motto = :motto_value, email = :email_value, city = :city_value, state = :state_value
+    first_name = :first_name_value, last_name = :last_name_value, motto = :motto_value,
+    email = :email_value, city = :city_value, state = :state_value, photo = :photo_value 
     WHERE id = :user_id';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
@@ -140,6 +184,7 @@ if(isset($_POST['save_button'])){
     $update_session_result->execute(['user_id' => $user_id]);
     $row = $update_session_result->fetch();
     
+    $debug = debug($row);
     $_SESSION['photo'] = $row['photo'];
     $_SESSION['first_name'] = $row['first_name'];
     $_SESSION['last_name'] = $row['last_name'];
@@ -162,7 +207,7 @@ if(isset($_POST['save_button'])){
                             <label for="profile_photo">
                                 <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
                             </label>
-                            <input type="file" class="form-control-file" id="profile_photo" name="profile_photo">
+                            <input type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
                         </div>
                         <div class="col-auto" id="user_name">
                             <label for="first_name" class="col-form-label sr-only">First Name </label>
@@ -212,14 +257,14 @@ LINKS;
                             <label for="state" class="col-form-label" >State:</label> 
                             <select class="form-control" id="state" name="state">
                                 <?php
-                                foreach ($state_array as $value) {
-                                    if($_SESSION['state'] == $value){
+                                foreach ($state_array as $key => $value) {
+                                    if($_SESSION['state'] == $key){
                                         $state_selected_tag = 'selected';
                                     } else {
                                         $state_selected_tag = '';
                                     }
 echo <<<ENDOPTION
-                                    <option value="$value" $state_selected_tag>$value</option>
+                                    <option value="$key" $state_selected_tag>$value</option>
 ENDOPTION;
                                 }
                                 ?>
