@@ -39,6 +39,7 @@ $motto = $_SESSION['motto'];
 $email = $_SESSION['email'];
 $city = $_SESSION['city'];
 $state = $_SESSION['state'];
+$update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // get selected UID: Don't run if the GET["u"] is SESSION["id"]
 // TODO: protect this better
@@ -56,6 +57,7 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
     $email = $row['email'];
     $city = $row['city'];
     $state = $row['state'];
+    $update_time_stamp = strtotime($row['update_time']); // convert to timestamp for cache-busting
 }
  
 ?>
@@ -65,7 +67,7 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
         <div class="container">
             <section id="user_head">
                 <div id="profile_photo">
-                    <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
+                    <img class="img-fluid" src="<?php echo "$photo?$update_time_stamp"; ?>" alt="A photo of <?php echo $full_name;?>"/>
                 </div>
                 <div id="user_name"><?php echo $full_name ?></div>
                 <!-- Links not displayed if "logged in" == "displayed" -->  
@@ -105,7 +107,7 @@ LINKS;
             </section><!-- END user_meta -->
                 
             <section id="user_records">
-                <h1>Keenland Records</h1>
+                <h2>Event Records</h2>
                 <table class="table">
                     <tbody>
                         <tr>

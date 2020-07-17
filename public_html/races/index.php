@@ -70,7 +70,7 @@ $debug = debug("UID: $uid<br>Event: $event");
 
 // Gather data for this page
 // SQL to retrieve race results
-$race_sql = 'SELECT user.first_name, user.last_name, user.photo, race_standings.race_event_id, race_standings.race_race_number, race_standings.user_id, race_standings.earnings, event.name, event.date 
+$race_sql = 'SELECT user.first_name, user.last_name, user.photo, user.update_time, race_standings.race_event_id, race_standings.race_race_number, race_standings.user_id, race_standings.earnings, event.name, event.date 
 FROM race_standings 
 INNER JOIN event ON event.id = race_standings.race_event_id 
 INNER JOIN user ON user.id = race_standings.user_id 
@@ -174,17 +174,18 @@ if ($num_race_results > 0) {
     // Output data of each row
     while($row = $race_result->fetch()) {
         $name = $row["first_name"] . ' ' . $row["last_name"];
-        // Handle missing profile photo
-        if(empty($row["photo"])) {
-            $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+        $update_time_stamp = strtotime($row["update_time"]); // convert to timestamp for cache-busting
+        
+        if(empty($row["photo"])) { // Handle missing profile photo
+            $photo = "/images/no-user-image.jpg"; // do not cache-bust this image
         }else{
-            $photo = $row["photo"];
+            $photo = $row["photo"] . "?$update_time_stamp"; // cache-bust this image
         }
         echo <<< HERE
         <li class="list-group-item">
             <div class="media">
                 <a href="/user/?u={$row["user_id"]}">
-                    <img src="$photo" alt="photo" class="rounded-circle">
+                    <img src="$photo" alt="A photo of $name" class="rounded-circle">
                 </a>
                 <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> <span class="earnings badge badge-success float-right px-2">\${$row["earnings"]}</span></div>
             </div>
