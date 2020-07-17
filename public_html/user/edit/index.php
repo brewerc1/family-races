@@ -100,16 +100,10 @@ $state_array = array(
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
-    echo "<pre>";
-    print_r($_FILES);
-    var_dump($_POST);
-    echo "</pre>";
-    // TODO: User Photo Upload
-    // this will look just like the upload a photo challenge
-    if(!isset($_FILES['profile_photo'])){
-        $photo_value = $_SESSION['photo'];
-        echo "path1";
-    } else {
+    //User Photo Upload
+    //TODO: Impliment Cropper or similar plugin
+    $photo_value = $_SESSION['photo'];
+    if ($_FILES['profile_photo']['error'] == 0 && isset($_FILES['profile_photo'])) {
         echo "path2";
         $name = $_FILES['profile_photo']['name'];
         $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
@@ -160,7 +154,7 @@ if(isset($_POST['save_button'])){
     }
 
     // State Text
-    if(isset($_POST['state']) && in_array($_POST['state'], $state_array)){
+    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
         $state_value = htmlentities($_POST['state'], ENT_QUOTES);
     } else {
         $state_value = $_SESSION['state'];
@@ -211,7 +205,7 @@ if(isset($_POST['save_button'])){
                             <label for="profile_photo">
                                 <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
                             </label>
-                            <input type="file" class="form-control-file" id="profile_photo" name="profile_photo">
+                            <input type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
                         </div>
                         <div class="col-auto" id="user_name">
                             <label for="first_name" class="col-form-label sr-only">First Name </label>
