@@ -69,8 +69,8 @@ $debug = debug();
 
                 <!-- Betting window -->
                 <div class="form-group custom-control custom-switch custom-switch-lg">
-                    <input class="custom-control-input" type="checkbox" id="w-bet" name="w_bet">
-                    <label class="custom-control-label" for="w_bet"> Betting Windows open sequentially </label>
+                    <input class="custom-control-input" type="checkbox" id="bet_w" name="bet_w">
+                    <label class="custom-control-label" for="bet_w"> Betting windows open sequentially </label>
                 </div>
 
                 <!-- submit -->
