@@ -27,6 +27,10 @@ if (!$_SESSION["admin"]) {
 }
 $debug = debug();
 
+if (isset($_POST["submit"])) {
+    header("Location: /admin/events/manage.php");
+}
+
 ?>
 {header}
 {main_nav}
@@ -35,7 +39,7 @@ $debug = debug();
         <section>
             <h1>Create an Events</h1>
 
-            <form method="POST">
+            <form method="POST" action=<?php echo $_SERVER["PHP_SELF"] ?>>
                 <!-- Event Name -->
                 <div class="form-group row">
                     <div class="col">
