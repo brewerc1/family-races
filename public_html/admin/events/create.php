@@ -38,7 +38,7 @@ if (isset($_POST["submit"])) {
 
     <main role="main">
         <section>
-            <h1>Create an Events</h1>
+            <h1>Create an Event</h1>
 
             <form method="POST" action=<?php echo $_SERVER["PHP_SELF"] ?>>
                 <!-- Event Name -->
