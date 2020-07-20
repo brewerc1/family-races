@@ -41,6 +41,7 @@ $motto = $_SESSION['motto'];
 $email = $_SESSION['email'];
 $city = $_SESSION['city'];
 $state = $_SESSION['state'];
+$update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
 $state_array = array(	
@@ -178,7 +179,7 @@ if(isset($_POST['save_button'])){
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
     $update_session_sql = 
-    "SELECT first_name, last_name, motto, email, city, state, photo
+    "SELECT first_name, last_name, motto, email, city, state, photo, update_time
     FROM user WHERE id = :user_id";
     $update_session_result = $pdo->prepare($update_session_sql);
     $update_session_result->execute(['user_id' => $user_id]);
@@ -192,6 +193,8 @@ if(isset($_POST['save_button'])){
     $_SESSION['email'] = $row['email'];
     $_SESSION['city'] = $row['city'];
     $_SESSION['state'] = $row['state'];
+    $_SESSION['update_time'] = $row['update_time'];
+    $update_time_stamp = strtotime($row["update_time"]);
     }
 }
 
@@ -205,7 +208,7 @@ if(isset($_POST['save_button'])){
                     <div class="form-group row">
                         <div class="col-auto" id="profile_photo">
                             <label for="profile_photo">
-                                <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
+                                <img class="img-fluid" src="<?php echo "$photo?$update_time_stamp" ?>" alt="User Photo"/>
                             </label>
                             <input type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
                         </div>
