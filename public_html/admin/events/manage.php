@@ -17,10 +17,9 @@ let numberOfHorsesInputIds = ['01'];
         $('.dropdown-toggle:last').text('Race ' + groupCount);
         $('.race:last').attr('id', 'collapse' + groupCount);
         $('.dt:last').attr('data-target', '#collapse' + groupCount);
-        $('a.btn:last').text('Save Race ' + groupCount).attr('data-target', '#collapse' + groupCount);
         const id = '01' + groupCount;
-        $('.ht:last').attr('name', 'horses['+ (groupCount - 1) +'][]');
-        $('.addSelect:last').attr('id', 'addSelect' + id);
+        $('.ht:last').attr('name', 'horses['+ (groupCount) +'][]');
+        $('.addSelect:last').attr('id', 'addInput' + id);
         $('.hr:last').attr('id', id);
         numberOfHorsesInputIds.push(id);
 
@@ -41,18 +40,18 @@ let numberOfHorsesInputIds = ['01'];
         }
     });
 
-    // Clone: Select element (inner element)
+    // Clone: input element (inner element)
     $('body').on('click', function (e) {
         const idClicked = e.target.id;
 
         if (numberOfHorsesInputIds.includes(idClicked)) {
             $('#' + idClicked).on('change', function () {
-                let numberOfSelectElement = $('#addSelect' + idClicked + ' select').length;
+                let numberOfSelectElement = $('#addInput' + idClicked + ' input').length;
 
                 // Increment select element
                 if (this.value > numberOfSelectElement) {
                     for (numberOfSelectElement; numberOfSelectElement < this.value; numberOfSelectElement++) {
-                        $('#addSelect' + idClicked + ' select:first-of-type').clone().appendTo('#addSelect' + idClicked);
+                        $('#addInput' + idClicked + ' input:first-of-type').clone().appendTo('#addInput' + idClicked);
                     }
                 }
 
@@ -60,7 +59,7 @@ let numberOfHorsesInputIds = ['01'];
                 if (this.value < numberOfSelectElement) {
                     const numberOfElementToRemove = numberOfSelectElement - this.value;
                     for (let j = 0; j < numberOfElementToRemove; j++) {
-                        $('#addSelect' + idClicked + ' select:last-of-type').remove();
+                        $('#addInput' + idClicked + ' input:last-of-type').remove();
                     }
                 }
 
@@ -122,10 +121,7 @@ $debug = debug();
                             <div class="card-body">
                                 <div class="form-row">
                                     <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                    <select id="00" class="custom-select form-control col-sm-10 hr" name="horse_num" required>
-                                        <!--<option value="1">1</option>-->
-                                        <!--<option value="2">2</option>-->
-                                        <!--<option value="3">3</option>-->
+                                    <select id="00" class="custom-select form-control col-sm-10 hr" required>
                                         <?php
                                         for ($i = 1; $i < 10; $i++) {
                                             echo "<option value='$i'>$i</option>";
@@ -133,20 +129,9 @@ $debug = debug();
                                         ?>
                                     </select>
                                 </div>
-                                <div id="addSelect00" class="form-row mt-4 addSelect">
-                                    <select id="10" name="horses[0][]" class="custom-select my-1 mr-sm-2 horse ht">
-                                        <option selected>Horse#</option>
-                                            <!--<option value="1">1</option>-->
-                                            <!--<option value="2">2</option>-->
-                                            <!--<option value="3">3</option>-->
-                                        <?php
-                                            for ($i = 1; $i < 201; $i++) {
-                                                echo "<option value='$i'>$i</option>";
-                                            }
-                                        ?>
-                                    </select>
+                                <div id="addInput00" class="form-row mt-4 addSelect">
+                                    <input type="text" class="custom-select my-1 mr-sm-2 horse ht" placeholder="Horse#">
                                 </div>
-                                <a href="#" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse0">Save Race 0</a>
                             </div>
                         </div>
                     </div> <!---END Race HTML To Be Cloned -->
@@ -159,7 +144,7 @@ $debug = debug();
                             <div class="card-body">
                                 <div class="form-row">
                                     <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                    <select id="01" class="custom-select form-control col-sm-10 hr" name="horse_num" required>
+                                    <select id="01" class="custom-select form-control col-sm-10 hr" required>
                                         <?php
 
                                         $horse_count = isset($_SESSION["site_default_horse_count"]) ?
@@ -171,17 +156,9 @@ $debug = debug();
                                         ?>
                                     </select>
                                 </div>
-                                <div id="addSelect01" class="form-row mt-4 addSelect">
-                                    <select name="horses[0][]" class="custom-select my-1 mr-sm-2 horse ht">
-                                        <option selected>Horse#</option>
-                                        <?php
-                                        for ($i = 1; $i < 201; $i++) {
-                                            echo "<option value='$i'>$i</option>";
-                                        }
-                                        ?>
-                                    </select>
+                                <div id="addInput01" class="form-row mt-4 addSelect">
+                                    <input type="text" name="horses[1][]" class="custom-select my-1 mr-sm-2 horse ht" placeholder="Horse#">
                                 </div>
-                                <a href="#" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse">Save Race 1</a>
                             </div>
                         </div>
                     </div> <!---END Race HTML -->
@@ -193,7 +170,7 @@ $debug = debug();
             </form>
 
         </section>
-        <?php print_r($_POST); ?>
+        <?php var_dump($_POST); ?>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
