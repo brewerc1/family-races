@@ -28,8 +28,8 @@ if (!$_SESSION["admin"]) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-    //header("Location: /admin/events/manage.php");
-    echo $_POST["event_date"];
+    header("Location: /admin/events/manage.php");
+    //echo $_POST["event_date"];
 }
 
 ?>

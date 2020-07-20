@@ -17,9 +17,9 @@ let numberOfHorsesInputIds = ['01'];
         $('.dropdown-toggle:last').text('Race ' + groupCount);
         $('.race:last').attr('id', 'collapse' + groupCount);
         $('.dt:last').attr('data-target', '#collapse' + groupCount);
-        const id = '01' + groupCount;
+        const id = '0' + groupCount;
         $('.ht:last').attr('name', 'horses['+ (groupCount) +'][]');
-        $('.addSelect:last').attr('id', 'addInput' + id);
+        $('.addSInput:last').attr('id', 'addInput' + id);
         $('.hr:last').attr('id', id);
         numberOfHorsesInputIds.push(id);
 
@@ -34,6 +34,7 @@ let numberOfHorsesInputIds = ['01'];
         if (groupCount > 1) {
             $('.group:last').remove();
             groupCount--;
+            numberOfHorsesInputIds.pop();
         }
         if (groupCount === 1) {
             $('#deleteRace').addClass('disabled');
@@ -41,23 +42,23 @@ let numberOfHorsesInputIds = ['01'];
     });
 
     // Clone: input element (inner element)
-    $('body').on('click', function (e) {
+    $('fieldset').on('click', function (e) {
         const idClicked = e.target.id;
 
         if (numberOfHorsesInputIds.includes(idClicked)) {
             $('#' + idClicked).on('change', function () {
-                let numberOfSelectElement = $('#addInput' + idClicked + ' input').length;
+                let numberOfInputElement = $('#addInput' + idClicked + ' input').length;
 
                 // Increment select element
-                if (this.value > numberOfSelectElement) {
-                    for (numberOfSelectElement; numberOfSelectElement < this.value; numberOfSelectElement++) {
+                if (this.value > numberOfInputElement) {
+                    for (numberOfInputElement; numberOfInputElement < this.value; numberOfInputElement++) {
                         $('#addInput' + idClicked + ' input:first-of-type').clone().appendTo('#addInput' + idClicked);
                     }
                 }
 
                 // Decrement select element
-                if (this.value < numberOfSelectElement) {
-                    const numberOfElementToRemove = numberOfSelectElement - this.value;
+                if (this.value < numberOfInputElement) {
+                    const numberOfElementToRemove = numberOfInputElement - this.value;
                     for (let j = 0; j < numberOfElementToRemove; j++) {
                         $('#addInput' + idClicked + ' input:last-of-type').remove();
                     }
@@ -108,10 +109,7 @@ $debug = debug();
 
                 <fieldset class="accordion border border-dark" id="accordion01">
                     <legend class="text-center w-auto">Races</legend>
-                    <div class="text-center mb-4">
-                        <a href="#" id="addRace" class="btn btn-primary"> Add a Race </a>
-                        <a href="#" id="deleteRace" class="btn btn-danger disabled">Delete a Race</a>
-                    </div>
+
                     <!--- Race HTML To Be Cloned -->
                     <div class="group border-top border-dark" style="display: none">
                         <button class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse0" aria-expanded="true" aria-controls="collapseOne">
@@ -129,14 +127,14 @@ $debug = debug();
                                         ?>
                                     </select>
                                 </div>
-                                <div id="addInput00" class="form-row mt-4 addSelect">
+                                <div id="addInput00" class="form-row mt-4 addSInput">
                                     <input type="text" class="custom-select my-1 mr-sm-2 horse ht" placeholder="Horse#">
                                 </div>
                             </div>
                         </div>
                     </div> <!---END Race HTML To Be Cloned -->
                     <!--- Race HTML -->
-                    <div class="group border-top border-dark">
+                    <div class="group">
                         <button class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse" aria-expanded="true" aria-controls="collapseOne">
                             Race 1
                         </button>
@@ -164,13 +162,16 @@ $debug = debug();
                     </div> <!---END Race HTML -->
 
                 </fieldset>
+                <div class="text-center mt-4">
+                    <a href="#" id="addRace" class="btn btn-primary"> Add a Race </a>
+                    <a href="#" id="deleteRace" class="btn btn-danger disabled">Delete a Race</a>
+                </div>
                 <div class="text-center mt-3">
                     <input type="submit" name="save_event" value="Save Event" class="btn btn-primary">
                 </div>
             </form>
 
         </section>
-        <?php var_dump($_POST); ?>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
