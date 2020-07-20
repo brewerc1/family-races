@@ -134,7 +134,6 @@ if (isset($_POST['createAccount-btn'])) {
         $errors['db_error'] = "Database error: Failed to Register";
     }
     }
-}
 
 
 ?>
