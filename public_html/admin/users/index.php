@@ -43,7 +43,7 @@ if (!$_SESSION["admin"]) {
 
 // SQL to fetch user data
 
-$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code FROM user";
+$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time FROM user";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
@@ -101,8 +101,8 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
             </form>
         </section><!-- END user invite section -->
 
-        <section id="display_current_users"> 
-                <ul class="user-list list-group list-group-flush">  
+        <section id="display_current_users">
+                <ul class="user-list list-group list-group-flush">
                 <?php
                     if ($num_display_user_results > 0) {
 
@@ -110,7 +110,7 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                         while($row = $display_user_result->fetch()) {
                             // Has to be inside the loop so in every iteration, it's gonna be empty
                             $invited = "";
-
+                            $update_time_stamp = strtotime($row["update_time"]); // convert to timestamp for cache-busting
                             // handle user with invite but hasn't accepted
                             if(!is_null($row["invite_code"])) {
                                 $invited = "<span class='badge badge-primary badge-pill float-right px-2' id='invited_badge'>pending</span>";
@@ -120,9 +120,11 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                             }
                             // handle missing photo
                             if(empty($row["photo"])) {
-                                $photo = "https://races.informatics.plus/images/no-user-image.jpg";
+                                $photo = "/images/no-user-image.jpg"; // do not cache-bust this image
+                                $alt = "This user has no photo";
                             } else {
-                                $photo = $row["photo"];
+                                $photo = $row["photo"] ."?$update_time_stamp"; // cache-bust this image
+                                $alt = "A photo of $name";
                             }
 
                             // output row of user data
@@ -130,7 +132,7 @@ echo <<< ENDUSER
                 <li class="list-group-item">
                     <div class="media">
                         <a href="/user/?u={$row["id"]}">
-                            <img src="$photo" alt="photo" class="rounded-circle">
+                            <img src="$photo" alt="$alt" class="rounded-circle">
                         </a>
                         <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> {$invited}</div>
                     </div>
