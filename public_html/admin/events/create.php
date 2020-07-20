@@ -28,7 +28,8 @@ if (!$_SESSION["admin"]) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-    header("Location: /admin/events/manage.php");
+    //header("Location: /admin/events/manage.php");
+    echo $_POST["event_date"];
 }
 
 ?>
@@ -44,14 +45,14 @@ if (isset($_POST["submit"])) {
                 <div class="form-group row">
                     <div class="col">
                         <label for="email_from_address" class="col-form-label"> Event Name </label>
-                        <input type="text" class="form-control" id="e_name" name="name" placeholder="Reunin 2022">
+                        <input type="text" class="form-control" id="name" name="event_name">
                     </div>
                 </div>
                 <!-- Event Date -->
                 <div class="form-group row">
                     <div class="col">
                         <label for="email_from_address" class="col-form-label"> Date </label>
-                        <input type="text" class="form-control" id="date" name="date" placeholder="Date">
+                        <input type="datetime-local" class="form-control" id="date" name="event_date">
                     </div>
                 </div>
 
@@ -59,26 +60,12 @@ if (isset($_POST["submit"])) {
                 <div class="form-group row">
                     <div class="col">
                         <label for="email_from_address" class="col-form-label"> POT </label>
-                        <input type="text" class="form-control" id="pot" name="pot" placeholder="Jackpot">
+                        <input type="text" class="form-control" id="pot" name="event_pot">
                     </div>
-                </div>
-
-                <!-- Event Video URL -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="email_from_address" class="col-form-label"> Video URL </label>
-                        <input type="text" class="form-control" id="url" name="url" placeholder="youtu.be/1234123">
-                    </div>
-                </div>
-
-                <!-- Betting window -->
-                <div class="form-group custom-control custom-switch custom-switch-lg">
-                    <input class="custom-control-input" type="checkbox" id="bet_w" name="bet_w">
-                    <label class="custom-control-label" for="bet_w"> Betting windows open sequentially </label>
                 </div>
 
                 <!-- submit -->
-                <input type="submit" name="submit" class="btn btn-primary btn-block" value="Create Event">
+                <input type="submit" name="submit" class="btn btn-primary btn-block" value="Next">
 
             </form>
         </section>
