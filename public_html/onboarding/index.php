@@ -45,7 +45,7 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 {main_nav}
 <h1>Sign Up</h1>
   <div>  
-            <form>
+            <form action="step2.php"  method="post">
                 <div class="form-group">
                     <input  type="email" required class="form-control" id="email"  placeholder="Enter Email"></input>
                 </div>
@@ -97,8 +97,8 @@ if (isset($_POST['createAccount-btn'])) {
         $stmt = $dbconnect->prepare($sqlcheck);
         $stmt->bind_param('s', $password);
         $stmt->execute();
-        var_dump($stmt);
-        exit;
+        //echo var_dump($stmt);
+        //exit;
         if($stmt < 0) {
             $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
             $stmt = $dbconnect->prepare($sql);
@@ -114,14 +114,14 @@ if (isset($_POST['createAccount-btn'])) {
     //exit;
     
     //Check for errors before writing to database
-    if (count($errors === 0)){
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        $verified = FALSE;
+    //if (count($errors === 0)){
+        //$password = password_hash($password, PASSWORD_DEFAULT);
+        //$verified = FALSE;
 
-        $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
-        $stmt = $dbconnect->prepare($sql);
-        $stmt->bind_param('s', $password);
-        $stmt->execute();
+       // $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
+        //$stmt = $dbconnect->prepare($sql);
+       // $stmt->bind_param('s', $password);
+       // $stmt->execute();
 
     if ($stmt->execute()) {
         //Login user 
