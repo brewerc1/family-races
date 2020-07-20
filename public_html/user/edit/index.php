@@ -33,14 +33,8 @@ $debug = debug();
 
 // logged in user
 $user_id = $_SESSION['id'];
-$first_name = $_SESSION['first_name'];
-$last_name = $_SESSION['last_name'];
-$full_name = $_SESSION['first_name'].' '.$_SESSION['last_name'];
-$photo = $_SESSION['photo'];
-$motto = $_SESSION['motto'];
-$email = $_SESSION['email'];
-$city = $_SESSION['city'];
-$state = $_SESSION['state'];
+
+$update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
 $state_array = array(	
@@ -161,8 +155,6 @@ if(isset($_POST['save_button'])){
         $state_value = $_SESSION['state'];
     }
 
-
-
     // PDO to update the DB 
     $update_preferences_sql = 
     'UPDATE user SET 
@@ -175,23 +167,27 @@ if(isset($_POST['save_button'])){
     'motto_value' => $motto_value, 'email_value' => $email_value, 'city_value' => $city_value, 'state_value' => $state_value,
     'user_id' => $user_id, 'photo_value' => $photo_value ]);
     
-    //requery DB to update $_SESSION. Ensures current settings are always displayed
+    //requery DB to update $_SESSION. Ensures $_SESSION is always in sync with DB.
     if ($update_preferences_result){    
-    $update_session_sql = 
-    "SELECT first_name, last_name, motto, email, city, state, photo
-    FROM user WHERE id = :user_id";
-    $update_session_result = $pdo->prepare($update_session_sql);
-    $update_session_result->execute(['user_id' => $user_id]);
-    $row = $update_session_result->fetch();
-    
-    $debug = debug($row);
-    $_SESSION['photo'] = $row['photo'];
-    $_SESSION['first_name'] = $row['first_name'];
-    $_SESSION['last_name'] = $row['last_name'];
-    $_SESSION['motto'] = $row['motto'];
-    $_SESSION['email'] = $row['email'];
-    $_SESSION['city'] = $row['city'];
-    $_SESSION['state'] = $row['state'];
+        $update_session_sql = 
+        "SELECT first_name, last_name, motto, email, city, state, photo, update_time
+        FROM user WHERE id = :user_id";
+        $update_session_result = $pdo->prepare($update_session_sql);
+        $update_session_result->execute(['user_id' => $user_id]);
+        $row = $update_session_result->fetch();
+        
+        $debug = debug($row);
+        $_SESSION['photo'] = $row['photo'];
+        $_SESSION['first_name'] = $row['first_name'];
+        $_SESSION['last_name'] = $row['last_name'];
+        $_SESSION['motto'] = $row['motto'];
+        $_SESSION['email'] = $row['email'];
+        $_SESSION['city'] = $row['city'];
+        $_SESSION['state'] = $row['state'];
+        $_SESSION['update_time'] = $row['update_time'];
+        $update_time_stamp = strtotime($row["update_time"]);
+        header("Location: /user/");
+        exit;
     }
 }
 
@@ -205,7 +201,7 @@ if(isset($_POST['save_button'])){
                     <div class="form-group row">
                         <div class="col-auto" id="profile_photo">
                             <label for="profile_photo">
-                                <img class="img-fluid" src="<?php echo $photo ?>" alt="User Photo"/>
+                                <img class="img-fluid" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="User Photo"/>
                             </label>
                             <input type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
                         </div>
