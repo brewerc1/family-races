@@ -42,12 +42,6 @@ WHERE event.champion_id = user.id AND event.status = 1 ORDER BY event.id DESC';
 $hof_result = $pdo->prepare($hof_sql);
 $hof_result->execute();
 $num_hof_results = $hof_result->rowCount();
-
-if($num_hof_results > 0){
-
-$current_champ_row = $hof_result->fetch();
-$num_hof_results -= 1;
-}
 ?>
 {header}
 {main_nav}
@@ -56,6 +50,11 @@ $num_hof_results -= 1;
             <h1>Hall of Fame</h1>
             <section id="current_champion">
                 <?php
+                if($num_hof_results > 0){
+
+                    $current_champ_row = $hof_result->fetch();
+                    $num_hof_results -= 1;
+                    
 echo <<< ENDCURRENT
                 <div class="card text-center">
                     <h2 class="card-header">Current Champion</h2>
@@ -72,34 +71,54 @@ echo <<< ENDCURRENT
                     </ul>
                 </div>
 ENDCURRENT;
+                } else {
+echo <<< ENDNORESULT
+<li class= "list-group-item">
+    <h2 class="card-header">Current Champion</h2>
+    <div class="card text-center">
+        <h5 class="card-title">No Current Champion</h5>
+    </div>
+</li>
+ENDNORESULT;
+                }
             ?>
             </section> <!-- END current_champion -->
 
             <section id="prior_champions">
                 <h2>Prior Champions</h2>
-                <?php
-                if ($num_hof_results > 0){
-                    while ($row = $hof_result->fetch()){
-echo <<< ENDCURRENT
-                        <div class="card text-center">
-                            <h5 class="card-title">{$row['name']}</h5>
-                            <div class="card-body">
-                                <a href="/user/?u={$row['champion_id']}">
-                                    <img src="{$row['champion_photo']}" alt="Photo of HOF winner">
-                                </a>
-                            </div>
-                            <ul class="list-group">
-                                <li class= "list-group-item">{$row['first_name']} {$row['last_name']}
-                                    <span class="badge badge-primary badge-pill" id="purse_badge">{$row['champion_purse']}</span>
-                                </li>
-                            </ul>
-                        </div>
-ENDCURRENT;
+                <ul class="list-group">
+                    <?php
+                    if ($num_hof_results > 0){
+                        while ($row = $hof_result->fetch()){
+echo <<< ENDPREVIOUS
+<li class= "list-group-item">
+    <div class="card text-center">
+        <h5 class="card-title">{$row['name']}</h5>
+        <div class="card-body">
+            <a href="/user/?u={$row['champion_id']}">
+                <img src="{$row['champion_photo']}" alt="Photo of HOF winner">
+            </a>
+        </div>
+        <ul class="list-group">
+            <li class= "list-group-item">{$row['first_name']} {$row['last_name']}
+                <span class="badge badge-primary badge-pill" id="purse_badge">{$row['champion_purse']}</span>
+            </li>
+        </ul>
+    </div>
+</li>
+ENDPREVIOUS;
+                        }
+                    } else {
+echo <<< ENDNORESULT
+<li class= "list-group-item">
+    <div class="card text-center">
+        <h5 class="card-title">No Previous Champions</h5>
+    </div>
+</li>
+ENDNORESULT;
                     }
-                } else {
-                    
-                }
-            ?>
+                ?>
+            </ul>
             </section>
         </div>
 
