@@ -2,8 +2,8 @@
 /**
  * Page to Display User Settings
  *
- * Page displays the current user's settings via checkbox.
- *
+ * Page displays the current user's settings and allows the user to change
+ * certain sitewide settings.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
