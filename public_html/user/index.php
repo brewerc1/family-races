@@ -17,18 +17,16 @@ ob_start('template');
 session_start();
 
 // set the page title for the template
-$page_title = "User Profile";
+$page_title = "Profile";
 
 // include the menu javascript for the template
 $javascript = '';
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
 
@@ -64,24 +62,24 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
 {header}
 {main_nav}
     <main role="main">
-        <div class="container">
-            <section id="user_head">
-                <div id="profile_photo">
-                    <img class="img-fluid" src="<?php echo "$photo?$update_time_stamp"; ?>" alt="A photo of <?php echo $full_name;?>"/>
+
+        <section class="row" id="user_head">
+            <div class="group col-sm-5">
+                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+            </div>
+            <div id="user_name" class="group col-sm-7">
+                <h1>
+                    <?php echo $full_name ?>
+                </h1>
+            </div>
+       
+                <div id="edit_buttons" class="btn-group col-sm-7 ml-sm-auto text-center" role="group" aria-label="Profile Controls">
+                    <a href="/user/edit/" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
+                    <a href="/user/settings/" class="btn btn-primary btn-sm" id="user_settings">Settings</a>
+                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="user_settings">Reset Password</a>
                 </div>
-                <div id="user_name"><?php echo $full_name ?></div>
-                <!-- Links not displayed if "logged in" == "displayed" -->  
-                <?php
-                if (!isset($_GET["u"]) || ($_GET["u"] == $_SESSION["id"])) {
-echo <<< LINKS
-                <div id="edit_buttons">
-                    <a href="./edit/index.php" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
-                    <a href="./settings/index.php" class="btn btn-primary btn-sm" id="user_settings">User Settings</a>
-                </div>
-LINKS;
-                        }
-                ?>         
-            </section> <!-- END user_head -->
+            
+        </section> <!-- END user_head -->
 
             <section id="user_meta">
                 <table class="table">
@@ -106,7 +104,7 @@ LINKS;
                 </table>
             </section><!-- END user_meta -->
                 
-            <section id="user_records">
+            <section id="user_records" class="mt-4">
                 <h2>Event Records</h2>
                 <table class="table">
                     <tbody>
@@ -118,7 +116,6 @@ LINKS;
                     </tbody>
                 </table>
             </section> <!-- END user_records -->
-        </div> <!-- END container -->
     </main>
 {footer}
 <?php ob_end_flush(); ?>
