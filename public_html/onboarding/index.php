@@ -89,10 +89,28 @@ if (isset($_POST['createAccount-btn'])) {
         $notification ['password'] = 'Password Required';
     }
 //Check if passwords and confirmation match
-    if($password !== $confirmPassword) {
-        $notification ['password'] = 'The two passwords do not match';
-    }
-    //echo "email is $email";
+    //if($password !== $confirmPassword) {
+        //$notification ['password'] = 'The two passwords do not match';
+    //}
+    //Selecting code and email from users to see if it's same as $code and $email
+        $sqlcheck = "SELECT * FROM users WHERE email = $_POST[email] and invite_code = $_POST[code]";
+        $stmt = $dbconnect->prepare($sqlcheck);
+        $stmt->bind_param('s', $password);
+        $stmt->execute();
+        var_dump($stmt);
+        exit;
+        if($stmt < 0) {
+            $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
+            $stmt = $dbconnect->prepare($sql);
+            $stmt->bind_param('s', $password);
+            $stmt->execute();
+        }
+        else{
+            $notification ['db_error'] = "The code and or email you provided do not match the values in the database. Please Try Again!";
+
+        }
+
+
     //exit;
     
     //Check for errors before writing to database
@@ -100,7 +118,7 @@ if (isset($_POST['createAccount-btn'])) {
         $password = password_hash($password, PASSWORD_DEFAULT);
         $verified = FALSE;
 
-        $sql = "UPDATE INTO users (password) WHERE invite_code = $code AND email = $email";
+        $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
         $stmt = $dbconnect->prepare($sql);
         $stmt->bind_param('s', $password);
         $stmt->execute();
