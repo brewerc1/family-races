@@ -89,9 +89,9 @@ if (isset($_POST['createAccount-btn'])) {
         $notification ['password'] = 'Password Required';
     }
 //Check if passwords and confirmation match
-    //if($password !== $confirmPassword) {
-        //$notification ['password'] = 'The two passwords do not match';
-    //}
+    if($password !== $confirmPassword) {
+        $notification ['password'] = 'The two passwords do not match';
+    }
     //Selecting code and email from users to see if it's same as $code and $email
         $sqlcheck = "SELECT * FROM users WHERE email = $_POST[email] and invite_code = $_POST[code]";
         $stmt = $dbconnect->prepare($sqlcheck);
