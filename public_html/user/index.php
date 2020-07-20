@@ -65,20 +65,24 @@ if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
 
         <section class="row" id="user_head">
             <div class="group col-sm-5">
-                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "$photo?$update_time_stamp" ?>" alt="My Photo">
             </div>
             <div id="user_name" class="group col-sm-7">
                 <h1>
                     <?php echo $full_name ?>
                 </h1>
             </div>
-       
+<?php
+if (!isset($_GET["u"]) || $_GET["u"] == $_SESSION["id"]){
+    echo <<< LINKS
                 <div id="edit_buttons" class="btn-group col-sm-7 ml-sm-auto text-center" role="group" aria-label="Profile Controls">
                     <a href="/user/edit/" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
                     <a href="/user/settings/" class="btn btn-primary btn-sm" id="user_settings">Settings</a>
                     <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="user_settings">Reset Password</a>
                 </div>
-            
+LINKS;
+}
+ ?>           
         </section> <!-- END user_head -->
 
             <section id="user_meta">
