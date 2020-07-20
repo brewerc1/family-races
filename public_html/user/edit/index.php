@@ -2,7 +2,11 @@
 /**
  * Page to Edit User Profile
  * 
- * Page Decription
+ * This page mirrors the layout of the profile page and allows the user to edit
+ * their profile data. 
+ * DB is updated when the 'save' button is clicked.
+ * If a photo is uploaded, the user's current photo is removed from /uploads/
+ * as the new image is saved. Profile images are saved as 'user_id.file_type'.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -33,7 +37,6 @@ $debug = debug();
 
 // logged in user
 $user_id = $_SESSION['id'];
-
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
