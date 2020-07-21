@@ -6,6 +6,7 @@ ob_start('template');
 
 // start a session
 session_start();
+
 if (isset($_POST['skip-btn'])) {
     Header('Location:/onboarding/step3.php');
 }
@@ -32,7 +33,10 @@ if (isset($_POST['submit-btn'])) {
         $updatePhoto = $pdo->prepare($uploadsql);
         $updatePhoto->execute(['photo_value' => $photo_value]);
     if ($updatePhoto)  {
-        
+    $getsessionsql ="SELECT * FROM user where id = {$_SESSION['id']}";
+    $updatesession = $pdo->prepare($getsessionsql);
+    $updatesession->execute();
+
     }
     }
 }
