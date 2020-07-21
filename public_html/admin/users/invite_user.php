@@ -10,7 +10,7 @@ if (isset($_POST["invite"])) {
     $email = trim($_POST["email"]);
 
     if (!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
-        header("Location: ./?message=1&alt=2");
+        header("Location: ./?m=10&s=warning");
         // Make sure the rest of code is not gonna be executed
         exit;
     } else {
@@ -19,20 +19,20 @@ if (isset($_POST["invite"])) {
         $emails->execute(['email' => $email]);
 
         if ($emails->rowCount() != 0) {
-            header("Location: ./?message=2&alt=2");
+            header("Location: ./?m=11&s=warning");
             // Make sure the rest of code is not gonna be executed
             exit;
         } else {
             try {
                 $unique_code = generateCode();
             } catch (Exception $e) {
-                header("Location: ./?message=4&alt=2");
+                header("Location: ./?m=6&s=warning");
                 exit; //
             }
             // write to the db
             $sql = "INSERT INTO user (email, invite_code) VALUES (?,?)";
             if (!$pdo->prepare($sql)->execute([$email, $unique_code])) {
-                header("Location: ./?message=5&alt=2");
+                header("Location: ./?m=6&s=warning");
                 // Make sure the rest of code is not gonna be executed
                 exit;
             } else {
@@ -45,12 +45,12 @@ if (isset($_POST["invite"])) {
                     $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
                     $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
 
-                    header("Location: ./?message=6&alt=2");
+                    header("Location: ./?m=8&s=warning");
                     // Make sure the rest of code is not gonna be executed
                     exit;
 
                 } else {
-                    header("Location: ./?message=7&alt=1");
+                    header("Location: ./?m=9&s=success");
                     // Make sure the rest of code is not gonna be executed
                     exit;
                 }
