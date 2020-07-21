@@ -75,6 +75,7 @@ if (isset($_POST['createAccount-btn'])) {
 //Validation Email filed filled and email exist
     if ((empty('email')) && (!filter_var($email, FILTER_VALIDATE_EMAIL))) {
         $notification ['email'] = 'Email is Required and must be valid';
+        exit;
     }
 //Check if email exist
     //if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -83,17 +84,20 @@ if (isset($_POST['createAccount-btn'])) {
 //Validation Code
     if(empty('code')){
         $notification ['code'] = 'Code Required';
+        exit;
     }
 //Validation Password
     if(empty('password')) {
         $notification ['password'] = 'Password Required';
+        exit;
     }
 //Check if passwords and confirmation match
     if($password !== $confirmPassword) {
         $notification ['password'] = 'The two passwords do not match';
+        exit;
     }
     //Selecting code and email from users to see if it's same as $code and $email
-        $sqlcheck = "SELECT * FROM users WHERE email = $_POST[email] and invite_code = $_POST[code]";
+        $sqlcheck = "SELECT * FROM users WHERE email = {$_POST[email]} and invite_code = {$_POST[code]}";
         $stmt = $dbconnect->prepare($sqlcheck);
         $stmt->bind_param('s', $password);
         $stmt->execute();
