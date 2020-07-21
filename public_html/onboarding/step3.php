@@ -8,7 +8,7 @@ ob_start('template');
 session_start();
 
 if (isset($_POST['skip-btn'])) {
-    Header('Location:/onboarding/step3.php');
+    Header('Location:/races/index.php');
 }
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
