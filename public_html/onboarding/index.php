@@ -103,7 +103,7 @@ if (isset($_POST['createAccount-btn'])) {
     $code = trim($_POST['code']);
     //Selecting code and email from users to see if it's same as $code and $email
         $sqlcheck = "SELECT * FROM users WHERE email = $email and invite_code = $code";
-        $stmt1 = $dbconnect->prepare($sqlcheck);
+        $stmt1 = $pdo->prepare($sqlcheck);
         $stmt1->bind_param('s', $password);
         $stmt1->execute();
         //echo var_dump($stmt);
@@ -111,8 +111,8 @@ if (isset($_POST['createAccount-btn'])) {
         if($stmt1 < 0) {
         $sql = "UPDATE users 
                 SET password= :password, photo='/images/no-user-image.jpg' 
-                WHERE invite_code = $code AND email = $email";
-            $stmt = $dbconnect->prepare($sql);
+                WHERE invite_code = :code AND email = :email";
+            $stmt = $pdo->prepare($sql);
             $stmt->bind_param('s', $password);
             $stmt->execute();
         }
