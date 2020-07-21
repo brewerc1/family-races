@@ -49,7 +49,7 @@ if (isset($_POST['submit-btn'])) {
         </div>
     <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
         <div class="form-group">
-            <input type="file" class="form-control-file" id="photoUpload" name="photoUpload" placeholder="Add a Profile Photo">
+            <input type="file" class="form-control-file" id="photoUpload" name="profile_photo" placeholder="Add a Profile Photo">
         </div>
         <input type ="submit" class="btn btn-primary" name="sumbit-btn" value="Upload">
         <div>
