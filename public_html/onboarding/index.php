@@ -67,8 +67,8 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     {footer}
 <?php ob_end_flush(); ?>
 <?php
-echo var_dump($_POST);
-exit;
+//echo var_dump($_POST);
+//exit;
 $notification = array();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
@@ -94,25 +94,26 @@ if (isset($_POST['createAccount-btn'])) {
         exit;
     }
 //Check if passwords and confirmation match
-    if($password !== $confirmPassword) {
+    if($_POST['password'] !== $_POST['confirmPassword']) {
         $notification ['password'] = 'The two passwords do not match';
         exit;
     }
     $password= trim($_POST['password']);
     $email= trim($_POST['email']);
     $code = trim($_POST['code']);
+    $photo = '/images/no-user-image.jpg';
     //Selecting code and email from users to see if it's same as $code and $email
-        $sqlcheck = "SELECT * FROM users WHERE email = $email and invite_code = $code";
+        $sqlcheck = "SELECT email, invite_code FROM users WHERE email = :email and invite_code = :code";
         $stmt1 = $pdo->prepare($sqlcheck);
-        $stmt1->execute();
+        $stmt1->execute(['email' => $email, 'invite_code' => $code]);
         //echo var_dump($stmt);
         //exit;
         if($stmt1 < 0) {
         $sql = "UPDATE users 
-                SET password= :password, photo='/images/no-user-image.jpg' 
+                SET password= :password, photo=:photo 
                 WHERE invite_code = :code AND email = :email";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['password'=> $password, 'photo' => '/images/no-user-image.jpg']);
+            $stmt->execute(['password'=> $password, 'photo' => $photo]);
         }
         else{
             $notification ['db_error'] = "The code and or email you provided do not match the values in the database. Please Try Again!";
