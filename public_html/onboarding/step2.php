@@ -1,12 +1,36 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+if (isset($_POST['next-btn'])) {
+    if(empty($_POST['first_name'])) {
+        $notification = "Please fill in a first name";
+    }
+    if(empty($_POST['last_name'])){
+        $notification = "Please fill in a last name";
+    }
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $city = trim($_POST['city']);
+    $state = trim($_POST['state']);
+    $motto = trim($_POST['motto']);
+    $sqlUpdate = "UPDATE user SET
+    first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto 
+    WHERE user_id = {$_SESSION['id']}";
+    $update = $pdo->prepare($sqlUpdate);
+    $update->execute(['first_name' => $first_name,
+                    'last_name' => $last_name, 
+                    'city' => $city, 
+                    'state' => $state, 
+                    'motto'=> $motto]);
+
+}
+
 ?>
 {header}
 {main_nav}
 <h1>Your Profile</h1>
 
 
-<form>
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
                 <div class="form-group">
                     <input  type="text" class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
                 </div>
@@ -26,13 +50,3 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     </form>
     {footer}
 <?php ob_end_flush(); ?>
-<?php
-if (isset($_POST['next-btn'])) {
-    $FN = $_POST['FN'];
-    $LN = $_POST['LN'];
-    $city = $_POST['city'];
-    $state = $_POST['state'];
-    $motto = $_POST['motto'];
-
-}
-?>
