@@ -21,9 +21,9 @@ if (isset($_POST['next-btn'])) {
                     'city' => $city, 
                     'state' => $state, 
                     'motto'=> $motto]);
-        if ($stmt) {
+        if ($update) {
         //Update Session Variables
-        $updateSession ="SELECT * FROM user WHERE id = :user_id";
+        $updateSession ="SELECT * FROM user WHERE id = {$_SESSION['id']}";
         $updateSessionResult = $pdo->prepare($updateSession);
         $updateSessionResult->execute(['user_id' => $user_id]);
         $row= $updateSessionResult->fetch();
