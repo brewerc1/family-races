@@ -104,7 +104,6 @@ if (isset($_POST['createAccount-btn'])) {
     //Selecting code and email from users to see if it's same as $code and $email
         $sqlcheck = "SELECT * FROM users WHERE email = $email and invite_code = $code";
         $stmt1 = $pdo->prepare($sqlcheck);
-        $stmt1->bind_param('s', $password);
         $stmt1->execute();
         //echo var_dump($stmt);
         //exit;
@@ -113,8 +112,7 @@ if (isset($_POST['createAccount-btn'])) {
                 SET password= :password, photo='/images/no-user-image.jpg' 
                 WHERE invite_code = :code AND email = :email";
             $stmt = $pdo->prepare($sql);
-            $stmt->bind_param('s', $password);
-            $stmt->execute();
+            $stmt->execute(['password'=> $password, 'photo' => '/images/no-user-image.jpg']);
         }
         else{
             $notification ['db_error'] = "The code and or email you provided do not match the values in the database. Please Try Again!";
