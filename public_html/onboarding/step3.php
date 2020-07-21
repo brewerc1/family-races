@@ -26,6 +26,14 @@ if (isset($_POST['submit-btn'])) {
             if(move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type))
             $photo_value = "/uploads/$user_id.$image_file_type"; 
         }
+        $uploadsql = "UPDATE user SET
+        photo = :photo_value 
+        WHERE id ={$_SESSION['id']}";
+        $updatePhoto = $pdo->prepare($uploadsql);
+        $updatePhoto->execute(['photo_value' => $photo_value]);
+    if ($updatePhoto)  {
+        
+    }
     }
 }
 ?>
