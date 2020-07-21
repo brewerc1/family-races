@@ -6,7 +6,7 @@ ob_start('template');
 // start a session
 session_start();
 if (isset($_POST['skip-btn'])) {
-    Header('Location: ');
+    Header('Location:/onboarding/step3.php');
 }
 if (isset($_POST['next-btn'])) {
     if(empty($_POST['first_name'])) {
