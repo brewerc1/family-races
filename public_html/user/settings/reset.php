@@ -1,13 +1,24 @@
 <?php
-
+/**
+ * Page to Change User Password
+ *
+ * Allows user to change password outside the login/forgot password flow.
+ */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
+// turn on output buffering
+ob_start('template');
+
+// start a session
+session_start();
+
+// set the page title for the template
 $page_title = "Change Password";
+
+// include the menu javascript for the template
 $javascript = '';
 
-// Authentication System
-ob_start('template');
-session_start();
+
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -96,20 +107,29 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
 {header}
 {main_nav}
     <main role="main">
-        <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
-            <input type="password" name="pwd" placeholder="New Password">
-            <input type="password" name="confirm_pwd" placeholder="Confirm Password">
-            <!--- Notification System : HTML tag may change-->
-            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
-                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-                    <?php echo $notification; ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        <div class="container">
+            <form class="mt-5" action=<?php $_SERVER["PHP_SELF"] ?> method="post" >
+                <div class="form-group">
+                    <label for="pwd" class="sr-only">New Password</label>
+                    <input type="password" name="pwd" placeholder="New Password">
                 </div>
-            <?php } ?>
-            <input type="submit" name="change_pwd" value="Change Password" >
-        </form>
+                <div class="form-group">
+                    <label for="confirm_pwd" class="sr-only">Confirm Password</label>
+                    <input type="password" name="confirm_pwd" placeholder="Confirm Password">
+                </div>
+                <!--- Notification System : HTML tag may change-->
+                <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
+                    <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
+                        <?php echo $notification; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } ?>
+                <button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>
+                <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+            </form>
+        </div>
     </main>
 {footer}
 <?php ob_end_flush(); ?>

@@ -2,7 +2,11 @@
 /**
  * Page to Edit User Profile
  * 
- * Page Decription
+ * This page mirrors the layout of the profile page and allows the user to edit
+ * their profile data. 
+ * DB is updated when the 'save' button is clicked.
+ * If a photo is uploaded, the user's current photo is removed from /uploads/
+ * as the new image is saved. Profile images are saved as 'user_id.file_type'.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -194,98 +198,74 @@ if(isset($_POST['save_button'])){
 {header}
 {main_nav}
     <main role="main">
-        <div class="container">
-            <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
-                <section id="user_head">
-                    <div class="form-group row">
-                        <div class="col-auto" id="profile_photo">
-                            <label for="profile_photo">
-                                <img class="img-fluid" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="User Photo"/>
-                            </label>
-                            <input type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
-                        </div>
-                        <div class="col-auto" id="user_name">
-                            <label for="first_name" class="col-form-label sr-only">First Name </label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>">
-                            <label for="last_name" class="col-form-label sr-only">First Name </label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>">
-                        </div>
-                    </div>
-                    <!-- Links not displayed if "logged in" == "displayed" -->  
-                    <?php
-                    if (!isset($_GET["u"]) || ($_GET["u"] == $_SESSION["id"])) {
-echo <<< LINKS
-                    <div id="edit_buttons">
-                        <a href="../index.php" class="btn btn-primary btn-sm active" id="edit_profile">Edit Profile</a> 
-                        <a href="../settings/" class="btn btn-primary btn-sm disabled" id="user_settings">User Settings</a>
-                    </div>
-LINKS;
-                            }
-                    ?>         
-                </section> <!-- END user_head -->
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
+            <section class="form-row">
+                <div class="form-group col">
+                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                </div>
+                <div id="photo_upload" class="form-group col-sm-8 d-flex">
+                    <input class="d-inline" type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
+                </div>
+            </section>
 
-                <section id="user_meta">
-                    <!-- trying to just use a form row to mimic the displayed table  -->
-                    <div class="form-group row">
-                        <div class="col-auto">
-                            <label for="motto" class="col-form-label" >Motto:</label> 
-                            <input type="text" class="form-control" id="motto" name="motto" value="<?php echo $_SESSION['motto'] ?>">
-                        </div>
+            <section id="user_meta">
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="motto" class="col-form-label" >First Name:</label> 
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="motto" class="col-form-label" >Last Name:</label> 
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="email" class="col-form-label" >Email:</label> 
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="city" class="col-form-label" >City:</label> 
+                        <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>">
                     </div>
 
-                    <div class="form-group row">
-                        <div class="col-auto">
-                            <label for="email" class="col-form-label" >Email:</label> 
-                            <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-auto">
-                            <label for="city" class="col-form-label" >City:</label> 
-                            <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-auto">
-                            <label for="state" class="col-form-label" >State:</label> 
-                            <select class="form-control" id="state" name="state">
-                                <?php
-                                foreach ($state_array as $key => $value) {
-                                    if($_SESSION['state'] == $key){
-                                        $state_selected_tag = 'selected';
-                                    } else {
-                                        $state_selected_tag = '';
-                                    }
-echo <<<ENDOPTION
-                                    <option value="$key" $state_selected_tag>$value</option>
-ENDOPTION;
+                    <div class="form-group col-md-6">
+                        <label for="state" class="col-form-label" >State:</label> 
+                        <select class="form-control" id="state" name="state">
+                            <?php
+                            foreach ($state_array as $key => $value) {
+                                if($_SESSION['state'] == $key){
+                                    $state_selected_tag = 'selected';
+                                } else {
+                                    $state_selected_tag = '';
                                 }
-                                ?>
-                            </select>
-                        </div>
+echo <<<ENDOPTION
+                                <option value="$key" $state_selected_tag>$value</option>
+ENDOPTION;
+                            }
+                            ?>
+                        </select>
                     </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label for="motto" class="col-form-label" >Motto:</label> 
+                        <textarea class="form-control" id="motto" name="motto" rows="2"><?php echo $_SESSION['motto'] ?></textarea>
+                    </div>
+                </div>
 
-                </section><!-- END user_meta -->
-
-                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
-                <a class="text-secondary d-block mt-2 text-center" href="../index.php">Cancel</a>
-           
-            </form>
-            <section id="user_records">
-                <h1>Keenland Records</h1>
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <!-- TODO: Need to create 'records' field in user table. -->                  
-                            <td><?php //echo $row['records'] ?></td>
-                            <td>Reunion 2022: 9th place</td> <!-- Placeholder -->
-                        </tr>
-                    </tbody>
-                </table>
-            </section> <!-- END user_records -->
-        </div> <!-- END container -->
+            </section><!-- END user_meta -->
+            <div class="form-row mt-5">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
+                    <a class="text-secondary d-block mt-2 text-center" href="/user/">Cancel</a>
+                </div>
+            </div>
+        </form>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
