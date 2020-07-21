@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 16, 2020 at 06:05 PM
+-- Generation Time: Jul 21, 2020 at 01:44 PM
 -- Server version: 10.2.10-MariaDB
 -- PHP Version: 7.2.30
 
@@ -30,9 +30,11 @@ SET time_zone = "+00:00";
 CREATE TABLE `event` (
   `id` smallint(6) NOT NULL,
   `name` varchar(25) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `date` date NOT NULL,
   `pot` decimal(6,2) NOT NULL,
   `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Boolean, 1 means completed.',
+  `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `champion_id` smallint(6) DEFAULT NULL,
   `champion_purse` decimal(6,2) DEFAULT NULL,
   `champion_photo` varchar(128) NOT NULL
@@ -42,10 +44,10 @@ CREATE TABLE `event` (
 -- Dumping data for table `event`
 --
 
-INSERT INTO `event` (`id`, `name`, `date`, `pot`, `status`, `champion_id`, `champion_purse`, `champion_photo`) VALUES
-(1, 'Keeneland 2020', '2020-06-18 22:08:45', '420.00', 1, 2, '58.60', 'https://informatics.plus/races/uploads/1-champion.jpg'),
-(2, 'Keeneland 2021', '2020-06-18 22:08:55', '421.00', 1, 3, '65.63', 'https://informatics.plus/races/uploads/2-champion.jpg'),
-(3, 'Keeneland 2022', '2020-06-17 19:14:46', '422.00', 0, NULL, NULL, '');
+INSERT INTO `event` (`id`, `name`, `date`, `pot`, `status`, `create_time`, `update_time`, `champion_id`, `champion_purse`, `champion_photo`) VALUES
+(1, 'Keeneland 2020', '2020-07-21', '420.00', 1, '2020-06-18 22:08:45', '2020-07-21 13:37:07', 2, '58.60', '/uploads/1-champion.jpg'),
+(2, 'Keeneland 2021', '2021-07-21', '421.00', 1, '2020-06-18 22:08:55', '2020-07-21 13:37:21', 3, '65.63', '/uploads/2-champion.jpg'),
+(3, 'Keeneland 2022', '2022-07-21', '422.00', 0, '2020-06-17 19:14:46', '2020-07-21 13:37:33', NULL, NULL, '');
 
 -- --------------------------------------------------------
 
@@ -463,7 +465,7 @@ CREATE TABLE `user` (
   `city` varchar(45) DEFAULT NULL,
   `state` char(2) DEFAULT NULL,
   `motto` varchar(255) DEFAULT NULL,
-  `photo` varchar(128) DEFAULT NULL,
+  `photo` varchar(128) DEFAULT '/images/no-user-image.jpg',
   `sound_fx` tinyint(1) DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `voiceovers` tinyint(1) DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `pw_reset_code` char(8) DEFAULT NULL,
@@ -483,11 +485,11 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `creat
 (5, 'Cornelius', 'Frank', 'cfrank@enkayewe.edu', '$2y$10$FqQp9Qc9Dou1xHsNpucvMujl1PU0UvonPMdUdU/czlEndZr4f4qx.', '2020-06-17 15:54:39', '2020-07-14 21:51:28', 'Zyzzx', 'CA', 'The gull sees farthest who flies highest', '/uploads/5.jpg', 1, 1, NULL, NULL, 0),
 (6, 'Beth', 'Wilson', 'beth@wilson.com', '$2y$10$D0XWQKDM.gvRjD6/lyiG3u3kJEHbeyUmHatDhymEluaFO.ywOvL7u', '2020-06-17 15:54:39', '2020-07-14 21:51:34', 'Bethel', 'AK', 'Be sweet and carry a sharp knife.', '/uploads/6.jpg', 1, 1, NULL, NULL, 0),
 (7, 'Lemuel', 'Cricketbritches', 'cricketbritches@lemmy.com', '$2y$10$Hofalv7IJPRj07D1FQBp1ebF7zu0X7UbdrpTaORHJIq5ECdfOGI9O', '2020-06-17 15:57:12', '2020-07-14 21:51:55', 'St John\'s Wood', 'UK', 'If you\'ve already dug yourself a hole too deep to climb out of, you may as well keep digging.', '/uploads/7.jpg', 1, 1, NULL, NULL, 0),
-(8, 'John', 'Smith', 'jsmith@gmailzzz.com', '$2y$10$2cV.S5TLZ9QW9XHdXSq77e9ubKnCzv9Yh8clbsBcTJyNoj78sSjqO', '2020-06-17 15:57:12', '2020-07-10 01:38:10', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '', 1, 1, NULL, NULL, 0),
+(8, 'John', 'Smith', 'jsmith@gmailzzz.com', '$2y$10$2cV.S5TLZ9QW9XHdXSq77e9ubKnCzv9Yh8clbsBcTJyNoj78sSjqO', '2020-06-17 15:57:12', '2020-07-10 01:38:10', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '/images/no-user-image.jpg', 1, 1, NULL, NULL, 0),
 (9, 'Jane', 'Doe', 'jane@doe.com', '$2y$10$NjspBSMZXfTsFtnYu.totO38diKzigfuEakbanIyqiOpzzr2r0Bhu', '2020-06-17 15:59:34', '2020-07-14 21:52:03', 'Monkey\'s Eyebrow', 'KY', 'Eight hours work, eight hours sleep, and ten hours recreation; Now that\'s a good day!', '/uploads/9.jpg', 1, 1, NULL, NULL, 0),
 (10, 'Larry', 'Noble', 'larrythenoble@primordialooze.org', '$2y$10$1XiQQ55K7yTgO4NEZz9IxuWuLsIjejtQVqclmuhB9.4KZfXKvcEGK', '2020-06-17 16:02:16', '2020-07-14 21:52:08', 'Scratch Ankle', 'AL', 'Envy is honor\'s foe.', '/uploads/10.jpg', 1, 1, NULL, NULL, 0),
 (11, 'Babbette', 'Lloyd', 'babs@glitterfusion.xyz', '$2y$10$5M.osBVngZBufDbjJvNu/OcgNwbqUQgsEb/b2MnJZupucbt9vf8LS', '2020-06-17 16:06:58', '2020-07-14 21:52:20', 'Truth or Consequences', 'NM', 'Truth and virtue conquer.', '/uploads/11.jpg', 1, 1, NULL, NULL, 0),
-(12, NULL, NULL, 'ashoemaker@gmail.com', '', '2020-06-17 16:06:58', '2020-06-19 15:32:11', NULL, NULL, NULL, NULL, 1, 1, NULL, 'b696aa76', 0);
+(12, NULL, NULL, 'ashoemaker@gmail.com', '', '2020-06-17 16:06:58', '2020-06-19 15:32:11', NULL, NULL, NULL, '/images/no-user-image.jpg', 1, 1, NULL, 'b696aa76', 0);
 
 --
 -- Indexes for dumped tables
