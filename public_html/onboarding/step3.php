@@ -47,7 +47,7 @@ if (isset($_POST['submit-btn'])) {
         <div>
             <img src="no-user-image.jpg">
         </div>
-    <form>
+    <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
         <div class="form-group">
             <input type="file" class="form-control-file" id="photoUpload" name="photoUpload" placeholder="Add a Profile Photo">
         </div>
