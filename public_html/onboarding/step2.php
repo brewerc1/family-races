@@ -1,5 +1,13 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+// turn on output buffering
+ob_start('template');
+
+// start a session
+session_start();
+if (isset($_POST['skip-btn'])) {
+    Header('Location: ');
+}
 if (isset($_POST['next-btn'])) {
     if(empty($_POST['first_name'])) {
         $notification = "Please fill in a first name";
@@ -14,7 +22,7 @@ if (isset($_POST['next-btn'])) {
     $motto = trim($_POST['motto']);
     $sqlUpdate = "UPDATE user SET
     first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto 
-    WHERE user_id = {$_SESSION['id']}";
+    WHERE id = {$_SESSION['id']}";
     $update = $pdo->prepare($sqlUpdate);
     $update->execute(['first_name' => $first_name,
                     'last_name' => $last_name, 
@@ -63,6 +71,9 @@ if (isset($_POST['next-btn'])) {
                     <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
+                <div>
+                    <input type="sumbit" class="btn btn-primary" name="skip-btn" value="Skip"></input>
+                </div>
     </form>
     {footer}
 <?php ob_end_flush(); ?>
