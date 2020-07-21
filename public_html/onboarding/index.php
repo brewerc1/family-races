@@ -47,16 +47,16 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
   <div>  
             <form action="step2.php"  method="post">
                 <div class="form-group">
-                    <input  type="email" required class="form-control" id="email"  placeholder="Enter Email"></input>
+                    <input  type="email" required class="form-control" name ="email" id="email"  placeholder="Enter Email"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="textbox" required class="form-control" id="code"  placeholder="Enter Code"></input>
+                    <input  type="textbox" required class="form-control" name="code" id="code"  placeholder="Enter Code"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="password"  required class="form-control" id="password" placeholder="Enter Password"></input>
+                    <input  type="password"  required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="textbox" required class="form-control" id="confirmPassword" placeholder="Confirm Password"></input>
+                    <input  type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
             </form>
@@ -67,13 +67,15 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     {footer}
 <?php ob_end_flush(); ?>
 <?php
+echo var_dump($_POST);
+exit;
 $notification = array();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
     //$email = trim($_POST ['email']);
     //$code = trim($_POST ['code']);
 //Validation Email filed filled and email exist
-    if ((empty('email')) && (!filter_var($email, FILTER_VALIDATE_EMAIL))) {
+    if ((empty($_POST['email'])) && (!filter_var($email, FILTER_VALIDATE_EMAIL))) {
         $notification ['email'] = 'Email is Required and must be valid';
         exit;
     }
@@ -82,12 +84,12 @@ if (isset($_POST['createAccount-btn'])) {
        // $errors ['email'] = 'Email address is invalid';
    // }
 //Validation Code
-    if(empty('code')){
+    if(empty($_POST['code'])){
         $notification ['code'] = 'Code Required';
         exit;
     }
 //Validation Password
-    if(empty('password')) {
+    if(empty($_POST['password'])) {
         $notification ['password'] = 'Password Required';
         exit;
     }
@@ -96,15 +98,20 @@ if (isset($_POST['createAccount-btn'])) {
         $notification ['password'] = 'The two passwords do not match';
         exit;
     }
+    $password= trim($_POST['password']);
+    $email= trim($_POST['email']);
+    $code = trim($_POST['code']);
     //Selecting code and email from users to see if it's same as $code and $email
-        $sqlcheck = "SELECT * FROM users WHERE email = {$_POST[email]} and invite_code = {$_POST[code]}";
+        $sqlcheck = "SELECT * FROM users WHERE email = $email and invite_code = $code";
         $stmt = $dbconnect->prepare($sqlcheck);
         $stmt->bind_param('s', $password);
         $stmt->execute();
         //echo var_dump($stmt);
         //exit;
         if($stmt < 0) {
-            $sql = "UPDATE users SET password='$_POST[passowrd]' WHERE invite_code = $_POST[code] AND email = $_POST[email]";
+        $sql = "UPDATE users 
+                SET password= $password AND photo='/images/no-user-image.jpg' 
+                WHERE invite_code = $code AND email = $email";
             $stmt = $dbconnect->prepare($sql);
             $stmt->bind_param('s', $password);
             $stmt->execute();
