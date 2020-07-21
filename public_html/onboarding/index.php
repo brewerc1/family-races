@@ -55,7 +55,7 @@ $javascript = '';
 ///// DEBUG
 $debug = debug();
 ///// end DEBUG
-<?php
+
 $notification = array();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
@@ -131,7 +131,7 @@ if (isset($_POST['createAccount-btn'])) {
 
 
 ?>
-?>
+
 {header}
 {main_nav}
 <h1>Sign Up</h1>
