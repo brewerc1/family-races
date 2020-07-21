@@ -53,7 +53,7 @@ $javascript = '';
 //$uid = $_SESSION['id'];
  
 ///// DEBUG
-$debug = debug();
+//$debug = debug();
 ///// end DEBUG
 
 $notification = array();
