@@ -21,6 +21,22 @@ if (isset($_POST['next-btn'])) {
                     'city' => $city, 
                     'state' => $state, 
                     'motto'=> $motto]);
+        if ($stmt) {
+        //Update Session Variables
+        $updateSession ="SELECT * FROM user WHERE id = :user_id";
+        $updateSessionResult = $pdo->prepare($updateSession);
+        $updateSessionResult->execute(['user_id' => $user_id]);
+        $row= $updateSessionResult->fetch();
+        $_SESSION ['first_name'] = $row['first_name'];
+        $_SESSION['last_name'] = $row['last_name'];
+        $_SESSION['city'] = $row['city'];
+        $_SESSION['state'] = $row['state'];
+        $_SESSION['motto'] = $row['motto'];
+        header('Location:/onboarding/step3.php/');
+                
+            } else {
+                        //$errors['db_error'] = "Database error: Failed to Register";
+                    }
 
 }
 
