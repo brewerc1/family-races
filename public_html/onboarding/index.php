@@ -45,7 +45,7 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 {main_nav}
 <h1>Sign Up</h1>
   <div>  
-            <form action="step2.php"  method="post">
+            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
                 <div class="form-group">
                     <input  type="email" required class="form-control" name ="email" id="email"  placeholder="Enter Email"></input>
                 </div>
@@ -67,8 +67,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
     {footer}
 <?php ob_end_flush(); ?>
 <?php
-//echo var_dump($_POST);
-//exit;
 $notification = array();
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
@@ -106,9 +104,10 @@ if (isset($_POST['createAccount-btn'])) {
         $sqlcheck = "SELECT email, invite_code FROM users WHERE email = :email and invite_code = :code";
         $stmt1 = $pdo->prepare($sqlcheck);
         $stmt1->execute(['email' => $email, 'invite_code' => $code]);
+        $stmt1_Result=$stmt1->rowCount();
         //echo var_dump($stmt);
         //exit;
-        if($stmt1 < 0) {
+        if($stmt1) {
         $sql = "UPDATE users 
                 SET password= :password, photo=:photo 
                 WHERE invite_code = :code AND email = :email";
@@ -133,16 +132,16 @@ if (isset($_POST['createAccount-btn'])) {
        // $stmt->bind_param('s', $password);
        // $stmt->execute();
 
-    if ($stmt->execute()) {
+    //if ($stmt->execute()) {
         //Login user 
-        $user_id = $dbconnect->insert_id;
-        $_SESSION ['id'] = $user_id;
-        $_SESSION['email'] = $email;
-        $_SESSION['password'] = $password;
+        //$user_id = $dbconnect->insert_id;
+        //$_SESSION ['id'] = $user_id;
+        //$_SESSION['email'] = $email;
+        //$_SESSION['password'] = $password;
 
-    } else {
-        $errors['db_error'] = "Database error: Failed to Register";
-    }
+    //} else {
+        //$errors['db_error'] = "Database error: Failed to Register";
+    //}
     }
 
 
