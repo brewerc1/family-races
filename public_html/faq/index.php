@@ -11,6 +11,7 @@ session_start();
 {main_nav}
 
     <main role="main">
+    <h1>FAQ</h1>
         <h2>What's the deal?</h2>
             <p>The objective of the Challenge is to earn the highest purse/winnings for one day at the racetrack</p>
         
@@ -21,7 +22,7 @@ session_start();
                 <li>The winnings from all races for the day are added together for each participant to determine the winners.</li>
             </ul>
             
-        <h2>What is the buy&mdash;in?</h2>
+        <h2>What is the buy-in?</h2>
             <p>Each participant must contribute $20.00 to the "Challenge Jackpot" prior to the start of the first race</p>
 
         <h2>What's in it for me?</h2>
@@ -40,7 +41,7 @@ session_start();
                     <li>Their name and losing total permanetly added to the "Horses Arse" trophy</li>
                     <li>Posession of the "Horses Arse" trophy for an entire year</li>
                 </ul>
-                <li>All non&mdash;placing players still get to have a great day at the races!</li>
+                <li>All non-placing players still get to have a great day at the races!</li>
             </ul>
 
         <h2>What are the three types of bets at the horse track?</h2>
@@ -162,10 +163,10 @@ session_start();
     <section>
     <h2>What are the biggest mistakes of horse handicapping? </h2>
 
-    <h3>Handicapping Mistake #1: It’s important to pick winners</h3>
+    <h3>Handicapping Mistake #1: It's important to pick winners</h3>
         <ul>
-            <li>Do NOT fall prey to the most common, yet immaterial and irrelevant, question: “Who do you like?” A far more significant question is, “Who should I bet?”.</li>
-            <li>Always come to the track to “make money”: never come to the track “to pick horses to WIN” because: </li>
+            <li>Do NOT fall prey to the most common, yet immaterial and irrelevant, question: "Who do you like?" A far more significant question is, "Who should I bet?".</li>
+            <li>Always come to the track to "make money": never come to the track "to pick horses to WIN" because: </li>
                 <ul>
                     <li>Horses who WIN, only win 1/3 of the time.</li>
                     <li>The average payoff for Horses who WIN is NOT high enough for betters to earn a profit.</li>
@@ -179,25 +180,25 @@ session_start();
                     <li>the race has more good bets</li>
                     <li>you automatically get better value</li>
                 </ul>
-            <li>By being able to figure out who will NOT win, you do NOT have to be as concerned with who will win. Always try to eliminate the “reputation horses,”: those animals whose odds are more reflective of some distant accomplishment than their recent form or their realistic chances of winning that day’s race.</li>
+            <li>By being able to figure out who will NOT win, you do NOT have to be as concerned with who will win. Always try to eliminate the "reputation horses,": those animals whose odds are more reflective of some distant accomplishment than their recent form or their realistic chances of winning that day's race.</li>
             <li>The biggest edge you have is playing against a public that does not understand how to work the odds.</li>
                 <ul>
-                    <li>Example: if the weather has only a 10 percent chance of rain tomorrow, the “honest odds” you should receive on it raining tomorrow should be 9/1. Therefore, you should not bet it will rain tomorrow with only 6/1 odds. However, if you were offered 20/1 odds to bet it will rain tomorrow, that does not change the 10 percent chance of rain tomorrow, but it does offer you an attractive payback.</li>
+                    <li>Example: if the weather has only a 10 percent chance of rain tomorrow, the "honest odds" you should receive on it raining tomorrow should be 9/1. Therefore, you should not bet it will rain tomorrow with only 6/1 odds. However, if you were offered 20/1 odds to bet it will rain tomorrow, that does not change the 10 percent chance of rain tomorrow, but it does offer you an attractive payback.</li>
                 </ul>
-            <li>The bottom line? “Don’t bet a pick. Pick a bet.” </li>
+            <li>The bottom line? "Don't bet a pick. Pick a bet." </li>
         </ul>
 
-    <h3>Mistake #2: “Never let the tote board influence your betting decisions”</h3>
+    <h3>Mistake #2: "Never let the tote board influence your betting decisions"</h3>
         <ul>
             <li>Allowing the tote board to influence your betting decisions is one of the most fundamental aspects of betting. If you cannot grasp this concept you really have no chance of winning and should be doing something else.</li>
-            <li>Key Betting Element: the ONLY way to determine a horse’s value is to compare a horse’s realistic chances of winning to his ACTUAL ODDS vs LISTED ODDS.</li>
+            <li>Key Betting Element: the ONLY way to determine a horse's value is to compare a horse's realistic chances of winning to his ACTUAL ODDS vs LISTED ODDS.</li>
             <li>If you take what the board gives you, go for the value. You will have a much better chance of winning.</li>
             <li>Sometimes watching the tote board can tell you when to bet horses that are lower in price than they should be.</li>
             <li>Some people have more information than others. However, they:</li>
                 <ul>
                     <li>do NOT know it all and are always looking to learn.</li>
                     <li>are alert to picking up on information.</li>
-                    <li>know there are scenarios where somebody else’s information can work to their own advantage.</li>
+                    <li>know there are scenarios where somebody else's information can work to their own advantage.</li>
                     <li>know the board can be a source of that information.</li>
                     <li>know the more unknowns and variables there are in a race, the more possible edges there are, too.</li>  
                     <li>remain alert and can read the board, to maximize their information.</li>
@@ -211,7 +212,7 @@ session_start();
                 </ul>
         </ul>
     
-    <h3>Mistake #3: “Class will always tell”</h3>
+    <h3>Mistake #3: "Class will always tell"</h3>
         <ul>
             <li>When it comes to evaluating horses, there is no such thing as class.</li>
                 <ul>
@@ -225,7 +226,7 @@ session_start();
                             <li>create true value for the smart better.</li>
                         </ul>
                 </ul>
-            <li>These days, speed figures tell you who the fastest horses are. Generally, the fastest horse’s race in the best races, so nowadays, if insist on talking about class, you are just talking about speed</li>
+            <li>These days, speed figures tell you who the fastest horses are. Generally, the fastest horse's race in the best races, so nowadays, if insist on talking about class, you are just talking about speed</li>
             <li>The entire game is based on speed and money. Trainers:</li>
                 <ul>
                     <li>run their horses where they think they can win.</li>
@@ -234,16 +235,16 @@ session_start();
             <li>Obviously, the quality of a race is determined by the quality of the horses that compete in that race so designating a race as a Grade 1, months before you know the field, is ridiculous.</li>
             <li>It is nonsense to select a horse based on how many Grade 1 races that horse has won. Do NOT do something that stupid. How a horse might have performed months or years ago is worthless.</li>
             <li>The most important thing is the current form of the horse.</li>
-            <li>Even in Daily Racing Forms, which should know better, you can read ridiculous statements like, “faced better,” or “first time in claimers.” When they load a horse into the gate, he does not look around and say, “I raced against better horses so I should beat these,” or, “These are just a bunch of claimers.”</li>
+            <li>Even in Daily Racing Forms, which should know better, you can read ridiculous statements like, "faced better," or "first time in claimers." When they load a horse into the gate, he does not look around and say, "I raced against better horses so I should beat these," or, "These are just a bunch of claimers."</li>
             <li>Being in a claimer does not mean anything. Sometimes claiming races can be stronger than allowance races.</li>
-            <li>Do NOT make “absolute rules” or set up rigid guidelines for a series of races because.</li>
+            <li>Do NOT make "absolute rule" or set up rigid guidelines for a series of races because.</li>
                 <ul>
                     <li>people will try to tell you that you should never do this in some situation or that you should always do that in another.</li>
                     <li>every race is a separate puzzle with its own clues.</li>
                 </ul>
         </ul>
 
-    <h3>Mistake #4: “Public opinion can help you win”</h3>
+    <h3>Mistake #4: "Public opinion can help you win"</h3>
         <ul>
             <li>Those who can, do. Those who cannot, make selections in newspapers or via a telephone service, hold seminars or write books.</li>
             <li>The key ingredient to winning, and even a moron should know this &mdash; is value. Any time you select in advance, without knowing the odds of the horses, you are not getting the best of it. It is impossible for anyone to win under those conditions.</li>
@@ -252,7 +253,7 @@ session_start();
                     <li>You have got to be able to look at pools and determine whether to bet straight or in exotics.</li>
                     <li>You certainly cannot do that if you are handing out selections in a paper or over a telephone.</li>
                 </ul>
-            <li>Many handicappers, public and private, make their first mistake before they ever get to the racetrack. Do not be the person who arrives at the track with a program full of horses’ names with lines drawn through them. This is a hopeless strategy.</li>
+            <li>Many handicappers, public and private, make their first mistake before they ever get to the racetrack. Do not be the person who arrives at the track with a program full of horses' names with lines drawn through them. This is a hopeless strategy.</li>
             <li>You cannot learn how to handicap horses from a book.</li>
                 <ul>
                     <li>What you will learn from a book is a set of rules or tendencies. All that is nonsense.</li>
@@ -263,19 +264,19 @@ session_start();
             <li>Remember: people who make their picks in a newspaper, host seminars, or have a 900 number, know everything there is to know about racing except how to win. If they did, they would be doing it themselves.</li>
         </ul>
 
-    <h3>Mistake #5: “There are many tried and true rules to use when betting on horses” </h3>
+    <h3>Mistake #5: "There are many tried and true rules to use when betting on horses" </h3>
         <ul>
             <li>No professional bettor, no one with any real knowledge of the game, would make such ridiculous and meaningless statements as:</li>
                 <ul>
-                    <li>“Never bet a horse to do something he hasn’t done before.”</li>
-                    <li>“Never bet a 3-year-old against older horses in the spring.”</li>
-                    <li>“Never bet fillies against colts.”</li>
-                    <li>“Never bet maidens versus winners.”</li>
-                    <li>“Never bet the highest weighted horse on a muddy track.”</li>
+                    <li>"Never bet a horse to do something he hasn't done before."</li>
+                    <li>"Never bet a 3-year-old against older horses in the spring."</li>
+                    <li>"Never bet fillies against colts."</li>
+                    <li>"Never bet maidens versus winners."</li>
+                    <li>"Never bet the highest weighted horse on a muddy track."</li>
                </ul>
             <li>At the highest levels of the game, among those who win, this stuff is laughable.</li>
             <li>No professional bettor would ever buy into such garbage rules.</li>
-            <li>Such arbitrary “rules” can become an asset for astute bettors.</li>
+            <li>Such arbitrary "rules" can become an asset for astute bettors.</li>
         </ul>
 
     </section>
