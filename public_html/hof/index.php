@@ -55,10 +55,8 @@ $num_hof_results = $hof_result->rowCount();
                     $current_champ_row = $hof_result->fetch();
                         // $current_champ_row['champion_photo'] = ""; // test for no champ_photo
                     $num_hof_results -= 1;
-                        $row = print_r($current_champ_row);
-                        $debug = debug("row: $row");
-                    
                     // avoid having no image to display
+                    
                     if ($current_champ_row['champion_photo'] == NULL){
                         $update_time_stamp = $current_champ_row['user_update_time'];
                         $current_champ_photo = $current_champ_row['photo']."?".$update_time_stamp;
@@ -103,6 +101,7 @@ ENDNORESULT;
                     if ($num_hof_results > 0){
                         while ($row = $hof_result->fetch()){
                             // avoid having no image to display
+
                             // $row['champion_photo'] = ""; // test for no champ_photo
                             if ($row['champion_photo'] == NULL){
                                 $update_time_stamp = $row['user_update_time'];
