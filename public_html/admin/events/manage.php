@@ -103,8 +103,16 @@ $debug = debug();
 
             <form method="POST" class="mt-3">
                 <div class="form-row">
-                    <label class="col-sm-2 col-form-label"  for="pot">Jackpot</label>
-                    <input type="text" class="form-control col-sm-10" id="pot" value="$ 200">
+                    <div class="input-group mb-3">
+                        <label class="col-sm-2 col-form-label"  for="pot">Jackpot</label>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" class="form-control" name="pot" id="pot" aria-label="Amount (to the nearest dollar)">
+                        <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                        </div>
+                    </div>
                 </div>
 
                 <fieldset class="accordion border border-dark" id="accordion01">
