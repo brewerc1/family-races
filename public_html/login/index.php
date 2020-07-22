@@ -29,16 +29,12 @@ if (isset($_POST["login"])) {
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        header("Location: /login/?login=false&email=" . $email . "&message=2&alt=2");
-
-        // Make sure the rest of code is not gonna be executed
+        header("Location: /login/?login=false&email=" . $email . "&m=2&s=warning");
         exit;
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
-        header("Location: /login/?login=false&message=1&alt=2");
-
-        // Make sure the rest of code is not gonna be executed
+        header("Location: /login/?login=false&m=1&s=warning");
         exit;
 
     } else {
@@ -50,9 +46,7 @@ if (isset($_POST["login"])) {
 
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
-            header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
-
-            // Make sure the rest of code is not gonna be executed
+            header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
             exit;
 
         } else {
@@ -63,9 +57,7 @@ if (isset($_POST["login"])) {
 
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
-                header("Location: /login/?login=false&email=" . $email . "&message=1&alt=2");
-
-                // Make sure the rest of code is not gonna be executed
+                header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
                 exit;
 
             } else {
@@ -139,31 +131,6 @@ if (isset($_POST["login"])) {
 
 }
 
-// Notification System
-$messages = array(
-    1 => "Invalid Credentials",
-    2 => "Email or Password cannot be empty",
-    3 => "Password has been changed, please log in"
-);
-
-$alerts = array(
-    1 => "success",
-    2 => "warning"
-);
-
-$notification = "";
-$alert = "";
-if (isset($_GET["message"]) && isset($_GET["alt"])) {
-    $not = trim($_GET["message"]);
-    $al = trim($_GET["alt"]);
-
-    if ($not == 1 || $not == 2 || $not == 3 )
-        $notification = $messages[$not];
-    if ($al == 1 || $al == 2 )
-        $alert = $alert_style[$alerts[$al]];
-
-}
-
 ?>
 {header}
     <main role="main">
@@ -187,14 +154,6 @@ if (isset($_GET["message"]) && isset($_GET["alt"])) {
                 <a href="/password/">Forgot Password</a>
             </div>
         </form>
-            <?php if(isset($notification) && $notification != ''){?>
-                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-                    <?php echo $notification; ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            <?php } ?>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
