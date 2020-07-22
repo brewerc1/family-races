@@ -29,16 +29,12 @@ if (isset($_POST["login"])) {
     if (empty($email) || empty($password)) {
 
         // Redirect to login with email, if not empty, inside the placeholder
-        header("Location: /login/?login=false&email=" . $email . "&me=2&s=warning");
-
-        // Make sure the rest of code is not gonna be executed
+        header("Location: /login/?login=false&email=" . $email . "&m=2&s=warning");
         exit;
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Redirect to login if invalid email
         header("Location: /login/?login=false&m=1&s=warning");
-
-        // Make sure the rest of code is not gonna be executed
         exit;
 
     } else {
@@ -51,8 +47,6 @@ if (isset($_POST["login"])) {
         if ($user->rowCount() != 1) {
             // Redirect to login if rowcount is not 1
             header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
-
-            // Make sure the rest of code is not gonna be executed
             exit;
 
         } else {
@@ -64,8 +58,6 @@ if (isset($_POST["login"])) {
             if (!password_verify($pwd_peppered, $pwd)) {
                 // redirect to login if password don't match
                 header("Location: /login/?login=false&email=" . $email . "&m=1&s=warning");
-
-                // Make sure the rest of code is not gonna be executed
                 exit;
 
             } else {

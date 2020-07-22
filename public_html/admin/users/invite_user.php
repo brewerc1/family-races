@@ -11,7 +11,6 @@ if (isset($_POST["invite"])) {
 
     if (!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
         header("Location: ./?m=10&s=warning");
-        // Make sure the rest of code is not gonna be executed
         exit;
     } else {
         $query = "SELECT email FROM user WHERE email = :email";
@@ -20,7 +19,6 @@ if (isset($_POST["invite"])) {
 
         if ($emails->rowCount() != 0) {
             header("Location: ./?m=11&s=warning");
-            // Make sure the rest of code is not gonna be executed
             exit;
         } else {
             try {
@@ -33,7 +31,6 @@ if (isset($_POST["invite"])) {
             $sql = "INSERT INTO user (email, invite_code) VALUES (?,?)";
             if (!$pdo->prepare($sql)->execute([$email, $unique_code])) {
                 header("Location: ./?m=6&s=warning");
-                // Make sure the rest of code is not gonna be executed
                 exit;
             } else {
                 // send invite
@@ -46,12 +43,10 @@ if (isset($_POST["invite"])) {
                     $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
 
                     header("Location: ./?m=8&s=warning");
-                    // Make sure the rest of code is not gonna be executed
                     exit;
 
                 } else {
                     header("Location: ./?m=9&s=success");
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 }
 

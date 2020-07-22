@@ -51,7 +51,7 @@ if (isset($_POST["change_pwd"])) {
             $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
             if (password_verify($pwd_peppered, $_SESSION["password"])) {
                 // can't use the old password
-                header("Location: ./reset.php?message=4&s=warning");
+                header("Location: ./reset.php?m=4&s=warning");
                 // Make sure the rest of code is not gonna be executed
                 exit;
             } else {

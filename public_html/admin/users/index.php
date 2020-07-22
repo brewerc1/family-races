@@ -48,35 +48,6 @@ $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
 $row = $display_user_result->fetch();
-
-// Notification System
-//$messages = array(
-//    1 => "Invalid Email",
-//    2 => "User already invited",
-//    3 => "DB is empty",
-//    4 => "Fails to generate Code",
-//    5 => "Couldn't write to DB",
-//    6 => "Invite not sent",
-//    7 => "Invite sent"
-//);
-//
-//$alerts = array(
-//    1 => "success",
-//    2 => "warning"
-//);
-//
-//$notification = "";
-//$alert = "";
-//if (isset($_GET["message"]) && isset($_GET["alt"])) {
-//    $not = $_GET["message"];
-//    $al = $_GET["alt"];
-//
-//    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 || $not == 6 || $not == 7 )
-//        $notification = $messages[$not];
-//    if ($al == 1 || $al == 2 )
-//        $alert = $alert_style[$alerts[$al]];
-//
-//}
 ?>
 {header}
 {main_nav}

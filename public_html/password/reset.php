@@ -29,13 +29,11 @@ if (isset($_POST["change_pwd"])) {
     $user = $pdo->prepare($query);
     if (!$user->execute(['email' => $email, 'pw_reset_code' => $code])) {
         header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
-        // Make sure the rest of code is not gonna be executed
         exit;
     } else {
 
         if ($user->rowCount() != 1) {
             header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
-            // Make sure the rest of code is not gonna be executed
             exit;
         } else {
             $row = $user->fetch();
@@ -46,14 +44,12 @@ if (isset($_POST["change_pwd"])) {
             // At least one of these is empty: Password cannot be empty
             if (empty($pwd) || empty($confirm_pwd)) {
                 header("Location: /password/reset.php?m=7&s=warning&email=" . $email ."&code=" . $code);
-                // Make sure the rest of code is not gonna be executed
                 exit;
 
             } else {
 
                 if ($pwd != $confirm_pwd) {
                     header("Location: /password/reset.php?m=5&s=warning&email=" . $email ."&code=" . $code);
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 } else {
                     // Check if old password
@@ -61,7 +57,6 @@ if (isset($_POST["change_pwd"])) {
                     if (password_verify($pwd_peppered, $row["password"])) {
                         // can't use the old password
                         header("Location: /password/reset.php?m=4&s=warning&email=" . $email ."&code=" . $code);
-                        // Make sure the rest of code is not gonna be executed
                         exit;
                     } else {
                         // Update the password
@@ -70,12 +65,10 @@ if (isset($_POST["change_pwd"])) {
                         if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'pw_reset_code' => NULL, 'email' => $email])) {
                             // server error: hopefully this edge case will never happen
                             header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
-                            // Make sure the rest of code is not gonna be executed
                             exit;
                         } else {
                             // Redirect back to login with a success message and email inside the email input
                             header("Location: /login/?m=3&s=success&email=" . $email);
-                            // Make sure the rest of code is not gonna be executed
                             exit;
                         }
                     }
