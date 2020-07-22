@@ -34,7 +34,7 @@ $debug = debug();
 ///// end DEBUG
 
 // Get UID
-$uid = $_SESSION['id'];
+$uid = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
