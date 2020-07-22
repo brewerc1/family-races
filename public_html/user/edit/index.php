@@ -138,8 +138,6 @@ if(isset($_POST['save_button'])){
         $update_session_result = $pdo->prepare($update_session_sql);
         $update_session_result->execute(['user_id' => $user_id]);
         $row = $update_session_result->fetch();
-        
-        $debug = debug($row);
         $_SESSION['photo'] = $row['photo'];
         $_SESSION['first_name'] = $row['first_name'];
         $_SESSION['last_name'] = $row['last_name'];
