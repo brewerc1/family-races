@@ -47,7 +47,7 @@ $display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
-$row = $display_user_result->fetch();
+//$row = $display_user_result->fetch();
 
 // Notification System
 $messages = array(

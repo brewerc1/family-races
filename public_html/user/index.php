@@ -30,34 +30,73 @@ if (!isset($_SESSION["id"])) {
     exit;
 }
 
+///// DEBUG
+$debug = debug();
+///// end DEBUG
+
 // logged in user
-$full_name = $_SESSION['first_name'].' '.$_SESSION['last_name'];
+$full_name = filter_var(trim($_SESSION['first_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS).' '.filter_var(trim($_SESSION['last_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$user_id = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 $photo = $_SESSION['photo'];
-$motto = $_SESSION['motto'];
-$email = $_SESSION['email'];
-$city = $_SESSION['city'];
-$state = $_SESSION['state'];
+$motto = filter_var(trim($_SESSION['motto']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$email = filter_var(filter_var(trim($_SESSION['email']), FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
+$city = filter_var(trim($_SESSION['city']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$state = filter_var(trim($_SESSION['state']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // get selected UID: Don't run if the GET["u"] is SESSION["id"]
-// TODO: protect this better
 if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
-    $display_uid = $_GET["u"]; // Replace 1 with $_GET['u']
-    $display_user_sql = "SELECT * FROM user WHERE id = :display_uid";
+    $user_id = filter_var(trim($_GET["u"]), FILTER_SANITIZE_NUMBER_INT);
+    $display_user_sql = "SELECT * FROM user WHERE id = :user_id";
     $display_user_result = $pdo->prepare($display_user_sql);
-    $display_user_result->execute(['display_uid' => $display_uid]);
+    $display_user_result->execute(['user_id' => $user_id]);
     $num_display_user_results = $display_user_result->rowCount();
-    $row = $display_user_result->fetch();
+    
+    if($num_display_user_results > 0){
+        $row = $display_user_result->fetch();
 
-    $full_name = $row['first_name'].' '.$row['last_name'];
-    $photo = $row['photo'];
-    $motto = $row['motto'];
-    $email = $row['email'];
-    $city = $row['city'];
-    $state = $row['state'];
-    $update_time_stamp = strtotime($row['update_time']); // convert to timestamp for cache-busting
+        $full_name = $row['first_name'].' '.$row['last_name'];
+        $user_id = $row['id'];
+        $photo = $row['photo'];
+        $motto = $row['motto'];
+        $email = $row['email'];
+        $city = $row['city'];
+        $state = $row['state'];
+        $update_time_stamp = strtotime($row['update_time']); // convert to timestamp for cache-busting
+    }
 }
- 
+
+// populate array of user placements
+$records_sql = <<< ENDSQL
+SELECT event_standings.*, event.name
+FROM event_standings, event
+WHERE event_standings.event_id = event.id
+ORDER BY event_standings.event_id DESC, event_standings.earnings DESC
+ENDSQL;
+$records_result = $pdo->prepare($records_sql);
+$records_result->execute();
+$num_records_result = $records_result->rowCount();
+$user_records_array = array();
+
+
+if ($num_records_result > 0 ){
+    // Grab the entire array to sort and process
+    $records_array = $records_result->fetchall(PDO::FETCH_GROUP);
+    // Determine how the user placed in each event
+    foreach ($records_array as $event_id => $grouped_array) {
+        $placement = 1;
+        foreach ($grouped_array as $key => $user_row) {
+            if ($user_row['user_id'] == $user_id){
+                // Add a record to the tracking array
+                $user_records_array += [$event_id => array('event_name' => $user_row['name'],'placement' => $placement, 'earnings' => $user_row['earnings'])];   
+            } else {
+                $placement += 1 ;
+            }
+        }
+    }
+} else {
+    // array is empty
+}
 ?>
 {header}
 {main_nav}
@@ -112,11 +151,34 @@ LINKS;
                 <h2>Event Records</h2>
                 <table class="table">
                     <tbody>
+                        <?php 
+                        // Takes the array of user's event placements, formats and output to table
+                        foreach ($user_records_array as $record) {
+                            foreach ($record as $key => $value) {
+                                $placement = $record['placement'];
+                                switch ($placement) {
+                                    case '1':
+                                        $placement = "1st";
+                                        break;
+                                    case '2':
+                                        $placement = "2nd";
+                                        break;
+                                    case '3':
+                                        $placement = "3rd";
+                                        break;
+                                    default:
+                                        $placement = $placement."th";
+                                        break;
+                                }
+                                $earnings = "$".$record['earnings'];
+                            }
+echo <<< ENDRECORD
                         <tr>
-                            <!-- TODO: Need to create 'records' field in user table. -->                  
-                            <td><?php //echo $row['records'] ?></td>
-                            <td>Reunion 2022: 9th place</td> <!-- Placeholder -->
+                            <td>{$record['event_name']} Placement: {$placement} with {$earnings}</td> <!-- Placeholder -->
                         </tr>
+ENDRECORD;
+                        }
+                        ?>         
                     </tbody>
                 </table>
             </section> <!-- END user_records -->
