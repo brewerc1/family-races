@@ -153,30 +153,39 @@ LINKS;
                     <tbody>
                         <?php 
                         // Takes the array of user's event placements, formats and output to table. 
-                        foreach ($user_records_array as $record) {
-                            foreach ($record as $key => $value) {
-                                $placement = $record['placement'];
-                                switch ($placement) {
-                                    case '1':
-                                        $placement = "1st";
-                                        break;
-                                    case '2':
-                                        $placement = "2nd";
-                                        break;
-                                    case '3':
-                                        $placement = "3rd";
-                                        break;
-                                    default:
-                                        $placement = $placement."th";
-                                        break;
-                                }
-                                $earnings = "$".$record['earnings'];
-                            }
-echo <<< ENDRECORD
-                        <tr>
-                            <th>{$record['event_name']}</th> <td>Placement: {$placement} with {$earnings}</td>
-                        </tr>
+                        
+                        if (empty($user_records_array)){
+                            echo <<< ENDRECORD
+                            <tr>
+                                <td>No Completed Events</td>
+                            </tr>
 ENDRECORD;
+                        } else {
+                            foreach ($user_records_array as $record) {
+                                foreach ($record as $key => $value) {
+                                    $placement = $record['placement'];
+                                    switch ($placement) {
+                                        case '1':
+                                            $placement = "1st";
+                                            break;
+                                        case '2':
+                                            $placement = "2nd";
+                                            break;
+                                        case '3':
+                                            $placement = "3rd";
+                                            break;
+                                        default:
+                                            $placement = $placement."th";
+                                            break;
+                                    }
+                                    $earnings = "$".$record['earnings'];
+                                }
+echo <<< ENDRECORD
+                            <tr>
+                                <th>{$record['event_name']}</th> <td>Placement: {$placement} with {$earnings}</td>
+                            </tr>
+ENDRECORD;
+                            }
                         }
                         ?>         
                     </tbody>
