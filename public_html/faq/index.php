@@ -12,20 +12,20 @@ session_start();
 
     <main role="main">
     <h1>FAQ</h1>
-        <h2>What's the deal?</h2>
+        <h3>What's the deal?</h3>
             <p>The objective of the Challenge is to earn the highest purse/winnings for one day at the racetrack</p>
         
-        <h2>How does it all work?</h2>
+        <h3>How does it all work?</h3>
             <ul>
                 <li>Each participant chooses one horse per race and whether they want to bet on that horse to WIN, PLACE or SHOW.</li>
                 <li>The amount of winnings earned by the participant each reace is determined by the outcome of each race as displayed on the "tote board" located in the infield of the racetrack.</li>
                 <li>The winnings from all races for the day are added together for each participant to determine the winners.</li>
             </ul>
             
-        <h2>What is the buy-in?</h2>
+        <h3>What is the buy-in?</h3>
             <p>Each participant must contribute $20.00 to the "Challenge Jackpot" prior to the start of the first race</p>
 
-        <h2>What's in it for me?</h2>
+        <h3>What's in it for me?</h3>
             <ul>
                 <li>First place will receive:</li>
                 <ul>
@@ -44,14 +44,14 @@ session_start();
                 <li>All non-placing players still get to have a great day at the races!</li>
             </ul>
 
-        <h2>What are the three types of bets at the horse track?</h2>
+        <h3>What are the three types of bets at the horse track?</h3>
             <ul>
                 <li>Win: Choose a horse to finish in first place.</li>
                 <li>Place: Choose a horse to finish in first OR second place.</li>
                 <li>Show: Choose a horse to finish in first, second OR third place.</li>
             </ul>
 
-        <h2>What are the odds and how are they used to calculate the payout on bets at the horse track?</h2>
+        <h3>What are the odds and how are they used to calculate the payout on bets at the horse track?</h3>
             <ul>
                 <li>The more bets on a HORSE, the lower its ODDS...</li>
                 <li>The lower the ODDS, the better the ODDS...</li>
@@ -60,8 +60,8 @@ session_start();
             </ul>
 
         <section>
-        <h2>Approximate Payouts</h2>
-            <table>
+        <h3>Approximate Payouts</h3>
+            <table class=center>
                 <tr>
                     <th>Odds</th>
                     <th>$2 Payoff</th>
@@ -163,7 +163,7 @@ session_start();
     <section>
     <h2>What are the biggest mistakes of horse handicapping? </h2>
 
-    <h3>Handicapping Mistake #1: It's important to pick winners</h3>
+    <h4>Mistake #1: It's important to pick winners</h4>
         <ul>
             <li>Do NOT fall prey to the most common, yet immaterial and irrelevant, question: "Who do you like?" A far more significant question is, "Who should I bet?".</li>
             <li>Always come to the track to "make money": never come to the track "to pick horses to WIN" because: </li>
@@ -188,7 +188,7 @@ session_start();
             <li>The bottom line? "Don't bet a pick. Pick a bet." </li>
         </ul>
 
-    <h3>Mistake #2: "Never let the tote board influence your betting decisions"</h3>
+    <h4>Mistake #2: "Never let the tote board influence your betting decisions"</h4>
         <ul>
             <li>Allowing the tote board to influence your betting decisions is one of the most fundamental aspects of betting. If you cannot grasp this concept you really have no chance of winning and should be doing something else.</li>
             <li>Key Betting Element: the ONLY way to determine a horse's value is to compare a horse's realistic chances of winning to his ACTUAL ODDS vs LISTED ODDS.</li>
@@ -212,7 +212,7 @@ session_start();
                 </ul>
         </ul>
     
-    <h3>Mistake #3: "Class will always tell"</h3>
+    <h4>Mistake #3: "Class will always tell"</h4>
         <ul>
             <li>When it comes to evaluating horses, there is no such thing as class.</li>
                 <ul>
@@ -244,7 +244,7 @@ session_start();
                 </ul>
         </ul>
 
-    <h3>Mistake #4: "Public opinion can help you win"</h3>
+    <h4>Mistake #4: "Public opinion can help you win"</h4>
         <ul>
             <li>Those who can, do. Those who cannot, make selections in newspapers or via a telephone service, hold seminars or write books.</li>
             <li>The key ingredient to winning, and even a moron should know this &mdash; is value. Any time you select in advance, without knowing the odds of the horses, you are not getting the best of it. It is impossible for anyone to win under those conditions.</li>
