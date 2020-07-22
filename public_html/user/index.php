@@ -149,8 +149,8 @@ LINKS;
                 
             <section id="user_records" class="mt-4">
                 <h2>Event Records</h2>
-                <ul class="user-list list-group list-group-flush">
-
+                <table class="table">
+                    <tbody>
                         <?php 
                         // Takes the array of user's event placements, formats and output to table. 
                         foreach ($user_records_array as $record) {
@@ -173,14 +173,14 @@ LINKS;
                                 $earnings = "$".$record['earnings'];
                             }
 echo <<< ENDRECORD
-                        <li class="list-group-item">
-                            {$record['event_name']}: {$placement} place with {$earnings} 
-                        </li>
+                        <tr>
+                            <th>{$record['event_name']}</th> <td>Placement: {$placement} with {$earnings}</td>
+                        </tr>
 ENDRECORD;
                         }
                         ?>         
-                    
-                    </ul>
+                    </tbody>
+                </table>
             </section> <!-- END user_records -->
     </main>
 {footer}
