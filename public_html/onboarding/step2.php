@@ -72,7 +72,7 @@ if (isset($_POST['next-btn'])) {
                 </div>
                     <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
                 <div>
-                    <input type="submit" class="btn btn-primary" name="skip-btn" value="Skip"></input>
+                    <input type="submit" class="btn btn-secondary" name="skip-btn" value="Skip"></input>
                 </div>
     </form>
     {footer}
