@@ -56,7 +56,7 @@ if (isset($_POST['next-btn'])) {
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
                 <div class="form-group">
-                    <p>First name and last name are required</p>
+                    <p>First name and last name are REQUIRED even if you choose to skip the rest!</p>
                     <input  type="text"  required class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
                 </div>
                 <div class="form-group">
