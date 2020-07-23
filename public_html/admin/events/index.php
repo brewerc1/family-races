@@ -40,9 +40,35 @@ $debug = debug();
             </ul>
 
             <h2>Previous Events</h2>
-            <ul class="list-unstyled text-center mt-3">
-                <li><a href="#">Reunion 2021</a> <span class='badge badge-primary badge-pill' id='invited_badge'>completed</span></li>
-            </ul>
+                <ul class="list-unstyled mt-3 text-center">
+                    <?php
+                    $query = "SELECT id, name, status FROM event ORDER BY id DESC";
+                    $events = $pdo->prepare($query);
+                    if ($events->execute()) {
+                        if ($events->rowCount() > 0) {
+                            $row = $events->fetchAll();
+                            $index = 0;
+                            while ($index < count($row)) {
+                                $event_id = $row[$index]["id"];
+                                $event_name = $row[$index]["name"];
+                                $event_status = $row[$index]["status"];
+
+                                $completed = "";
+
+                                if ($event_status) {
+                                    $completed = "<span class='badge badge-primary badge-pill' id='invited_badge'>completed</span>";
+                                }
+
+                                echo "<li><a href=\"./event.php?e=$event_id\">$event_name</a> $completed</li>";
+
+                                $index++;
+                            }
+                        }
+                    }
+
+                    ?>
+                </ul>
+
         </section>
     </main>
 
