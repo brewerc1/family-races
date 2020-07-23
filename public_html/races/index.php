@@ -118,6 +118,11 @@ $race_info_result = $pdo->prepare($race_info_sql);
 $race_info_result->execute(['event' => $event, 'race' => $race]);
 $race_info = $race_info_result->fetch();
 
+$race_standings_sql = "SELECT * FROM `race_standings` WHERE race_standings.race_event_id = :event AND race_standings.race_race_number = :race AND race_standings.user_id = :user_id LIMIT 1";
+$race_standings_result = $pdo->prepare($race_standings_sql);
+$race_standings_result->execute(['event' => $event, 'race' => $race, 'user_id' => $uid]);
+$race_standings_info = $race_standings_result->fetch();
+
 ?>
 {header}
 {main_nav}
@@ -223,6 +228,9 @@ $race_info = $race_info_result->fetch();
         <!-- Race Select Menu -->
         
     </form> <!-- END id race_picker -->
+    <?php if ($race_standings_info) {
+        echo "<strong>Purse: {$race_standings_info['earnings']}</strong>";
+    }?>
     
 	<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
