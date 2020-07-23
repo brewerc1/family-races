@@ -48,6 +48,7 @@ if (isset($_POST['submit-btn'])) {
             <img src="no-user-image.jpg">
         </div>
     <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
+        <p>If you do not submit a image you will be given a no profile photo image as your photo</p>
         <div class="form-group">
             <input type="file" class="form-control-file" id="photoUpload" name="profile_photo" placeholder="Add a Profile Photo">
         </div>
