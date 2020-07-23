@@ -24,7 +24,7 @@ label, .col-form-label {
 	font-weight: inherit;
 	padding-top: 4px;
 }
-.horizontal-center {
+.vertical-center {
 	margin: 0;
 	position: absolute;
 	top: 50%;
@@ -123,32 +123,34 @@ main {
 }
 
 /* User Profile */
-#profile_photo {
-	width: 150px;
-	height: 150px;
-	display: inline-block;
+#photo_upload {
+	align-items: center;
+	justify-content: center;
 }
-#profile_photo img {
-	border-radius: 50%;
+#user_profile_photo {
 	width: 100%;
+	margin-right: 10px;
 }
-#edit_buttons {
-	position: absolute;
-    top: 10px;
-    left: 0;
-    text-align: center;
-    width: 100%;
-    padding-left: 150px;
+#user_name h1 {
+	margin: 1.5rem 0;
 }
+@media (min-width: 576px) { 
+	#edit_buttons {
+		position: relative;
+		top: -50px;
+	}
+ }
+
+#edit_buttons.btn-group>.btn:not(:first-of-type):not(.dropdown-toggle){
+	border-left: 1px solid rgba(255,255,255,0.4);
+}
+
 #user_name{
     font-size: 1.3em;
     font-weight: 600;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 150px;
-	float: right;
-	width: calc( 100% - 150px );
 }
 #user_meta {
 	list-style-type: none;

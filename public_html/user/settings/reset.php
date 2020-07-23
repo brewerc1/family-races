@@ -1,13 +1,24 @@
 <?php
-
+/**
+ * Page to Change User Password
+ *
+ * Allows user to change password outside the login/forgot password flow.
+ */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
+// turn on output buffering
+ob_start('template');
+
+// start a session
+session_start();
+
+// set the page title for the template
 $page_title = "Change Password";
+
+// include the menu javascript for the template
 $javascript = '';
 
-// Authentication System
-ob_start('template');
-session_start();
+
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -26,13 +37,13 @@ if (isset($_POST["change_pwd"])) {
 
     // At least one of these is empty: Password cannot be empty
     if (empty($pwd) || empty($confirm_pwd)) {
-        header("Location: ./reset.php?message=2&alt=2");
+        header("Location: ./reset.php?m=7&s=warning");
         // Make sure the rest of code is not gonna be executed
         exit;
     } else {
 
         if ($pwd != $confirm_pwd) {
-            header("Location: ./reset.php?message=3&alt=2");
+            header("Location: ./reset.php?m=5&s=warning");
             // Make sure the rest of code is not gonna be executed
             exit;
 
@@ -40,7 +51,7 @@ if (isset($_POST["change_pwd"])) {
             $pwd_peppered = hash_hmac($hash_algorithm, $pwd, $pepper);
             if (password_verify($pwd_peppered, $_SESSION["password"])) {
                 // can't use the old password
-                header("Location: ./reset.php?message=4&alt=2");
+                header("Location: ./reset.php?m=4&s=warning");
                 // Make sure the rest of code is not gonna be executed
                 exit;
             } else {
@@ -49,12 +60,12 @@ if (isset($_POST["change_pwd"])) {
                 $sql = "UPDATE user SET password=:password WHERE email=:email";
                 if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'email' => $_SESSION["email"]])) {
                     // server error: hopefully this edge case will never happen
-                    header("Location: ./reset.php?message=1&alt=2");
+                    header("Location: ./reset.php?m=6&s=warning");
                     // Make sure the rest of code is not gonna be executed
                     exit;
                 } else {
                     // Redirect back to login with a success message and email inside the email input
-                    header("Location: /login/?message=3&alt=1&email=" . $_SESSION["email"]);
+                    header("Location: /login/?m=3&s=success&email=" . $_SESSION["email"]);
                     // Make sure the rest of code is not gonna be executed
                     exit;
                 }
@@ -67,49 +78,25 @@ if (isset($_POST["change_pwd"])) {
 
 }
 
-// Notification System
-$messages = array(
-    1 => "Server Error: Try again",
-    2 => "Password cannot be empty",
-    3 => "Passwords did not match",
-    4 => "Can't use old password"
-);
-
-$alerts = array(
-    1 => "success",
-    2 => "warning"
-);
-
-$notification = "";
-$alert = "";
-if (isset($_GET["message"]) && isset($_GET["alt"])) {
-    $not = trim($_GET["message"]);
-    $al = trim($_GET["alt"]);
-
-    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 )
-        $notification = $messages[$not];
-    if ($al == 1 || $al == 2 )
-        $alert = $alert_style[$alerts[$al]];
-
-}
 ?>
 {header}
 {main_nav}
     <main role="main">
-        <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
-            <input type="password" name="pwd" placeholder="New Password">
-            <input type="password" name="confirm_pwd" placeholder="Confirm Password">
-            <!--- Notification System : HTML tag may change-->
-            <?php if((isset($notification) && $notification != '') && (isset($_GET["alt"]) && $alert != '')){?>
-                <div class="alert <?php echo $alert ?> alert-dismissible fade show" role="alert">
-                    <?php echo $notification; ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        <div class="container">
+            <form class="mt-5" method="POST" action=<?php $_SERVER["PHP_SELF"] ?> >
+                <div class="form-group">
+                    <label for="pwd" class="sr-only">New Password</label>
+                    <input type="password" name="pwd" placeholder="New Password">
                 </div>
-            <?php } ?>
-            <input type="submit" name="change_pwd" value="Change Password" >
-        </form>
+                <div class="form-group">
+                    <label for="confirm_pwd" class="sr-only">Confirm Password</label>
+                    <input type="password" name="confirm_pwd" placeholder="Confirm Password">
+                </div>
+                <!-- <button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>-->
+                <input type="submit" name="change_pwd" value="Change Password" class="btn btn-primary btn-block">
+                <a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
+            </form>
+        </div>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
