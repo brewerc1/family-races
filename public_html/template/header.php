@@ -14,6 +14,10 @@ return <<< HTML
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/library/jquery.multifield.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" rel="stylesheet">
+
+
     <script>
         $( document ).ready(function() {
             $javascript
