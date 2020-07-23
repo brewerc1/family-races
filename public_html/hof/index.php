@@ -61,7 +61,7 @@ echo <<< ENDCURRENT
                     <h5 class="card-title">{$current_champ_row['name']}</h5>
                     <div class="card-body">
                         <a href="/user/?u={$current_champ_row['champion_id']}">
-                            <img src="{$current_champ_row['champion_photo']}" alt="Photo of HOF winner">
+                            <img class="w-100" src="{$current_champ_row['champion_photo']}" alt="Photo of HOF winner">
                         </a>
                     </div>
                     <ul class="list-group">
@@ -96,7 +96,7 @@ echo <<< ENDPREVIOUS
         <h5 class="card-title">{$row['name']}</h5>
         <div class="card-body">
             <a href="/user/?u={$row['champion_id']}">
-                <img src="{$row['champion_photo']}" alt="Photo of HOF winner">
+                <img class="w-100" src="{$row['champion_photo']}" alt="Photo of HOF winner">
             </a>
         </div>
         <ul class="list-group">
