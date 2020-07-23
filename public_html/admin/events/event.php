@@ -45,7 +45,6 @@ if ($event->rowCount() > 0) {
     $event_status = $row["status"];
     $event_pot = intval(explode(".", $row["pot"])[0]);
 }
-
 $debug = debug();
 ?>
 {header}
@@ -101,6 +100,7 @@ $debug = debug();
                 </div> <!---END Race HTML To Be Cloned -->
                 <?php
 
+
                 $query = "SELECT race_number, window_closed FROM race WHERE event_id = :event_id";
                 $races = $pdo->prepare($query);
                 if ($races->execute(['event_id' => $event_id])) {
@@ -108,42 +108,70 @@ $debug = debug();
                         $row = $races->fetchAll();
                         $index = 0;
                         while ($index < count($row)) {
-                            echo $row[$index]["race_number"];
+                            $race_num = $row[$index]["race_number"];
 
+$race_HTML = <<< HTML
+                <!--- Race HTML -->
+                <div class="group border-bottom border-dark">
+                    <button class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" aria-controls="collapseOne">
+                        Race $race_num
+                    </button>
+                    <div id="collapse$race_num" class="collapse race" data-parent="#accordion01">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
+                                <select id="$race_num" class="custom-select form-control col-sm-10 hr" required>
+HTML;
 
+                            // Horse count
+                            $horse_count = isset($_SESSION["site_default_horse_count"]) ?
+                                $_SESSION["site_default_horse_count"] : 1;
+                            for ($i = 1; $i < $horse_count + 1; $i++) {
+                                 $race_HTML .= "<option value='$i'>$i</option>";
+                            }
+$race_HTML .= <<< HTML
+                                </select>
+                            </div>
+                                <div id="addInput01" class="form-row mt-4 addSelect">
+HTML;
+                            $query = "SELECT horse_number FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
+                            $horses = $pdo->prepare($query);
+                            $horses->execute(['event_id' => $event_id, 'race_num' => $race_num]);
+                            $count_horse = $horses->rowCount();
+                            if ($horses->rowCount() > 0) {
+                                $row_horse = $horses->fetchAll();
+                                $i = 0;
+                                while ($i < count($row_horse)) {
+                                    $horse_val = $row_horse[$i]["horse_number"];
+$race_HTML .= <<< HTML
+                                    <input type="text" name="horses[$race_num][$i]" class="custom-select my-1 mr-sm-2 horse ht" value="$horse_val">
+HTML;
+                                    $i++;
+                                }
+
+                            } else {
+                                $count_horse = 1;
+$race_HTML .= <<< HTML
+                                
+                                <input type="text" name="horses[$race_num][]" class="custom-select my-1 mr-sm-2 horse ht" placeholder="Horse#">
+HTML;
+                            }
+$race_HTML .= <<< HTML
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div> <!---END Race HTML -->
+                                        <script>
+                                            $( "#$race_num" ).val($count_horse);
+                                        </script>
+HTML;
+                            echo $race_HTML;
                             $index++;
                         }
                     }
                 }
 
                 ?>
-                <!--- Race HTML -->
-                <div class="group">
-                    <button class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse" aria-expanded="true" aria-controls="collapseOne">
-                        Race 1
-                    </button>
-                    <div id="collapse" class="collapse race" data-parent="#accordion01">
-                        <div class="card-body">
-                            <div class="form-row">
-                                <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                <select id="01" class="custom-select form-control col-sm-10 hr" required>
-                                    <?php
-
-                                    $horse_count = isset($_SESSION["site_default_horse_count"]) ?
-                                        $_SESSION["site_default_horse_count"] : 1;
-
-                                    for ($i = 1; $i < $horse_count + 1; $i++) {
-                                        echo "<option value='$i'>$i</option>";
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div id="addInput01" class="form-row mt-4 addSelect">
-                                <input type="text" name="horses[1][]" class="custom-select my-1 mr-sm-2 horse ht" placeholder="Horse#">
-                            </div>
-                        </div>
-                    </div>
-                </div> <!---END Race HTML -->
 
             </fieldset>
             <div class="text-center mt-4">
