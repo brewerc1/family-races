@@ -57,13 +57,18 @@ $debug = debug();
 
                                 if ($event_status) {
                                     $completed = "<span class='badge badge-primary badge-pill' id='invited_badge'>completed</span>";
+                                    echo "<li>$event_name $completed</li>";
+                                } else {
+                                    echo "<li><a href=\"./event.php?e=$event_id\">$event_name</a> </li>";
                                 }
-
-                                echo "<li><a href=\"./event.php?e=$event_id\">$event_name</a> $completed</li>";
-
                                 $index++;
                             }
+                        } else {
+                            echo "<li>There is no event.</li>";
                         }
+                    } else {
+
+                        echo "<li>Something went wrong, <span>please logout and log back in</span>.</li>";
                     }
 
                     ?>

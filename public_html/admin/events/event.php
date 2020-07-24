@@ -7,6 +7,7 @@ session_start();
 
 // set the page title for the template
 $page_title = "Manage an Event";
+$javascript = "";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -31,24 +32,35 @@ $event_date = "Event Date";
 $event_pot = 0;
 
 
-$e = $_GET["e"];
+$e = isset($_GET["e"]) ? $_GET["e"] : NULL;
 $event_id = filter_var($e, FILTER_VALIDATE_INT) ? $e : 0;
 
-$query = "SELECT name, status, date, pot FROM event WHERE id = :id";
-$event = $pdo->prepare($query);
-$event->execute(['id' => $event_id]);
+if ($event_id == 0) {
+    $javascript .= "
+       $('#addRace').addClass('disabled');
+    ";
+} else {
 
-if ($event->rowCount() > 0) {
-    $row = $event->fetch();
-    $event_name = $row["name"];
-    $event_date = $row["date"];
-    $event_status = $row["status"];
-    $event_pot = intval(explode(".", $row["pot"])[0]);
+    $query = "SELECT name, status, date, pot FROM event WHERE id = :id";
+    $event = $pdo->prepare($query);
+    $event->execute(['id' => $event_id]);
+
+    if ($event->rowCount() > 0) {
+        $row = $event->fetch();
+        $event_name = $row["name"];
+        $event_date = $row["date"];
+        $event_status = $row["status"];
+        $event_pot = intval(explode(".", $row["pot"])[0]);
+    }
 }
 $debug = debug();
 ?>
 {header}
 {main_nav}
+<script>
+    deletHorseIDS = [];
+    let defaultHorseCount;
+</script>
 <main role="main">
     <section>
         <h1>Manage an Event</h1>
@@ -118,6 +130,7 @@ $race_HTML = <<< HTML
                     </button>
                     <div id="collapse$race_num" class="collapse race" data-parent="#accordion01">
                         <div class="card-body">
+                            <div class="d-flex flex-row-reverse mb-2"><a href="#" id="deleteRace$race_num" class="btn btn-outline-danger">Delete Race $race_num</a></div>
                             <div class="form-row">
                                 <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
                                 <select id="$race_num" class="custom-select form-control col-sm-10 hr" required>
@@ -130,9 +143,10 @@ HTML;
                                  $race_HTML .= "<option value='$i'>$i</option>";
                             }
 $race_HTML .= <<< HTML
+                                    <script>defaultHorseCount = $horse_count </script>
                                 </select>
                             </div>
-                                <div id="addInput01" class="form-row mt-4 addSelect">
+                                <div id="addInput$race_num" class="form-row mt-4 addSelect">
 HTML;
                             $query = "SELECT horse_number FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
                             $horses = $pdo->prepare($query);
@@ -143,8 +157,19 @@ HTML;
                                 $i = 0;
                                 while ($i < count($row_horse)) {
                                     $horse_val = $row_horse[$i]["horse_number"];
+
 $race_HTML .= <<< HTML
-                                    <input type="text" name="horses[$race_num][$i]" class="custom-select my-1 mr-sm-2 horse ht" value="$horse_val">
+     
+                                                                           
+                                        <div class="input-group mb-1 group-horse" id="horse$race_num$i">
+                                            <input type="text" name="horses[$race_num][$i]" class="custom-select my-1 mr-sm-2 horse ht" value="$horse_val">
+                                          <div class="input-group-append">
+                                            <span class="btn btn-danger" id="$race_num$i" style="border-radius: 100px">-</span>
+                                            <script>
+                                                deletHorseIDS.push($race_num$i);
+                                            </script>
+                                          </div>
+                                        </div>
 HTML;
                                     $i++;
                                 }
@@ -158,16 +183,23 @@ HTML;
                             }
 $race_HTML .= <<< HTML
                                                 </div>
-                                                    <div class="text-center mt-4">
-                                                        <a href="#" id="manage$race_num" class="btn btn-primary"> Manage Race $race_num </a>
-                                                        <a href="#" id="update$race_num" class="btn btn-primary disabled">Update Race $race_num</a>
-                                                        <a href="#" id="deleteRace$race_num" class="btn btn-danger disabled">Delete Race $race_num</a>
+                                                    <div class="d-flex justify-content-between mt-4">
+                                                        <span class="btn btn-success" id="addHorse$race_num" style="border-radius: 100px">+</span>
+                                                        <a href="/races/?r=$race_num" id="goToRace$race_num" class="btn btn-primary"> Go To Race $race_num </a>
+                                                        <a href="#" id="update$race_num" class="btn btn-primary d-none">Save</a>
+                                                        <div class="custom-control custom-checkbox">
+                                                          <input type="checkbox" class="custom-control-input" id="cancel$race_num">
+                                                          <label class="custom-control-label" for="cancel$race_num">Cancel Race $race_num</label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div> <!---END Race HTML -->
                                         <script>
                                             $( "#$race_num" ).val($count_horse);
+                                            if ($count_horse === defaultHorseCount) {
+                                                $("#addHorse$race_num").addClass("disabled");
+                                            }
                                         </script>
 HTML;
                             echo $race_HTML;
@@ -184,11 +216,59 @@ HTML;
                 <a href="#" id="deleteRace" class="btn btn-danger disabled">Delete a Race</a>
             </div>
             <div class="text-center mt-3">
-                <input type="submit" name="update_event" value="Update Event" class="btn btn-primary" style="display: none">
+                <input type="submit" name="update_event" value="Update Event" class="btn btn-primary d-none">
             </div>
         </form>
     </section>
 </main>
+<script>
+    $('fieldset').on('click', function (e) {
+        const idClicked = e.target.id;
 
+        if (deletHorseIDS.includes(parseInt(idClicked))) {
+            const id = 'select#' + idClicked.charAt(0);
+
+                const val = $( id ).val();
+                if (val > 1) {
+                    $( id ).val(val - 1);
+                    $('#horse' + idClicked).remove();
+                } else {
+                    $('#horse' + idClicked + ' input').attr('name', 'horses['+ idClicked.charAt(0) +'][]');
+                    $('#' + idClicked).addClass('d-none');
+                }
+
+        }
+
+        $( '#' + idClicked.charAt(0) ).on('change', function () {
+            if (this.value < defaultHorseCount) {
+                $('#addHorse' + idClicked.charAt(0)).removeClass("disabled");
+            } else {
+                $('#addHorse' + idClicked.charAt(0)).addClass("disabled");
+            }
+
+            let numberOfHorses = $('#addInput' + idClicked.charAt(0) + ' div.group-horse').length;
+
+            if (numberOfHorses > this.value) {
+                const numberOfDivToDelete = numberOfHorses - this.value;
+                if (this.value === '1') {
+                    $('#addInput' + idClicked.charAt(0) + ' div.group-horse span').addClass('d-none');
+                } else {
+                    $('#addInput' + idClicked.charAt(0) + ' div.group-horse span').removeClass('d-none');
+                }
+
+                for (let horse = 0; horse < numberOfDivToDelete; horse++) {
+                    $( '#addInput' + idClicked.charAt(0) + ' div.group-horse:last-of-type' ).remove();
+                }
+            } else {
+                for (numberOfHorses; numberOfHorses < this.value; numberOfHorses++) {
+                    $('#addInput' + idClicked.charAt(0) + ' div.group-horse span').removeClass('d-none');
+                    $( '#addInput' + idClicked.charAt(0) + ' div.group-horse:first-of-type').clone().
+                    attr('name', 'horses['+ idClicked.charAt(0) +'][' + numberOfHorses + ']').appendTo('#addInput' + idClicked.charAt(0));
+                }
+            }
+        });
+
+    });
+</script>
 {footer}
 <?php ob_end_flush(); ?>

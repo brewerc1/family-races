@@ -5,7 +5,7 @@ global $config;
 $config = array(
     'prod_mode' => false, // set to false for development
     'db_host' => 'localhost', //informatics.plus
-    'db_name' => 'races',
+    'db_name' => 'family-race',
     'db_user' => 'root', //racesdbuser
     'db_password' => '', //racesdb!
     'db_charset' => 'utf8mb4',
