@@ -293,7 +293,7 @@ $debug = debug($_POST);
                                     $state_selected_tag = '';
                                 }
 echo <<<ENDOPTION
-                                <option value="$key" $state_selected_tag>$value</option>
+                                <option value="$key" $state_selected_tag>$value</option>\n
 ENDOPTION;
                             }
                             ?>
