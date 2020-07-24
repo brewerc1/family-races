@@ -19,7 +19,76 @@ session_start();
 $page_title = "Edit User Profile";
 
 // include the menu javascript for the template
-$javascript = '';
+$javascript =<<< JAVASCRIPT
+
+\$image_crop = $('#croppie_element').croppie(
+    {
+        enableExif: true,
+        viewport: 
+        {
+            width:200,
+            height:200,
+            type:'circle'
+        },
+        boundary:
+        {
+            width:300,
+            height:300
+        }
+    }
+);
+
+$('#profile_photo').on(
+    'change', function(){
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            \$image_crop.croppie(
+                'bind', 
+                {
+                    url: event.target.result
+                }
+            ).then(function(){
+                console.log('jQuery bind complete');
+            });
+        }
+        reader.readAsDataURL(this.files[0]);
+        $('#uploadimageModal').modal('show');
+    }
+);
+
+$('.crop_image').click(function(event){
+    \$image_crop.croppie(
+        'result', 
+        {
+            type: 'base64',
+            size: {width: 300},
+            format: 'jpeg',
+            quality: 0.8,
+            circle: false,
+        }
+    ).then(function(response){
+        $('#user_profile_photo').attr("src", response);
+        $.ajax(
+            {
+                url:"/library/photo_uploader.php",
+                type: "POST",
+                data:
+                {
+                    "id": {$_SESSION['id']},
+                    "cropped_image": response
+                },
+                success:function(data)
+                {
+                    $('#uploadimageModal').modal('hide');
+                    $('#profile_photo').val('');
+                    $('#ajax_alert').html(data);
+                }
+            }
+        );
+    })
+});
+/* END AJAX Photo Uploader */
+JAVASCRIPT;
 
 if (!isset($_SESSION["id"])){
     header("Location: /login/");
@@ -114,6 +183,7 @@ if(isset($_POST['save_button'])){
         $email_value = $_SESSION['email'];
     } else {
     // this is not adequate. What happens if validate filter fails? For debate: What method should be first? Sanitize or Validate?
+    // for example, enter (without quotes) .admin@mysite.com (note the period)...
         $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
@@ -271,76 +341,5 @@ ENDOPTION;
         <!-- END: modal for photo cropping -->
 
     </main>
-<script>  
-$(document).ready(function(){
-
-    $image_crop = $('#croppie_element').croppie(
-        {
-            enableExif: true,
-            viewport: 
-            {
-                width:200,
-                height:200,
-                type:'circle'
-            },
-            boundary:
-            {
-                width:300,
-                height:300
-            }
-        }
-    );
-
-    $('#profile_photo').on(
-        'change', function(){
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                $image_crop.croppie(
-                    'bind', 
-                    {
-                        url: event.target.result
-                    }
-                ).then(function(){
-                    console.log('jQuery bind complete');
-                });
-            }
-            reader.readAsDataURL(this.files[0]);
-            $('#uploadimageModal').modal('show');
-        }
-    );
-
-    $('.crop_image').click(function(event){
-        $image_crop.croppie(
-            'result', 
-            {
-                type: 'base64',
-                size: {width: 300},
-                format: 'jpeg',
-                quality: 0.8,
-                circle: false,
-            }
-        ).then(function(response){
-            $('#user_profile_photo').attr("src", response);
-            $.ajax(
-                {
-                    url:"/library/photo_uploader.php",
-                    type: "POST",
-                    data:
-                    {
-                        "id": <?php echo $_SESSION['id'];?>,
-                        "cropped_image": response
-                    },
-                    success:function(data)
-                    {
-                        $('#uploadimageModal').modal('hide');
-                        $('#profile_photo').val('');
-                        $('#ajax_alert').html(data);
-                    }
-                }
-            );
-        })
-    });
-});  
-</script>
 {footer}
 <?php ob_end_flush(); ?>
