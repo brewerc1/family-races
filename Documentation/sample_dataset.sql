@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 21, 2020 at 01:44 PM
+-- Generation Time: Jul 23, 2020 at 11:44 PM
 -- Server version: 10.2.10-MariaDB
 -- PHP Version: 7.2.30
 
@@ -299,23 +299,24 @@ INSERT INTO `pick` (`user_id`, `race_event_id`, `race_race_number`, `horse_numbe
 CREATE TABLE `race` (
   `event_id` smallint(6) NOT NULL,
   `race_number` tinyint(4) NOT NULL,
-  `window_closed` tinyint(1) DEFAULT 0
+  `window_closed` tinyint(1) DEFAULT 0,
+  `cancelled` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `race`
 --
 
-INSERT INTO `race` (`event_id`, `race_number`, `window_closed`) VALUES
-(1, 1, 1),
-(1, 2, 1),
-(1, 3, 1),
-(2, 1, 1),
-(2, 2, 1),
-(2, 3, 1),
-(3, 1, 1),
-(3, 2, 1),
-(3, 3, 0);
+INSERT INTO `race` (`event_id`, `race_number`, `window_closed`, `cancelled`) VALUES
+(1, 1, 1, 0),
+(1, 2, 1, 0),
+(1, 3, 1, 0),
+(2, 1, 1, 0),
+(2, 2, 1, 0),
+(2, 3, 1, 0),
+(3, 1, 1, 0),
+(3, 2, 1, 0),
+(3, 3, 0, 0);
 
 -- --------------------------------------------------------
 
