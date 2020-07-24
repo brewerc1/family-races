@@ -234,8 +234,8 @@ if(isset($_POST['save_button'])){
         }
 
         $update_time_stamp = strtotime($row["update_time"]);
-        //header("Location: /user/");
-        //exit;
+        header("Location: /user/");
+        exit;
     }
 }
 
