@@ -36,64 +36,26 @@ $debug = debug();
 ///// end DEBUG
 
 // logged in user
-$user_id = $_SESSION['id'];
+$user_id = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
 $state_array = array(	
-    "AK" => "Alaska",
-    "AL" => "Alabama",
-    "AR" => "Arkansas",
-    "AZ" => "Arizona",	    
-    "CA" => "California",
-    "CO" => "Colorado",	
-    "CT" => "Connecticut",	
-    "DC" => "District of Columbia",	
-    "DE" => "Delaware",	
-    "FL" => "Florida",	
-    "GA" => "Georgia",	
-    "HI" => "Hawaii",	
-    "IA" => "Iowa",	
-    "ID" => "Idaho",	
-    "IL" => "Illinois",	
-    "IN" => "Indiana",	
-    "KS" => "Kansas",	
-    "KY" => "Kentucky",	
-    "LA" => "Louisiana",	
-    "MA" => "Massachusetts",	
-    "MD" => "Maryland",	
-    "ME" => "Maine",	
-    "MI" => "Michigan",	
-    "MN" => "Minnesota",	
-    "MO" => "Missouri",	
-    "MS" => "Mississippi",	
-    "MT" => "Montana",	
-    "NC" => "North Carolina",	
-    "ND" => "North Dakota",	
-    "NE" => "Nebraska",	
-    "NH" => "New Hampshire",	
-    "NJ" => "New Jersey",	
-    "NM" => "New Mexico",	
-    "NV" => "Nevada",	
-    "NY" => "New York",	
-    "OH" => "Ohio",	
-    "OK" => "Oklahoma",	
-    "OR" => "Oregon",	
-    "PA" => "Pennsylvania",	
-    "PR" => "Puerto Rico",	
-    "RI" => "Rhode Island",	
-    "SC" => "South Carolina",	
-    "SD" => "South Dakota",	
-    "TN" => "Tennessee",	
-    "TX" => "Texas",	
-    "UT" => "Utah",	
-    "VA" => "Virginia",	
-    "VT" => "Vermont",	
-    "WA" => "Washington",	
-    "WI" => "Wisconsin",	
-    "WV" => "West Virginia",	
-    "WY" => "Wyoming"	
-);
+    "AK" => "Alaska", "AL" => "Alabama", "AR" => "Arkansas", "AZ" => "Arizona",
+    "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut",
+    "DC" => "District of Columbia", "DE" => "Delaware", "FL" => "Florida",	
+    "GA" => "Georgia", "HI" => "Hawaii", "IA" => "Iowa", "ID" => "Idaho",	
+    "IL" => "Illinois", "IN" => "Indiana", "KS" => "Kansas", "KY" => "Kentucky",	
+    "LA" => "Louisiana", "MA" => "Massachusetts", "MD" => "Maryland",	
+    "ME" => "Maine", "MI" => "Michigan", "MN" => "Minnesota", "MO" => "Missouri",	
+    "MS" => "Mississippi", "MT" => "Montana", "NC" => "North Carolina",	
+    "ND" => "North Dakota", "NE" => "Nebraska",	"NH" => "New Hampshire",	
+    "NJ" => "New Jersey", "NM" => "New Mexico",	"NV" => "Nevada", "NY" => "New York",	
+    "OH" => "Ohio",	"OK" => "Oklahoma",	"OR" => "Oregon", "PA" => "Pennsylvania",	
+    "PR" => "Puerto Rico", "RI" => "Rhode Island", "SC" => "South Carolina",	
+    "SD" => "South Dakota",	"TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah",	
+    "VA" => "Virginia", "VT" => "Vermont", "WA" => "Washington", "WI" => "Wisconsin",	
+    "WV" => "West Virginia", "WY" => "Wyoming");
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
@@ -116,46 +78,44 @@ if(isset($_POST['save_button'])){
     }
     // First Name Text
     if(!isset($_POST['first_name'])){
-        $first_name_value = $_SESSION['first_name']; 
+        $first_name_value = filter_var(trim($_SESSION['first_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
     } else {
-        $first_name_value = htmlentities($_POST['first_name'], ENT_QUOTES);
+        $first_name_value = filter_var(trim($_POST['first_name']),  FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     // Last Name Text
     if(!isset($_POST['last_name'])){
-       $last_name_value = $_SESSION['last_name'];
-    } else {
-        //$last_name_value = htmlentities($_POST['last_name'], ENT_QUOTES);
-        $last_name_value = filter_var( $_POST['last_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        //$last_name_value = $_POST['last_name'];
+       $last_name_value = filter_var(trim($_SESSION['last_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    } else { 
+        $last_name_value = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     // Motto Text
     if(!isset($_POST['motto'])){
-        $motto_value = $_SESSION['motto'];
+        $motto_value = filter_var(trim($_SESSION['motto']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     } else {
-        $motto_value = htmlentities($_POST['motto'], ENT_QUOTES);
+        $motto_value = filter_var(trim($_POST['motto']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     // Email Text
     if(!isset($_POST['email'])){
-        $email_value = $_SESSION['email'];
+        $email_value = filter_var(filter_var(trim($_SESSION['email']), FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     } else {
-        $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
+        $email_value = filter_var(filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
     // City Text
     if(!isset($_POST['city'])){
-        $city_value = $_SESSION['city'];
+        $city_value = filter_var(trim($_SESSION['city']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     } else {
-        $city_value = htmlentities($_POST['city'], ENT_QUOTES);
+        $city_value = filter_var(trim($_POST['city']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     // State Text
     if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
-        $state_value = htmlentities($_POST['state'], ENT_QUOTES);
+        $state_value = filter_var(trim($_POST['state']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     } else {
-        $state_value = $_SESSION['state'];
+        $state_value = filter_var(trim($_SESSION['state']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
     // PDO to update the DB 
@@ -178,8 +138,6 @@ if(isset($_POST['save_button'])){
         $update_session_result = $pdo->prepare($update_session_sql);
         $update_session_result->execute(['user_id' => $user_id]);
         $row = $update_session_result->fetch();
-        
-        $debug = debug($row);
         $_SESSION['photo'] = $row['photo'];
         $_SESSION['first_name'] = $row['first_name'];
         $_SESSION['last_name'] = $row['last_name'];
