@@ -158,6 +158,11 @@ HTML;
                             }
 $race_HTML .= <<< HTML
                                                 </div>
+                                                    <div class="text-center mt-4">
+                                                        <a href="#" id="manage$race_num" class="btn btn-primary"> Manage Race $race_num </a>
+                                                        <a href="#" id="update$race_num" class="btn btn-primary disabled">Update Race $race_num</a>
+                                                        <a href="#" id="deleteRace$race_num" class="btn btn-danger disabled">Delete Race $race_num</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div> <!---END Race HTML -->
