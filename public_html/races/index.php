@@ -264,15 +264,14 @@ HERE;
     }
 } else {
     if ($race_info['window_closed'] == '0') { // Don't show any text when the window is still open
-        echo "<br>";
+
     }
     else { // Show there is no results entered in yet
         echo <<< NORESULTS
             <div class="no-results">
-                <br>
                 <h2>No results have been entered in for this race yet! Check back later!</h2>
             </div>
-        NORESULTS;
+NORESULTS;
     }
 }
 ?>
