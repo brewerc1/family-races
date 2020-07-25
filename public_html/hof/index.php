@@ -36,7 +36,7 @@ $debug = debug("");
 
 // Gather data for this page
 // SQL to retrieve Hall of Fame related data
-$hof_sql = 'SELECT event.*, user.first_name, user.last_name, user.update_time
+$hof_sql = 'SELECT event.*, user.first_name, user.last_name, user.photo, user.update_time as user_update_time
 FROM event, user
 WHERE event.champion_id = user.id AND event.status = 1 ORDER BY event.id DESC';
 $hof_result = $pdo->prepare($hof_sql);
@@ -53,15 +53,25 @@ $num_hof_results = $hof_result->rowCount();
                 if($num_hof_results > 0){
 
                     $current_champ_row = $hof_result->fetch();
+                        // $current_champ_row['champion_photo'] = ""; // test for no champ_photo
                     $num_hof_results -= 1;
+                    // avoid having no image to display
                     
+                    if ($current_champ_row['champion_photo'] == NULL){
+                        $update_time_stamp = $current_champ_row['user_update_time'];
+                        $current_champ_photo = $current_champ_row['photo']."?".$update_time_stamp;
+                    } else {
+                        $event_update_time_stamp = strtotime($current_champ_row['update_time']); // cache busting
+                        $current_champ_photo = $current_champ_row['champion_photo']."?".$event_update_time_stamp;
+                    }
+
 echo <<< ENDCURRENT
                 <div class="card text-center">
                     <h2 class="card-header">Current Champion</h2>
                     <h5 class="card-title">{$current_champ_row['name']}</h5>
                     <div class="card-body">
                         <a href="/user/?u={$current_champ_row['champion_id']}">
-                            <img class="w-100" src="{$current_champ_row['champion_photo']}" alt="Photo of HOF winner">
+                            <img class="w-100" src="{$current_champ_photo}" alt="Photo of HOF winner">
                         </a>
                     </div>
                     <ul class="list-group">
@@ -90,13 +100,23 @@ ENDNORESULT;
                     <?php
                     if ($num_hof_results > 0){
                         while ($row = $hof_result->fetch()){
+                            // avoid having no image to display
+
+                            // $row['champion_photo'] = ""; // test for no champ_photo
+                            if ($row['champion_photo'] == NULL){
+                                $update_time_stamp = $row['user_update_time'];
+                                $champ_photo = $row['photo']."?".$update_time_stamp;
+                            } else {
+                                $event_update_time_stamp = strtotime($current_champ_row['update_time']); // cache busting
+                                $champ_photo = $row['champion_photo']."?".$event_update_time_stamp;
+                            }
 echo <<< ENDPREVIOUS
 <li class= "list-group-item">
     <div class="card text-center">
         <h5 class="card-title">{$row['name']}</h5>
         <div class="card-body">
             <a href="/user/?u={$row['champion_id']}">
-                <img class="w-100" src="{$row['champion_photo']}" alt="Photo of HOF winner">
+                <img class="w-100" src="{$champ_photo}" alt="Photo of HOF winner">
             </a>
         </div>
         <ul class="list-group">
