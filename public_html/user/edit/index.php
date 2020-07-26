@@ -2,11 +2,9 @@
 /**
  * Page to Edit User Profile
  * 
- * This page mirrors the layout of the profile page and allows the user to edit
- * their profile data. 
+ * This page allows the user to edit their profile data. 
  * DB is updated when the 'save' button is clicked.
- * If a photo is uploaded, the user's current photo is removed from /uploads/
- * as the new image is saved. Profile images are saved as 'user_id.file_type'.
+ * Photo uploads are handled via AJAX independent of this form's SAVE.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -21,7 +19,76 @@ session_start();
 $page_title = "Edit User Profile";
 
 // include the menu javascript for the template
-$javascript = '';
+$javascript =<<< JAVASCRIPT
+
+\$image_crop = $('#croppie_element').croppie(
+    {
+        enableExif: true,
+        viewport: 
+        {
+            width:200,
+            height:200,
+            type:'circle'
+        },
+        boundary:
+        {
+            width:300,
+            height:300
+        }
+    }
+);
+
+$('#profile_photo').on(
+    'change', function(){
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            \$image_crop.croppie(
+                'bind', 
+                {
+                    url: event.target.result
+                }
+            ).then(function(){
+                console.log('jQuery bind complete');
+            });
+        }
+        reader.readAsDataURL(this.files[0]);
+        $('#uploadimageModal').modal('show');
+    }
+);
+
+$('.crop_image').click(function(event){
+    \$image_crop.croppie(
+        'result', 
+        {
+            type: 'base64',
+            size: {width: 300},
+            format: 'jpeg',
+            quality: 0.8,
+            circle: false,
+        }
+    ).then(function(response){
+        $('#user_profile_photo').attr("src", response);
+        $.ajax(
+            {
+                url:"/library/photo_uploader.php",
+                type: "POST",
+                data:
+                {
+                    "id": {$_SESSION['id']},
+                    "cropped_image": response
+                },
+                success:function(data)
+                {
+                    $('#uploadimageModal').modal('hide');
+                    $('#profile_photo').val('');
+                    $('#ajax_alert').html(data);
+                }
+            }
+        );
+    })
+});
+/* END AJAX Photo Uploader */
+JAVASCRIPT;
 
 if (!isset($_SESSION["id"])){
     header("Location: /login/");
@@ -31,180 +98,162 @@ if (!isset($_SESSION["id"])){
     exit;
 }
 
-///// DEBUG
-$debug = debug();
-///// end DEBUG
-
 // logged in user
 $user_id = $_SESSION['id'];
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
 $state_array = array(	
-    "AK" => "Alaska",
-    "AL" => "Alabama",
-    "AR" => "Arkansas",
-    "AZ" => "Arizona",	    
-    "CA" => "California",
-    "CO" => "Colorado",	
-    "CT" => "Connecticut",	
-    "DC" => "District of Columbia",	
-    "DE" => "Delaware",	
-    "FL" => "Florida",	
-    "GA" => "Georgia",	
-    "HI" => "Hawaii",	
-    "IA" => "Iowa",	
-    "ID" => "Idaho",	
-    "IL" => "Illinois",	
-    "IN" => "Indiana",	
-    "KS" => "Kansas",	
-    "KY" => "Kentucky",	
-    "LA" => "Louisiana",	
-    "MA" => "Massachusetts",	
-    "MD" => "Maryland",	
-    "ME" => "Maine",	
-    "MI" => "Michigan",	
-    "MN" => "Minnesota",	
-    "MO" => "Missouri",	
-    "MS" => "Mississippi",	
-    "MT" => "Montana",	
-    "NC" => "North Carolina",	
-    "ND" => "North Dakota",	
-    "NE" => "Nebraska",	
-    "NH" => "New Hampshire",	
-    "NJ" => "New Jersey",	
-    "NM" => "New Mexico",	
-    "NV" => "Nevada",	
-    "NY" => "New York",	
-    "OH" => "Ohio",	
-    "OK" => "Oklahoma",	
-    "OR" => "Oregon",	
-    "PA" => "Pennsylvania",	
-    "PR" => "Puerto Rico",	
-    "RI" => "Rhode Island",	
-    "SC" => "South Carolina",	
-    "SD" => "South Dakota",	
-    "TN" => "Tennessee",	
-    "TX" => "Texas",	
-    "UT" => "Utah",	
-    "VA" => "Virginia",	
-    "VT" => "Vermont",	
-    "WA" => "Washington",	
-    "WI" => "Wisconsin",	
-    "WV" => "West Virginia",	
-    "WY" => "Wyoming"	
+	"AK" => "Alaska",
+	"AL" => "Alabama",
+	"AR" => "Arkansas",
+	"AZ" => "Arizona",
+	"CA" => "California",
+	"CO" => "Colorado",
+	"CT" => "Connecticut",
+	"DC" => "District of Columbia",
+	"DE" => "Delaware",
+	"FL" => "Florida",
+	"GA" => "Georgia",
+	"HI" => "Hawaii",
+	"IA" => "Iowa",
+	"ID" => "Idaho",
+	"IL" => "Illinois",
+	"IN" => "Indiana",
+	"KS" => "Kansas",
+	"KY" => "Kentucky",
+	"LA" => "Louisiana",
+	"MA" => "Massachusetts",
+	"MD" => "Maryland",
+	"ME" => "Maine",
+	"MI" => "Michigan",
+	"MN" => "Minnesota",
+	"MO" => "Missouri",
+	"MS" => "Mississippi",
+	"MT" => "Montana",
+	"NC" => "North Carolina",
+	"ND" => "North Dakota",
+	"NE" => "Nebraska",
+	"NH" => "New Hampshire",
+	"NJ" => "New Jersey",
+	"NM" => "New Mexico",
+	"NV" => "Nevada",
+	"NY" => "New York",
+	"OH" => "Ohio",
+	"OK" => "Oklahoma",
+	"OR" => "Oregon",
+	"PA" => "Pennsylvania",
+	"PR" => "Puerto Rico",
+	"RI" => "Rhode Island",
+	"SC" => "South Carolina",
+	"SD" => "South Dakota",
+	"TN" => "Tennessee",
+	"TX" => "Texas",
+	"UT" => "Utah",	
+	"VA" => "Virginia",
+	"VT" => "Vermont",
+	"WA" => "Washington",
+	"WI" => "Wisconsin",
+	"WV" => "West Virginia",
+	"WY" => "Wyoming"
 );
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
-    //User Photo Upload
-    //TODO: Impliment Cropper or similar plugin
-    $photo_value = $_SESSION['photo'];
-    if ($_FILES['profile_photo']['error'] == 0 && isset($_FILES['profile_photo'])) {
-        $name = $_FILES['profile_photo']['name'];
-        $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
-        $target_file = $target_dir . basename($_FILES['profile_photo']['name']);
-        $image_file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        $extensions_arr = array("jpg","jpeg","png","gif");
 
-        if(in_array($image_file_type, $extensions_arr)){
-            $unlink_result=unlink($_SERVER['DOCUMENT_ROOT'] . $photo_value);
-            $debug = debug($unlink_result); 
-            if(move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type))
-            $photo_value = "/uploads/$user_id.$image_file_type"; 
-        }
-    }
-    // First Name Text
-    if(!isset($_POST['first_name'])){
+    if(empty($_POST['first_name'])){
         $first_name_value = $_SESSION['first_name']; 
     } else {
-        $first_name_value = htmlentities($_POST['first_name'], ENT_QUOTES);
+        $first_name_value = trim($_POST['first_name']);
     }
 
-    // Last Name Text
-    if(!isset($_POST['last_name'])){
+    if(empty($_POST['last_name'])){
        $last_name_value = $_SESSION['last_name'];
     } else {
-        //$last_name_value = htmlentities($_POST['last_name'], ENT_QUOTES);
-        $last_name_value = filter_var( $_POST['last_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        //$last_name_value = $_POST['last_name'];
+        $last_name_value = trim($_POST['last_name']);
     }
 
-    // Motto Text
-    if(!isset($_POST['motto'])){
+    if(empty($_POST['motto'])){
         $motto_value = $_SESSION['motto'];
     } else {
-        $motto_value = htmlentities($_POST['motto'], ENT_QUOTES);
+        $motto_value = trim($_POST['motto']);
     }
 
-    // Email Text
-    if(!isset($_POST['email'])){
+    if(empty($_POST['email'])){
         $email_value = $_SESSION['email'];
     } else {
+    // this is not adequate. What happens if validate filter fails? For debate: What method should be first? Sanitize or Validate?
+    // for example, enter (without quotes) .admin@mysite.com (note the period)...
         $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
-    // City Text
-    if(!isset($_POST['city'])){
+    if(empty($_POST['city'])){
         $city_value = $_SESSION['city'];
     } else {
-        $city_value = htmlentities($_POST['city'], ENT_QUOTES);
+        $city_value = trim($_POST['city']);
     }
 
-    // State Text
     if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
-        $state_value = htmlentities($_POST['state'], ENT_QUOTES);
+        $state_value = trim($_POST['state']);
     } else {
         $state_value = $_SESSION['state'];
     }
 
     // PDO to update the DB 
-    $update_preferences_sql = 
-    'UPDATE user SET 
-    first_name = :first_name_value, last_name = :last_name_value, motto = :motto_value,
-    email = :email_value, city = :city_value, state = :state_value, photo = :photo_value 
+    $update_preferences_sql = 'UPDATE user SET 
+      first_name = :first_name_value,
+      last_name = :last_name_value,
+      motto = :motto_value,
+      email = :email_value,
+      city = :city_value,
+      state = :state_value 
     WHERE id = :user_id';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
-    $update_preferences_result->execute(['first_name_value' => $first_name_value, 'last_name_value' => $last_name_value,
-    'motto_value' => $motto_value, 'email_value' => $email_value, 'city_value' => $city_value, 'state_value' => $state_value,
-    'user_id' => $user_id, 'photo_value' => $photo_value ]);
+    $update_preferences_result->execute([
+      'first_name_value' => $first_name_value,
+      'last_name_value' => $last_name_value,
+      'motto_value' => $motto_value,
+      'email_value' => $email_value,
+      'city_value' => $city_value,
+      'state_value' => $state_value,
+      'user_id' => $user_id
+    ]);
     
     //requery DB to update $_SESSION. Ensures $_SESSION is always in sync with DB.
     if ($update_preferences_result){    
         $update_session_sql = 
-        "SELECT first_name, last_name, motto, email, city, state, photo, update_time
-        FROM user WHERE id = :user_id";
+        "SELECT first_name, last_name, motto, email, city, state, update_time FROM user WHERE id = :user_id";
         $update_session_result = $pdo->prepare($update_session_sql);
         $update_session_result->execute(['user_id' => $user_id]);
         $row = $update_session_result->fetch();
-        
-        $debug = debug($row);
-        $_SESSION['photo'] = $row['photo'];
-        $_SESSION['first_name'] = $row['first_name'];
-        $_SESSION['last_name'] = $row['last_name'];
-        $_SESSION['motto'] = $row['motto'];
-        $_SESSION['email'] = $row['email'];
-        $_SESSION['city'] = $row['city'];
-        $_SESSION['state'] = $row['state'];
-        $_SESSION['update_time'] = $row['update_time'];
+
+        // Set the session variable for each column returned
+        foreach( $row as $key => $value ){
+          $_SESSION[$key] = $value;
+        }
+
         $update_time_stamp = strtotime($row["update_time"]);
         header("Location: /user/");
         exit;
     }
 }
 
+///// DEBUG
+$debug = debug($_POST);
+///// end DEBUG
 ?>
-{header}
-{main_nav}
+  {header}
+  {main_nav}
     <main role="main">
         <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
                 <div class="form-group col">
                     <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                    <div id="ajax_alert"></div>
                 </div>
                 <div id="photo_upload" class="form-group col-sm-8 d-flex">
-                    <input class="d-inline" type="file" accept="image/*" class="form-control-file" id="profile_photo" name="profile_photo">
+                    <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
                 </div>
             </section>
 
@@ -244,7 +293,7 @@ if(isset($_POST['save_button'])){
                                     $state_selected_tag = '';
                                 }
 echo <<<ENDOPTION
-                                <option value="$key" $state_selected_tag>$value</option>
+                                <option value="$key" $state_selected_tag>$value</option>\n
 ENDOPTION;
                             }
                             ?>
@@ -265,7 +314,32 @@ ENDOPTION;
                     <a class="text-secondary d-block mt-2 text-center" href="/user/">Cancel</a>
                 </div>
             </div>
+            <input class="col" type="hidden" id="cropped_image">
         </form>
+
+        <!-- modal for photo cropping -->
+        <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
+                <div id="croppie_element"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary crop_image">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END: modal for photo cropping -->
+
     </main>
 {footer}
 <?php ob_end_flush(); ?>

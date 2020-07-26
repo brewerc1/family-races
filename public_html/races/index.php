@@ -57,11 +57,24 @@ if(isset($_GET['e']) && is_numeric($_GET['e'])){
 if(isset($_GET['r']) && is_numeric($_GET['r'])){
     $race = $_GET['r'];
 }else{
-    $race = 1;
+    $current_race_sql = "SELECT * FROM `race` WHERE race.event_id = :event AND race.window_closed = 0 LIMIT 1";
+    $current_race_result = $pdo->prepare($current_race_sql);
+    $current_race_result->execute(['event' => $event]);
+    $current_race = $current_race_result->fetch();
+
+    $race = $current_race['race_number'];
+}
+
+// Handle if user only selected one thing and clicked submit
+if (isset($_GET['p']) && is_numeric($_GET['p'])) {
+    $old_pick = $_GET['p'];
+}
+if (isset($_GET['f']) && is_string($_GET['f'])) {
+    $old_finish = $_GET['f'];
 }
 
 if($_SESSION['site_memorial_race_enable'] == '1'){
-    $memorial_race = '';
+    $memorial_race_number = $_SESSION['site_memorial_race_number'];
 }
 
 ///// DEBUG
@@ -92,6 +105,25 @@ $num_races_result = $pdo->prepare($num_races_sql);
 $num_races_result->execute(['event' => $event]);
 $num_races = $num_races_result->rowCount();
 
+// SQL to get the horses for each race
+$horses_sql = "SELECT * FROM `horse` WHERE horse.race_event_id = :event AND horse.race_race_number = :race";
+$horses_result = $pdo->prepare($horses_sql);
+$horses_result->execute(['event' => $event, 'race' => $race]);
+$horse = $horses_result->fetch();
+$horses_count = $horses_result->rowCount();
+
+// SQL to get information about each race
+$race_info_sql = "SELECT * FROM `race` WHERE race.event_id = :event AND race.race_number = :race";
+$race_info_result = $pdo->prepare($race_info_sql);
+$race_info_result->execute(['event' => $event, 'race' => $race]);
+$race_info = $race_info_result->fetch();
+
+// SQL to get the race standings (used for the purse)
+$race_standings_sql = "SELECT * FROM `race_standings` WHERE race_standings.race_event_id = :event AND race_standings.race_race_number = :race AND race_standings.user_id = :user_id LIMIT 1";
+$race_standings_result = $pdo->prepare($race_standings_sql);
+$race_standings_result->execute(['event' => $event, 'race' => $race, 'user_id' => $uid]);
+$race_standings_info = $race_standings_result->fetch();
+
 ?>
 {header}
 {main_nav}
@@ -103,68 +135,106 @@ $num_races = $num_races_result->rowCount();
                 <label class="input-group-text" for="race_picker">Race</label>
             </div>
             <select class="custom-select" id="race_picker">
-    <?php 
-    // Builds the select menu based on number of races
-        // TODO: "all" option to display event standings
-        // TODO: Replace "race #" display with memorial race title
-    for($i = 1; $i <= $num_races; $i++){
-        if($i == $race){
-            $attr = "selected='selected' disabled='disabled'";
-        }else{
-            $attr = "";
-        }
-        echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
-    }
-    ?>
+                <?php 
+                    // Builds the select menu based on number of races
+                    // TODO: "all" option to display event standings
+                    for($i = 1; $i <= $num_races; $i++){
+                        if($i == $race){
+                            $attr = "selected='selected' disabled='disabled'";
+                        }else{
+                            $attr = "";
+                        }
+
+                        if ($memorial_race_number == $i) {
+                            echo "<option value='e=$event&r=$i&u=$uid' $attr>" . $_SESSION['site_memorial_race_name'] . "</option>";
+                        }
+                        else {
+                            echo "<option value='e=$event&r=$i&u=$uid' $attr>Race $i</option>";
+                        }
+                    }
+                ?>
                 <option value="e=$event&r=0&u=$uid">All Races</option>
             </select>
         </div>
-        <div class="card-body">
-            <?php // TODO: Conditional statements to check if window closed (display results)
-// TODO: Conditional statement to check if window not open yet
-/* CONSIDER: If window is closed, perhaps the best way to show the user's bet is to use the select menu choices
-set as readonly plain text as described here: https://getbootstrap.com/docs/4.0/components/forms/#readonly-plain-text
-*/
-?>
-            <div class="input-group input-group-lg mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Pick</label>
+        <?php if($race_info['window_closed'] == '0') {?>
+            <form action="bets.php" method="POST">
+                <div class="card-body">
+                    <div class="form-group input-group input-group-lg mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="horseSelection">Pick</label>
+                        </div>
+                        <select class="custom-select" id="horseSelection" name="horseSelection" required>
+                            <?php
+                                // If no horse has been selected, default to 'Horse'
+                                echo "<option value='default' selected disabled>Horse...</option>";
+                                for($i = 0; $i < $horses_count; $i++){
+                                    if (($horse['horse_number'] == $pick['horse_number']) || ($horse['horse_number'] == $old_pick)) {
+                                        echo "<option selected>" . $horse['horse_number']. "</option>";
+                                    }
+                                    else {
+                                        echo "<option>" . $horse['horse_number'] . "</option>";
+                                    }
+                                    $horse = $horses_result->fetch();
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group input-group input-group-lg mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="placeSelection">Finish</label>
+                        </div>
+                        <select class="custom-select" id="placeSelection" name="placeSelection" required>
+                            <!-- If no finish has been selected, default to 'Choose' -->
+                            <option value="default" selected disabled>Choose...</option>
+                            <?php 
+                            if (($pick['finish'] == 'win') || ($old_finish == 'win')) {
+                                echo "<option value='win' selected>Win</option>";
+                            }
+                            else {
+                                echo "<option value='win'>Win</option>";
+                            }
+                            if (($pick['finish'] == 'place') || ($old_finish == 'place')) {
+                                echo "<option value='place' selected>Place</option>";
+                            }
+                            else {
+                                echo "<option value='place'>Place</option>";
+                            }
+                            if (($pick['finish'] == 'show') || ($old_finish == 'show')) {
+                                echo "<option value='show' selected>Show</option>";
+                            }
+                            else {
+                                echo "<option value='show'>Show</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <input type="hidden" value=<?php echo "$race"; ?> name="currentRace" id="currentRace">
+                    <input class="btn btn-primary" type="submit" value="Submit">
                 </div>
-                <select class="custom-select" id="inputGroupSelect01">
-                    <?php // TODO: Add the Horse picker. ?>
-                    <option selected>Horse...</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="3">Need to show horses in this race! </option>
-                </select>
+            </form>
+        <?php } 
+        elseif ($race_info['window_closed'] == '1') {?>
+            <div class="window-closed-section">
+                <h1>The window for this race has been closed!</h1>
+                <?php if($pick){ ?>
+                    <div class="your-bet">
+                        <h2>Your Bet: <?php echo "<span class='horse-number'>{$pick['horse_number']}</span> to <span class='horse-finish'>" . ucfirst($pick['finish']) . "</span>";?></h2>
+                        <?php if ($race_standings_info) {
+                            echo "<h3>Purse: $" . $race_standings_info['earnings'] . "</h3>";
+                        }?>
+                    </div>
+                <?php } else { ?>
+                    <div class="no-bet">
+                        <h2>No Bet Logged!</h2>
+                        <!-- When there is no bet, they will not win anything, so default to $0.00 -->
+                        <h3>Purse: $0.00</h3>
+                    </div>
+                <?php } ?>
             </div>
-            <div class="input-group input-group-lg mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Finish</label>
-                </div>
-                <select class="custom-select" id="inputGroupSelect01">
-                    <?php // TODO: Add the Place picker. ?>
-                    <option selected>Choose...</option>
-                    <option value="w">Win</option>
-                    <option value="p">Place</option>
-                    <option value="s">Show</option>
-                </select>
-            </div>
-            <a href="#" class="btn btn-primary">Do something</a>
-        </div>
+        <?php } else { // SHOULD NEVER REACH HERE!!! ?>
+            <h1> ERROR! </h1>
+        <?php } ?>
     </div>
-
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="race">
-        <!-- Race Select Menu -->
-        
-    </form> <!-- END id race_picker -->
-
-	<div id="user_bet"> <!-- Display User's Bet -->
-		<!-- TODO: select menu's to display user pick options, defaul to current pick -->
-		<p><strong>Your Bet:</strong> <?php echo "{$pick['horse_number']} to {$pick['finish']}";?><br>
-		<strong>Purse:</strong> $<?php //echo $purse;?></p>
-    </div> <!-- END id user_bet -->
     
 	<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
@@ -193,7 +263,16 @@ if ($num_race_results > 0) {
 HERE;
     }
 } else {
-    echo "<p>0 results</p>";
+    if ($race_info['window_closed'] == '0') { // Don't show any text when the window is still open
+
+    }
+    else { // Show there is no results entered in yet
+        echo <<< NORESULTS
+            <div class="no-results">
+                <h2>No results have been entered in for this race yet! Check back later!</h2>
+            </div>
+NORESULTS;
+    }
 }
 ?>
     </ul> <!-- END id race_leaderboard -->

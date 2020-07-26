@@ -47,43 +47,14 @@ $display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
-$row = $display_user_result->fetch();
 
-// Notification System
-$messages = array(
-    1 => "Invalid Email",
-    2 => "User already invited",
-    3 => "DB is empty",
-    4 => "Fails to generate Code",
-    5 => "Couldn't write to DB",
-    6 => "Invite not sent",
-    7 => "Invite sent"
-);
-
-$alerts = array(
-    1 => "success",
-    2 => "warning"
-);
-
-$notification = "";
-$alert = "";
-if (isset($_GET["message"]) && isset($_GET["alt"])) {
-    $not = $_GET["message"];
-    $al = $_GET["alt"];
-
-    if ($not == 1 || $not == 2 || $not == 3 || $not == 4 || $not == 5 || $not == 6 || $not == 7 )
-        $notification = $messages[$not];
-    if ($al == 1 || $al == 2 )
-        $alert = $alert_style[$alerts[$al]];
-
-}
 ?>
 {header}
 {main_nav}
     <main role="main">
         <h1>User Management</h1>
         <section id="User_invite" class="mt-3 mb-4" method="post" >
-            <form action="./invite_user.php" id="invite_form">
+            <form method="POST" action="./invite_user.php" id="invite_form">
                 <div class="form-row align-items-center justify-content-center">
                     <div class="col-auto">
                         <label class="sr-only" for="inlineFormInputName">Email address</label>

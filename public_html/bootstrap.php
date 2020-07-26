@@ -122,11 +122,22 @@ HERE;
 
 /* Notification System */
 
-
 $messages = array(
+    0 => "An email has been sent",
     1 => "Invalid Credentials",
     2 => "Email or Password cannot be empty",
-    3 => "Password has been changed. Please log in again."
+    3 => "Password has been changed. Please log in again.",
+    4 => "Can't use the old password",
+    5 => "Passwords did not match",
+    6 => "Server Error: Try again",
+    7 => "Password cannot be empty",
+    8 => "Invite not sent",
+    9 => "Invite sent",
+    10 => "Invalid Email",
+    11 => "User already invited",
+    12 => "Need to have a selection for horse & place!",
+    13 => "Bet Placed!",
+    14 => "Bet Updated!"
 );
 
 $notification = '';
@@ -136,8 +147,9 @@ if (isset($_GET['m']) && isset($_GET['s'])) {
     $message = trim($_GET['m']);
     $style = trim($_GET["s"]);
 
-    if ($message == 1 || $message == 2 || $message == 3 )
+    if (array_key_exists($message, $messages)) {
         $notification = $messages[$message];
+    }
     if (array_key_exists($style, $alert_styles)){
         $alert_style = $alert_styles[$style];
     } else {
