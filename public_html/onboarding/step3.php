@@ -13,20 +13,77 @@ if (isset($_POST['skip-btn'])) {
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
     //TODO: Impliment Cropper or similar plugin
-    $photo_value = $_SESSION['photo'];
-    if ($_FILES['profile_photo']['error'] == 0 && isset($_FILES['profile_photo'])) {
-        $name = $_FILES['profile_photo']['name'];
-        $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
-        $target_file = $target_dir . basename($_FILES['profile_photo']['name']);
-        $image_file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        $extensions_arr = array("jpg","jpeg","png","gif");
-
-        if(in_array($image_file_type, $extensions_arr)){
-            $unlink_result=unlink($_SERVER['DOCUMENT_ROOT'] . $photo_value);
-            $debug = debug($unlink_result); 
-            if(move_uploaded_file($_FILES['profile_photo']['tmp_name'], $target_dir . $user_id .".". $image_file_type))
-            $photo_value = "/uploads/$user_id.$image_file_type"; 
+    // include the menu javascript for the template
+$javascript =<<< JAVASCRIPT
+\$image_crop = $('#croppie_element').croppie(
+    {
+        enableExif: true,
+        viewport: 
+        {
+            width:200,
+            height:200,
+            type:'circle'
+        },
+        boundary:
+        {
+            width:300,
+            height:300
         }
+    }
+);
+
+$('#profile_photo').on(
+    'change', function(){
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            \$image_crop.croppie(
+                'bind', 
+                {
+                    url: event.target.result
+                }
+            ).then(function(){
+                console.log('jQuery bind complete');
+            });
+        }
+        reader.readAsDataURL(this.files[0]);
+        $('#uploadimageModal').modal('show');
+    }
+);
+
+$('.crop_image').click(function(event){
+    \$image_crop.croppie(
+        'result', 
+        {
+            type: 'base64',
+            size: {width: 300},
+            format: 'jpeg',
+            quality: 0.8,
+            circle: false,
+        }
+    ).then(function(response){
+        $('#user_profile_photo').attr("src", response);
+        $.ajax(
+            {
+                url:"/library/photo_uploader.php",
+                type: "POST",
+                data:
+                {
+                    "id": {$_SESSION['id']},
+                    "cropped_image": response
+                },
+                success:function(data)
+                {
+                    $('#uploadimageModal').modal('hide');
+                    $('#profile_photo').val('');
+                    $('#ajax_alert').html(data);
+                }
+            }
+        );
+    })
+});
+/* END AJAX Photo Uploader */
+JAVASCRIPT;
+
         $uploadsql = "UPDATE user SET
         photo = :photo_value 
         WHERE id ={$_SESSION['id']}";
@@ -39,7 +96,7 @@ if (isset($_POST['submit-btn'])) {
 
     }
     }
-}
+
 ?>
 {header}
 {main_nav}
