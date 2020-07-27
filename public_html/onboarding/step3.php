@@ -12,8 +12,8 @@ if (isset($_POST['skip-btn'])) {
 }
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
-    // include the menu javascript for the template
-    $javascript =<<< JAVASCRIPT
+// include the menu javascript for the template
+$javascript =<<< JAVASCRIPT
 
 \$image_crop = $('#croppie_element').croppie(
     {
@@ -100,6 +100,7 @@ if ($updatePhoto)  {
 ?>
 {header}
 {main_nav}
+<main>
 <h1>Your Photo</h1>
         <div>
             <img src="no-user-image.jpg">
@@ -136,5 +137,6 @@ if ($updatePhoto)  {
         </div>
         <!-- END: modal for photo cropping -->
     </form>
+    </main>
 {footer}
 <?php ob_end_flush(); ?>
