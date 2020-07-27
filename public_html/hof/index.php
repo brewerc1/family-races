@@ -64,6 +64,7 @@ $user_id = $_SESSION['id'];
                         if ($current_champ_row['champion_photo'] == NULL){
                             $update_time_stamp = $current_champ_row['user_update_time'];
                             $current_champ_photo = $current_champ_row['photo']."?".$update_time_stamp;
+                            // avoids unlinking a user's placeholder HOF image (their profile image)
                             $champ_photo_nostamp = NULL;
                         } else {
                             $event_update_time_stamp = strtotime($current_champ_row['update_time']); // cache busting
