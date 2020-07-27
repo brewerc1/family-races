@@ -12,9 +12,9 @@ if (isset($_POST['skip-btn'])) {
 }
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
-    //TODO: Impliment Cropper or similar plugin
     // include the menu javascript for the template
-$javascript =<<< JAVASCRIPT
+
+
 \$image_crop = $('#croppie_element').croppie(
     {
         enableExif: true,
@@ -84,12 +84,12 @@ $('.crop_image').click(function(event){
 /* END AJAX Photo Uploader */
 JAVASCRIPT;
 
-        $uploadsql = "UPDATE user SET
-        photo = :photo_value 
-        WHERE id ={$_SESSION['id']}";
-        $updatePhoto = $pdo->prepare($uploadsql);
-        $updatePhoto->execute(['photo_value' => $photo_value]);
-    if ($updatePhoto)  {
+$uploadsql = "UPDATE user SET
+photo = :photo_value 
+WHERE id ={$_SESSION['id']}";
+$updatePhoto = $pdo->prepare($uploadsql);
+$updatePhoto->execute(['photo_value' => $photo_value]);
+if ($updatePhoto)  {
     $getsessionsql ="SELECT * FROM user where id = {$_SESSION['id']}";
     $updatesession = $pdo->prepare($getsessionsql);
     $updatesession->execute();
