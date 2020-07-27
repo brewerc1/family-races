@@ -13,7 +13,7 @@ if (isset($_POST['skip-btn'])) {
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
     // include the menu javascript for the template
-
+    $javascript =<<< JAVASCRIPT
 
 \$image_crop = $('#croppie_element').croppie(
     {
@@ -113,6 +113,28 @@ if ($updatePhoto)  {
         <div>
             <input type ="submit" class="btn btn-primary" name="skip-btn" value="Skip">
         </div>
+        <!-- modal for photo cropping -->
+        <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
+                <div id="croppie_element"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary crop_image">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END: modal for photo cropping -->
     </form>
 {footer}
 <?php ob_end_flush(); ?>
