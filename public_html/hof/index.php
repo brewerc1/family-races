@@ -58,15 +58,17 @@ $user_id = $_SESSION['id'];
                             // $current_champ_row['champion_photo'] = ""; // test for no champ_photo
                         $num_hof_results -= 1;
 
-                        $current_champ_id = $current_champ_row['champion_id'];
+                        $event_id = $current_champ_row['id'];
 
                         // avoid having no image to display
                         if ($current_champ_row['champion_photo'] == NULL){
                             $update_time_stamp = $current_champ_row['user_update_time'];
                             $current_champ_photo = $current_champ_row['photo']."?".$update_time_stamp;
+                            $champ_photo_nostamp = NULL;
                         } else {
                             $event_update_time_stamp = strtotime($current_champ_row['update_time']); // cache busting
                             $current_champ_photo = $current_champ_row['champion_photo']."?".$event_update_time_stamp;
+                            $champ_photo_nostamp = $current_champ_row['champion_photo'];
                         }
 
                     if ($_SESSION['admin']){
@@ -118,7 +120,7 @@ ENDNORESULT;
                 <ul class="list-group">
                     <?php
                     if ($num_hof_results > 0){
-                        while ($row = $hof_result->fetch()){
+                        while ($row = $hof_result->fetch()){                         
                             // avoid having no image to display
 
                             // $row['champion_photo'] = ""; // test for no champ_photo
@@ -127,7 +129,7 @@ ENDNORESULT;
                                 $champ_photo = $row['photo']."?".$update_time_stamp;
                             } else {
                                 $event_update_time_stamp = strtotime($current_champ_row['update_time']); // cache busting
-                                $champ_photo = $row['champion_photo']."?".$event_update_time_stamp;
+                                $champ_photo = $row['champion_photo']."?".$event_update_time_stamp;                               
                             }
 echo <<< ENDPREVIOUS
 <li class= "list-group-item">
@@ -190,14 +192,14 @@ ENDNORESULT;
             enableExif: true,
             viewport: 
             {
-                width:200,
-                height:200,
-                type:'circle'
+                width:400,
+                height:400,
+                type:'square'
             },
             boundary:
             {
-                width:300,
-                height:300
+                width:450,
+                height:450
             }
         }
     );
@@ -225,7 +227,7 @@ ENDNORESULT;
             'result', 
             {
                 type: 'base64',
-                size: {width: 300},
+                size: {width: 450},
                 format: 'jpeg',
                 quality: 0.8,
                 circle: false,
@@ -238,8 +240,9 @@ ENDNORESULT;
                     type: "POST",
                     data:
                     {
-                        "id": {$user_id},
-                        "champ_id": {$current_champ_id}, 
+                        "id": <?php echo $_SESSION['id']; ?>,
+                        "event_id": <?php echo $event_id; ?>,
+                        "champ_photo": <?php echo '"'.$champ_photo_nostamp.'"'; ?>,
                         "cropped_image": response
                     },
                     success:function(data)
