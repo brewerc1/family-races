@@ -9,12 +9,6 @@ session_start();
 
 // Set the page title for the template
 $page_title = "Your Profile Photo";
-
-if (isset($_POST['skip-btn'])) {
-    Header('Location:/races/index.php');
-}
-if (isset($_POST['submit-btn'])) {
-    //User Photo Upload
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 
@@ -87,6 +81,12 @@ $('.crop_image').click(function(event){
 /* END AJAX Photo Uploader */
 JAVASCRIPT;
 
+if (isset($_POST['skip-btn'])) {
+    Header('Location:/races/index.php');
+}
+if (isset($_POST['submit-btn'])) {
+    //User Photo Upload
+    
 if (!isset($_SESSION["id"])){
     header("Location: /login/");
     exit;
@@ -109,20 +109,19 @@ if ($updatePhoto)  {
 ?>
 {header}
 {main_nav}
-<main>
-<h1>Your Photo</h1>
-<img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
-    <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
-        <p>If you do not submit a image you will be given a no profile photo image as your photo</p>
-        <div id="photo_upload" class="form-group col-sm-8 d-flex">
-                <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
-        </div>
-        <input type ="submit" class="btn btn-primary" id="profile_photo" name="sumbit-btn" value="Upload">
-        <div>
-            <input type ="submit" class="btn btn-primary" name="skip-btn" value="Skip">
-        </div>
-        <input class="col" type="hidden" id="cropped_image">
+<main role="main">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
+            <section class="form-row">
+                <div class="form-group col">
+                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                    <div id="ajax_alert"></div>
+                </div>
+                <div id="photo_upload" class="form-group col-sm-8 d-flex">
+                    <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
+                </div>
+            </section>
         </form>
+
         <!-- modal for photo cropping -->
         <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
@@ -145,6 +144,7 @@ if ($updatePhoto)  {
           </div>
         </div>
         <!-- END: modal for photo cropping -->
+
     </main>
 {footer}
 <?php ob_end_flush(); ?>
