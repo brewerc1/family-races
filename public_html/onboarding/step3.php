@@ -84,6 +84,14 @@ $('.crop_image').click(function(event){
 /* END AJAX Photo Uploader */
 JAVASCRIPT;
 
+if (!isset($_SESSION["id"])){
+    header("Location: /login/");
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    exit;
+}
+
 $uploadsql = "UPDATE user SET photo = :photo_value WHERE id ={$_SESSION['id']}";
 $updatePhoto = $pdo->prepare($uploadsql);
 $updatePhoto->execute(['photo_value' => $photo_value]);
@@ -105,7 +113,7 @@ if ($updatePhoto)  {
         </div>
     <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
         <p>If you do not submit a image you will be given a no profile photo image as your photo</p>
-        <div class="form-group">
+        <div class="form-group" id="photo_upload">
             <input type="file" class="form-control-file" id="user_profile_photo" name="profile_photo" placeholder="Add a Profile Photo">
         </div>
         <input type ="submit" class="btn btn-primary" id="profile_photo" name="sumbit-btn" value="Upload">
