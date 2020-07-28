@@ -58,9 +58,6 @@ if (isset($_POST['createAccount-btn'])) {
         exit;
     }
 
-    
-    $code = trim($codeSanitize);
-
     //Selecting code and email from users to see if it's same as $code and $email
         $sqlcheck = "SELECT email, invite_code, id FROM user WHERE email = :email and invite_code = :code";
         $stmt1 = $pdo->prepare($sqlcheck);
