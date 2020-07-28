@@ -5,23 +5,36 @@ ob_start('template');
 
 // start a session
 session_start();
-if (isset($_POST['skip-btn'])) {
-    Header('Location:/onboarding/step3.php');
-}
+
+
 if (isset($_POST['next-btn'])) {
-    if(empty($_POST['first_name'])) {
-        $first_name_sanitize = !filter_var($_POST['first_name'], FILTER_SANITIZE_STRING);
+    if(!empty($_POST['first_name'])) {
+        $first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
+    } else {
         $notification = "Please fill in a first name";
+        exit;
     }
-    if(empty($_POST['last_name'])){
-        $last_name_sanitize = !filter_var($_POST['last_name'], FILTER_SANITIZE_STRING);
+    if(!empty($_POST['last_name'])){
+        $last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
+    } else {
         $notification = "Please fill in a last name";
+        exit;
     }
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $city = trim($_POST['city']);
-    $state = trim($_POST['state']);
-    $motto = trim($_POST['motto']);
+    if(!empty($_POST['city'])){
+        $city = filter_var(trim($_POST['city']), FILTER_SANITIZE_STRING);
+    } else{
+        $city = "";
+    }
+    if(!empty($_POST['state'])){
+        $state = filter_var(trim($_POST['state']), FILTER_SANITIZE_STRING);
+    } else{
+        $state = "";
+    }
+    if(!empty($_POST['motto'])){
+        $motto = filter_var(trim($_POST['motto']), FILTER_SANITIZE_STRING);
+    } else {
+        $motto = "";
+    }
     $sqlUpdate = "UPDATE user SET
     first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto 
     WHERE id = {$_SESSION['id']}";
@@ -42,7 +55,7 @@ if (isset($_POST['next-btn'])) {
         $_SESSION['city'] = $row['city'];
         $_SESSION['state'] = $row['state'];
         $_SESSION['motto'] = $row['motto'];
-        header('Location:/onboarding/step3.php/');
+        header('Location:/onboarding/step3.php');
                 
             } else {
                         //$errors['db_error'] = "Database error: Failed to Register";
@@ -74,9 +87,6 @@ if (isset($_POST['next-btn'])) {
                     <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
-                <div>
-                    <input type="submit" class="btn btn-secondary" name="skip-btn" value="Skip"></input>
-                </div>
     </form>
     {footer}
 <?php ob_end_flush(); ?>
