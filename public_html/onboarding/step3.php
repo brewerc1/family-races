@@ -120,6 +120,7 @@ if ($updatePhoto)  {
         <div>
             <input type ="submit" class="btn btn-primary" name="skip-btn" value="Skip">
         </div>
+        <input class="col" type="hidden" id="cropped_image">
         </form>
         <!-- modal for photo cropping -->
         <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
