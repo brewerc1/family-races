@@ -136,8 +136,9 @@ if (isset($_POST['createAccount-btn'])) {
 ?>
 
 {header}
-<h1>Sign Up</h1>
-  <div>  
+<main>
+    <h1>Sign Up</h1>
+        <div>  
             <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
                 <div class="form-group">
                     <input  type="email" required class="form-control" name ="email" id="email"  placeholder="Enter Email"></input>
@@ -156,6 +157,7 @@ if (isset($_POST['createAccount-btn'])) {
             <p>Already have a Account? <a href="/login/">Login</a></p>
     
     
-    </div>
+        </div>
+</main>
     {footer}
 <?php ob_end_flush(); ?>
