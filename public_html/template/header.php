@@ -43,6 +43,7 @@ return <<< HTML
                 modal.find('.btn.btn-primary').html(button_primary_text);
                 modal.find('.btn.btn-primary').attr("onclick",button_primary_action);
                 modal.find('.btn.btn-secondary').html(button_secondary_text);
+                modal.find('.btn.btn-secondary').attr("onclick",button_secondary_action);
 
                 // Close main_nav when modal is active
                 var trigger_id =  $('#main-navigation').attr('data-target');

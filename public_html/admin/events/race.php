@@ -28,37 +28,144 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
-if (!isset($_GET["r"])) {
+if (!isset($_GET["r"]) && !isset($_GET["q"])) {
     header("HTTP/1.1 401 Unauthorized");
     // An error page
     //header("Location: error401.php");
     exit;
 }
 
-$r = isset($_GET["r"]) ? $_GET["r"] : NULL;
-$race_number = filter_var($r, FILTER_VALIDATE_INT) ? $r : 0;
+$request_array = array(
+    1 => "window_closed",
+    2 => "cancelled"
+);
 
-$query = "SELECT cancelled FROM race WHERE race_number = :race_number";
-$race = $pdo->prepare($query);
-if ($race->execute(['race_number' => $race_number])) {
-    if ($race->rowCount() > 0) {
-        $cancelled = $race->fetch()["cancelled"];
-        $cancelled = $cancelled ? 0 : 1;
+$update = array(
+    3 => "update"
+);
 
-        $update_query = "UPDATE race SET cancelled = :cancelled WHERE race_number = :race_number";
-        $stmt = $pdo->prepare($update_query);
-        if ($stmt->execute(["cancelled" => $cancelled, 'race_number' => $race_number])) {
+/**
+ * @param $int
+ * @return mixed
+ */
+function validateInt($int) {
+    $int_options = array("options" =>
+        array("min_range" =>1 ));
 
-            $query = "SELECT cancelled FROM race WHERE race_number = :race_number";
-            $race = $pdo->prepare($query);
-            if ($race->execute(['race_number' => $race_number])) {
-                if ($race->rowCount() > 0) {
-                    $cancelled = $race->fetch()["cancelled"];
-                    echo $cancelled ? true : false;
+    $in = filter_var(trim($int), FILTER_SANITIZE_NUMBER_INT);
+    return filter_var($in, FILTER_VALIDATE_INT, $int_options);
+}
+
+$q = validateInt($_GET["q"]);
+$race_number = validateInt($_GET["r"]);
+
+if (key_exists($q, $request_array)) {
+
+    $query = "SELECT ". $request_array[$q] ." FROM race WHERE race_number = :race_number";
+    $race = $pdo->prepare($query);
+    if ($race->execute(['race_number' => $race_number])) {
+        if ($race->rowCount() > 0) {
+            $respond = $race->fetch()[$request_array[$q]];
+            $respond = $respond ? 0 : 1;
+
+            $update_query = "UPDATE race SET ". $request_array[$q] ." = :respond WHERE race_number = :race_number";
+            $stmt = $pdo->prepare($update_query);
+            if ($stmt->execute(["respond" => $respond, 'race_number' => $race_number])) {
+
+                $query = "SELECT ". $request_array[$q] ." FROM race WHERE race_number = :race_number";
+                $race = $pdo->prepare($query);
+                if ($race->execute(['race_number' => $race_number])) {
+                    if ($race->rowCount() > 0) {
+                        $respond = $race->fetch()[$request_array[$q]];
+                        if ($q == 1) {
+                            if ($respond) {
+echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> betting window is closed.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+                            } else {
+echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> betting window is opened.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+                            }
+                        } elseif ($q == 2) {
+                            if ($respond) {
+                                echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> is canceled.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+                            } else {
+                                echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> is uncancelled.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+} elseif (key_exists($q, $update)) {
+
+    if (!isset($_GET["e"])) {
+        header("HTTP/1.1 401 Unauthorized");
+        // An error page
+        //header("Location: error401.php");
+        exit;
+    }
+
+$alert = <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> is updated.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+
+    $event_id = validateInt($_GET["e"]);
+
+
+    if (isset($_POST["horse_array"])) {
+
+        $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $horses = $pdo->prepare($query);
+        if ($horses->execute(["race_event_id" => $event_id, "race_race_number" => $race_number ])) {
+            //, win_purse, place_purse, show_purse
+            $query = "INSERT INTO horse ( race_event_id, race_race_number, horse_number ) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($query);
+
+            $horses = $_POST["horse_array"];
+            foreach ($horses as $horse) {
+                if (!empty($horse)) {
+                    $horse = filter_var($horse, FILTER_SANITIZE_STRING);
+                    $success = $stmt->execute([$event_id, $race_number, $horse]);
                 }
             }
 
-        }
-    }
+            if ($success) echo $alert;
 
+        }
+
+    }
 }
