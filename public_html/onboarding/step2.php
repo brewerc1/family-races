@@ -9,14 +9,14 @@ session_start();
 // Set the page title for the template
 $page_title = "Your Profile";
 
-/*if (!isset($_SESSION["id"])){
+if (!isset($_SESSION["id"])){
   header("Location: /login/");
    exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
     exit;
 }
-*/
+
 
 if (isset($_POST['next-btn'])) {
     if(!empty($_POST['first_name'])) {
