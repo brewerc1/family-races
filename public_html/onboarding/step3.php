@@ -84,9 +84,7 @@ $('.crop_image').click(function(event){
 /* END AJAX Photo Uploader */
 JAVASCRIPT;
 
-$uploadsql = "UPDATE user SET
-photo = :photo_value 
-WHERE id ={$_SESSION['id']}";
+$uploadsql = "UPDATE user SET photo = :photo_value WHERE id ={$_SESSION['id']}";
 $updatePhoto = $pdo->prepare($uploadsql);
 $updatePhoto->execute(['photo_value' => $photo_value]);
 if ($updatePhoto)  {
@@ -96,7 +94,7 @@ if ($updatePhoto)  {
 
     }
     }
-
+    
 ?>
 {header}
 {main_nav}
@@ -114,6 +112,7 @@ if ($updatePhoto)  {
         <div>
             <input type ="submit" class="btn btn-primary" name="skip-btn" value="Skip">
         </div>
+        </form>
         <!-- modal for photo cropping -->
         <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
@@ -136,7 +135,6 @@ if ($updatePhoto)  {
           </div>
         </div>
         <!-- END: modal for photo cropping -->
-    </form>
     </main>
 {footer}
 <?php ob_end_flush(); ?>
