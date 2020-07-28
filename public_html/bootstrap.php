@@ -35,7 +35,6 @@ require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/PHPMailer.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
 
-
 /**
  * @param $email_server
  * @param $email_server_account
@@ -52,7 +51,6 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
                    $email_from_name, $email_from_address, $invite_email_subject, $invite_email_body,
                    $recipient_email) {
 
-
     $mail = new PHPMailer(true);
 
     try {
@@ -68,7 +66,6 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         //Recipients
         $mail->setFrom($email_from_address, $email_from_name);
         $mail->addAddress($recipient_email);
-
 
         // Content
         $mail->isHTML(true);
@@ -93,4 +90,69 @@ function generateCode()
     return bin2hex(random_bytes(4));
 }
 
-?>
+
+function debug( $content='' ){
+    if(!isset($content)) {
+        $content='';
+    }
+    if(isset($_SESSION)) {
+        $session_content = "<pre>" . print_r($_SESSION, TRUE) . "</pre>";
+    }
+    if(is_array($content)){
+        $content = "<pre>" . print_r($content, TRUE) . "</pre>";
+    }
+    return <<< HERE
+    <button class="btn btn-link btn-sm" id="debug_button" type="button" data-toggle="collapse" data-target="#debug" aria-expanded="false" aria-controls="debug">debug</button>
+    <div class="collapse" id="debug">
+        <div class="card card-body" id="debug_card">
+            <nav>
+                <div class="nav nav-pills nav-justified" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="true">\$_SESSION</a>
+                    <a class="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" href="#nav-debug" role="tab" aria-controls="nav-debug" aria-selected="false">My Debug</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">$session_content;</div>
+                <div class="tab-pane fade" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">$content</div>
+            </div>
+        </div>
+    </div>
+HERE;
+}
+
+/* Notification System */
+
+$messages = array(
+    0 => "An email has been sent",
+    1 => "Invalid Credentials",
+    2 => "Email or Password cannot be empty",
+    3 => "Password has been changed. Please log in again.",
+    4 => "Can't use the old password",
+    5 => "Passwords did not match",
+    6 => "Server Error: Try again",
+    7 => "Password cannot be empty",
+    8 => "Invite not sent",
+    9 => "Invite sent",
+    10 => "Invalid Email",
+    11 => "User already invited",
+    12 => "Need to have a selection for horse & place!",
+    13 => "Bet Placed!",
+    14 => "Bet Updated!"
+);
+
+$notification = '';
+$alert_style = '';
+
+if (isset($_GET['m']) && isset($_GET['s'])) {
+    $message = trim($_GET['m']);
+    $style = trim($_GET["s"]);
+
+    if (array_key_exists($message, $messages)) {
+        $notification = $messages[$message];
+    }
+    if (array_key_exists($style, $alert_styles)){
+        $alert_style = $alert_styles[$style];
+    } else {
+        $alert_style = $alert_styles['primary'];
+    }
+}

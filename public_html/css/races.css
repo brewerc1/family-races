@@ -1,26 +1,414 @@
-html,body {
-	margin: 0;
-	padding: 0;
-}
+html,
 body {
-	font-family: 'Raleway', sans-serif;
-	font-weight: 300;
+    margin: 0;
+    padding: 0;
 }
-b,strong {
-	font-weight: 600;
+
+body {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    background-color: rgba(0, 0, 0, .05);
 }
-h1 {
-	font-family: 'Playfair Display', serif;
-	font-weight: 400;
+
+b,
+strong {
+    font-weight: 600;
 }
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    text-align: center;
+}
+
+label,
+.col-form-label {
+    font-weight: 600;
+    font-size: .7em;
+}
+
+.custom-control-label {
+    font-size: 1em;
+    font-weight: inherit;
+    padding-top: 4px;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+main {
+    padding: 20px 20px 85px 20px;
+    background-color: rgba(255, 255, 255, 1);
+    min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+    main {
+        max-width: 768px;
+        margin: 0 auto;
+        border-color: rgba(0, 0, 0, .1);
+        border-width: 0 1px;
+        border-style: solid;
+    }
+}
+
+
+
+
+
+/* Forms */
+.cancel {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+
+/* ============== Main Index Page: #index_page ============== */
+#index_page {
+    background-image: url('/images/photos/horse-3880448_1920.jpg');
+    background-size: cover;
+    background-position: top right;
+    position: relative;
+    animation-delay: 2.5s;
+}
+#logo_wrapper{
+    width: calc( 100% - 40px );
+    position: absolute;
+    top: 20px;
+    animation-delay: 2s;
+}
+#logo_text {
+    animation-delay: 0.7s;
+    font-size: 3em;
+    font-weight: 600;
+    color: #fff;
+}
+#background_image {
+    z-index: 200;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 1;
+}
+
+
+/* ============== Login Index Page: #login_page ============== */
+#login_page {
+    background-image: url('/images/photos/horse-3880448_1920.jpg');
+    background-size: cover;
+    background-position: top right;
+    position: relative;
+}
+#login_page #logo_wrapper{
+    position: initial;
+    margin-bottom: 30px;
+    text-align: center;
+    width: 100%;
+}
+#login_page #logo {
+    width: 60px;
+}
+#login_page #logo_text{
+    font-size: 1em;
+    font-weight: 600;
+    color: #000;
+}
+form#login {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    animation-delay: 0.5s;
+    box-shadow: 0px 1px 13px 5px rgba(0,0,0,.4);
+}
+#forgot_pwd {
+    margin-top: 20px;
+}
+
+
+/* ============== Profile Page: ============== */
+#photo_upload {
+    align-items: center;
+    justify-content: center;
+}
+#user_profile_photo {
+    width: 100%;
+    margin-right: 10px;
+}
+#user_name h1 {
+    margin: 1.5rem 0;
+}
+@media (min-width: 576px) {
+    #edit_buttons {
+        position: relative;
+        top: -50px;
+    }
+}
+#edit_buttons.btn-group>.btn:not(:first-of-type):not(.dropdown-toggle) {
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+}
+#user_name {
+    font-size: 1.3em;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#user_meta {
+    list-style-type: none;
+    margin-top: 20px;
+}
+#user_meta li {
+    line-height: 2em;
+}
+#user_meta li span {
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+
+/* Footer */
+span.navbar-text {
+    font-size: .5em;
+}
+
+
+/* ============== User Lists: ============== */
+.user-list.list-group .media {
+    align-items: center;
+    justify-content: center;
+}
+.list-group .media img {
+    width: 70px;
+}
+.earnings {
+    font-size: 100%;
+}
+
+
+
+/* ============== Races Page: #races_page ============== */
+#races_page .card {
+    min-height: 400px; 
+    background-size: cover; 
+    background-repeat: no-repeat; 
+}
+#races_page #window_closed {
+    color: #fff;
+    text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 8px rgba(0,0,0,.6);
+}
+#races_page .card .input-group {
+    z-index: 1000;
+}
+#races_page #window_closed > .card-meta{
+    position: absolute;
+    top: 0px;
+    left: 0;
+    font-size: 1.2em;
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0,0,0,.2);
+    padding: 80px 0 0 0;
+    margin-bottom: 10px;
+    color: #fff;
+    height: 100%;
+    z-index: -1;
+    text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 10px rgba(0,0,0,.3);
+}
+#races_page .card-body {
+    margin: 10%;
+    padding: 0;
+    border-radius: 5px;
+    z-index: +1;
+}
+#races_page .card-text {
+    margin-top: 40px;
+}
+#race_leaderboard .no-results {
+    margin-top: 100px;
+    text-align: center;
+}
+
+
+
+
+/* Custom Switch Overrides: Provides sizes for Bootstrap 4's built in switches */
+/* for sm */
+.custom-switch.custom-switch-sm .custom-control-label {
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+}
+.custom-switch.custom-switch-sm .custom-control-label::before {
+    height: 1rem;
+    width: calc(1rem + 0.75rem);
+    border-radius: 2rem;
+}
+.custom-switch.custom-switch-sm .custom-control-label::after {
+    width: calc(1rem - 4px);
+    height: calc(1rem - 4px);
+    border-radius: calc(1rem - (1rem / 2));
+}
+.custom-switch.custom-switch-sm .custom-control-input:checked~.custom-control-label::after {
+    transform: translateX(calc(1rem - 0.25rem));
+}
+/* for md */
+.custom-switch.custom-switch-md .custom-control-label {
+    padding-left: 2rem;
+    padding-bottom: 1.5rem;
+}
+.custom-switch.custom-switch-md .custom-control-label::before {
+    height: 1.5rem;
+    width: calc(2rem + 0.75rem);
+    border-radius: 3rem;
+}
+.custom-switch.custom-switch-md .custom-control-label::after {
+    width: calc(1.5rem - 4px);
+    height: calc(1.5rem - 4px);
+    border-radius: calc(2rem - (1.5rem / 2));
+}
+.custom-switch.custom-switch-md .custom-control-input:checked~.custom-control-label::after {
+    transform: translateX(calc(1.5rem - 0.25rem));
+}
+/* for lg */
+.custom-switch.custom-switch-lg .custom-control-label {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+}
+.custom-switch.custom-switch-lg .custom-control-label::before {
+    height: 2rem;
+    width: calc(3rem + 0.75rem);
+    border-radius: 4rem;
+}
+.custom-switch.custom-switch-lg .custom-control-label::after {
+    width: calc(2rem - 4px);
+    height: calc(2rem - 4px);
+    border-radius: calc(3rem - (2rem / 2));
+}
+.custom-switch.custom-switch-lg .custom-control-input:checked~.custom-control-label::after {
+    transform: translateX(calc(2rem - 0.25rem));
+}
+/* for xl */
+.custom-switch.custom-switch-xl .custom-control-label {
+    padding-left: 4rem;
+    padding-bottom: 2.5rem;
+}
+.custom-switch.custom-switch-xl .custom-control-label::before {
+    height: 2.5rem;
+    width: calc(4rem + 0.75rem);
+    border-radius: 5rem;
+}
+.custom-switch.custom-switch-xl .custom-control-label::after {
+    width: calc(2.5rem - 4px);
+    height: calc(2.5rem - 4px);
+    border-radius: calc(4rem - (2.5rem / 2));
+}
+.custom-switch.custom-switch-xl .custom-control-input:checked~.custom-control-label::after {
+    transform: translateX(calc(2.5rem - 0.25rem));
+}
+
+
+
+/* Animations */
+.fade-in {
+    animation-name: fadeIn;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: .5s;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.fade-out {
+    animation-name: fadeOut;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: .5s;
+}
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+    
+
+/* Alerts */
+.floating-alert {
+    box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
+}
+
+
 /* Bootstrap navbar overrides */
+#main-navigation {
+    box-shadow: 0px -7px 8px -7px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(50, 50, 50, .2);
+}
 .navbar-nav .active>.nav-link {
-	font-weight: 600;
+    font-weight: 600;
 }
 .navbar-collapse.collapse.show li.nav-item:first-of-type {
-	margin-top: 10px;
+    margin-top: 10px;
+}
+.navbar-collapse.collapse.show li.nav-item:last-of-type {
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(50, 50, 50, .2);
 }
 .navbar-collapse.collapse.show li.nav-item {
-	margin-left: 10px;
-	border-top: 1px solid rgba(50,50,50,.1);
+    margin-left: 10px;
+    border-top: 1px solid rgba(50, 50, 50, .1);
+}
+
+
+
+/* DEBUG */
+#debug_button {
+    position: fixed;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, .6);
+    color: #fff;
+}
+#debug {
+    position: fixed;
+    top: 33px;
+    right: 0px;
+    width: 100%;
+    max-width: 600px;
+    color: #fff;
+}
+#debug pre {
+    color: #fff;
+    font-size: 0.7em;
+}
+#debug .nav-item.nav-link {
+    color: #fff;
+    font-weight: 600;
+}
+#debug_card {
+    width: 100%;
+    max-width: 600px;
+    font-size: .8em;
+    backdrop-filter: blur(6px);
+    background-color: rgba(0, 0, 0, .6);
 }
