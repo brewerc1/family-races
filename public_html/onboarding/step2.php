@@ -10,9 +10,11 @@ if (isset($_POST['skip-btn'])) {
 }
 if (isset($_POST['next-btn'])) {
     if(empty($_POST['first_name'])) {
+        $first_name_sanitize = !filter_var($_POST['first_name'], FILTER_SANITIZE_STRING);
         $notification = "Please fill in a first name";
     }
     if(empty($_POST['last_name'])){
+        $last_name_sanitize = !filter_var($_POST['last_name'], FILTER_SANITIZE_STRING);
         $notification = "Please fill in a last name";
     }
     $first_name = trim($_POST['first_name']);
