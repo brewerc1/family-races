@@ -21,7 +21,7 @@ $javascript = '';
 //$debug = debug();
 ///// end DEBUG
 
-$notification = array();
+//$notification = array();
 
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
@@ -37,7 +37,7 @@ if (isset($_POST['createAccount-btn'])) {
     }
 //Validation Code
     if(!empty($_POST['code'])){
-        $codeSanitize = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
+        $code = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         
     } else{
         $notification ['code'] = 'Code Required';
