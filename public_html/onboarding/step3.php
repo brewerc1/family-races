@@ -108,13 +108,11 @@ if ($updatePhoto)  {
 {main_nav}
 <main>
 <h1>Your Photo</h1>
-        <div>
-            <img src="no-user-image.jpg">
-        </div>
+<img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
     <form action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
         <p>If you do not submit a image you will be given a no profile photo image as your photo</p>
-        <div class="form-group" id="photo_upload">
-            <input type="file" class="d-inline form-control-file" accept="image/*" id="user_profile_photo" placeholder="Add a Profile Photo">
+        <div id="photo_upload" class="form-group col-sm-8 d-flex">
+                <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
         </div>
         <input type ="submit" class="btn btn-primary" id="profile_photo" name="sumbit-btn" value="Upload">
         <div>
