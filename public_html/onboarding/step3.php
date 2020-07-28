@@ -7,6 +7,9 @@ ob_start('template');
 // start a session
 session_start();
 
+// Set the page title for the template
+$page_title = "Your Profile Photo";
+
 if (isset($_POST['skip-btn'])) {
     Header('Location:/races/index.php');
 }
