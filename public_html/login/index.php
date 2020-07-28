@@ -133,10 +133,11 @@ if (isset($_POST["login"])) {
 
 ?>
 {header}
-    <main role="main">
-        <form class="horizontal-center" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
-            <div class="text-center mb-4">
-                <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
+    <main role="main" id="login_page" class="">
+        <form class="vertical-center animate__animated animate__fadeIn" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+            <div id="logo_wrapper">
+                <img id="logo" class="" src="/images/kc-logo.svg">
+                <h1 id="logo_text">Keene Challenge</h1>
             </div>
             <div class="form-group">
                 <label for="email" class="sr-only">Email address</label>
