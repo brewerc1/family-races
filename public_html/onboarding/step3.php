@@ -110,6 +110,7 @@ if ($updatePhoto)  {
 {header}
 {main_nav}
 <main role="main">
+        <p>If you do not choose to upload a photo a no-user photo will be placed as your Profile Photo</p>
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
                 <div class="form-group col">
