@@ -8,8 +8,8 @@ ob_start('template');
 // start a session
 session_start();
 
-$getemail = filter_var(trim($_GET["email"]), FILTER_SANITIZE_EMAIL);
-$getcode = filter_var(trim($_GET["code"]), FILTER_SANITIZE_STRING);
+$getemail = filter_var(trim($_GET['email']), FILTER_SANITIZE_EMAIL);
+$getcode = filter_var(trim($_GET['code']), FILTER_SANITIZE_STRING);
 
 // Set the page title for the template
 $page_title = "Sign Up";
@@ -30,15 +30,11 @@ if (isset($_POST['createAccount-btn'])) {
 
 //Validation Email filed filled and email exist
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
-        $email = filter_var(trim($_POST['email']), FILTER_SANITZE_EMAIL);
+        $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     }else{
         $notification ['email'] = 'Email is Required and must be valid';
         exit;
     }
-//Check if email exist
-    //if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-       // $errors ['email'] = 'Email address is invalid';
-   // }
 //Validation Code
     if(!empty($_POST['code'])){
         $codeSanitize = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
