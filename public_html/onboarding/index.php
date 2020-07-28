@@ -30,7 +30,7 @@ if (isset($_POST['createAccount-btn'])) {
 
 //Validation Email filed filled and email exist
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
-        $emailSanitize = filter_var($_POST['email'], FILTER_SANITZE_EMAIL);
+        $email = filter_var(trim($_POST['email']), FILTER_SANITZE_EMAIL);
     }else{
         $notification ['email'] = 'Email is Required and must be valid';
         exit;
@@ -41,7 +41,7 @@ if (isset($_POST['createAccount-btn'])) {
    // }
 //Validation Code
     if(!empty($_POST['code'])){
-        $codeSanitize = filter_var($_POST['code'], FILTER_SANITIZE_STRING);
+        $codeSanitize = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         $notification ['code'] = 'Code Required';
         exit;
     }
@@ -58,7 +58,7 @@ if (isset($_POST['createAccount-btn'])) {
         exit;
     }
 
-    $email= trim($emailSanitize);
+    
     $code = trim($codeSanitize);
 
     //Selecting code and email from users to see if it's same as $code and $email
