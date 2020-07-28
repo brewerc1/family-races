@@ -6,6 +6,14 @@ ob_start('template');
 // start a session
 session_start();
 
+if (!isset($_SESSION["id"])){
+    header("Location: /login/");
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    exit;
+}
+
 
 if (isset($_POST['next-btn'])) {
     if(!empty($_POST['first_name'])) {
