@@ -120,6 +120,7 @@ if ($updatePhoto)  {
                     <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
                 </div>
             </section>
+            <input type= "submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
         </form>
 
         <!-- modal for photo cropping -->
