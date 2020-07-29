@@ -144,21 +144,6 @@ main {
         overflow: visible;
     }
 }
-#background_image {
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    opacity: 1;
-    /*animation: bg-slide 20s linear infinite;*/
-}
-@-webkit-keyframes bg-slide {
-    from { transform: translateY(0); }
-    to { transform: translateY(-50%); }
-}
-
 
 
 /* ============== Login Index Page: #login_page ============== */
@@ -263,10 +248,12 @@ span.navbar-text {
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: bottom center;
+    margin: -21px -21px 0px -21px;
+    padding: 21px 21px 0 21px;
 }
 #races_page #window_closed {
     color: #fff;
-    text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 8px rgba(0,0,0,.6);
+    text-shadow: 0px 16px 10px rgba(0,0,0,.2), 1px 6px 8px rgba(0,0,0,.6);
 }
 #races_page .card .input-group {
     z-index: 1000;
@@ -279,12 +266,14 @@ span.navbar-text {
     width: 100%;
     text-align: center;
     background-color: rgba(0,0,0,.2);
-    padding: 80px 0 0 0;
+    padding: 130px 0 0 0;
     margin-bottom: 10px;
     color: #fff;
     height: 100%;
     z-index: -1;
     text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 10px rgba(0,0,0,.3);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(7px);
 }
 #races_page .card-body {
     margin: 10%;
@@ -298,6 +287,19 @@ span.navbar-text {
 #race_leaderboard .no-results {
     margin-top: 100px;
     text-align: center;
+}
+#races_page .input-group-lg>.custom-select, 
+#races_page .input-group-lg>.form-control, 
+#races_page .input-group-lg>.input-group-append>.btn, 
+#races_page .input-group-lg>.input-group-append>.input-group-text, 
+#races_page .input-group-lg>.input-group-prepend>.btn, 
+#races_page .input-group-lg>.input-group-prepend>.input-group-text.input-group-lg>.custom-select, 
+#races_page .input-group-lg>.form-control, 
+#races_page .input-group-lg>.input-group-append>.btn, 
+#races_page .input-group-lg>.input-group-append>.input-group-text, 
+#races_page .input-group-lg>.input-group-prepend>.btn, 
+#races_page .input-group-lg>.input-group-prepend>.input-group-text {
+    opacity: 0.9;
 }
 
 
@@ -413,6 +415,8 @@ span.navbar-text {
 /* Alerts */
 .floating-alert {
     box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
+    max-width: 600px;
+    margin: 92px auto !important;
 }
 
 
