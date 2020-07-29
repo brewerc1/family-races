@@ -114,14 +114,14 @@ HTML;
         });
     }
 
-    function updateRace(raceNumber) {
+    function updateRace(eventNumber, raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
             let horses = [];
             $('#addInput' + raceNumber + ' div.group-horse input').each( function () {
                 horses.push(this.value);
             })
-            $.post('./race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + eventID , {
+            $.post('./race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + eventNumber , {
                 horse_array: horses
             }).done( function (data) {
                 $('main').prepend(data);
@@ -166,24 +166,6 @@ HTML;
             $('#addHorse' + raceNumber).removeClass('disabled');
     }
 
-
-    function openWindow(btnId) {
-        $.ajax({
-            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1
-        }).done(function (data) {
-            $('main').prepend(data);
-            $('#c' + btnId.charAt(4) ).addClass('d-none');
-            $('#card' + btnId.charAt(4) ).removeClass('d-none');
-            $('#' + btnId ).addClass('d-none');
-            $('#wind' + btnId.charAt(4) ).removeClass('d-none');
-            $('#alert').delay( 3000 ).fadeOut( 400 );
-
-            numberOfHorses = $('#addInput' + btnId.charAt(4) + ' div.group-horse').length;
-            if (numberOfHorses < defaultHorseCount)
-                $('#addHorse' + btnId.charAt(4)).removeClass('disabled');
-        });
-    }
-
     function deleteHorse(parentDivId, selfId) {
         const id = 'select#' + parentDivId.charAt(5);
 
@@ -203,40 +185,58 @@ HTML;
         }
 
         changeGoToRaceButtonToUpdateRaceButton(parentDivId.charAt(5));
+    }
 
-        //console.log(parentDivId);
+    function openWindow(btnId) {
+        $.ajax({
+            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1,
+            success: function (data) {
+                $('main').prepend(data);
+                $('#c' + btnId.charAt(4) ).addClass('d-none');
+                $('#card' + btnId.charAt(4) ).removeClass('d-none');
+                $('#' + btnId ).addClass('d-none');
+                $('#wind' + btnId.charAt(4) ).removeClass('d-none');
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+
+                numberOfHorses = $('#addInput' + btnId.charAt(4) + ' div.group-horse').length;
+                if (numberOfHorses < defaultHorseCount)
+                    $('#addHorse' + btnId.charAt(4)).removeClass('disabled');
+            }
+        });
     }
 
     function closeWindow(btnId) {
         $.ajax({
-            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1
-        }).done(function (data) {
-            $('main').prepend(data);
-            $('#c' + btnId.charAt(4) ).removeClass('d-none');
-            $('#card' + btnId.charAt(4) ).addClass('d-none');
-            $('#' + btnId ).addClass('d-none');
-            $('#open' + btnId.charAt(4) ).removeClass('d-none');
-            $('#alert').delay( 3000 ).fadeOut( 400 );
-            $('#addHorse' + btnId.charAt(4)).addClass('disabled');
+            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1,
+            success: function (data) {
+                $('main').prepend(data);
+                $('#c' + btnId.charAt(4) ).removeClass('d-none');
+                $('#card' + btnId.charAt(4) ).addClass('d-none');
+                $('#' + btnId ).addClass('d-none');
+                $('#open' + btnId.charAt(4) ).removeClass('d-none');
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#addHorse' + btnId.charAt(4)).addClass('disabled');
+            }
         });
     }
 
     function cancelRace(btnId) {
         $.ajax({
-            url: './race.php?r=' + btnId.charAt(6) + '&q=' + 2
-        }).done(function (data) {
-            $('main').prepend(data);
-            $('#alert').delay( 3000 ).fadeOut( 400 );
-            if ( $('#cancel' + btnId.charAt(6)).is(':checked') ) {
-                $('#open' + btnId.charAt(6)).addClass('disabled');
-                $('#c' + btnId.charAt(6) + ' a').addClass('d-none');
-                $('#c' + btnId.charAt(6) + ' h5').
-                text('Race ' + btnId.charAt(6) + ' is cancelled.').addClass('alert alert-info');
-                $('#addHorse' + btnId.charAt(6)).addClass('disabled');
-            } else {
-                $('#open' + btnId.charAt(6)).removeClass('disabled');
-                $('#c' + btnId.charAt(6) + ' a').removeClass('d-none');
-                $('#c' + btnId.charAt(6) + ' h5').text('').removeClass('alert alert-info');
+            url: './race.php?r=' + btnId.charAt(6) + '&q=' + 2,
+            success: function (data) {
+                $('main').prepend(data);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+                if ( $('#cancel' + btnId.charAt(6)).is(':checked') ) {
+                    $('#open' + btnId.charAt(6)).addClass('disabled');
+                    $('#c' + btnId.charAt(6) + ' a').addClass('d-none');
+                    $('#c' + btnId.charAt(6) + ' h5').
+                    text('Race ' + btnId.charAt(6) + ' is cancelled.').addClass('alert alert-info');
+                    $('#addHorse' + btnId.charAt(6)).addClass('disabled');
+                } else {
+                    $('#open' + btnId.charAt(6)).removeClass('disabled');
+                    $('#c' + btnId.charAt(6) + ' a').removeClass('d-none');
+                    $('#c' + btnId.charAt(6) + ' h5').text('').removeClass('alert alert-info');
+                }
             }
         });
     }
@@ -261,9 +261,23 @@ HTML;
         changeGoToRaceButtonToUpdateRaceButton(inputId.charAt(2));
     }
 
+    // Under Construction
     function deleteRace(eventNumber, raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
-        console.log(eventNumber + " " + raceNumber);
+
+        $.ajax({
+            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 4,
+            success: function (data) {
+                $('main').prepend(data);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+
+                $('.group').each(function (index) {
+                    if ((index + 1) >= raceNumber) {
+                        console.log(index);
+                    }
+                });
+            }
+        });
     }
 
 </script>
@@ -454,7 +468,7 @@ $race_HTML .= <<< HTML
                                                             data-title="Save Changes for Race $race_num" 
                                                             data-message="Are you sure you want to update Race $race_num?"
                                                             data-button-primary-text="Confirm" 
-                                                            data-button-primary-action="updateRace($race_num)" 
+                                                            data-button-primary-action="updateRace($event_id, $race_num)" 
                                                             data-button-secondary-text="Cancel" 
                                                             data-button-secondary-action="dismiss($race_num)"
                                                         >Save</a>
@@ -465,21 +479,21 @@ $race_HTML .= <<< HTML
                                                     </div>
                                                 </div>
                                             </div>
+                                            <script>
+                                                $( "#$race_num" ).val($count_horse);
+                                                if ($count_horse === defaultHorseCount) {
+                                                    $("#addHorse$race_num").addClass("disabled");
+                                                }
+                                                raceHistory.set($race_num, horsesHistory$race_num);
+                                            </script>
                                         </div> <!---END Race HTML -->
-                                        <script>
-                                            $( "#$race_num" ).val($count_horse);
-                                            if ($count_horse === defaultHorseCount) {
-                                                $("#addHorse$race_num").addClass("disabled");
-                                            }
-                                            raceHistory.set($race_num, horsesHistory$race_num);
-                                        </script>
+                                        
 HTML;
                             echo $race_HTML;
                             $index++;
                         }
                     }
                 }
-                echo "<script>const eventID = $event_id;</script>";
 
                 ?>
 

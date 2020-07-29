@@ -44,6 +44,10 @@ $update = array(
     3 => "update"
 );
 
+$delete = array(
+    4 => "Delete"
+);
+
 /**
  * @param $int
  * @return mixed
@@ -125,7 +129,7 @@ HTML;
         }
 
     }
-} elseif (key_exists($q, $update)) {
+} else {
 
     if (!isset($_GET["e"])) {
         header("HTTP/1.1 401 Unauthorized");
@@ -133,8 +137,11 @@ HTML;
         //header("Location: error401.php");
         exit;
     }
+    $event_id = validateInt($_GET["e"]);
 
-$alert = <<< HTML
+    if (key_exists($q, $update)) {
+
+        $alert = <<< HTML
         <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
           <strong>Race $race_number</strong> is updated.
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -143,29 +150,37 @@ $alert = <<< HTML
         </div>
 HTML;
 
-    $event_id = validateInt($_GET["e"]);
 
+        if (isset($_POST["horse_array"])) {
 
-    if (isset($_POST["horse_array"])) {
+            $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $horses = $pdo->prepare($query);
+            if ($horses->execute(["race_event_id" => $event_id, "race_race_number" => $race_number])) {
+                //, win_purse, place_purse, show_purse
+                $query = "INSERT INTO horse ( race_event_id, race_race_number, horse_number ) VALUES (?, ?, ?)";
+                $stmt = $pdo->prepare($query);
 
-        $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
-        $horses = $pdo->prepare($query);
-        if ($horses->execute(["race_event_id" => $event_id, "race_race_number" => $race_number ])) {
-            //, win_purse, place_purse, show_purse
-            $query = "INSERT INTO horse ( race_event_id, race_race_number, horse_number ) VALUES (?, ?, ?)";
-            $stmt = $pdo->prepare($query);
-
-            $horses = $_POST["horse_array"];
-            foreach ($horses as $horse) {
-                if (!empty($horse)) {
-                    $horse = filter_var($horse, FILTER_SANITIZE_STRING);
-                    $success = $stmt->execute([$event_id, $race_number, $horse]);
+                $horses = $_POST["horse_array"];
+                foreach ($horses as $horse) {
+                    if (!empty($horse)) {
+                        $horse = filter_var($horse, FILTER_SANITIZE_STRING);
+                        $success = $stmt->execute([$event_id, $race_number, $horse]);
+                    }
                 }
+
+                if ($success) echo $alert;
+
             }
 
-            if ($success) echo $alert;
-
         }
-
+    } elseif (key_exists($q, $delete)) {
+echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          <strong>Race $race_number</strong> is deleted.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
     }
 }
