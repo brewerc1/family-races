@@ -1,6 +1,6 @@
 <?php
 $nav = <<< HTML
-    <nav id="main-navigation" class="navbar navbar-expand-sm fixed-bottom navbar-light bg-light">
+    <nav id="main_navigation" class="navbar navbar-expand-sm fixed-bottom navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

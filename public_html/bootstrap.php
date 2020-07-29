@@ -3,10 +3,6 @@
 // Get the configuration array from the config file located outside the document root.
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/../system/config.php');
 
-// Those information are used to hash password.
-$hash_algorithm = "sha256";
-$pepper = "clisvFdxMd2020";
-
 // Code for page templating
 function template($buffer)
 {
@@ -79,6 +75,11 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         return false;
     }
 }
+
+
+// Password hashing
+$hash_algorithm = "sha256";
+$pepper = "clisvFdxMd2020";
 
 
 /**
@@ -155,4 +156,57 @@ if (isset($_GET['m']) && isset($_GET['s'])) {
     } else {
         $alert_style = $alert_styles['primary'];
     }
+}
+
+/* returns an array, where key 'filename' is the image filename, 
+and key 'credit' is the name of the photographer for attribution */
+function random_photo(){
+
+    $photos = glob($_SERVER['DOCUMENT_ROOT'] .  '/images/photos/*.jpg');
+    
+    // Remove path info and just keep filename
+    $photos = array_map('basename', $photos);
+
+    // Randomize the array keys, then use the random array key to select one value from the array
+    $photo = $photos[array_rand($photos)];
+
+    $photo_credit_array = array(
+        'horses-2523301_1920.jpg' => 'Yenni Vance',
+        'horse-316960_1280.jpg' => 'No-longer-here',
+        'horse-3880448_1920.jpg' => 'Clarence Alford',
+        'horse-racing-2714846_1280.jpg' => 'dreamtemp',
+        'horse-racing-2714849_1280.jpg' => 'dreamtemp',
+        'horse-1911382_1920.jpg' => 'Babil Kulesi',
+        'horses-3811270_1920.jpg' => 'Clarence Alford',
+        'horse-3433862_1920.jpg' => 'Clarence Alford',
+        'bremer-rennverein-3283491_1920.jpg' => 'Andreas Iken',
+        'gallop-1117183_1920.jpg' => 'Bertil Arlert',
+        'fair-1559180_1920.jpg' => 'S. Hermann &amp; F. Richter',
+        'horse-3880451_1920.jpg' => 'Clarence Alford',
+        'horse-3880449_1920.jpg' => 'Clarence Alford',
+        'horse-3880450_1920.jpg' => 'Clarence Alford',
+        'horses-3817727_1920.jpg' => 'Clarence Alford',
+        'horse-4818530_1920.jpg' => 'Karuvadgraphy',
+        'horse-4811946_1920.jpg' => 'Karuvadgraphy</a>"',
+        'horse-2815033_1920.jpg' => 'Richard Mcall',
+        'horses-2523299_1920.jpg' => 'Yenni Vance',
+        'horse-racing-2714854_1280.jpg' => 'dreamtemp',
+        'horseracing-5061006_1920.jpg' => 'bianca-stock-photos',
+        'race-horse-2629450_1920.jpg' => 'Larry White',
+        'horses-2523295_1920.jpg' => 'Yenni Vance',
+        'race-4100474_1920.jpg' => 'Ameer shah Mohamed Farook',
+        'horse-4100475_1920.jpg' => 'Ameer shah Mohamed Farook'
+    );
+    
+    $photo_array = array(
+        'filename' => "/images/photos/$photo"
+    );
+ 
+    if(array_key_exists($photo, $photo_credit_array)){
+        $photo_array['credit'] = $photo_credit_array[$photo];
+    }else{
+        $photo_array['credit'] = 'unknown';
+    }
+
+    return $photo_array;
 }

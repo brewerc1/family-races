@@ -37,12 +37,21 @@ $uid = $_SESSION['id'];
 ///// DEBUG
 $debug = debug();
 ///// end DEBUG
-
+$background_image = random_photo();
 ?>
 {header}
+<style>
+
+#banner h1 {
+    margin: 0;
+    line-height: 100px;
+}
+</style>
 {main_nav}
 <main role="main">
-    <h1>Welcome to <?php echo $_SESSION['site_name'];?></h1>
+    <div id="banner">
+        <h1>Welcome to <?php echo $_SESSION['site_name'];?></h1>
+</div>
     <div class="mt-5 embed-responsive embed-responsive-16by9">
         <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>

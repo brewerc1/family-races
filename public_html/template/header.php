@@ -25,7 +25,7 @@ return <<< HTML
     <meta name="theme-color" content="#ffffff">
     <title>$page_title</title>
     $meta
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link href="/css/races.css" rel="stylesheet">
 
@@ -74,6 +74,7 @@ return <<< HTML
 
 </head>
 <body>
+  <div id="body_overlays"></div>
 
 <!-- Modal -->
 <div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" data-backdrop="static" aria-hidden="true">
