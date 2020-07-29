@@ -246,10 +246,10 @@ $debug = debug($_POST);
   {header}
   {main_nav}
     <main role="main">
-        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
                 <div class="form-group col">
-                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'] . '?' . $update_time_stamp;?>" alt="My Photo">
                     <div id="ajax_alert"></div>
                 </div>
                 <div id="photo_upload" class="form-group col-sm-8 d-flex">
@@ -314,7 +314,6 @@ ENDOPTION;
                     <a class="text-secondary d-block mt-2 text-center" href="/user/">Cancel</a>
                 </div>
             </div>
-            <input class="col" type="hidden" id="cropped_image">
         </form>
 
         <!-- modal for photo cropping -->
