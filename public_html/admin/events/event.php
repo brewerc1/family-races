@@ -62,9 +62,58 @@ if ($event_id == 0) {
 
 $debug = debug();
 
-$enter_race_results_HTML = <<< HTML
-    
+$node_options = "";
+$HTML_for_Race_result = <<< HTML
+
+    <table class='table table-borderless'>
+    <!-- Row A -->
+    <thead>
+        <tr>
+          <th scope='col'>Horse#</th>
+          <th scope='col'>Win</th>
+          <th scope='col'>Place</th>
+          <th scope='col'>Show</th>
+        </tr>
+    </thead>
+    <!-- Row B -->
+    <tr>
+        <td>
+            <select  id='win-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            $node_options
+            </select>
+        </td>
+        <td class='position-relative'><input type='text' class='w-100' id='win1'></td>
+        <td class='position-relative'><input type='text' class='w-100' id='place1'></td>
+        <td class='position-relative'><input type='text' class='w-100' id='show1'></td>
+    </tr>
+    <!-- Row C -->
+    <tr>
+        <td>
+            <select  id='place-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            $node_options
+            </select>
+        </td>
+        <td></td>
+        <td class='position-relative'><input type='text' class='w-100' id='place2'></td>
+        <td class='position-relative'><input type='text' class='w-100' id='show2'></td>
+    </tr>
+    <!-- Row D -->
+    <tr>
+        <td>
+            <select  id='show-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            $node_options
+            </select>
+        </td>
+        <td></td>
+        <td></td>
+        <td class='position-relative'><input type='text' class='w-100' id='show3'></td>
+    </tr>
+    </table>
 HTML;
+
 ?>
 {header}
 {main_nav}
@@ -75,14 +124,15 @@ HTML;
     let showCancelIDS = new Set();
     let defaultHorseCount;
     let numberOfHorses;
+    let horsesList;
 
-    function changeGoToRaceButtonToUpdateRaceButton(raceNumber) {
-        $('#update' + raceNumber).removeClass('d-none');
-        $('#goToRace' + raceNumber).addClass('d-none');
-        $('#wind' + raceNumber).addClass('disabled');
-        $('#open' + raceNumber).addClass('disabled');
-
-    }
+    // function changeGoToRaceButtonToUpdateRaceButton(raceNumber) {
+    //     $('#update' + raceNumber).removeClass('d-none');
+    //     $('#goToRace' + raceNumber).addClass('d-none');
+    //     $('#wind' + raceNumber).addClass('disabled');
+    //     $('#open' + raceNumber).addClass('disabled');
+    //
+    // }
 
     function removeInput(raceNumber, amountToDecrement) {
         for (let k = 0; k < amountToDecrement; k++) {
@@ -125,22 +175,20 @@ HTML;
                 horse_array: horses
             }).done( function (data) {
                 $('main').prepend(data);
-                $('#update' + raceNumber).addClass('d-none');
-                $('#goToRace' + raceNumber).removeClass('d-none');
                 $('#alert').delay( 3000 ).fadeOut( 400 );
             });
 
         raceHistory.set(raceNumber, horses);
 
-        $('#update' + raceNumber).addClass('d-none');
-        $('#goToRace' + raceNumber).removeClass('d-none');
-        $('#wind' + raceNumber).removeClass('disabled');
+        // $('#update' + raceNumber).addClass('d-none');
+        // $('#goToRace' + raceNumber).removeClass('d-none');
+        // $('#wind' + raceNumber).removeClass('disabled');
     }
 
     function dismiss(raceNumber) {
-        $('#update' + raceNumber).addClass('d-none');
-        $('#goToRace' + raceNumber).removeClass('d-none');
-        $('#wind' + raceNumber).removeClass('disabled');
+        // $('#update' + raceNumber).addClass('d-none');
+        // $('#goToRace' + raceNumber).removeClass('d-none');
+        // $('#wind' + raceNumber).removeClass('disabled');
 
         const inputId = '#addInput' + raceNumber + ' div.group-horse';
         numberOfHorses = $(inputId).length;
@@ -183,59 +231,48 @@ HTML;
         if ( $( '#addHorse' + parentDivId.charAt(5) ).hasClass( 'disabled' ) ) {
             $( '#addHorse' + parentDivId.charAt(5) ).removeClass( 'disabled' )
         }
-
-        changeGoToRaceButtonToUpdateRaceButton(parentDivId.charAt(5));
     }
 
-    function openWindow(btnId) {
+    function openWindow(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1,
+            url: './race.php?r=' + raceNumber + '&q=' + 1,
             success: function (data) {
                 $('main').prepend(data);
-                $('#c' + btnId.charAt(4) ).addClass('d-none');
-                $('#card' + btnId.charAt(4) ).removeClass('d-none');
-                $('#' + btnId ).addClass('d-none');
-                $('#wind' + btnId.charAt(4) ).removeClass('d-none');
+                $('#c' + raceNumber ).addClass('d-none');
+                $('#card' + raceNumber ).removeClass('d-none');
                 $('#alert').delay( 3000 ).fadeOut( 400 );
 
-                numberOfHorses = $('#addInput' + btnId.charAt(4) + ' div.group-horse').length;
+                numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
                 if (numberOfHorses < defaultHorseCount)
-                    $('#addHorse' + btnId.charAt(4)).removeClass('disabled');
+                    $('#addHorse' + raceNumber).removeClass('disabled');
             }
         });
     }
 
-    function closeWindow(btnId) {
+    function closeWindow(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + btnId.charAt(4) + '&q=' + 1,
+            url: './race.php?r=' + raceNumber + '&q=' + 1,
             success: function (data) {
                 $('main').prepend(data);
-                $('#c' + btnId.charAt(4) ).removeClass('d-none');
-                $('#card' + btnId.charAt(4) ).addClass('d-none');
-                $('#' + btnId ).addClass('d-none');
-                $('#open' + btnId.charAt(4) ).removeClass('d-none');
+                $('#c' + raceNumber ).removeClass('d-none');
+                $('#card' + raceNumber ).addClass('d-none');
                 $('#alert').delay( 3000 ).fadeOut( 400 );
-                $('#addHorse' + btnId.charAt(4)).addClass('disabled');
             }
         });
     }
 
-    function cancelRace(btnId) {
+    function cancelRace(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + btnId.charAt(6) + '&q=' + 2,
+            url: './race.php?r=' + raceNumber + '&q=' + 2,
             success: function (data) {
                 $('main').prepend(data);
                 $('#alert').delay( 3000 ).fadeOut( 400 );
-                if ( $('#cancel' + btnId.charAt(6)).is(':checked') ) {
-                    $('#open' + btnId.charAt(6)).addClass('disabled');
-                    $('#c' + btnId.charAt(6) + ' a').addClass('d-none');
-                    $('#c' + btnId.charAt(6) + ' h5').
-                    text('Race ' + btnId.charAt(6) + ' is cancelled.').addClass('alert alert-info');
-                    $('#addHorse' + btnId.charAt(6)).addClass('disabled');
+                if ( $('#cancel' + raceNumber).is(':checked') ) {
+                    $('#open' + raceNumber).addClass('disabled');
+                    $('#result' + raceNumber).addClass('disabled');
                 } else {
-                    $('#open' + btnId.charAt(6)).removeClass('disabled');
-                    $('#c' + btnId.charAt(6) + ' a').removeClass('d-none');
-                    $('#c' + btnId.charAt(6) + ' h5').text('').removeClass('alert alert-info');
+                    $('#open' + raceNumber).removeClass('disabled');
+                    $('#result' + raceNumber).removeClass('disabled');
                 }
             }
         });
@@ -250,16 +287,15 @@ HTML;
             duplicateHorseInput(btnId.charAt(8), numberOfHorses);
             numberOfHorses = numberOfHorses + 1;
             $('#' + btnId.charAt(8) ).val(numberOfHorses);
-            changeGoToRaceButtonToUpdateRaceButton(btnId.charAt(8));
         }
         if (numberOfHorses === defaultHorseCount) {
             $('#' + btnId).addClass('disabled');
         }
     }
 
-    function inputOnChange(inputId) {
-        changeGoToRaceButtonToUpdateRaceButton(inputId.charAt(2));
-    }
+    // function inputOnChange(inputId) {
+    //     changeGoToRaceButtonToUpdateRaceButton(inputId.charAt(2));
+    // }
 
     // Under Construction
     function deleteRace(eventNumber, raceNumber) {
@@ -279,6 +315,30 @@ HTML;
             }
         });
     }
+
+    function resultWereEnteredForRace(raceNumber) {
+
+    }
+
+    function enterResultForRace(raceNumber) {
+        $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
+        $('#collapse' + raceNumber).addClass('show');
+
+        // console.log($('#win-result').val() + " Win: $ " +$('#win1').val());
+        // console.log($('#win-result').val() + " Place: $ " + $('#place1').val());
+        // console.log($('#win-result').val() + " Show: $ " + $('#show1').val());
+        // console.log($('#place-result').val() + " Place: $ " + $('#place2').val());
+        // console.log($('#place-result').val() + " Show: $ " + $('#show2').val());
+        // console.log($('#show-result').val() + " Show: $ " + $('#show3').val());
+    }
+
+    function populateHorses(raceNumber) {
+        horsesList = raceHistory.get(raceNumber);
+        console.log(horsesList);
+
+        $('#mainModal td div#show-result').append("<h1>hi</h1>");
+    }
+
 
 </script>
 <main role="main">
@@ -317,11 +377,10 @@ HTML;
                         $index = 0;
                         while ($index < count($row)) {
                             $race_num = $row[$index]["race_number"];
+
                             $checked = $row[$index]["cancelled"] ? "checked" : "";
-                            $h5 = $row[$index]["cancelled"] ? "Race " . $race_num . " is cancelled" : "";
-                            $h5_style = $row[$index]["cancelled"] ? "alert alert-info" : "";
-                            $a_none = $row[$index]["cancelled"] ? "d-none" : "";
                             $disabled = $row[$index]["cancelled"] ? "disabled" : "";
+
                             $display_none = "";
                             $addHorse = "";
                             $closed = "d-none";
@@ -334,32 +393,41 @@ HTML;
 $race_HTML = <<< HTML
                 <!--- Race HTML -->
                 <div class="group border-bottom border-dark">
-                    <button id="btn$race_num" class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" aria-controls="collapseOne">
-                        Race $race_num
-                    </button>
+                   <div class="d-flex flex-row">
+                       <button id="btn$race_num" class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" aria-controls="collapseOne">
+                            Race $race_num
+                        </button>
+                        <a href="/races/?r=$race_num" class="btn btn-outline-primary mb-1"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" d="M8.146 11.354a.5.5 0 0 1 0-.708L10.793 8 8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/>
+                          <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 1 8z"/>
+                          <path fill-rule="evenodd" d="M13.5 14.5A1.5 1.5 0 0 0 15 13V3a1.5 1.5 0 0 0-1.5-1.5h-8A1.5 1.5 0 0 0 4 3v1.5a.5.5 0 0 0 1 0V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-8A.5.5 0 0 1 5 13v-1.5a.5.5 0 0 0-1 0V13a1.5 1.5 0 0 0 1.5 1.5h8z"/>
+                        </svg></a>
+                    </div>
                     <div id="collapse$race_num" class="collapse race" data-parent="#accordion01">
-                        <div class="card-body">
-                            <div class="text-center $closed" id="c$race_num">
+                        <div class="text-center card-body $closed" id="c$race_num">
                                 <h4>The betting window has closed.</h4>
-                                <h5 class="$h5_style">$h5</h5>
-                                <a href="#" class="btn btn-outline-secondary mt-3 $a_none" 
-                                        data-toggle="modal" 
-                                        data-target="#mainModal" 
-                                        data-title="Race $race_num Results" 
-                                        data-message="$enter_race_results_HTML"
-                                        data-button-primary-text="Save" 
-                                        data-button-primary-action="window.location.href=''" 
-                                        data-button-secondary-text="Exit" 
-                                        data-button-secondary-action=""
-                                >Enter Results for Race $race_num</a>
-                                
                                 <div class="custom-control custom-checkbox mt-4">
                                     <input type="checkbox" class="custom-control-input" id="cancel$race_num" $checked 
-                                    onclick="cancelRace('cancel$race_num')">
+                                    onclick="cancelRace($race_num)">
                                     <label class="custom-control-label" for="cancel$race_num">Cancel Race $race_num</label>
                                 </div>
-                            </div>
-                            <div class="$display_none" id="card$race_num">
+                                <div class="text-center card-body px-3">
+                                    <a href="#" class="btn btn-primary $disabled" id="result$race_num"
+                                            data-toggle="modal" 
+                                            data-target="#mainModal" 
+                                            data-title="Race $race_num Results" 
+                                            data-message= "$HTML_for_Race_result"
+                                            data-button-primary-text="Save" 
+                                            data-button-primary-action="enterResultForRace($race_num)" 
+                                            data-button-secondary-text="Exit" 
+                                            data-button-secondary-action=""
+                                            onclick="populateHorses($race_num)"
+                                    >Enter Results for Race $race_num</a>
+                                    <a href="#" class="btn btn-secondary $disabled" id="open$race_num" 
+                                     onclick="openWindow($race_num)">Reopen Betting Window</a>
+                                </div>
+                        </div>
+                        <div class="card-body $display_none" id="card$race_num">
                                 <div class="d-flex flex-row-reverse mb-2">
                                     <a href="#" id="deleteRace$race_num" class="btn btn-outline-danger"
                                         data-toggle="modal" 
@@ -374,13 +442,14 @@ $race_HTML = <<< HTML
                                 </div>
                                 <div class="form-row">
                                     <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                    <select id="$race_num" class="custom-select form-control col-sm-10 hr" required>
+                                    <select id="$race_num" class="custom-select form-control col-sm-10" required>
                                     <script>selectIDS.add($race_num); </script>
 HTML;
 
                             // Horse count
                             $horse_count = isset($_SESSION["site_default_horse_count"]) ?
                                 $_SESSION["site_default_horse_count"] : 1;
+
                             for ($i = 1; $i < $horse_count + 1; $i++) {
                                  $race_HTML .= "<option value='$i'>$i</option>";
                             }
@@ -428,10 +497,9 @@ HTML;
                                     $i++;
                                 }
                                 for ($i = 0; $i < count($finish); $i++) {
-                                    if (!is_null($finish[$i])) {
-                                        $disabled = "disabled";
+                                    if (!empty($finish[$i])) {
 $race_HTML .= <<< HTML
-                                            <script>showCancelIDS.add("c$race_num");</script>
+                                            <script>resultWereEnteredForRace($race_num);</script>
 HTML;
                                         break;
                                     }
@@ -457,12 +525,10 @@ HTML;
                             }
 $race_HTML .= <<< HTML
                                                 </div>
-                                              </div>
                                                     <div class="d-flex justify-content-between mt-4">
                                                         <span class="btn btn-success $addHorse" id="addHorse$race_num" style="border-radius: 100px"
                                                         onclick="addHorse('addHorse$race_num')">+</span>
-                                                        <a href="/races/?r=$race_num" id="goToRace$race_num" class="btn btn-primary">Race $race_num</a>
-                                                        <a href="#" class="btn btn-primary d-none" id="update$race_num"
+                                                        <a href="#" class="btn btn-primary" id="update$race_num"
                                                             data-toggle="modal" 
                                                             data-target="#mainModal" 
                                                             data-title="Save Changes for Race $race_num" 
@@ -471,11 +537,9 @@ $race_HTML .= <<< HTML
                                                             data-button-primary-action="updateRace($event_id, $race_num)" 
                                                             data-button-secondary-text="Cancel" 
                                                             data-button-secondary-action="dismiss($race_num)"
-                                                        >Save</a>
-                                                        <a href="#" class="btn btn-primary $display_none $disabled" id="wind$race_num" 
-                                                        onclick="closeWindow('wind$race_num')">Close betting window</a>
-                                                        <a href="#" class="btn btn-primary $closed $disabled" id="open$race_num" 
-                                                        onclick="openWindow('open$race_num')">Reopen Betting Window</a>
+                                                        >Save Race $race_num</a>
+                                                        <a href="#" class="btn btn-primary" id="wind$race_num" 
+                                                        onclick="closeWindow($race_num)">Close betting window</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -494,7 +558,6 @@ HTML;
                         }
                     }
                 }
-
                 ?>
 
             </fieldset>
@@ -533,7 +596,6 @@ HTML;
                         $('#addHorse' + idClicked ).addClass('disabled');
                     }
                 }
-                changeGoToRaceButtonToUpdateRaceButton(idClicked);
             });
         }
 
@@ -541,12 +603,12 @@ HTML;
     });
 
 
-    showCancelIDS.forEach(id => {
-        $('#' + id + ' h4').text("The betting window has closed. Results were successfully entered.");
-        $('#' + id + ' div label' ).attr('for', '');
-        $('#' + id + ' a').remove();
-        $('#btn' + id.charAt(1)).addClass('text-success');
-    });
+    // showCancelIDS.forEach(id => {
+    //     $('#' + id + ' h4').text("The betting window has closed. Results were successfully entered.");
+    //     $('#' + id + ' div label' ).attr('for', '');
+    //     $('#' + id + ' a').remove();
+    //     $('#btn' + id.charAt(1)).addClass('text-success');
+    // });
 </script>
 {footer}
 <?php ob_end_flush(); ?>
