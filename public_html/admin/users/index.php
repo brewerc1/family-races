@@ -41,6 +41,10 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+///// DEBUG
+$debug = debug($_POST);
+///// end DEBUG
+
 // deactivate a registered user
 if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'deactivate' && $_SESSION['admin'] == 1 ){
     $uid = trim($_GET['u']);
