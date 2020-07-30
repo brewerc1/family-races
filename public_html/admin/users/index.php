@@ -41,9 +41,44 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+// deactivate a registered user
+if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'deactivate' && $_SESSION['admin'] == 1 ){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "UPDATE user SET inactive = 1 WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+ 
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+    }
+ 
+// reactivate a registered user
+if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' && $_SESSION['admin'] == 1 ){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "UPDATE user SET inactive = 0 WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+ 
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+}
+    
+// delete an invite
+if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'delete' && $_SESSION['admin'] == 1){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "DELETE user WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+ 
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+}
 // SQL to fetch user data
 
-$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin FROM user";
+$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin, inactive FROM user";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
@@ -121,20 +156,25 @@ $output = <<< ENDUSER
 ENDUSER;
 
 
-if(!empty($invited)) {
+if(!empty($invited)) { // user invited no sign up
     $title = 'Delete Invite';
-    $action = '/thingToDo/';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=delete";
     $message="Are you sure you want to delete the invite to {$row['email']}?";
-    $value ="Resend Email";
+    $value ="Resend Invite";
+}else{
 
-
-} else{
+if($row['inactive'] == 0){ // active user deactivated
     $title = 'Deactivate User';
-    $action = '/thingToDo/';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
     $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
     $value = "Reset Email";
+}else{ //deactivated user reactivated
+    $title = 'Reactivate User';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
+    $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
+    $value = "Reset Email";
 }
-
+}
     $output .= <<< ENDUSER
                             <input class="btn btn-primary" type="submit" id="reset_email" value="$value">
 ENDUSER;
@@ -147,7 +187,7 @@ if ($row['id'] != 1) { // not admin user 1
                                 data-title="$title" 
                                 data-message="$message"
                                 data-button-primary-text="$title" 
-                                data-button-primary-action="window.location.href='<?php echo {$_SERVER['PHP_SELF']}; ?>'" 
+                                data-button-primary-action="window.location.href='$action'" 
                                 data-button-secondary-text="Cancel" 
                                 data-button-secondary-action="" 
                                 >$title</a>
