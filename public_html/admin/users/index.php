@@ -41,6 +41,42 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+// deactivate a registered user
+if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'deactivate' && $_SESSION['admin'] == 1 ){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "UPDATE user SET inactive = 1 WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+    }
+
+// reactivate a registered user
+if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' && $_SESSION['admin'] == 1 ){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "UPDATE user SET inactive = 0 WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+}
+    
+// delete an invite
+if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'delete' && $_SESSION['admin'] == 1){
+    $uid = trim($_GET['u']);
+    // PDO to update the DB
+    $update_preferences_sql = "DELETE user WHERE id = :uid";
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute(['uid' => $uid]);
+
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+}
+
 // SQL to fetch user data
 
 $display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin FROM user";
@@ -125,7 +161,7 @@ echo <<< ENDUSER
                             data-title="Delete User" 
                             data-message="Are you sure you want to delete {$row['first_name']} {$row['last_name']}?"
                             data-button-primary-text="Delete User" 
-                            data-button-primary-action="window.location.href='<?php echo {$_SERVER['PHP_SELF']}; ?>'" 
+                            data-button-primary-action="window.location.href='{$_SERVER['PHP_SELF']}?u={$row['id']}'" 
                             data-button-secondary-text="Cancel" 
                             data-button-secondary-action="" 
                                 >Delete User</a>
