@@ -138,7 +138,8 @@ $messages = array(
     11 => "User already invited",
     12 => "Need to have a selection for horse & place!",
     13 => "Bet Placed!",
-    14 => "Bet Updated!"
+    14 => "Bet Updated!",
+    15 => "Settings Updated!"
 );
 
 $notification = '';

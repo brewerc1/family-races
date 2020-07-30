@@ -40,7 +40,7 @@ $debug = debug($_POST);
 ///// end DEBUG
 
 // Check if "save" button was clicked
-if(!empty($_POST['save_button'])){
+if(isset($_POST['save_button'])){
 
     // If the sound_fx variable was not sent, or is not what is expected, set to 0
     if(empty($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
@@ -208,6 +208,9 @@ if(!empty($_POST['save_button'])){
     $_SESSION['site_email_server_password'] = $row['email_server_password'];
     $_SESSION['site_email_from_name'] = $row['email_from_name'];
     $_SESSION['site_email_from_address'] = $row['email_from_address'];
+
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
     }
 }
 
@@ -222,7 +225,7 @@ $memorial_race_selected_tag = '';
 <main role="main">
     <div class="container">
         <section id="site_settings">
-            <h1>Site Settings</h1>
+            <h1>Settings</h1>
             
             <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                 <!-- Sound Effects enable -->
