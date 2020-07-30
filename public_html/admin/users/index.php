@@ -48,11 +48,11 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     $update_preferences_sql = "UPDATE user SET inactive = 1 WHERE id = :uid";
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute(['uid' => $uid]);
-
+ 
     // confirm update
     header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
     }
-
+ 
 // reactivate a registered user
 if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' && $_SESSION['admin'] == 1 ){
     $uid = trim($_GET['u']);
@@ -60,7 +60,7 @@ if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' 
     $update_preferences_sql = "UPDATE user SET inactive = 0 WHERE id = :uid";
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute(['uid' => $uid]);
-
+ 
     // confirm update
     header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
 }
@@ -72,14 +72,17 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     $update_preferences_sql = "DELETE user WHERE id = :uid";
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute(['uid' => $uid]);
-
+ 
     // confirm update
     header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
 }
 
+if (isset($_POST['submit'])){
+
+}
 // SQL to fetch user data
 
-$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin FROM user";
+$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin, inactive FROM user";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
@@ -139,7 +142,7 @@ $num_display_user_results = $display_user_result->rowCount();
                                 $user_admin_check ="";
                             }
                             // output row of user data
-echo <<< ENDUSER
+$output = <<< ENDUSER
                 <li class="list-group-item">
                     <div class="media">
                         <a href="/user/?u={$row["id"]}">
@@ -153,32 +156,67 @@ echo <<< ENDUSER
                             <div class="form-group">
                                 <input class="form-control" type="text" id="edit_email" name="edit_email" value="{$row['email']}">
                             </div>
-                            <div class="form-group">
-                            <input class="btn btn-primary" type="submit" id="reset_email" value="Reset Email">
+                        <div class="form-group">
+ENDUSER;
+
+
+if(!empty($invited)) { // user invited no sign up
+    $title = 'Delete Invite';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=delete";
+    $message="Are you sure you want to delete the invite to {$row['email']}?";
+    $value ="Resend Invite";
+}else{
+
+if($row['inactive'] == 0){ // active user deactivated
+    $title = 'Deactivate User';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
+    $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
+    $value = "Reset Email";
+}else{ //deactivated user reactivated
+    $title = 'Reactivate User';
+    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
+    $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
+    $value = "Reset Email";
+}
+}
+    $output .= <<< ENDUSER
+                            <input class="btn btn-primary" type="submit" id="submit" value="$value">
+ENDUSER;
+
+if ($row['id'] != 1) { // not admin user 1
+    $output .= <<< ENDUSER
                             <a class="ml-4" href="#" 
-                            data-toggle="modal" 
-                            data-target="#mainModal" 
-                            data-title="Delete User" 
-                            data-message="Are you sure you want to delete {$row['first_name']} {$row['last_name']}?"
-                            data-button-primary-text="Delete User" 
-                            data-button-primary-action="window.location.href='{$_SERVER['PHP_SELF']}?u={$row['id']}'" 
-                            data-button-secondary-text="Cancel" 
-                            data-button-secondary-action="" 
-                                >Delete User</a>
+                                data-toggle="modal" 
+                                data-target="#mainModal" 
+                                data-title="$title" 
+                                data-message="$message"
+                                data-button-primary-text="$title" 
+                                data-button-primary-action="window.location.href='$action'" 
+                                data-button-secondary-text="Cancel" 
+                                data-button-secondary-action="" 
+                                >$title</a>
                             </div>
+ENDUSER;
+}
+if(empty($invited) && $row['id'] != 1){ // not admin user 1
+$output .= <<< ENDUSER
                             <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
-                        <label class="custom-control-label" for="admin"> Admin </label>
-                    </div>
+                                <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
+                                <label class="custom-control-label" for="admin"> Admin </label>
+                            </div>
+ENDUSER;
+}
+$output .= <<< ENDUSER
                       </form>
                     </div>
                 </li>
-ENDUSER;
-                        } 
+ENDUSER;                  
+                    echo $output;    
+                        } //Closes the loop for database users
                     } else {
                         echo "0 results";
-                    }
-                    ?>  
+                    }//if return is greater than 0
+                    ?>
                 </ul>
         </section> <!-- END display_current_users -->
 
