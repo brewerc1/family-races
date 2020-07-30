@@ -103,7 +103,7 @@ $num_display_user_results = $display_user_result->rowCount();
                                 $user_admin_check ="";
                             }
                             // output row of user data
-echo <<< ENDUSER
+$output = <<< ENDUSER
                 <li class="list-group-item">
                     <div class="media">
                         <a href="/user/?u={$row["id"]}">
@@ -117,32 +117,62 @@ echo <<< ENDUSER
                             <div class="form-group">
                                 <input class="form-control" type="text" id="edit_email" name="edit_email" value="{$row['email']}">
                             </div>
-                            <div class="form-group">
-                            <input class="btn btn-primary" type="submit" id="reset_email" value="Reset Email">
+                        <div class="form-group">
+ENDUSER;
+
+
+if(!empty($invited)) {
+    $title = 'Delete Invite';
+    $action = '/thingToDo/';
+    $message="Are you sure you want to delete the invite to {$row['email']}?";
+    $value ="Resend Email";
+
+
+} else{
+    $title = 'Deactivate User';
+    $action = '/thingToDo/';
+    $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
+    $value = "Reset Email";
+}
+
+    $output .= <<< ENDUSER
+                            <input class="btn btn-primary" type="submit" id="reset_email" value="$value">
+ENDUSER;
+
+if ($row['id'] != 1) { // not admin user 1
+    $output .= <<< ENDUSER
                             <a class="ml-4" href="#" 
-                            data-toggle="modal" 
-                            data-target="#mainModal" 
-                            data-title="Delete User" 
-                            data-message="Are you sure you want to delete {$row['first_name']} {$row['last_name']}?"
-                            data-button-primary-text="Delete User" 
-                            data-button-primary-action="window.location.href='<?php echo {$_SERVER['PHP_SELF']}; ?>'" 
-                            data-button-secondary-text="Cancel" 
-                            data-button-secondary-action="" 
-                                >Delete User</a>
+                                data-toggle="modal" 
+                                data-target="#mainModal" 
+                                data-title="$title" 
+                                data-message="$message"
+                                data-button-primary-text="$title" 
+                                data-button-primary-action="window.location.href='<?php echo {$_SERVER['PHP_SELF']}; ?>'" 
+                                data-button-secondary-text="Cancel" 
+                                data-button-secondary-action="" 
+                                >$title</a>
                             </div>
+ENDUSER;
+}
+if(empty($invited) && $row['id'] != 1){ // not admin user 1
+$output .= <<< ENDUSER
                             <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
-                        <label class="custom-control-label" for="admin"> Admin </label>
-                    </div>
+                                <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
+                                <label class="custom-control-label" for="admin"> Admin </label>
+                            </div>
+ENDUSER;
+}
+$output .= <<< ENDUSER
                       </form>
                     </div>
                 </li>
-ENDUSER;
-                        } 
+ENDUSER;                  
+                    echo $output;    
+                        } //Closes the loop for database users
                     } else {
                         echo "0 results";
-                    }
-                    ?>  
+                    }//if return is greater than 0
+                    ?>
                 </ul>
         </section> <!-- END display_current_users -->
 
