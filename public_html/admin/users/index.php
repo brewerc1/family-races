@@ -43,7 +43,7 @@ if (!$_SESSION["admin"]) {
 
 // SQL to fetch user data
 
-$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time FROM user";
+$display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin FROM user";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
@@ -97,7 +97,11 @@ $num_display_user_results = $display_user_result->rowCount();
                                 $photo = $row["photo"] ."?$update_time_stamp"; // cache-bust this image
                                 $alt = "A photo of $name";
                             }
-
+                            if ($row['admin']=== 1) {
+                                $user_admin_check = "checked";
+                            } else {
+                                $user_admin_check ="";
+                            }
                             // output row of user data
 echo <<< ENDUSER
                 <li class="list-group-item">
@@ -105,7 +109,33 @@ echo <<< ENDUSER
                         <a href="/user/?u={$row["id"]}">
                             <img src="$photo" alt="$alt" class="rounded-circle">
                         </a>
-                        <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> {$invited}</div>
+                        <div class="media-body"><span class="user_name d-inline-block px-3" data-toggle="collapse" href="#user_{$row['id']}_collapse">$name</span> {$invited}</div>
+                    </div>
+                    <div class="collapse" id="user_{$row['id']}_collapse">
+                    <div class="card card-body">
+                      <form>
+                            <div class="form-group">
+                                <input type="text" id="edit_email" name="edit_email" value="{$row['email']}">
+                                
+                            </div>
+                            <div class="form-group">
+                            <input type="submit" id="reset_email" value="Reset Email">
+                            <a href="#" 
+                            data-toggle="modal" 
+                            data-target="#mainModal" 
+                            data-title="Delete User" 
+                            data-message="Are you sure you want to delete {$row['first_name']} {$row['last_name']}?"
+                            data-button-primary-text="Delete User" 
+                            data-button-primary-action="window.location.href='<?php echo {$_SERVER['PHP_SELF']}; ?>'" 
+                            data-button-secondary-text="Cancel" 
+                            data-button-secondary-action="" 
+                                >Delete User</a>
+                            </div>
+                            <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
+                        <label class="custom-control-label" for="sound_fx"> Admin </label>
+                    </div>
+                      </form>
                     </div>
                 </li>
 ENDUSER;
