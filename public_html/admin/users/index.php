@@ -145,6 +145,30 @@ $num_display_user_results = $display_user_result->rowCount();
                             } else {
                                 $user_admin_check ="";
                             }
+
+                            if(!empty($invited)) { // user invited no sign up
+                                $title = 'Delete Invite';
+                                $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=delete";
+                                $message="Are you sure you want to delete the invite to {$row['email']}?";
+                                $value ="Resend Invite";
+                                $field_name = "resend_invite";
+                            }else{
+                            
+                            if($row['inactive'] == 0){ // active user deactivated
+                                $title = 'Deactivate User';
+                                $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
+                                $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
+                                $value = "Reset Email";
+                                $field_name = "reset_email";
+                            }else{ //deactivated user reactivated
+                                $title = 'Reactivate User';
+                                $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
+                                $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
+                                $value = "Reset Email";
+                                $field_name = "reset_email";
+                            }
+                            }
+
                             // output row of user data
 $output = <<< ENDUSER
                 <li class="list-group-item">
@@ -158,32 +182,13 @@ $output = <<< ENDUSER
                     <div class="card card-body">
                       <form action="{$_SERVER["PHP_SELF"]}" method="post" >
                             <div class="form-group">
-                                <input class="form-control" type="text" name="edit_email" value="{$row['email']}">
+                                <input class="form-control" type="text" name="{$field_name}" value="{$row['email']}">
                             </div>
                         <div class="form-group">
 ENDUSER;
 
 
-if(!empty($invited)) { // user invited no sign up
-    $title = 'Delete Invite';
-    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=delete";
-    $message="Are you sure you want to delete the invite to {$row['email']}?";
-    $value ="Resend Invite";
-}else{
 
-if($row['inactive'] == 0){ // active user deactivated
-    $title = 'Deactivate User';
-    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
-    $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
-    $value = "Reset Email";
-}else{ //deactivated user reactivated
-    $title = 'Reactivate User';
-    $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
-    $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
-    $value = "Reset Email";
-    
-}
-}
     $output .= <<< ENDUSER
                             <input class="btn btn-primary" type="submit" name="submit" value="$value">
 ENDUSER;
