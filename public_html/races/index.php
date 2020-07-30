@@ -4,7 +4,7 @@
  * 
  * This page displays races of the current event.
  * Logged in users can place bets and view results.
- * User data for logged in user is stored in $_SESSION.email
+ * User data for logged in user is stored in $_SESSION['email']
  * Page checks for $_GET
  */
 
@@ -47,14 +47,14 @@ $uid = $_SESSION['id'];
 
 // URL needs to have the GET variables to work ex: http://localhost/races/?e=1&r=3
 // Handle Event
-if(isset($_GET['e']) && is_numeric($_GET['e'])){
+if(!empty($_GET['e']) && is_numeric($_GET['e'])){
     $event = $_GET['e'];
 }else{
     $event = $_SESSION['current_event'];
 }
 
 // Handle Race TODO: impliment $_SESSION['current_race']
-if(isset($_GET['r']) && is_numeric($_GET['r'])){
+if(!empty($_GET['r']) && is_numeric($_GET['r'])){
     $race = $_GET['r'];
 }else{
     $current_race_sql = "SELECT * FROM `race` WHERE race.event_id = :event AND race.window_closed = 0 LIMIT 1";
@@ -66,10 +66,10 @@ if(isset($_GET['r']) && is_numeric($_GET['r'])){
 }
 
 // Handle if user only selected one thing and clicked submit
-if (isset($_GET['p']) && is_numeric($_GET['p'])) {
+if (!empty($_GET['p']) && is_numeric($_GET['p'])) {
     $old_pick = $_GET['p'];
 }
-if (isset($_GET['f']) && is_string($_GET['f'])) {
+if (!empty($_GET['f']) && is_string($_GET['f'])) {
     $old_finish = $_GET['f'];
 }
 
@@ -124,12 +124,14 @@ $race_standings_result = $pdo->prepare($race_standings_sql);
 $race_standings_result->execute(['event' => $event, 'race' => $race, 'user_id' => $uid]);
 $race_standings_info = $race_standings_result->fetch();
 
+$background_image = random_photo();
+
 ?>
 {header}
 {main_nav}
-<main role="main">
+<main role="main" id="races_page">
 
-    <div class="card" style=" margin: 0 auto;">
+    <div class="card" style="background-image: url(<?php echo $background_image['filename'];?>);">
         <div class="input-group input-group-lg mb-3 pt-2 pl-2 pr-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
@@ -214,18 +216,18 @@ $race_standings_info = $race_standings_result->fetch();
             </form>
         <?php } 
         elseif ($race_info['window_closed'] == '1') {?>
-            <div class="window-closed-section">
-                <h1>The window for this race has been closed!</h1>
+            <div class="card-body" id="window_closed">
+                <div class="card-meta">The window for this race is closed</div>
                 <?php if($pick){ ?>
-                    <div class="your-bet">
-                        <h2>Your Bet: <?php echo "<span class='horse-number'>{$pick['horse_number']}</span> to <span class='horse-finish'>" . ucfirst($pick['finish']) . "</span>";?></h2>
+                    <div class="card-text" id="your_bet">
+                        <h1>You picked horse #<?php echo "<span class='horse-number'>{$pick['horse_number']}</span> to <span class='horse-finish'>" . ucfirst($pick['finish']) . "</span>";?></h1>
                         <?php if ($race_standings_info) {
-                            echo "<h3>Purse: $" . $race_standings_info['earnings'] . "</h3>";
+                            echo "<h3>Your purse: $" . $race_standings_info['earnings'] . "</h3>";
                         }?>
                     </div>
                 <?php } else { ?>
-                    <div class="no-bet">
-                        <h2>No Bet Logged!</h2>
+                    <div class="card-text" id="no_bet">
+                        <h2 class="card-title">You didn't place a bet</h2>
                         <!-- When there is no bet, they will not win anything, so default to $0.00 -->
                         <h3>Purse: $0.00</h3>
                     </div>
@@ -269,7 +271,7 @@ HERE;
     else { // Show there is no results entered in yet
         echo <<< NORESULTS
             <div class="no-results">
-                <h2>No results have been entered in for this race yet! Check back later!</h2>
+                <div>Race results are not in. Check&nbsp;back&nbsp;later.</div>
             </div>
 NORESULTS;
     }
