@@ -156,9 +156,9 @@ $output = <<< ENDUSER
                     </div>
                     <div class="collapse" id="user_{$row['id']}_collapse">
                     <div class="card card-body">
-                      <form>
+                      <form action="{$_SERVER["PHP_SELF"]}" method="post" >
                             <div class="form-group">
-                                <input class="form-control" type="text" id="edit_email" name="edit_email" value="{$row['email']}">
+                                <input class="form-control" type="text" name="edit_email" value="{$row['email']}">
                             </div>
                         <div class="form-group">
 ENDUSER;
@@ -181,10 +181,11 @@ if($row['inactive'] == 0){ // active user deactivated
     $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
     $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
     $value = "Reset Email";
+    
 }
 }
     $output .= <<< ENDUSER
-                            <input class="btn btn-primary" type="submit" id="submit" value="$value">
+                            <input class="btn btn-primary" type="submit" name="submit" value="$value">
 ENDUSER;
 
 if ($row['id'] != 1) { // not admin user 1
