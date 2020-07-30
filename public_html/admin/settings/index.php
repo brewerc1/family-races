@@ -222,7 +222,7 @@ $memorial_race_selected_tag = '';
 <main role="main">
     <div class="container">
         <section id="site_settings">
-            <h1>Settings</h1>
+            <h1>Site Settings</h1>
             
             <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                 <!-- Sound Effects enable -->
@@ -245,9 +245,7 @@ $memorial_race_selected_tag = '';
                 <div class="form-group row">
                     <div class="col">
                         <label for="terms_text" class="sr-only"> Terms & Conditions </label>
-                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" >
-                            <?php if(!empty($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?>
-                        </textarea>
+                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" ><?php if(!empty($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?></textarea>
                     </div>
                 </div>
 
