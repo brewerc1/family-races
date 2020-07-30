@@ -20,7 +20,7 @@ $page_title = "User Settings";
 // include the menu javascript for the template
 $javascript = '';
 
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
@@ -40,13 +40,13 @@ $uid = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 if(isset($_POST['save_button'])){
 
     // If the sound_fx variable was not sent, or is not what is expected, set to 0
-    if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
+    if(empty($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
         $sound_fx_value = 0;
     } else {
         $sound_fx_value = 1;
     }
     // Same process for voiceovers. Any future 'boolean' settings follow this logic
-    if(!isset($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
+    if(empty($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
         $voiceovers_value = 0;
     } else {
         $voiceovers_value = 1;
