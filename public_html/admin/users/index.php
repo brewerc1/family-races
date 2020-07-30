@@ -115,12 +115,11 @@ echo <<< ENDUSER
                     <div class="card card-body">
                       <form>
                             <div class="form-group">
-                                <input type="text" id="edit_email" name="edit_email" value="{$row['email']}">
-                                
+                                <input class="form-control" type="text" id="edit_email" name="edit_email" value="{$row['email']}">
                             </div>
                             <div class="form-group">
-                            <input type="submit" id="reset_email" value="Reset Email">
-                            <a href="#" 
+                            <input class="btn btn-primary" type="submit" id="reset_email" value="Reset Email">
+                            <a class="ml-4" href="#" 
                             data-toggle="modal" 
                             data-target="#mainModal" 
                             data-title="Delete User" 
@@ -133,7 +132,7 @@ echo <<< ENDUSER
                             </div>
                             <div class="form-group custom-control custom-switch custom-switch-lg">
                         <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
-                        <label class="custom-control-label" for="sound_fx"> Admin </label>
+                        <label class="custom-control-label" for="admin"> Admin </label>
                     </div>
                       </form>
                     </div>
