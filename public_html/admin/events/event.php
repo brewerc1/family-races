@@ -8,10 +8,67 @@ session_start();
 // set the page title for the template
 $page_title = "Manage an Event";
 
+$HTML_for_Race_result = <<< HTML
 
+    <table class='table table-borderless'>
+    <!-- Row A -->
+    <thead>
+        <tr>
+          <th scope='col'>Horse#</th>
+          <th scope='col'>Win</th>
+          <th scope='col'>Place</th>
+          <th scope='col'>Show</th>
+        </tr>
+    </thead>
+    <!-- Row B -->
+    <tr>
+        <td>
+            <select  id='win-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            </select>
+        </td>
+        <td class='position-relative'>
+                <input type='text' id='win1' class='w-100 form-control'>
+        </td>
+        <td class='position-relative'>
+                <input type='text' id='place1' class='w-100 form-control'>
+        </td>
+        <td class='position-relative'>
+                <input type='text' id='show1' class='w-100 form-control'>
+        </td>
+    </tr>
+    <!-- Row C -->
+    <tr>
+        <td>
+            <select  id='place-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            </select>
+        </td>
+        <td></td>
+        <td class='position-relative'>
+                <input type='text' id='place2' class='w-100 form-control'>
+        </td>
+        <td class='position-relative'>
+            <input type='text' id='show2' class='w-100 form-control'>
+        </td>
+    </tr>
+    <!-- Row D -->
+    <tr>
+        <td>
+            <select  id='show-result' class='custom-select'>
+            <option value=''>Horse#</option>
+            </select>
+        </td>
+        <td></td>
+        <td></td>
+        <td class='position-relative'>
+            <input type='text' id='show3' class='w-100 form-control'>
+        </td>
+    </tr>
+    </table>
+HTML;
 $javascript = <<< JAVASCRIPT
-
-    
+enterResultFormHTML();
 JAVASCRIPT;
 
 
@@ -62,77 +119,16 @@ if ($event_id == 0) {
 
 $debug = debug();
 
-$node_options = "";
-$HTML_for_Race_result = <<< HTML
-
-    <table class='table table-borderless'>
-    <!-- Row A -->
-    <thead>
-        <tr>
-          <th scope='col'>Horse#</th>
-          <th scope='col'>Win</th>
-          <th scope='col'>Place</th>
-          <th scope='col'>Show</th>
-        </tr>
-    </thead>
-    <!-- Row B -->
-    <tr>
-        <td>
-            <select  id='win-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            $node_options
-            </select>
-        </td>
-        <td class='position-relative'><input type='text' class='w-100' id='win1'></td>
-        <td class='position-relative'><input type='text' class='w-100' id='place1'></td>
-        <td class='position-relative'><input type='text' class='w-100' id='show1'></td>
-    </tr>
-    <!-- Row C -->
-    <tr>
-        <td>
-            <select  id='place-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            $node_options
-            </select>
-        </td>
-        <td></td>
-        <td class='position-relative'><input type='text' class='w-100' id='place2'></td>
-        <td class='position-relative'><input type='text' class='w-100' id='show2'></td>
-    </tr>
-    <!-- Row D -->
-    <tr>
-        <td>
-            <select  id='show-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            $node_options
-            </select>
-        </td>
-        <td></td>
-        <td></td>
-        <td class='position-relative'><input type='text' class='w-100' id='show3'></td>
-    </tr>
-    </table>
-HTML;
-
 ?>
 {header}
 {main_nav}
 <script>
     let raceHistory = new Map();
+    let resultList = new Map();
 
-    let selectIDS = new Set();
-    let showCancelIDS = new Set();
     let defaultHorseCount;
     let numberOfHorses;
     let horsesList;
-
-    // function changeGoToRaceButtonToUpdateRaceButton(raceNumber) {
-    //     $('#update' + raceNumber).removeClass('d-none');
-    //     $('#goToRace' + raceNumber).addClass('d-none');
-    //     $('#wind' + raceNumber).addClass('disabled');
-    //     $('#open' + raceNumber).addClass('disabled');
-    //
-    // }
 
     function removeInput(raceNumber, amountToDecrement) {
         for (let k = 0; k < amountToDecrement; k++) {
@@ -176,19 +172,24 @@ HTML;
             }).done( function (data) {
                 $('main').prepend(data);
                 $('#alert').delay( 3000 ).fadeOut( 400 );
+                raceHistory.set(raceNumber, horses);
             });
 
-        raceHistory.set(raceNumber, horses);
+        // $.ajax({
+        //     type: 'POST',
+        //     url: './race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + eventNumber,
+        //     horse_array: horses,
+        //     success: function (data) {
+        //         $('main').prepend(data);
+        //         $('#alert').delay( 3000 ).fadeOut( 400 );
+        //         raceHistory.set(raceNumber, horses);
+        //     }
+        // });
 
-        // $('#update' + raceNumber).addClass('d-none');
-        // $('#goToRace' + raceNumber).removeClass('d-none');
-        // $('#wind' + raceNumber).removeClass('disabled');
+
     }
 
     function dismiss(raceNumber) {
-        // $('#update' + raceNumber).addClass('d-none');
-        // $('#goToRace' + raceNumber).removeClass('d-none');
-        // $('#wind' + raceNumber).removeClass('disabled');
 
         const inputId = '#addInput' + raceNumber + ' div.group-horse';
         numberOfHorses = $(inputId).length;
@@ -212,6 +213,7 @@ HTML;
         numberOfHorses = $(inputId).length;
         if (numberOfHorses < defaultHorseCount)
             $('#addHorse' + raceNumber).removeClass('disabled');
+
     }
 
     function deleteHorse(parentDivId, selfId) {
@@ -235,7 +237,7 @@ HTML;
 
     function openWindow(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + raceNumber + '&q=' + 1,
+            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
             success: function (data) {
                 $('main').prepend(data);
                 $('#c' + raceNumber ).addClass('d-none');
@@ -251,7 +253,7 @@ HTML;
 
     function closeWindow(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + raceNumber + '&q=' + 1,
+            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
             success: function (data) {
                 $('main').prepend(data);
                 $('#c' + raceNumber ).removeClass('d-none');
@@ -263,7 +265,7 @@ HTML;
 
     function cancelRace(raceNumber) {
         $.ajax({
-            url: './race.php?r=' + raceNumber + '&q=' + 2,
+            url: './race.php?e=2&r=' + raceNumber + '&q=' + 2,
             success: function (data) {
                 $('main').prepend(data);
                 $('#alert').delay( 3000 ).fadeOut( 400 );
@@ -293,10 +295,6 @@ HTML;
         }
     }
 
-    // function inputOnChange(inputId) {
-    //     changeGoToRaceButtonToUpdateRaceButton(inputId.charAt(2));
-    // }
-
     // Under Construction
     function deleteRace(eventNumber, raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
@@ -316,11 +314,13 @@ HTML;
         });
     }
 
-    function resultWereEnteredForRace(raceNumber) {
-
+    function depopulateHorses() {
+        $( ".race-result" ).each( function () {
+            $(".race-result option").remove();
+        });
     }
 
-    function enterResultForRace(raceNumber) {
+    function enterResultForRace(eventNumber, raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
         $('#collapse' + raceNumber).addClass('show');
 
@@ -330,15 +330,138 @@ HTML;
         // console.log($('#place-result').val() + " Place: $ " + $('#place2').val());
         // console.log($('#place-result').val() + " Show: $ " + $('#show2').val());
         // console.log($('#show-result').val() + " Show: $ " + $('#show3').val());
+
+        let win = [];
+        win.push($('#win-result').val());
+        win.push($('#win1').val());
+        win.push($('#place1').val());
+        win.push($('#show1').val());
+        console.log(win)
+
+        let place = [];
+        place.push($('#place-result').val());
+        place.push($('#place2').val());
+        place.push($('#show2').val());
+        console.log(place)
+
+        let show = [];
+        show.push($('#show-result').val());
+        show.push($('#show3').val());
+        console.log(show)
+
+        depopulateHorses();
+
+        $.ajax({
+            method: 'POST',
+            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
+            data: {win: win, place: place, show: show},
+            success: function (data) {
+                $('main').prepend(data);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+            }
+        });
+
+    }
+
+    function enterResultFormHTML() {
+        $('.modal-header button.close span').attr('onclick', 'depopulateHorses()');
+
+        $('#message').prepend("<table class='table table-borderless'>\n" +
+            "    <!-- Row A -->\n" +
+            "    <thead>\n" +
+            "        <tr>\n" +
+            "          <th scope='col'>Horse#</th>\n" +
+            "          <th scope='col'>Win</th>\n" +
+            "          <th scope='col'>Place</th>\n" +
+            "          <th scope='col'>Show</th>\n" +
+            "        </tr>\n" +
+            "    </thead>\n" +
+            "    <!-- Row B -->\n" +
+            "    <tr>\n" +
+            "        <td>\n" +
+            "            <select  id='win-result' class='custom-select race-result'>\n" +
+            "            </select>\n" +
+            "        </td>\n" +
+            "        <td class='position-relative'>\n" +
+            "                <input type='text' id='win1' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "        <td class='position-relative'>\n" +
+            "                <input type='text' id='place1' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "        <td class='position-relative'>\n" +
+            "                <input type='text' id='show1' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "    </tr>\n" +
+            "    <!-- Row C -->\n" +
+            "    <tr>\n" +
+            "        <td>\n" +
+            "            <select  id='place-result' class='custom-select race-result'>\n" +
+            "            </select>\n" +
+            "        </td>\n" +
+            "        <td></td>\n" +
+            "        <td class='position-relative'>\n" +
+            "                <input type='text' id='place2' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "        <td class='position-relative'>\n" +
+            "            <input type='text' id='show2' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "    </tr>\n" +
+            "    <!-- Row D -->\n" +
+            "    <tr>\n" +
+            "        <td>\n" +
+            "            <select  id='show-result' class='custom-select race-result'>\n" +
+            "            </select>\n" +
+            "        </td>\n" +
+            "        <td></td>\n" +
+            "        <td></td>\n" +
+            "        <td class='position-relative'>\n" +
+            "            <input type='text' id='show3' class='w-100 form-control'>\n" +
+            "        </td>\n" +
+            "    </tr>\n" +
+            "    </table>");
+
+        depopulateHorses()
+    }
+
+    $('.group-select').bind('change', function () {
+        numberOfHorses = $('#addInput' + this.id + ' div.group-horse').length;
+
+        if (this.value < numberOfHorses) {
+            const amountToDecrement = numberOfHorses - this.value;
+            removeInput(this.id, amountToDecrement);
+            $('#addHorse' + this.id ).removeClass('disabled');
+        }
+
+        if (this.value > numberOfHorses) {
+            for (numberOfHorses; numberOfHorses < this.value; numberOfHorses++) {
+                $('#addInput' + this.id + ' div.group-horse div.input-group-append span').
+                removeClass('d-none');
+                duplicateHorseInput(this.id, numberOfHorses);
+            }
+            if (numberOfHorses === defaultHorseCount) {
+                $('#addHorse' + this.id ).addClass('disabled');
+            }
+        }
+    });
+
+
+    function resultWereEnteredForRace(raceNumber) {
+        $('#c' + raceNumber + ' div.custom-control').remove();
+        $('#open' + raceNumber).remove();
+        $('#result' + raceNumber).text('Edit Result for race ' + raceNumber).
+        attr('class', 'btn btn-secondary');
+        $('#c' + raceNumber + ' span').text('Results were entered successfully.');
     }
 
     function populateHorses(raceNumber) {
         horsesList = raceHistory.get(raceNumber);
-        console.log(horsesList);
 
-        $('#mainModal td div#show-result').append("<h1>hi</h1>");
+        $( ".race-result" ).prepend( "<option>Horse#</option>" );
+        horsesList.forEach(horse => {
+            $('#win-result option:last-of-type').clone().
+            attr('value', horse).text(horse).appendTo('.race-result');
+        })
     }
-
 
 </script>
 <main role="main">
@@ -376,6 +499,7 @@ HTML;
                         $row = $races->fetchAll();
                         $index = 0;
                         while ($index < count($row)) {
+                            $race_num_if_result_were_entered = "";
                             $race_num = $row[$index]["race_number"];
 
                             $checked = $row[$index]["cancelled"] ? "checked" : "";
@@ -394,7 +518,9 @@ $race_HTML = <<< HTML
                 <!--- Race HTML -->
                 <div class="group border-bottom border-dark">
                    <div class="d-flex flex-row">
-                       <button id="btn$race_num" class="btn btn-block dropdown-toggle dt" type="button" data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" aria-controls="collapseOne">
+                       <button id="btn$race_num" class="btn btn-block dropdown-toggle dt" type="button" 
+                       data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" 
+                       aria-controls="collapseOne">
                             Race $race_num
                         </button>
                         <a href="/races/?r=$race_num" class="btn btn-outline-primary mb-1"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -406,6 +532,7 @@ $race_HTML = <<< HTML
                     <div id="collapse$race_num" class="collapse race" data-parent="#accordion01">
                         <div class="text-center card-body $closed" id="c$race_num">
                                 <h4>The betting window has closed.</h4>
+                                <span></span>
                                 <div class="custom-control custom-checkbox mt-4">
                                     <input type="checkbox" class="custom-control-input" id="cancel$race_num" $checked 
                                     onclick="cancelRace($race_num)">
@@ -415,13 +542,12 @@ $race_HTML = <<< HTML
                                     <a href="#" class="btn btn-primary $disabled" id="result$race_num"
                                             data-toggle="modal" 
                                             data-target="#mainModal" 
-                                            data-title="Race $race_num Results" 
-                                            data-message= "$HTML_for_Race_result"
+                                            data-title="Race $race_num Results"
                                             data-button-primary-text="Save" 
-                                            data-button-primary-action="enterResultForRace($race_num)" 
+                                            data-button-primary-action="enterResultForRace($event_id, $race_num)" 
                                             data-button-secondary-text="Exit" 
-                                            data-button-secondary-action=""
-                                            onclick="populateHorses($race_num)"
+                                            data-button-secondary-action="depopulateHorses()"
+                                             onclick="populateHorses($race_num)"
                                     >Enter Results for Race $race_num</a>
                                     <a href="#" class="btn btn-secondary $disabled" id="open$race_num" 
                                      onclick="openWindow($race_num)">Reopen Betting Window</a>
@@ -437,13 +563,13 @@ $race_HTML = <<< HTML
                                         data-button-primary-text="Confirm" 
                                         data-button-primary-action="deleteRace('$event_id', '$race_num')" 
                                         data-button-secondary-text="Cancel" 
-                                        data-button-secondary-action=""
+                                        data-button-secondary-action="enterResultFormHTML();"
                                     >Delete Race $race_num</a>
                                 </div>
                                 <div class="form-row">
                                     <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                    <select id="$race_num" class="custom-select form-control col-sm-10" required>
-                                    <script>selectIDS.add($race_num); </script>
+                                    <select id="$race_num" class="custom-select form-control col-sm-10 group-select" required>
+                                    
 HTML;
 
                             // Horse count
@@ -459,7 +585,7 @@ $race_HTML .= <<< HTML
                                 </div>
                                     <div id="addInput$race_num" class="form-row mt-4 addSelect">
 HTML;
-                            $query = "SELECT horse_number, finish FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
+                            $query = "SELECT horse_number, finish, win_purse, place_purse, show_purse FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
                             $horses = $pdo->prepare($query);
                             $horses->execute(['event_id' => $event_id, 'race_num' => $race_num]);
                             $count_horse = $horses->rowCount();
@@ -471,8 +597,10 @@ HTML;
                                 $row_horse = $horses->fetchAll();
                                 $i = 0;
                                 while ($i < count($row_horse)) {
+                                    //var_dump($row_horse[$i]);
                                     $horse_val = $row_horse[$i]["horse_number"];
                                     $finish[$i] = $row_horse[$i]["finish"];
+
 
                                     // ids
                                     $parent_div = "horse" . $race_num.$i . substr(microtime() . "", 2, 5);
@@ -496,11 +624,10 @@ $race_HTML .= <<< HTML
 HTML;
                                     $i++;
                                 }
+                                //var_dump($row_horse);
                                 for ($i = 0; $i < count($finish); $i++) {
-                                    if (!empty($finish[$i])) {
-$race_HTML .= <<< HTML
-                                            <script>resultWereEnteredForRace($race_num);</script>
-HTML;
+                                    if (!is_null($finish[$i])) {
+                                        $race_num_if_result_were_entered = $race_num;
                                         break;
                                     }
                                 }
@@ -549,9 +676,12 @@ $race_HTML .= <<< HTML
                                                     $("#addHorse$race_num").addClass("disabled");
                                                 }
                                                 raceHistory.set($race_num, horsesHistory$race_num);
+                                                
+                                                $( document ).ready(function() {
+                                                  resultWereEnteredForRace($race_num_if_result_were_entered);
+                                                })
                                             </script>
-                                        </div> <!---END Race HTML -->
-                                        
+                                        </div> <!---END Race HTML -->    
 HTML;
                             echo $race_HTML;
                             $index++;
@@ -571,44 +701,5 @@ HTML;
         </form>
     </section>
 </main>
-<script>
-    $('fieldset').on('click', function (e) {
-        const idClicked = e.target.id;
-
-        // Select
-        if (selectIDS.has(parseInt(idClicked))) {
-            $('#' + idClicked).on('change', function () {
-                numberOfHorses = $('#addInput' + idClicked + ' div.group-horse').length;
-
-                if (this.value < numberOfHorses) {
-                    const amountToDecrement = numberOfHorses - this.value;
-                    removeInput(idClicked, amountToDecrement);
-                    $('#addHorse' + idClicked ).removeClass('disabled');
-                }
-
-                if (this.value > numberOfHorses) {
-                    for (numberOfHorses; numberOfHorses < this.value; numberOfHorses++) {
-                        $('#addInput' + idClicked + ' div.group-horse div.input-group-append span').
-                        removeClass('d-none');
-                        duplicateHorseInput(idClicked, numberOfHorses);
-                    }
-                    if (numberOfHorses === defaultHorseCount) {
-                        $('#addHorse' + idClicked ).addClass('disabled');
-                    }
-                }
-            });
-        }
-
-
-    });
-
-
-    // showCancelIDS.forEach(id => {
-    //     $('#' + id + ' h4').text("The betting window has closed. Results were successfully entered.");
-    //     $('#' + id + ' div label' ).attr('for', '');
-    //     $('#' + id + ' a').remove();
-    //     $('#btn' + id.charAt(1)).addClass('text-success');
-    // });
-</script>
 {footer}
 <?php ob_end_flush(); ?>

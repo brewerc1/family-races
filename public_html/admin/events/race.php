@@ -28,7 +28,7 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
-if (!isset($_GET["r"]) && !isset($_GET["q"])) {
+if (!isset($_GET["r"]) && !isset($_GET["q"]) && !isset($_GET["e"])) {
     header("HTTP/1.1 401 Unauthorized");
     // An error page
     //header("Location: error401.php");
@@ -48,6 +48,10 @@ $delete = array(
     4 => "Delete"
 );
 
+$result = array(
+    5 => "result"
+);
+
 /**
  * @param $int
  * @return mixed
@@ -62,6 +66,7 @@ function validateInt($int) {
 
 $q = validateInt($_GET["q"]);
 $race_number = validateInt($_GET["r"]);
+$event_id = validateInt($_GET["e"]);
 
 if (key_exists($q, $request_array)) {
 
@@ -131,17 +136,9 @@ HTML;
     }
 } else {
 
-    if (!isset($_GET["e"])) {
-        header("HTTP/1.1 401 Unauthorized");
-        // An error page
-        //header("Location: error401.php");
-        exit;
-    }
-    $event_id = validateInt($_GET["e"]);
-
     if (key_exists($q, $update)) {
 
-        $alert = <<< HTML
+$alert = <<< HTML
         <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
           <strong>Race $race_number</strong> is updated.
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -167,8 +164,8 @@ HTML;
                         $success = $stmt->execute([$event_id, $race_number, $horse]);
                     }
                 }
-
-                if ($success) echo $alert;
+                if ($success)
+                    echo $alert;
 
             }
 
@@ -177,6 +174,37 @@ HTML;
 echo <<< HTML
         <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
           <strong>Race $race_number</strong> is deleted.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+HTML;
+    }
+}
+
+if (key_exists($q, $result)) {
+
+    if (isset($_POST["win"])) {
+
+        //INSERT INTO horse ( win_purse, place_purse, show_purse ) VALUES (?, ?, ?) WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number
+        $query = "UPDATE horse SET finish = :finish, win_purse = :win_purse, place_purse = :place_purse, show_purse = :show_purse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $stmt = $pdo->prepare($query);
+
+        $stmt->execute(['finish' => 'win', 'win_purse' => $_POST["win"][1], 'place_purse' => $_POST["win"][2], 'show_purse' => $_POST["win"][3],
+            'race_event_id' => $event_id, 'race_race_number' => $race_number,
+            'horse_number' => $_POST["win"][0]]);
+
+        $stmt->execute(['finish' => 'place', 'win_purse' => NULL, 'place_purse' => $_POST["place"][1], 'show_purse' => $_POST["place"][2],
+            'race_event_id' => $event_id, 'race_race_number' => $race_number,
+            'horse_number' => $_POST["place"][0]]);
+
+        $stmt->execute(['finish' => 'show', 'win_purse' => NULL, 'place_purse' => NULL, 'show_purse' => $_POST["show"][1],
+            'race_event_id' => $event_id, 'race_race_number' => $race_number,
+            'horse_number' => $_POST["show"][0]]);
+
+echo <<< HTML
+        <div class="floating-alert alert alert-success alert-dismissible fade show fixed-top mt-5 mx-4" role="alert" id="alert">
+          Results for Race $race_number are saved.
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
