@@ -169,7 +169,7 @@ $background_image = random_photo();
 MEMORIAL;
         }?>
 
-    <div class="card" style="background-image: url(<?php echo $background_image['filename'];?>);">
+    <div class="card sticky-top" style="background-image: url(<?php echo $background_image['filename'];?>);">
         <div class="input-group input-group-lg mb-3 pt-2 pl-2 pr-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
@@ -267,11 +267,12 @@ MEMORIAL;
                         echo "<div class='card-meta'></div>";
                     }
                     else {
-                        echo "<div class='card-meta'>The betting window is closed. Awaiting race results</div>";
+                        echo "<div class='card-meta'></div>
+                        <div class='corner-ribbon top-left sticky red shadow'>Awaiting race results</div>";
                     }
                     if($pick){ ?>
                     <div class="card-text" id="your_bet">
-                        <h1>You picked horse #<?php echo "<span class='horse-number'>{$pick['horse_number']}</span> to <span class='horse-finish'>" . ucfirst($pick['finish']) . "</span>";?></h1>
+                        <h1>You picked horse #<?php echo "<span class='horse-number animate__animated animate__bounceIn'>{$pick['horse_number']}</span> to <span class='horse-finish animate__animated animate__bounceIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
                         <?php if ($race_standings_info) {
                             echo "<h3>Your purse: $" . $race_standings_info['earnings'] . "</h3>";
                         }?>
@@ -284,14 +285,35 @@ MEMORIAL;
                     </div>
                 <?php }
                     if ($win_horse) {
-                        echo "<hr/>";
-                        echo "<h2>Race Results</h2>";
-                        echo "<h3>Win: Horse #{$win_horse['horse_number']}</h3>";
-                        echo "<h4>\${$win_horse['win_purse']} | \${$win_horse['place_purse']} | \${$win_horse['show_purse']}</h4>";
-                        echo "<h3>Place: Horse #{$win_horse['horse_number']}</h3>";
-                        echo "<h4>\${$place_horse['place_purse']} | \${$place_horse['show_purse']}</h4>";
-                        echo "<h3>Show: Horse #{$win_horse['horse_number']}</h3>";
-                        echo "<h4>\${$show_horse['show_purse']}</h4>";
+                        echo <<< HERE
+                    <table id="scoreboard">
+                        <tr id="title_row">
+                            <td colspan="5"><img src="/images/kc-logo-white.svg" alt="Keene Challenge logo"> Keene Challenge</td>
+                        </tr>
+                        <tr id="first">
+                            <th>1st</th>
+                            <td>{$win_horse['horse_number']}</td>
+                            <td>&#36;{$win_horse['win_purse']}</td>
+                            <td>&#36;{$win_horse['place_purse']}</td>
+                            <td>&#36;{$win_horse['show_purse']}</td>
+                        </tr>
+                        <tr id="second">
+                            <th>2nd</th>
+                            <td>{$place_horse['horse_number']}</td>
+                            <td></td>
+                            <td>&#36;{$place_horse['place_purse']}</td>
+                            <td>&#36;{$place_horse['show_purse']}</td>
+                        </tr>
+                        <tr id="third">
+                            <th>3rd</th>
+                            <td>{$show_horse['horse_number']}</td>
+                            <td></td>
+                            <td></td>
+                            <td>&#36;{$show_horse['show_purse']}</td>
+                        </tr>
+                    </table>
+HERE;
+
                     }
                 } 
                 else { // SHOULD NEVER REACH HERE!!!
