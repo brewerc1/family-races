@@ -141,7 +141,8 @@ $messages = array(
     14 => "Bet Updated!",
     15 => "Settings Updated!",
     16 => "User Deactivated",
-    17 => "User Activated"
+    17 => "User Activated",
+    18 => "invite Deleted"
 );
 
 $notification = '';

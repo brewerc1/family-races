@@ -21,7 +21,33 @@ session_start();
 $page_title = "User Management";
 
 // include the menu javascript for the template
-$javascript = '';
+$javascript = <<< JAVASCRIPT
+$('.admin_switch').each(function(index){
+    ($(this).bind('click', function(){  
+        var user = this.name;
+        if ($(this).prop('checked')){ var ischecked = 1 
+        } else {ischecked = 0}
+        console.log(user);
+        console.log(ischecked);
+        $.ajax(
+            {
+                url:"./update_user.php",
+                type: "POST",
+                data:
+                {
+                    "id": user,
+                    "checked": ischecked
+                },
+                success:function(data)
+                {
+                    $('#ajax_alert').html(data);
+                }
+            }
+        );
+
+    }));
+});
+JAVASCRIPT;
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -66,7 +92,7 @@ if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' 
     $update_preferences_result->execute(['uid' => $uid]);
  
     // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=17&s=success");
 }
     
 // delete an invite
@@ -78,11 +104,11 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     $update_preferences_result->execute(['uid' => $uid]);
  
     // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=18&s=success");
 }
 
 if (isset($_POST['submit'])){
-
+// TODO process
 }
 // SQL to fetch user data
 
@@ -180,7 +206,7 @@ $output = <<< ENDUSER
                     </div>
                     <div class="collapse" id="user_{$row['id']}_collapse">
                     <div class="card card-body">
-                      <form action="{$_SERVER["PHP_SELF"]}" method="post" >
+                      <form class="mt-5" action="{$_SERVER["PHP_SELF"]}" method="post" >
                             <div class="form-group">
                                 <input class="form-control" type="text" name="{$field_name}" value="{$row['email']}">
                             </div>
@@ -211,9 +237,10 @@ ENDUSER;
 if(empty($invited) && $row['id'] != 1){ // not admin user 1
 $output .= <<< ENDUSER
                             <div class="form-group custom-control custom-switch custom-switch-lg">
-                                <input class="custom-control-input" type="checkbox" id="admin" name="admin" {$user_admin_check}>
-                                <label class="custom-control-label" for="admin"> Admin </label>
+                                <input class="custom-control-input admin_switch" type="checkbox" id="{$row['id']}admin" name="{$row['id']}" {$user_admin_check}>
+                                <label class="custom-control-label" for="{$row['id']}admin"> Admin </label>
                             </div>
+                            <div id="ajax_alert"></div>
 ENDUSER;
 }
 $output .= <<< ENDUSER
