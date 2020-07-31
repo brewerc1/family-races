@@ -63,38 +63,36 @@ if (isset($_POST['submit'])){
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
         } else {
-            echo 'sending invite';
-
-            try {
-                $unique_code = generateCode();
-            } catch (Exception $e) {
-                header("Location: ./?m=6&s=warning");
-                exit; //
-            }
-            // write to the db
-            $sql = "INSERT INTO user (email, invite_code) VALUES (?,?)";
-            if (!$pdo->prepare($sql)->execute([$email, $unique_code])) {
-                header("Location: ./?m=6&s=warning");
-                exit;
-            } else {
-                // send invite
-                $host = $_SERVER['SERVER_NAME'];
-                $invite_email_body = "<p>" . $_SESSION["site_invite_email_body"] . " <ul> <li>Code: $unique_code</li> <li><a href=\"http://$host/onboarding/?email=$email&code=$unique_code\">family race</a></li> </ul> </p>";
-
-                if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
-                    $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
-                    $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
-                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
-
-                    header("Location: ./?m=8&s=warning");
-                    exit;
-
-                } else {
-                    header("Location: ./?m=9&s=success");
-                    exit;
+            // We know this user exists so we use the passed hidden_id to update email and/or invite code
+                try {
+                    $unique_code = generateCode();
+                } catch (Exception $e) {
+                    header("Location: ./?m=6&s=warning");
+                    exit; //
                 }
+                // write to the db
+                $sql = "UPDATE user SET email = :email, invite_code = :invite_code WHERE id = :uid";
+                if (!$pdo->prepare($sql)->execute(['email' => $email, 'invite_code' => $unique_code, 'uid' => $uid])) {
+                    header("Location: ./?m=6&s=warning");
+                    exit;
+                } else {
+                    // send invite
+                    $host = $_SERVER['SERVER_NAME'];
+                    $invite_email_body = "<p>" . $_SESSION["site_invite_email_body"] . " <ul> <li>Code: $unique_code</li> <li><a href=\"http://$host/onboarding/?email=$email&code=$unique_code\">family race</a></li> </ul> </p>";
 
-            }
+                    if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
+                        $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
+                        $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
+                        $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
+
+                        header("Location: ./?m=8&s=warning");
+                        exit;
+
+                    } else {
+                        header("Location: ./?m=9&s=success");
+                        exit;
+                    }
+                }               
 
 
             /* POST to invite_user
@@ -184,7 +182,7 @@ if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' 
 if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'delete' && $_SESSION['admin'] == 1){
     $uid = trim($_GET['u']);
     // PDO to update the DB
-    $update_preferences_sql = "DELETE user WHERE id = :uid";
+    $update_preferences_sql = "DELETE FROM user WHERE id = :uid";
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute(['uid' => $uid]);
  
