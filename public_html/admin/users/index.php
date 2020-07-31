@@ -71,6 +71,9 @@ if (!$_SESSION["admin"]) {
 $debug = debug($_POST);
 ///// end DEBUG
 
+
+// Deactivate / Reactivate / Delete Invite link Handling
+
 // deactivate a registered user
 if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode'] == 'deactivate' && $_SESSION['admin'] == 1 ){
     $uid = trim($_GET['u']);
@@ -107,6 +110,7 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     header("Location: ".$_SERVER["PHP_SELF"]."?m=18&s=success");
 }
 
+// Process Reset Email or Resend Invite
 if (isset($_POST['submit'])){
 // TODO process
 }
@@ -241,10 +245,11 @@ $output .= <<< ENDUSER
                                 <label class="custom-control-label" for="{$row['id']}admin"> Admin </label>
                             </div>
                             <div id="ajax_alert"></div>
+                            </form>
 ENDUSER;
 }
 $output .= <<< ENDUSER
-                      </form>
+                      
                     </div>
                 </li>
 ENDUSER;                  
