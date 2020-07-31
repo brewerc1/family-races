@@ -7,9 +7,12 @@ ob_start('template');
  
 // start a session
 session_start();
-
-$getemail = filter_var(trim($_GET['email']), FILTER_SANITIZE_EMAIL);
-$getcode = filter_var(trim($_GET['code']), FILTER_SANITIZE_STRING);
+if (!empty($_GET['email'])){
+    $getemail = filter_var(trim($_GET['email']), FILTER_SANITIZE_EMAIL);
+} else { $getemail= "";}
+if (!empty($_GET['code'])) {
+    $getcode = filter_var(trim($_GET['code']), FILTER_SANITIZE_STRING);
+} else {$getcode = "";}
 
 // Set the page title for the template
 $page_title = "Sign Up";
@@ -48,8 +51,6 @@ if (isset($_POST['createAccount-btn'])) {
         $password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);
         $confirmPassword = filter_var($_POST['confirmPassword'], FILTER_SANITIZE_STRING);
         if($password != $confirmPassword){
-            $notification['password'] = 'The two passwords do not match';
-            exit;
         }
     }else{ 
         $notification ['password'] = 'Password Required';
