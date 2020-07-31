@@ -20,6 +20,102 @@ session_start();
 // set the page title for the template
 $page_title = "User Management";
 
+if (!isset($_SESSION["id"])) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+} elseif ($_SESSION["id"] == 0) {
+    header("Location: /login/");
+    // Make sure the rest of code is not gonna be executed
+    exit;
+}
+
+// To be reviewed
+if (!$_SESSION["admin"]) {
+    header("HTTP/1.1 401 Unauthorized");
+    // An error page
+    //header("Location: error401.php");
+    exit;
+}
+
+// Process Reset Email or Resend Invite
+if (isset($_POST['submit'])){
+    // If it's reset email
+    if (!empty($_POST['reset_email'])){
+        $uid = trim($_POST['hidden_id']);
+        $email = trim($_POST['reset_email']);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+        } else{
+
+        $update_user_sql = "UPDATE user SET email = :email WHERE id = :uid";
+        $update_user_result = $pdo->prepare($update_user_sql);
+        $update_user_result->execute(['uid' => $uid, 'email' => $email]);
+        }
+
+    }
+    //if its resend invite
+    if (!empty($_POST['resend_invite'])){
+        $uid = trim($_POST['hidden_id']);
+        $email = trim($_POST['resend_invite']);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+        } else {
+            echo 'sending invite';
+
+            try {
+                $unique_code = generateCode();
+            } catch (Exception $e) {
+                header("Location: ./?m=6&s=warning");
+                exit; //
+            }
+            // write to the db
+            $sql = "INSERT INTO user (email, invite_code) VALUES (?,?)";
+            if (!$pdo->prepare($sql)->execute([$email, $unique_code])) {
+                header("Location: ./?m=6&s=warning");
+                exit;
+            } else {
+                // send invite
+                $host = $_SERVER['SERVER_NAME'];
+                $invite_email_body = "<p>" . $_SESSION["site_invite_email_body"] . " <ul> <li>Code: $unique_code</li> <li><a href=\"http://$host/onboarding/?email=$email&code=$unique_code\">family race</a></li> </ul> </p>";
+
+                if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
+                    $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
+                    $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
+                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
+
+                    header("Location: ./?m=8&s=warning");
+                    exit;
+
+                } else {
+                    header("Location: ./?m=9&s=success");
+                    exit;
+                }
+
+            }
+
+
+            /* POST to invite_user
+            $url = './invite_user.php';
+            $field = array(
+                'email' => $email
+            );
+            $postvars = http_build_query($field);
+            $ch = curl_init();
+            
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, count($field));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
+
+            $result = curl_exec($ch);
+            curl_close($ch);
+            */
+        }
+    }
+}
+
 // include the menu javascript for the template
 $javascript = <<< JAVASCRIPT
 $('.admin_switch').each(function(index){
@@ -47,25 +143,11 @@ $('.admin_switch').each(function(index){
 
     }));
 });
+
+
 JAVASCRIPT;
 
-if (!isset($_SESSION["id"])) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
-    exit;
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
-    exit;
-}
 
-// To be reviewed
-if (!$_SESSION["admin"]) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
-    exit;
-}
 
 ///// DEBUG
 $debug = debug($_POST);
@@ -110,10 +192,8 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     header("Location: ".$_SERVER["PHP_SELF"]."?m=18&s=success");
 }
 
-// Process Reset Email or Resend Invite
-if (isset($_POST['submit'])){
-// TODO process
-}
+
+
 // SQL to fetch user data
 
 $display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin, inactive FROM user";
@@ -210,9 +290,10 @@ $output = <<< ENDUSER
                     </div>
                     <div class="collapse" id="user_{$row['id']}_collapse">
                     <div class="card card-body">
-                      <form class="mt-5" action="{$_SERVER["PHP_SELF"]}" method="post" >
+                      <form class="mt-5" id="email_form" action="{$_SERVER["PHP_SELF"]}" method="post" >
                             <div class="form-group">
                                 <input class="form-control" type="text" name="{$field_name}" value="{$row['email']}">
+                                <input type="hidden" id="hidden_id" name="hidden_id" value="{$row['id']}">
                             </div>
                         <div class="form-group">
 ENDUSER;
