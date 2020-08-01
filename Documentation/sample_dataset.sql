@@ -219,6 +219,8 @@ INSERT INTO `pick` (`user_id`, `race_event_id`, `race_race_number`, `horse_numbe
 (1, 2, 2, '215', 'show'),
 (1, 2, 3, '216', 'win'),
 (1, 3, 1, '224', 'win'),
+(1, 3, 2, '222', 'show'),
+(1, 3, 3, '223', 'place'),
 (2, 1, 1, '201', 'win'),
 (2, 1, 2, '205', 'place'),
 (2, 1, 3, '207', 'win'),
@@ -479,7 +481,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `create_time`, `update_time`, `city`, `state`, `motto`, `photo`, `sound_fx`, `voiceovers`, `pw_reset_code`, `invite_code`, `admin`) VALUES
-(1, 'Boss', 'O&#039;Dasyte', 'admin@mysite.com', '$2y$10$3oagwP1YGgYpbyr6uCrTXOCB7pyaFEnfmV8pATvSnHo4W6h6aIbR6', '2020-06-17 15:48:06', '2020-07-14 21:50:53', 'Florence', 'KY', 'Whatever, man!', '/uploads/1.jpg', 1, 1, NULL, NULL, 1),
+(1, 'Boss', 'O\'Dasyte', 'admin@mysite.com', '$2y$10$3oagwP1YGgYpbyr6uCrTXOCB7pyaFEnfmV8pATvSnHo4W6h6aIbR6', '2020-06-17 15:48:06', '2020-07-14 21:50:53', 'Florence', 'KY', 'Whatever, man!', '/uploads/1.jpg', 1, 1, NULL, NULL, 1),
 (2, 'Joe', 'Blow', 'joe@blow.com', '$2y$10$pw2q39Sm3QgsLKQVsULmOeG/.8jNfnqcS/WLrbnrAlf8rI0X5hz/.', '2020-06-17 15:48:06', '2020-07-14 21:59:04', 'Fort Thomas', 'KY', 'Everything in moderation, including moderation.', '/uploads/2.jpg', 1, 1, NULL, NULL, 0),
 (3, 'Amy', 'Adams', 'amy123@gmaily.com', '$2y$10$..QfModlnxZJpu6j3GIghOqQ3aFqC6taGpXaZIy6OAaYfDtjsdQ4q', '2020-06-17 15:51:01', '2020-07-14 21:51:13', 'Boston', 'MA', 'We may encounter many defeats but we must not be defeated.', '/uploads/3.jpg', 1, 1, NULL, NULL, 0),
 (4, 'Habernathy', 'Olathe', 'hab@habbieshobbies.com', '$2y$10$pAvFnyXIfQNuzZlPrV7ngu8I33LErjK3CyRmjk2E9MRqiJkXiiwBm', '2020-06-17 15:51:01', '2020-07-14 21:51:22', 'Barstow', 'CA', 'Draco Dormiens Nunquam Titillandus', '/uploads/4.jpg', 1, 1, NULL, NULL, 0),
