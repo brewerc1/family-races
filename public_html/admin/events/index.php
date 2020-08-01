@@ -1,4 +1,7 @@
 <?php
+
+// Refactoring in Progress
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
@@ -59,7 +62,7 @@ $debug = debug();
                                     $completed = "<span class='badge badge-primary badge-pill' id='invited_badge'>completed</span>";
                                     echo "<li>$event_name $completed</li>";
                                 } else {
-                                    echo "<li><a href=\"./event.php?e=$event_id\">$event_name</a> </li>";
+                                    echo "<li><a href=\"./manage.php?e=$event_id\">$event_name</a> </li>";
                                 }
                                 $index++;
                             }

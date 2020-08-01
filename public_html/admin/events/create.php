@@ -1,4 +1,7 @@
 <?php
+
+// Refactoring in Progress
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
@@ -28,9 +31,29 @@ if (!$_SESSION["admin"]) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-    header("Location: /admin/events/manage.php");
-    //echo $_POST["event_date"];
+
+    // Create event
+    $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
+    $stmt= $pdo->prepare($sql);
+    $stmt->execute(['name' => $_POST["event_name"],
+        'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]]);
+
+    // Get event ID
+    $sql = "SELECT id FROM event WHERE name=:name";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['name' => $_POST["event_name"]]);
+    $event_id = $stmt->fetch()["id"];
+
+    // Create the first Race
+    $sql = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
+    $stmt= $pdo->prepare($sql);
+    $stmt->execute(['event_id' => $event_id,
+        'race_number' => 1]);
+
+    // Redirect to Manage Event page
+    header("Location: ./event.php?e=" . $event_id);
 }
+
 
 ?>
 {header}
