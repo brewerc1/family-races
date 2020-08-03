@@ -35,13 +35,13 @@ $debug = debug();
 ///// end DEBUG
 
 // logged in user
-$full_name = filter_var(trim($_SESSION['first_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS).' '.filter_var(trim($_SESSION['last_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$user_id = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
+$full_name = trim($_SESSION['first_name']).' '.trim($_SESSION['last_name']);
+$user_id = trim($_SESSION['id']);
 $photo = $_SESSION['photo'];
-$motto = filter_var(trim($_SESSION['motto']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$email = filter_var(filter_var(trim($_SESSION['email']), FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
-$city = filter_var(trim($_SESSION['city']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$state = filter_var(trim($_SESSION['state']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$motto = trim($_SESSION['motto']);
+$email = trim($_SESSION['email']);
+$city = trim($_SESSION['city']);
+$state = trim($_SESSION['state']);
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // get selected UID: Don't run if the GET["u"] is SESSION["id"]
@@ -152,7 +152,7 @@ LINKS;
                 <table class="table">
                     <tbody>
                         <?php 
-                        // Takes the array of user's event placements, formats and output to table. 
+// takes the array generated from the event table to determine historical event placement
                         
                         if (empty($user_records_array)){
                             echo <<< ENDRECORD

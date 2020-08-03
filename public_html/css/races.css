@@ -288,6 +288,9 @@ span.navbar-text {
     margin-top: 0px;
     color: #fff;
 }
+#races_page .card-text h1 {
+    font-size: 1em;
+}
 #races_page .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
     color: #fff;
 }
