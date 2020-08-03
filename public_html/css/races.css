@@ -2,9 +2,7 @@ html,body{
     height: 100%;
 }
 body {
-    Font-Family: 'Lato', Sans-Serif;
-    /*font-family: 'Raleway', sans-serif;
-    font-weight: 300;*/
+    font-Family: 'Lato', Sans-Serif;
     background-color: rgba(0, 0, 0, .05);
     background-image: linear-gradient(black, black), url('/images/photos/background/horse-racing-2714854_1280.jpg'), linear-gradient(270deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%);
     background-blend-mode: saturation;
@@ -12,6 +10,9 @@ body {
     background-size: cover;
     background-position: bottom;
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: always;
 }
 
 b,
@@ -23,7 +24,7 @@ h1,
 h2,
 h3,
 h4 {
-    Font-Family: 'Arvo', Serif;
+    font-Family: 'Arvo', Serif;
     font-weight: 700;
     text-align: center;
 }
@@ -61,7 +62,7 @@ label,
 }
 
 main {
-    padding: 20px 20px 60px 20px;
+    padding: 0px 20px 92px 20px;
     background-color: rgba(255, 255, 255, 1);
     min-height: 100%;
     margin: 0 auto;
@@ -225,6 +226,8 @@ form#login {
 /* Footer */
 span.navbar-text {
     font-size: .5em;
+    text-transform: initial;
+    font-weight: 400;
 }
 
 
@@ -248,7 +251,7 @@ span.navbar-text {
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: bottom center;
-    margin: -21px -21px 0px -21px;
+    margin: 0px -21px 0px -21px;
     padding: 21px 21px 0 21px;
 }
 #races_page #window_closed {
@@ -256,14 +259,15 @@ span.navbar-text {
     text-shadow: 0px 16px 10px rgba(0,0,0,.2), 1px 6px 8px rgba(0,0,0,.6);
 }
 #races_page .card .input-group {
-    z-index: 1000;
+    z-index: 800;
 }
 #races_page #window_closed > .card-meta{
     position: absolute;
     top: 0px;
     left: 0;
     font-size: 1.2em;
-    width: 100%;
+    width: calc(100% + 2px );
+    margin: 0 -1px 0 -1px;
     text-align: center;
     background-color: rgba(0,0,0,.2);
     padding: 130px 0 0 0;
@@ -276,13 +280,16 @@ span.navbar-text {
     backdrop-filter: blur(7px);
 }
 #races_page .card-body {
-    margin: 10%;
     padding: 0;
     border-radius: 5px;
-    z-index: +1;
+    
 }
 #races_page .card-text {
-    margin-top: 40px;
+    margin-top: 0px;
+    color: #fff;
+}
+#races_page .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
+    color: #fff;
 }
 #race_leaderboard .no-results {
     margin-top: 100px;
@@ -300,6 +307,131 @@ span.navbar-text {
 #races_page .input-group-lg>.input-group-prepend>.btn, 
 #races_page .input-group-lg>.input-group-prepend>.input-group-text {
     opacity: 0.9;
+}
+#scoreboard {
+    border-collapse: separate;
+    text-align: right;
+    background-color: rgba(82, 86, 83, .9);
+    border-radius: 3px;
+    margin: 1.2rem 0 1.2rem 0;
+    box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
+    width: 100%;
+    padding: 5px;
+}
+@media (min-width: 576px) {
+    #scoreboard {
+        border-collapse: separate;
+        border-spacing: 10px 5px;
+        text-align: right;
+        background-color: rgba(82, 86, 83, .9);
+        border-radius: 3px;
+        margin: 2rem auto 0 auto;
+        width: auto;
+    }
+    #races_page .card-body {
+        margin: 1rem;
+    }
+}
+#scoreboard #title_row td {
+    background-color: initial;
+    font-Family: 'Arvo', Serif;
+    color: #fff;
+    opacity: 0.7;
+    text-shadow: none;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    padding: 0 0 10px 0;
+    line-height: 1.2rem;
+    font-weight: 700;
+}
+#scoreboard #title_row td img {
+    width: 60px;
+    margin-right: 5px;
+}
+#scoreboard tr {
+    border-spacing: 10px;
+    border-radius: 3px;
+}
+#scoreboard th {
+    text-align: right;
+    border-radius: 3px;
+}
+#scoreboard td {
+    background-color: #000;
+    padding: .2rem .5rem;
+    color: orange;
+    font-family: 'Score Board';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.2rem;
+    width: 4rem;
+    border-radius: 3px;
+}
+#scoreboard #second>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(3){
+    background-color: transparent;
+}
+
+
+/* ============== FAQ Page: #faq_page ============== */
+#faq_page > h1 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1rem;
+}
+#faq_page h2, #faq_page h3, #faq_page h4, #faq_page h5 {
+    text-align: left;
+}
+#faq_page h2{
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+#faq_overview h3 {
+    font-size: 1.2rem;
+    color: rgb(179, 109, 6);
+    font-weight: 400;
+    margin-top: 1rem;
+    font-style: italic;
+    text-transform: capitalize;
+}
+#faq_overview h3 > span {
+    font-weight: 700;
+    font-style: normal;
+}
+#faq_page blockquote {
+    margin-left: 3rem;
+}
+#faq_page mark {
+    color: #666;
+}
+#faq_page [aria-expanded="true"][data-toggle="collapse"]:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 1rem;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f054";
+    transform: rotate(-90deg);
+    transition: all linear 0.25s;
+    margin-left: 20px;
+}
+#faq_page [aria-expanded="false"][data-toggle="collapse"]:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 1rem;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f054";
+    transform: rotate(-270deg);
+    transition: all linear 0.25s;
+    margin-left: 30px;
+}
+#faq_page [data-toggle="collapse"].collapsed:after {
+  transform: rotate(90deg) ;
+  color: rgb(179, 109, 6);
 }
 
 
@@ -443,6 +575,71 @@ span.navbar-text {
 
 
 
+/* The ribbons */
+.corner-ribbon{
+    width: 300px;
+    background: #e43;
+    position: absolute;
+    top: 50px;
+    left: -60px;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    z-index: 1031;
+  }
+  /* Custom styles */
+  .corner-ribbon.sticky{
+    position: fixed;
+  }
+  .corner-ribbon.shadow{
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+  }
+  /* Different positions */
+  .corner-ribbon.top-left{
+    top: 50px;
+    left: -61px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  .corner-ribbon.top-right{
+    top: 50px;
+    right: -61px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+  .corner-ribbon.bottom-left{
+    top: auto;
+    bottom: 50px;
+    left: -61px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+  .corner-ribbon.bottom-right{
+    top: auto;
+    right: -50px;
+    bottom: 50px;
+    left: auto;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  /* Colors */
+  .corner-ribbon.white{background: #f0f0f0; color: #555;}
+  .corner-ribbon.black{background: #333;}
+  .corner-ribbon.grey{background: #999;}
+  .corner-ribbon.blue{background: #39d;}
+  .corner-ribbon.green{background: #2c7;}
+  .corner-ribbon.turquoise{background: #1b9;}
+  .corner-ribbon.purple{background: #95b;}
+  .corner-ribbon.red{background: #e43;}
+  .corner-ribbon.orange{background: #e82;}
+  .corner-ribbon.yellow{background: #ec0;}
+
+
+
 /* DEBUG */
 #debug_button {
     position: fixed;
@@ -473,4 +670,21 @@ span.navbar-text {
     font-size: .8em;
     backdrop-filter: blur(6px);
     background-color: rgba(0, 0, 0, .6);
+}
+
+
+/* SCOREBOARD */
+@font-face {
+    font-family: 'Score Board';
+    src: url('/css/ScoreBoard.woff2') format('woff2'),
+        url('/css/ScoreBoard.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.scoreboard {
+    font-family: 'Score Board';
+    font-weight: normal;
+    font-style: normal;
+    color: #fff;
 }
