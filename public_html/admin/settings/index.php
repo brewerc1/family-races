@@ -19,7 +19,7 @@ $page_title = "Site Settings";
 // include the menu javascript for the template
 $javascript = '';
 
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;
 } elseif ($_SESSION["id"] == 0) {
@@ -43,118 +43,118 @@ $debug = debug($_POST);
 if(isset($_POST['save_button'])){
 
     // If the sound_fx variable was not sent, or is not what is expected, set to 0
-    if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
+    if(empty($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
         $sound_fx_value = 0;
     } else {
         $sound_fx_value = 1;
     }
 
     // Same process for voiceovers. Any future 'boolean' settings follow this logic
-    if(!isset($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
+    if(empty($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
         $voiceovers_value = 0;
     } else {
         $voiceovers_value = 1;
     }
 
     // Terms and Conditions
-    if(!isset($_POST['terms_enable']) || $_POST['terms_enable'] != 'on'){
+    if(empty($_POST['terms_enable']) || $_POST['terms_enable'] != 'on'){
         $terms_enable_value = 0;
     } else {
         $terms_enable_value = 1;
     }
 
     // Terms and Conditions Text
-    if(!isset($_POST['terms_text'])){
+    if(empty($_POST['terms_text'])){
         $terms_text_value = $_SESSION['site_terms_text'];
     } else {
         $terms_text_value = htmlentities($_POST['terms_text']);
     }
     
     // Default Horse Count
-    if(!isset($_POST['default_horse_count']) || !is_int($_POST['default_horse_count'])){
+    if(empty($_POST['default_horse_count']) || !is_int($_POST['default_horse_count'])){
         $default_horse_count_value = $_SESSION['site_default_horse_count'];
     } else {
         $default_horse_count_value = $_POST['default_horse_count'];
     }
 
     // Memorial Race Enable
-    if(!isset($_POST['memorial_race_enable']) || $_POST['memorial_race_enable'] != 'on'){
+    if(empty($_POST['memorial_race_enable']) || $_POST['memorial_race_enable'] != 'on'){
         $memorial_race_enable_value = 0;
     } else {
         $memorial_race_enable_value = 1;
     }
         
     // Memorial Race Number
-    if(!isset($_POST['memorial_race_number']) || !is_int($_POST['memorial_race_number'])){
+    if(empty($_POST['memorial_race_number']) || !is_int($_POST['memorial_race_number'])){
         $memorial_race_number_value = $_SESSION['site_memorial_race_number'];
     } else {
         $memorial_race_number_value = $_POST['memorial_race_number'];
     }
 
     // Memorial Race Name Text
-    if(!isset($_POST['memorial_race_name'])){
+    if(empty($_POST['memorial_race_name'])){
         $memorial_race_name_value = $_SESSION['site_memorial_race_name'];
     } else {
         $memorial_race_name_value = htmlentities($_POST['memorial_race_name']);
     }
     // Welcome Video URL Text
-    if(!isset($_POST['welcome_video_url'])){
+    if(empty($_POST['welcome_video_url'])){
         $welcome_video_url_value = $_SESSION['site_welcome_video_url'];
     } else {
         $welcome_video_url_value = htmlentities($_POST['welcome_video_url']);
     }
 
     // Invite Email Subject Text
-    if(!isset($_POST['invite_email_subject'])){
+    if(empty($_POST['invite_email_subject'])){
         $invite_email_subject_value = $_SESSION['site_invite_email_subject'];
     } else {
         $invite_email_subject_value = htmlentities($_POST['invite_email_subject']);
     }
 
     // Invite Email Body Text
-    if(!isset($_POST['invite_email_body'])){
+    if(empty($_POST['invite_email_body'])){
         $invite_email_body_value = $_SESSION['site_invite_email_body'];
     } else {
         $invite_email_body_value = htmlentities($_POST['invite_email_body']);
     }
 
     // Invite Email Server Text
-    if(!isset($_POST['email_server'])){
+    if(empty($_POST['email_server'])){
         $email_server_value = $_SESSION['site_email_server'];
     } else {
         $email_server_value = htmlentities($_POST['email_server']);
     }
 
     // Invite Email Server Port Text
-    if(!isset($_POST['email_server_port'])){
+    if(empty($_POST['email_server_port'])){
         $email_server_port_value = $_SESSION['site_email_server_port'];
     } else {
         $email_server_port_value = htmlentities($_POST['email_server_port']);
     }
 
     // Invite Email Server Account Text
-    if(!isset($_POST['email_server_account'])){
+    if(empty($_POST['email_server_account'])){
         $email_server_account_value = $_SESSION['site_email_server_account'];
     } else {
         $email_server_account_value = htmlentities($_POST['email_server_account']);
     }
 
     // Invite Email Server Password Text
-    if(!isset($_POST['email_server_password'])){
+    if(empty($_POST['email_server_password'])){
         $email_server_password_value = $_SESSION['site_email_server_password'];
     } else {
         $email_server_password_value = htmlentities($_POST['email_server_password']);
     }
 
     // Invite Email From Name Text
-    if(!isset($_POST['email_from_name'])){
+    if(empty($_POST['email_from_name'])){
         $email_from_name_value = $_SESSION['site_email_from_name'];
     } else {
         $email_from_name_value = htmlentities($_POST['email_from_name']);
     }
    
     // Invite Email From Address Text
-    if(!isset($_POST['email_from_address'])){
+    if(empty($_POST['email_from_address'])){
         $email_from_address_value = $_SESSION['site_email_from_address'];
     } else {
         $email_from_address_value = htmlentities($_POST['email_from_address']);
@@ -208,6 +208,9 @@ if(isset($_POST['save_button'])){
     $_SESSION['site_email_server_password'] = $row['email_server_password'];
     $_SESSION['site_email_from_name'] = $row['email_from_name'];
     $_SESSION['site_email_from_address'] = $row['email_from_address'];
+
+    // confirm update
+    header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
     }
 }
 
@@ -245,9 +248,7 @@ $memorial_race_selected_tag = '';
                 <div class="form-group row">
                     <div class="col">
                         <label for="terms_text" class="sr-only"> Terms & Conditions </label>
-                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" >
-                            <?php if(isset($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?>
-                        </textarea>
+                        <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" ><?php if(!empty($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?></textarea>
                     </div>
                 </div>
 
@@ -326,7 +327,7 @@ ENDOPTION;
                 <div class="form-group row">
                     <div class="col">
                         <label for="invite_email_body" class="col-form-label"> Email Body </label>
-                        <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(isset($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
+                        <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(!empty($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
                     </div>
                 </div>
 

@@ -18,9 +18,14 @@ session_start();
 $page_title = "User Settings";
 
 // include the menu javascript for the template
-$javascript = '';
+$javascript = <<< JAVASCRIPT
+$("form").submit(function() {
+    $("#sound_fx").removeAttr("disabled");
+    $("#voiceovers").removeAttr("disabled");
+});
+JAVASCRIPT;
 
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
@@ -30,7 +35,7 @@ if (!isset($_SESSION["id"])) {
     exit;
 }
 ///// DEBUG
-$debug = debug();
+$debug = debug($_POST);
 ///// end DEBUG
 
 // Get UID
@@ -40,13 +45,13 @@ $uid = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 if(isset($_POST['save_button'])){
 
     // If the sound_fx variable was not sent, or is not what is expected, set to 0
-    if(!isset($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
+    if(empty($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
         $sound_fx_value = 0;
     } else {
         $sound_fx_value = 1;
     }
     // Same process for voiceovers. Any future 'boolean' settings follow this logic
-    if(!isset($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
+    if(empty($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
         $voiceovers_value = 0;
     } else {
         $voiceovers_value = 1;
@@ -66,6 +71,9 @@ if(isset($_POST['save_button'])){
 
         $_SESSION['sound_fx'] = $row['sound_fx'];
         $_SESSION['voiceovers'] = $row['voiceovers'];
+
+        // confirm update
+        header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
     }
 }
 ?>
@@ -79,13 +87,13 @@ if(isset($_POST['save_button'])){
                 <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                     <!-- Sound Effects enable -->
                     <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';} ?>>
+                        <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';}?><?php if ($_SESSION['site_sound_fx'] == 0){echo ' disabled';} ?>>
                         <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
                     </div>
 
                     <!-- Voiceovers enable -->
                     <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?>>
+                        <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?><?php if ($_SESSION['site_voiceovers'] == 0){echo ' disabled';} ?>>
                         <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
                     </div>
 
