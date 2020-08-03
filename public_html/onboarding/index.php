@@ -113,7 +113,7 @@ if (isset($_POST['createAccount-btn'])) {
                     <input  type="password"  required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
                 </div>
                 <div class="form-group">
-                    <input  type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
+                    <input  type="password" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
             </form>
