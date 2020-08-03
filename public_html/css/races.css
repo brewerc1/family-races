@@ -113,7 +113,7 @@ main {
 	padding: 2.5rem 0 2rem 0;
 	z-index: 1000;
 }
-#user_profile_page {
+#user_profile_page, #user_profile_edit_page {
 	padding-top: 1.5rem;
 }
 

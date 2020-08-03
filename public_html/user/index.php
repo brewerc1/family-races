@@ -117,7 +117,7 @@ if (!isset($_GET["u"]) || $_GET["u"] == $_SESSION["id"]){
                 <div id="edit_buttons" class="btn-group col-sm-7 ml-sm-auto text-center" role="group" aria-label="Profile Controls">
                     <a href="/user/edit/" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
                     <a href="/user/settings/" class="btn btn-primary btn-sm" id="user_settings">Settings</a>
-                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="user_settings">Reset Password</a>
+                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="user_settings">Change Password</a>
                 </div>
 LINKS;
 }

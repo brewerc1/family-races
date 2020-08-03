@@ -245,7 +245,7 @@ $debug = debug($_POST);
 ?>
   {header}
   {main_nav}
-    <main role="main">
+    <main role="main" id="user_profile_edit_page">
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
                 <div class="form-group col">
