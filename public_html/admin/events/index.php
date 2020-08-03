@@ -1,7 +1,4 @@
 <?php
-
-// Refactoring in Progress
-
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering

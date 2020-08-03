@@ -249,7 +249,7 @@ if (key_exists($q, $result)) {
      * @return bool
      *  Check if all $_POST variables are not empty or null
      */
-    function emptyResult() {
+    function notEmptyResult() {
         return (
             !empty($_POST["win"][0]) && !empty($_POST["win"][1]) && !empty($_POST["win"][2]) &&
             !empty($_POST["win"][3]) && !empty($_POST["place"][0]) && !empty($_POST["place"][1]) &&
@@ -260,7 +260,7 @@ if (key_exists($q, $result)) {
     if (isset($_POST["old_win"])) {
 
         // Update result
-        if (emptyResult()) {
+        if (notEmptyResult()) {
 
             // Set the old one to Null
             saveResult($pdo, $event_id, $race_number, $_POST["old_win"][0], NULL,
@@ -281,7 +281,7 @@ if (key_exists($q, $result)) {
 
     } else {
         // Save First time result
-        if (emptyResult()) {
+        if (notEmptyResult()) {
 
             // Write result to DB
             saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],

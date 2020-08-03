@@ -11,65 +11,6 @@ session_start();
 // set the page title for the template
 $page_title = "Manage an Event";
 
-$HTML_for_Race_result = <<< HTML
-
-    <table class='table table-borderless'>
-    <!-- Row A -->
-    <thead>
-        <tr>
-          <th scope='col'>Horse#</th>
-          <th scope='col'>Win</th>
-          <th scope='col'>Place</th>
-          <th scope='col'>Show</th>
-        </tr>
-    </thead>
-    <!-- Row B -->
-    <tr>
-        <td>
-            <select  id='win-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            </select>
-        </td>
-        <td class='position-relative'>
-                <input type='text' id='win1' class='w-100 form-control'>
-        </td>
-        <td class='position-relative'>
-                <input type='text' id='place1' class='w-100 form-control'>
-        </td>
-        <td class='position-relative'>
-                <input type='text' id='show1' class='w-100 form-control'>
-        </td>
-    </tr>
-    <!-- Row C -->
-    <tr>
-        <td>
-            <select  id='place-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            </select>
-        </td>
-        <td></td>
-        <td class='position-relative'>
-                <input type='text' id='place2' class='w-100 form-control'>
-        </td>
-        <td class='position-relative'>
-            <input type='text' id='show2' class='w-100 form-control'>
-        </td>
-    </tr>
-    <!-- Row D -->
-    <tr>
-        <td>
-            <select  id='show-result' class='custom-select'>
-            <option value=''>Horse#</option>
-            </select>
-        </td>
-        <td></td>
-        <td></td>
-        <td class='position-relative'>
-            <input type='text' id='show3' class='w-100 form-control'>
-        </td>
-    </tr>
-    </table>
-HTML;
 $javascript = <<< JAVASCRIPT
 JAVASCRIPT;
 // enterResultFormHTML();
@@ -92,15 +33,17 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
+
+
 $event_name = "Event Name";
 $event_date = "Event Date";
 $event_pot = 0;
 
 
-$e = isset($_GET["e"]) ? $_GET["e"] : NULL;
-$event_id = filter_var($e, FILTER_VALIDATE_INT) ? $e : 0;
+$e = isset($_GET["e"]) ? $_GET["e"] : 0;
+$event_id = filter_var($e, FILTER_VALIDATE_INT);
 
-// Check if a race has results
+// Check if results have been entered
 $finish = array();
 
 if ($event_id == 0) {
@@ -118,7 +61,6 @@ if ($event_id == 0) {
         $event_name = $row["name"];
         $event_date = $row["date"];
         $event_status = $row["status"];
-//        $event_pot = intval(explode(".", $row["pot"])[0]);
         $event_pot = $row["pot"];
     }
 }
@@ -130,32 +72,30 @@ $debug = debug();
 {main_nav}
 <script>
     const defaultHorseCount = <?php echo isset($_SESSION["site_default_horse_count"]) ?
-        $_SESSION["site_default_horse_count"] : 1; ?>
+        $_SESSION["site_default_horse_count"] : 1; ?>;
 
-    $( document ).ready( function () {
+    let newRaces = [];
+    let raceHorses = new Map();
+    let racesResultsTrack = new Map();
+    let resultList = new Map();
+    let numberOfHorses;
+    let horsesList;
 
-        // Done
-        // Select (value)
+    function updateNumberOfHorsesInputValue() {
         $('.group').each( function () {
             const id = '#addInput' + this.id.charAt(5) + ' div.group-horse';
-
             $('#' + this.id.charAt(5)).val($( id ).length);
-
-            //$('#addInput' + (index + 1) + ' div.group-horse input').val()
             let horses = [];
-           $(  id + ' input' ).each( function () {
-               horses.push( this.value );
-           });
+            $(  id + ' input' ).each( function () {
+                horses.push( this.value );
+            });
 
-            raceHistory.set(parseInt(this.id.charAt(5)), horses);
-
-            // console.log("race history")
-            // console.log(raceHistory)
-
+            raceHorses.set(parseInt(this.id.charAt(5)), horses);
         });
+    }
 
-        // Done
-        // Select on value change
+
+    function bindOnChangeOnSelectMenu() {
         $('.group-select').bind('change', function () {
             numberOfHorses = $('#addInput' + this.id + ' div.group-horse').length;
 
@@ -177,9 +117,9 @@ $debug = debug();
             }
 
         });
+    }
 
-        // Done
-        // Cancel a race
+    function bindOnClickCancelRace() {
         $('.cancel-race').bind( 'click', function () {
 
             const isChecked = $('#' + this.id).is(':checked') ? 1 : 0;
@@ -195,17 +135,8 @@ $debug = debug();
                 }
             });
         });
+    }
 
-    });
-
-    let newRaces = [];
-    let raceHistory = new Map();
-    let racesResultsTrack = new Map();
-    let resultList = new Map();
-    let numberOfHorses;
-    let horsesList;
-
-    // Done
     function removeInput(raceNumber, amountToDecrement) {
         for (let k = 0; k < amountToDecrement; k++) {
             $('#addInput' + raceNumber + ' div.group-horse:last-of-type').remove();
@@ -213,7 +144,6 @@ $debug = debug();
         }
     }
 
-    // Done
     function duplicateHorseInput(raceNumber, numberOfCurrentHorsesInput) {
         const parentDivId = 'horse' + raceNumber + numberOfCurrentHorsesInput + Date.now();
         const inputId = 'id' + raceNumber + numberOfCurrentHorsesInput + Date.now();
@@ -236,13 +166,12 @@ $debug = debug();
         });
     }
 
-    // Done
     function updateRace(eventNumber, raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         let horses = [];
         $('#addInput' + raceNumber + ' div.group-horse input').each( function () {
-             horses.push(this.value);
+            horses.push(this.value);
         })
 
         $.ajax({
@@ -252,18 +181,17 @@ $debug = debug();
             success: function (data) {
                 $('main').prepend(data);
                 $('#alert').delay( 3000 ).fadeOut( 400 );
-                raceHistory.set(raceNumber, horses);
+                raceHorses.set(raceNumber, horses);
             }
         });
 
     }
 
-    // Done
     function dismiss(raceNumber) {
 
         const inputId = '#addInput' + raceNumber + ' div.group-horse';
         numberOfHorses = $(inputId).length;
-        const length = raceHistory.get(raceNumber).length;
+        const length = raceHorses.get(raceNumber).length;
         if (numberOfHorses <= length) {
             let i = length - numberOfHorses;
             for (let j = 0; j < i; j++) {
@@ -275,7 +203,7 @@ $debug = debug();
         }
 
         $(inputId).each(function (index) {
-            $(inputId + ':nth-child(' + (index + 1) + ') input').val(raceHistory.get(raceNumber)[index]);
+            $(inputId + ':nth-child(' + (index + 1) + ') input').val(raceHorses.get(raceNumber)[index]);
             $(inputId + ':nth-child(' + (index + 1) + ') div.input-group-append span').removeClass('d-none');
         });
 
@@ -286,7 +214,6 @@ $debug = debug();
 
     }
 
-    // Done
     function deleteHorse(parentDivId, selfId) {
         const id = 'select#' + parentDivId.charAt(5);
 
@@ -306,7 +233,165 @@ $debug = debug();
         }
     }
 
-    // Done
+    function addHorse(btnId) {
+        numberOfHorses = $('#addInput' + btnId.charAt(8) + ' div.group-horse').length;
+        if (numberOfHorses < defaultHorseCount && !$('#' + btnId).hasClass('disabled') ) {
+            if ( $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').hasClass('d-none') ) {
+                $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').removeClass('d-none')
+            }
+            duplicateHorseInput(btnId.charAt(8), numberOfHorses);
+            numberOfHorses = numberOfHorses + 1;
+            $('#' + btnId.charAt(8) ).val(numberOfHorses);
+        }
+        if (numberOfHorses === defaultHorseCount) {
+            $('#' + btnId).addClass('disabled');
+        }
+    }
+
+    function deleteRace(eventNumber, raceNumber) {
+        $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
+
+        $.ajax({
+            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 4,
+            success: function (data) {
+                $('main').prepend(data);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+
+                $('#group' + raceNumber).remove();
+            }
+        });
+    }
+
+    function populateHorses(raceNumber) {
+        enterResultFormHTML();
+
+        horsesList = raceHorses.get(raceNumber);
+
+        $( ".race-result" ).prepend( "<option value='0'>Horse#</option>" );
+        horsesList.forEach(horse => {
+            $('#win-result option:last-of-type').clone().
+            attr('value', horse).text(horse).appendTo('.race-result');
+        })
+
+        if (racesResultsTrack.has((raceNumber + 'w'))) {
+            $('#win-result').val(racesResultsTrack.get((raceNumber + 'w'))[0]);
+            $('#win1').val(racesResultsTrack.get((raceNumber + 'w'))[1]);
+            $('#place1').val(racesResultsTrack.get((raceNumber + 'w'))[2]);
+            $('#show1').val(racesResultsTrack.get((raceNumber + 'w'))[3]);
+        }
+
+        if (racesResultsTrack.has((raceNumber + 'p'))) {
+            $('#place-result').val(racesResultsTrack.get((raceNumber + 'p'))[0]);
+            $('#place2').val(racesResultsTrack.get((raceNumber + 'p'))[1]);
+            $('#show2').val(racesResultsTrack.get((raceNumber + 'p'))[2]);
+        }
+
+        if (racesResultsTrack.has((raceNumber + 's'))) {
+            $('#show-result').val(racesResultsTrack.get((raceNumber + 's'))[0]);
+            $('#show3').val(racesResultsTrack.get((raceNumber + 's'))[1]);
+        }
+
+    }
+
+    function depopulateHorses() {
+        $( ".race-result" ).each( function () {
+            $(".race-result option").remove();
+        });
+
+        $('#message table').remove();
+    }
+
+    function enterResultForRace(eventNumber, raceNumber) {
+        $('#collapse' + raceNumber).addClass('show');
+
+        let oldWin = null;
+        let oldPlace = null;
+        let oldShow = null;
+
+        if (racesResultsTrack.has((raceNumber + 'w')) &&
+            racesResultsTrack.has((raceNumber + 'p')) &&
+            racesResultsTrack.has((raceNumber + 'w'))) {
+            oldWin = racesResultsTrack.get((raceNumber + 'w'));
+            oldPlace = racesResultsTrack.get((raceNumber + 'p'));
+            oldShow = racesResultsTrack.get((raceNumber + 's'));
+        }
+
+        let win = [];
+        win.push($('#win-result').val());
+        win.push($('#win1').val());
+        win.push($('#place1').val());
+        win.push($('#show1').val());
+
+        let place = [];
+        place.push($('#place-result').val());
+        place.push($('#place2').val());
+        place.push($('#show2').val());
+
+        let show = [];
+        show.push($('#show-result').val());
+        show.push($('#show3').val());
+
+        depopulateHorses();
+        let data = {win: win, place: place, show: show}
+
+        if (oldWin != null && oldPlace != null && oldShow != null)
+            data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
+
+        $.ajax({
+            method: 'POST',
+            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                $('main').prepend(data['alert']);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+                if (data['saved'] === 1) {
+                    resultWereEnteredForRace(eventNumber, raceNumber);
+                    racesResultsTrack.set((raceNumber + 'w'), win);
+                    racesResultsTrack.set((raceNumber + 'p'), place);
+                    racesResultsTrack.set((raceNumber + 's'), show);
+                }
+            }
+        });
+    }
+
+    function resultWereEnteredForRace(eventNumber, raceNumber) {
+        $('#c' + raceNumber + ' div.custom-control').remove();
+        $('#open' + raceNumber).remove();
+        $('#result' + raceNumber).text('Edit Result for race ' + raceNumber).
+        attr('class', 'btn btn-secondary');
+        $('#c' + raceNumber + ' span').text('Results were entered successfully.');
+
+        if (!racesResultsTrack.has((raceNumber + 'w')) &&
+            !racesResultsTrack.has((raceNumber + 'p')) &&
+            !racesResultsTrack.has((raceNumber + 's'))) {
+
+            $.ajax({
+                method: 'POST',
+                url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 6,
+                dataType: 'json',
+                success: function (data) {
+                    let win = [data['win']['horse_number'],
+                        data['win']['win_purse'], data['win']['place_purse'],
+                        data['win']['show_purse']];
+                    let place = [data['place']['horse_number'],
+                        data['place']['place_purse'], data['place']['show_purse']]
+                    let show = [data['show']['horse_number'], data['show']['show_purse']];
+                    racesResultsTrack.set((raceNumber + 'w'), win);
+                    racesResultsTrack.set((raceNumber + 'p'), place);
+                    racesResultsTrack.set((raceNumber + 's'), show);
+                }
+            });
+        }
+    }
+
+
+    $( document ).ready( function () {
+        updateNumberOfHorsesInputValue();
+        bindOnChangeOnSelectMenu();
+        bindOnClickCancelRace();
+    });
+
     function openWindow(raceNumber) {
         $.ajax({
             type: 'POST',
@@ -343,121 +428,6 @@ $debug = debug();
     }
 
     // Done
-    function addHorse(btnId) {
-        numberOfHorses = $('#addInput' + btnId.charAt(8) + ' div.group-horse').length;
-        if (numberOfHorses < defaultHorseCount && !$('#' + btnId).hasClass('disabled') ) {
-            if ( $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').hasClass('d-none') ) {
-                $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').removeClass('d-none')
-            }
-            duplicateHorseInput(btnId.charAt(8), numberOfHorses);
-            numberOfHorses = numberOfHorses + 1;
-            $('#' + btnId.charAt(8) ).val(numberOfHorses);
-        }
-        if (numberOfHorses === defaultHorseCount) {
-            $('#' + btnId).addClass('disabled');
-        }
-    }
-
-    // Done
-    function deleteRace(eventNumber, raceNumber) {
-        $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
-
-        $.ajax({
-            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 4,
-            success: function (data) {
-                $('main').prepend(data);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
-
-                $('#group' + raceNumber).remove();
-
-                // $('.group').each(function (index) {
-                //
-                //     if ((index + 1) > raceNumber) {
-                //         console.log(index + 1)
-                //
-                //         $('#btn' + (index + 1)).text('Race ' + index);
-                //         $('#c' + (index + 1) + ' div.mt-4 label').text('Cancel Race ' + index);
-                //         $('#result' + (index + 1)).text('Enter Result for Race ' + index);
-                //         $('#deleteRace' + (index + 1)).text('Delete Race ' + index);
-                //         $('#update' + (index + 1)).text('Save Race ' + index);
-                //
-                //     }
-                //
-                // });
-            }
-        });
-    }
-
-    // Done
-    function depopulateHorses() {
-        $( ".race-result" ).each( function () {
-            $(".race-result option").remove();
-        });
-
-        $('#message table').remove();
-        //enterResultFormHTML();
-    }
-
-    function enterResultForRace(eventNumber, raceNumber) {
-        // $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
-        $('#collapse' + raceNumber).addClass('show');
-
-        let oldWin = null;
-        let oldPlace = null;
-        let oldShow = null;
-
-        if (racesResultsTrack.has((raceNumber + 'w')) &&
-            racesResultsTrack.has((raceNumber + 'p')) &&
-            racesResultsTrack.has((raceNumber + 'w'))) {
-            oldWin = racesResultsTrack.get((raceNumber + 'w'));
-            oldPlace = racesResultsTrack.get((raceNumber + 'p'));
-            oldShow = racesResultsTrack.get((raceNumber + 's'));
-        }
-
-        let win = [];
-        win.push($('#win-result').val());
-        win.push($('#win1').val());
-        win.push($('#place1').val());
-        win.push($('#show1').val());
-        //console.log($('#show1').val())
-        // racesResultsTrack.set((raceNumber + 'w'), win);
-
-        let place = [];
-        place.push($('#place-result').val());
-        place.push($('#place2').val());
-        place.push($('#show2').val());
-        // racesResultsTrack.set((raceNumber + 'p'), place);
-
-        let show = [];
-        show.push($('#show-result').val());
-        show.push($('#show3').val());
-        // racesResultsTrack.set((raceNumber + 's'), show);
-
-        depopulateHorses();
-        let data = {win: win, place: place, show: show}
-
-        if (oldWin != null && oldPlace != null && oldShow != null)
-            data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
-
-        $.ajax({
-            method: 'POST',
-            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
-            data: data,
-            dataType: 'json',
-            success: function (data) {
-                $('main').prepend(data['alert']);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
-                if (data['saved'] === 1) {
-                    resultWereEnteredForRace(eventNumber, raceNumber);
-                    racesResultsTrack.set((raceNumber + 'w'), win);
-                    racesResultsTrack.set((raceNumber + 'p'), place);
-                    racesResultsTrack.set((raceNumber + 's'), show);
-                }
-            }
-        });
-    }
-
-
     // TOdo fix the inputs and select options
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
@@ -517,76 +487,13 @@ $debug = debug();
             "    </table>");
     }
 
-    // Done
-    function populateHorses(raceNumber) {
-        enterResultFormHTML();
-        horsesList = raceHistory.get(raceNumber);
-
-        $( ".race-result" ).prepend( "<option>Horse#</option>" );
-        horsesList.forEach(horse => {
-            $('#win-result option:last-of-type').clone().
-            attr('value', horse).text(horse).appendTo('.race-result');
-        })
-
-        if (racesResultsTrack.has((raceNumber + 'w'))) {
-            $('#win-result').val(racesResultsTrack.get((raceNumber + 'w'))[0]);
-            $('#win1').val(racesResultsTrack.get((raceNumber + 'w'))[1]);
-            $('#place1').val(racesResultsTrack.get((raceNumber + 'w'))[2]);
-            $('#show1').val(racesResultsTrack.get((raceNumber + 'w'))[3]);
-        }
-
-        if (racesResultsTrack.has((raceNumber + 'p'))) {
-            $('#place-result').val(racesResultsTrack.get((raceNumber + 'p'))[0]);
-            $('#place2').val(racesResultsTrack.get((raceNumber + 'p'))[1]);
-            $('#show2').val(racesResultsTrack.get((raceNumber + 'p'))[2]);
-        }
-
-        if (racesResultsTrack.has((raceNumber + 's'))) {
-            $('#show-result').val(racesResultsTrack.get((raceNumber + 's'))[0]);
-            $('#show3').val(racesResultsTrack.get((raceNumber + 's'))[1]);
-        }
-
-    }
-
-    // Done
-    // can't run in document.ready
-    function resultWereEnteredForRace(eventNumber, raceNumber) {
-        $('#c' + raceNumber + ' div.custom-control').remove();
-        $('#open' + raceNumber).remove();
-        $('#result' + raceNumber).text('Edit Result for race ' + raceNumber).
-        attr('class', 'btn btn-secondary');
-        $('#c' + raceNumber + ' span').text('Results were entered successfully.');
-
-        if (!racesResultsTrack.has((raceNumber + 'w')) &&
-            !racesResultsTrack.has((raceNumber + 'p')) &&
-            !racesResultsTrack.has((raceNumber + 's'))) {
-
-            $.ajax({
-                method: 'POST',
-                url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 6,
-                dataType: 'json',
-                success: function (data) {
-                    let win = [data['win']['horse_number'],
-                        data['win']['win_purse'], data['win']['place_purse'],
-                        data['win']['show_purse']];
-                    let place = [data['place']['horse_number'],
-                        data['place']['place_purse'], data['place']['show_purse']]
-                    let show = [data['show']['horse_number'], data['show']['show_purse']];
-                    racesResultsTrack.set((raceNumber + 'w'), win);
-                    racesResultsTrack.set((raceNumber + 'p'), place);
-                    racesResultsTrack.set((raceNumber + 's'), show);
-                }
-            });
-        }
-    }
-
     function addRace(eventNumber) {
         console.log(eventNumber)
         // Get the last race Number
         // New race number is the last race number plus one
-        let keys = Array.from(raceHistory.keys());
+        let keys = Array.from(raceHorses.keys());
         const raceNumber = keys[keys.length - 1] + 1;
-        raceHistory.set(raceNumber, ['']);
+        raceHorses.set(raceNumber, ['']);
 
         const groupId = 'group' + raceNumber;
         $('#group0').clone().removeClass('d-none').attr('id', groupId ).appendTo('#accordion01');
@@ -657,6 +564,7 @@ $debug = debug();
 
 
         // Re-bind for all the current select.group-select
+        // TODO Create a race in DB
         $('.group-select').bind('change', function () {
             numberOfHorses = $('#addInput' + this.id + ' div.group-horse').length;
 

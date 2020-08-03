@@ -1,7 +1,4 @@
 <?php
-
-// Refactoring in Progress
-
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
@@ -12,12 +9,10 @@ $page_title = "Create Event";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
 
