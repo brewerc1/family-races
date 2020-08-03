@@ -50,6 +50,6 @@ if (isset($_POST["update_event"])) {
     for ($r = 0; $r < count($races); $r++) {
         $stmt->execute(['event_id' => $db->{'e'}, 'race_number' => $races[$r]]);
     }
-    header("Location: ./manage.php/?m=1&s=1&e=". $db->{'e'}  );
+    header("Location: ./manage.php/?m=1&s=success&e=". $db->{'e'}  );
 
 }

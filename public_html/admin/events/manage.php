@@ -71,10 +71,6 @@ $HTML_for_Race_result = <<< HTML
     </table>
 HTML;
 $javascript = <<< JAVASCRIPT
-    
-   
-    
-    
 JAVASCRIPT;
 // enterResultFormHTML();
 

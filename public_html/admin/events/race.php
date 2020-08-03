@@ -144,8 +144,8 @@ if (key_exists($q, $request_array)) {
     // Close/Reopen betting window
     if (isset($_POST["open"])) {
         raceUpdate($pdo, $request_array[$q], $race_number,
-            intval($_POST["open"]), "Race $race_number window is reopened",
-            "Race $race_number window is closed",
+            intval($_POST["open"]), "Race $race_number window is closed",
+            "Race $race_number window is reopened",
             "Can't reopen Race $race_number window at the moment, please try again");
     }
 }
