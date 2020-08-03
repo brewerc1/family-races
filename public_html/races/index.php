@@ -92,8 +92,14 @@ else {
 if (!empty($_GET['p']) && is_numeric($_GET['p'])) {
     $old_pick = $_GET['p'];
 }
+else {
+    $old_pick = -1;
+}
 if (!empty($_GET['f']) && is_string($_GET['f'])) {
     $old_finish = $_GET['f'];
+}
+else {
+    $old_finish = -1;
 }
 
 if($_SESSION['site_memorial_race_enable'] == '1'){
@@ -383,7 +389,7 @@ function enterResultForRace(eventNumber, raceNumber) {
                                     // If no horse has been selected, default to 'Horse'
                                     echo "<option value='default' selected disabled>Horse...</option>";
                                     for($i = 0; $i < $horses_count; $i++){
-                                        if (($horse['horse_number'] == $pick['horse_number']) || ($horse['horse_number'] == $old_pick)) {
+                                        if (($pick && ($horse['horse_number'] == $pick['horse_number'])) || (($old_pick != -1) && ($horse['horse_number'] == $old_pick))) {
                                             echo "<option selected>" . $horse['horse_number']. "</option>";
                                         }
                                         else {
@@ -402,19 +408,19 @@ function enterResultForRace(eventNumber, raceNumber) {
                                 <!-- If no finish has been selected, default to 'Choose' -->
                                 <option value="default" selected disabled>Choose...</option>
                                 <?php 
-                                if (($pick['finish'] == 'win') || ($old_finish == 'win')) {
+                                if (($pick && ($pick['finish'] == 'win')) || (($old_finish != -1) && ($old_finish == 'win'))) {
                                     echo "<option value='win' selected>Win</option>";
                                 }
                                 else {
                                     echo "<option value='win'>Win</option>";
                                 }
-                                if (($pick['finish'] == 'place') || ($old_finish == 'place')) {
+                                if (($pick && ($pick['finish'] == 'place')) || (($old_finish != -1) && ($old_finish == 'place'))) {
                                     echo "<option value='place' selected>Place</option>";
                                 }
                                 else {
                                     echo "<option value='place'>Place</option>";
                                 }
-                                if (($pick['finish'] == 'show') || ($old_finish == 'show')) {
+                                if (($pick && ($pick['finish'] == 'show')) || (($old_finish != -1) && ($old_finish == 'show'))) {
                                     echo "<option value='show' selected>Show</option>";
                                 }
                                 else {
