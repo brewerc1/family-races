@@ -1,4 +1,3 @@
-
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
@@ -25,7 +24,7 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
-$debug = debug();
+//$debug = debug();
 
 
 // Set the page title for the template
@@ -35,16 +34,16 @@ $javascript = '';
 ?>
 {header}
 {main_nav}
-    <main role="main">
-        <section>
-            <h1>Admin</h1>
-            <ul class="list-unstyled text-center mt-5">
-                <li><a class="btn btn-primary mb-4" href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
-                <li><a class="btn btn-primary mb-4" href="./races/">Event & Race Managment</a></li>
-                <li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
-                <li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
-            </ul>
-        </section> 
-    </main>
+    <main role="main" id="admin_page">
+		<h1 class="mb-5 sticky-top">Admin</h1>
+		<section>
+			<ul class="list-unstyled text-center mt-5">
+				<li><a class="btn btn-primary mb-4" href="/races/?e=<?php echo $_SESSION['current_event']; ?>">Current Event</a></li>
+				<li><a class="btn btn-primary mb-4" href="./events/">Event &amp; Race Managment</a></li>
+				<li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
+				<li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
+			</ul>
+		</section> 
+	</main>
 {footer}
 <?php ob_end_flush(); ?>

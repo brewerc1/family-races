@@ -124,21 +124,25 @@ HERE;
 /* Notification System */
 
 $messages = array(
-    0 => "An email has been sent",
-    1 => "Invalid Credentials",
-    2 => "Email or Password cannot be empty",
+    0 => "An email has been sent.",
+    1 => "Invalid credentials.",
+    2 => "Email or password cannot be empty.",
     3 => "Password has been changed. Please log in again.",
-    4 => "Can't use the old password",
-    5 => "Passwords did not match",
-    6 => "Server Error: Try again",
-    7 => "Password cannot be empty",
-    8 => "Invite not sent",
-    9 => "Invite sent",
-    10 => "Invalid Email",
-    11 => "User already invited",
-    12 => "Need to have a selection for horse & place!",
-    13 => "Bet Placed!",
-    14 => "Bet Updated!"
+    4 => "Can't re-use the old password.",
+    5 => "Passwords did not match.",
+    6 => "Server error: Try again.",
+    7 => "Password cannot be empty.",
+    8 => "Invite not sent.",
+    9 => "Invite sent.",
+    10 => "Invalid email.",
+    11 => "User already invited.",
+    12 => "Need to have a selection for horse and place.",
+    13 => "Your pick is submitted.",
+    14 => "Your pick is updated.",
+    15 => "Settings updated.",
+    16 => "User deactivated.",
+    17 => "User activated.",
+    18 => "Invite deleted."
 );
 
 $notification = '';

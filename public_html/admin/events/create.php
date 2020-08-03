@@ -1,8 +1,14 @@
 <?php
+
+// Refactoring in Progress
+
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-// Authentication  and Authorization System
-ob_start();
+
+// turn on output buffering
+ob_start('template');
 session_start();
+
+$page_title = "Create Event";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -13,7 +19,6 @@ if (!isset($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
-
 }
 
 // To be reviewed
@@ -23,56 +28,71 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
+$debug = debug();
+
+if (isset($_POST["submit"])) {
+
+    // Create event
+    $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
+    $stmt= $pdo->prepare($sql);
+    $stmt->execute(['name' => $_POST["event_name"],
+        'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]]);
+
+    // Get event ID
+    $sql = "SELECT id FROM event WHERE name=:name";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['name' => $_POST["event_name"]]);
+    $event_id = $stmt->fetch()["id"];
+
+    // Create the first Race
+    $sql = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
+    $stmt= $pdo->prepare($sql);
+    $stmt->execute(['event_id' => $event_id,
+        'race_number' => 1]);
+
+    // Redirect to Manage Event page
+    header("Location: ./event.php?e=" . $event_id);
+}
+
 
 ?>
-<!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-        <title>Skeleton HTML</title>
+{header}
+{main_nav}
 
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
-        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
-        <link href="/css/races.css" rel="stylesheet">
+    <main role="main">
+        <section>
+            <h1>Create an Event</h1>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <style>
-            nav#main-navigation li {
-                display: inline-block;
-                width: 18%;
-            }
-            nav#main-navigation ul {
-                margin:0;
-                padding:0;
-            }
-        </style>
-    </head>
-    <body>
-    <!--The main navigation menu to be displayed on most pages. Not all links work yet.-->
-    <nav id="main-navigation">
-        <h1>Main Navigation</h1>
-        <ul>
-            <li><a href="http://localhost/races">Races</a></li>
-            <li><a href="http://localhost/HOF/">HOF</a></li>
-            <li><a href="http://localhost/faq/">FAQ</a></li>
-            <li><a href="http://localhost/user/">Me</a></li>
-            <?php
-            if ($_SESSION['admin']) {
-                echo <<< ADMIN
-<li><a href= "http://localhost/admin/">Admin</a></li>
-ADMIN;
-            }
-            ?>
-            <li><a href="http://localhost/logout">Log out</a></li>
-        </ul>
-    </nav>
+            <form method="POST" action=<?php echo $_SERVER["PHP_SELF"] ?>>
+                <!-- Event Name -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> Event Name </label>
+                        <input type="text" class="form-control" id="name" name="event_name">
+                    </div>
+                </div>
+                <!-- Event Date -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> Date </label>
+                        <input type="datetime-local" class="form-control" id="date" name="event_date">
+                    </div>
+                </div>
 
-    <h1>Admin Create an Event Page</h1>
-    <p>Create a new event</p>
+                <!-- Event POT -->
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="email_from_address" class="col-form-label"> POT </label>
+                        <input type="text" class="form-control" id="pot" name="event_pot">
+                    </div>
+                </div>
 
-    <footer>
-        <p>Created by students of the College of Informatics at Northern Kentucky University</p>
-    </footer>
-    </body>
-</html>
+                <!-- submit -->
+                <input type="submit" name="submit" class="btn btn-primary btn-block" value="Next">
+
+            </form>
+        </section>
+    </main>
+
+{footer}
+<?php ob_end_flush(); ?>
