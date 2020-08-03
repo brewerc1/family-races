@@ -35,15 +35,16 @@ if (isset($_POST["update_event"])) {
 
     $db = json_decode($_POST["db"]);
 
-//    if (!empty($db->{'pot'})) {
-//        $pot = $db->{'pot'};
-//
-//        // Update POT
-//        $sql = "UPDATE event SET pot=:pot WHERE id=:id";
-//        $stmt= $pdo->prepare($sql);
-//        $stmt->execute(['pot' => $pot, 'id' => $event_id]);
-//    }
-        // create new race
+    if (!empty($db->{'pot'})) {
+        $pot = $db->{'pot'};
+
+        // Update POT
+        $sql = "UPDATE event SET pot=:pot WHERE id=:id";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute(['pot' => $pot, 'id' => $event_id]);
+    }
+
+    // create new race
     $races = $db->{'r'};
     $sql = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
     $stmt = $pdo->prepare($sql);
