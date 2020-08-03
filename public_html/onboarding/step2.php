@@ -81,20 +81,25 @@ if (isset($_POST['next-btn'])) {
 
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
+            <p>First name and last name are REQUIRED even if you choose to skip the rest.</p>
                 <div class="form-group">
-                    <p>First name and last name are REQUIRED even if you choose to skip the rest!</p>
+                    <label for="motto" class="col-form-label" >First Name:</label>
                     <input  type="text"  required class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
                 </div>
                 <div class="form-group">
+                    <label for="motto" class="col-form-label" >Last Name:</label>
                     <input  type="text"  required class= "form-control" id="last_name" name="last_name"  placeholder="Last Name"></input>
                 </div>
                 <div class="form-group">
+                    <label for="city" class="col-form-label" >City:</label>
                     <input  type="text"  class= "form-control" id="city" name="city" placeholder="City"></input>
                 </div>
                 <div class="form-group">
+                    <label for="state" class="col-form-label" >State:</label>
                     <input  type="text" class= "form-control" id="state" name="state" placeholder="State"></input>
                 </div>
                 <div class="form-group">
+                    <label for="motto" class="col-form-label" >Motto:</label>
                     <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
                 </div>
                     <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
