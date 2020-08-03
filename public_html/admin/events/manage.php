@@ -385,47 +385,45 @@ $debug = debug();
         }
     }
 
+    function bettingWindow(raceNumber, isOpen, firstId, secondId, del=0) {
+        $.ajax({
+            type: 'POST',
+            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
+            data: {open: isOpen},
+            success: function (data) {
+                $('main').prepend(data);
+                $( firstId ).addClass('d-none');
+                $( secondId ).removeClass('d-none');
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+
+                if (del === 1) {
+                    numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
+                    if (numberOfHorses < defaultHorseCount)
+                        $('#addHorse' + raceNumber).removeClass('disabled');
+                    else $('#addHorse' + raceNumber).addClass('disabled');
+                }
+
+            }
+        });
+    }
+
+    function openWindow(raceNumber) {
+        bettingWindow(raceNumber, 0, ('#c' + raceNumber), ('#card' + raceNumber), 1);
+    }
+    function closeWindow(raceNumber) {
+        bettingWindow(raceNumber, 1, ('#card' + raceNumber), ('#c' + raceNumber));
+    }
+
 
     $( document ).ready( function () {
+
         updateNumberOfHorsesInputValue();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
+
     });
 
-    function openWindow(raceNumber) {
-        $.ajax({
-            type: 'POST',
-            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
-            data: {open: 0},
-            success: function (data) {
-                $('main').prepend(data);
-                $('#c' + raceNumber ).addClass('d-none');
-                $('#card' + raceNumber ).removeClass('d-none');
-                $('#alert').delay( 3000 ).fadeOut( 400 );
 
-                numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
-                if (numberOfHorses < defaultHorseCount)
-                    $('#addHorse' + raceNumber).removeClass('disabled');
-
-            }
-        });
-    }
-
-    // Done
-    function closeWindow(raceNumber) {
-        $.ajax({
-            type: 'POST',
-            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
-            data: {open: 1},
-            success: function (data) {
-                $('main').prepend(data);
-                $('#c' + raceNumber ).removeClass('d-none');
-                $('#card' + raceNumber ).addClass('d-none');
-                $('#alert').delay( 3000 ).fadeOut( 400 );
-
-            }
-        });
-    }
 
     // Done
     // TOdo fix the inputs and select options
@@ -488,7 +486,6 @@ $debug = debug();
     }
 
     function addRace(eventNumber) {
-        console.log(eventNumber)
         // Get the last race Number
         // New race number is the last race number plus one
         let keys = Array.from(raceHorses.keys());

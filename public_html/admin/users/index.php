@@ -46,7 +46,7 @@ if (isset($_POST['submit'])){
         $email = trim($_POST['reset_email']);
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+            header("Location: ".$_SERVER["PHP_SELF"]."?m=10&s=warning");
         } else{
 
         $update_user_sql = "UPDATE user SET email = :email WHERE id = :uid";
@@ -55,13 +55,14 @@ if (isset($_POST['submit'])){
         }
 
     }
+
     //if its resend invite
     if (!empty($_POST['resend_invite'])){
         $uid = trim($_POST['hidden_id']);
         $email = trim($_POST['resend_invite']);
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+            header("Location: ".$_SERVER["PHP_SELF"]."?m=10&s=warning");
         } else {
             // We know this user exists so we use the passed hidden_id to update email and/or invite code
                 try {
@@ -204,7 +205,7 @@ $num_display_user_results = $display_user_result->rowCount();
 {main_nav}
     <main role="main">
         <h1>User Management</h1>
-        <section id="User_invite" class="mt-3 mb-4" method="post" >
+        <section id="User_invite" class="mt-3 mb-4">
             <form method="POST" action="./invite_user.php" id="invite_form">
                 <div class="form-row align-items-center justify-content-center">
                     <div class="col-auto">
