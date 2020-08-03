@@ -9,10 +9,13 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom;
-    background-attachment: fixed;
+	background-attachment: fixed;
+	/*
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-smooth: always;
+	font-smooth: always;
+	*/
+	letter-spacing: 0px;
 }
 
 b,
@@ -74,9 +77,6 @@ main {
 @media (min-width: 1024px) {
     main {
         max-width: 1024px;
-        border-color: rgba(0, 0, 0, .1);
-        border-width: 0 1px;
-        border-style: solid;
     }
     #main_navigation {
         max-width: 1024px;
@@ -95,7 +95,27 @@ main {
 }
 
 
-
+#hof_page, #faq_page, #user_page {
+ 
+}
+#hof_page > h1,
+#faq_page > h1,
+#admin_page > h1,
+#admin_site_settings > h1
+{
+    border-bottom: 1px solid #ccc;
+    margin-left: -20px;
+    margin-right: -20px;
+	background-color: rgba(0,0,0,.0);
+	-webkit-backdrop-filter: blur(7px);
+	backdrop-filter: blur(7px);
+    line-height: 4rem;
+	padding: 2.5rem 0 2rem 0;
+	z-index: 1000;
+}
+#user_profile_page {
+	padding-top: 1.5rem;
+}
 
 
 /* Forms */
@@ -182,14 +202,17 @@ form#login {
 }
 
 
-/* ============== Profile Page: ============== */
+/* ============== Profile Page: #user_profile_page ============== */
 #photo_upload {
     align-items: center;
     justify-content: center;
 }
+#photo_container {
+	text-align: center;
+}
 #user_profile_photo {
-    width: 100%;
-    margin-right: 10px;
+	width: 100%;
+	max-width: 300px;
 }
 #user_name h1 {
     margin: 1.5rem 0;
@@ -198,7 +221,10 @@ form#login {
     #edit_buttons {
         position: relative;
         top: -50px;
-    }
+	}
+	#user_profile_photo {
+		margin-right: 10px;
+	}
 }
 #edit_buttons.btn-group>.btn:not(:first-of-type):not(.dropdown-toggle) {
     border-left: 1px solid rgba(255, 255, 255, 0.4);
@@ -220,6 +246,9 @@ form#login {
 #user_meta li span {
     text-transform: uppercase;
     font-weight: 400;
+}
+table#profile_records {
+	max-width: 500px;
 }
 
 
@@ -266,7 +295,7 @@ span.navbar-text {
     top: 0px;
     left: 0;
     font-size: 1.2em;
-    width: calc(100% + 2px );
+    width: 100%;
     margin: 0 -1px 0 -1px;
     text-align: center;
     background-color: rgba(0,0,0,.2);
@@ -376,11 +405,37 @@ span.navbar-text {
 }
 
 
-/* ============== FAQ Page: #faq_page ============== */
-#faq_page > h1 {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 1rem;
+/* ============== HOF Index Page: #hof_page ============== */
+#hof_page img{
+	max-width: 500px;
 }
+ 
+#hof_page .champion{
+	font-family: 'Lato', Sans-Serif;
+	font-size: 1.9rem;
+	font-weight: 400;
+	text-transform: capitalize;
+}
+#hof_page .champion span{
+	font-weight: 300;
+}
+#hof_page .champion .badge {
+	line-height: 1.8rem;
+	font-size: 1.4rem;
+	font-weight: 400;
+	background-color: rgba(127,204,154,1);
+	position: relative;
+	top: -4px;
+}
+#prior_champions .card .card {
+	margin: 2.5rem 2.5rem 0 2.5rem;
+}
+#prior_champions .card .card:last-of-type {
+	margin: 2.5rem;
+}
+
+
+/* ============== FAQ Page: #faq_page ============== */
 #faq_page h2, #faq_page h3, #faq_page h4, #faq_page h5 {
     text-align: left;
 }
@@ -435,6 +490,13 @@ span.navbar-text {
 #faq_page [data-toggle="collapse"].collapsed:after {
   transform: rotate(90deg) ;
   color: rgb(179, 109, 6);
+}
+
+
+/* ============== Admin Users Page: #admin_users ============== */
+
+#admin_users {
+
 }
 
 

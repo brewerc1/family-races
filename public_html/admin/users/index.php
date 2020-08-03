@@ -148,7 +148,7 @@ JAVASCRIPT;
 
 
 ///// DEBUG
-$debug = debug($_POST);
+//debug = debug($_POST);
 ///// end DEBUG
 
 
@@ -202,8 +202,8 @@ $num_display_user_results = $display_user_result->rowCount();
 ?>
 {header}
 {main_nav}
-    <main role="main">
-        <h1>User Management</h1>
+	<main role="main" id="admin_page">
+		<h1 class="mb-5 sticky-top">User Management</h1>
         <section id="User_invite" class="mt-3 mb-4" method="post" >
             <form method="POST" action="./invite_user.php" id="invite_form">
                 <div class="form-row align-items-center justify-content-center">
