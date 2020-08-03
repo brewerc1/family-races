@@ -40,6 +40,23 @@ $(function(){
     return false;
     });
 });
+function test() {
+    console.log("TEST!");
+}
+$('#confirm_cancel_button').hide();
+$(document).ready(function(){
+    $("input:checkbox").change(function() { 
+        if($(this).is(":checked")) {
+            console.log('checked'); 
+            $('#confirm_cancel_button').show();
+            $('#race_results_button').hide();
+        } else {
+            console.log('unchecked');
+            $('#confirm_cancel_button').hide();
+            $('#race_results_button').show();
+        }
+    }); 
+});
 JAVASCRIPT;
 
 // Get UID
@@ -164,6 +181,156 @@ MEMORIAL;
 }
 
 ?>
+<script>
+let horseList = [];
+<?php 
+$modal_horses_result = $pdo->prepare($horses_sql);
+$modal_horses_result->execute(['event' => $event, 'race' => $race]);
+$modal_horse = $modal_horses_result->fetch();
+
+for ($i = 0; $i < $horses_count; $i++) {
+    
+    echo "horseList.push({$modal_horse['horse_number']});";
+    $modal_horse = $modal_horses_result->fetch();
+}
+ ?>
+
+function enterResultFormHTML() {
+    $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
+
+    $('#message').html("<table class='table table-borderless'>\n" +
+        "    <!-- Row A -->\n" +
+        "    <thead>\n" +
+        "        <tr>\n" +
+        "          <th scope='col'>Horse#</th>\n" +
+        "          <th scope='col'>Win</th>\n" +
+        "          <th scope='col'>Place</th>\n" +
+        "          <th scope='col'>Show</th>\n" +
+        "        </tr>\n" +
+        "    </thead>\n" +
+        "    <!-- Row B -->\n" +
+        "    <tr>\n" +
+        "        <td>\n" +
+        "            <select  id='win-result' class='race-result'>\n" +
+        "            </select>\n" +
+        "        </td>\n" +
+        "        <td class='position-relative'>\n" +
+        "                <input type='text' id='win1' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "        <td class='position-relative'>\n" +
+        "                <input type='text' id='place1' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "        <td class='position-relative'>\n" +
+        "                <input type='text' id='show1' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "    </tr>\n" +
+        "    <!-- Row C -->\n" +
+        "    <tr>\n" +
+        "        <td>\n" +
+        "            <select  id='place-result' class='race-result'>\n" +
+        "            </select>\n" +
+        "        </td>\n" +
+        "        <td></td>\n" +
+        "        <td class='position-relative'>\n" +
+        "                <input type='text' id='place2' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "        <td class='position-relative'>\n" +
+        "            <input type='text' id='show2' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "    </tr>\n" +
+        "    <!-- Row D -->\n" +
+        "    <tr>\n" +
+        "        <td>\n" +
+        "            <select  id='show-result' class='race-result'>\n" +
+        "            </select>\n" +
+        "        </td>\n" +
+        "        <td></td>\n" +
+        "        <td></td>\n" +
+        "        <td class='position-relative'>\n" +
+        "            <input type='text' id='show3' class='w-100 form-control'>\n" +
+        "        </td>\n" +
+        "    </tr>\n" +
+        "    </table>");
+};
+
+function depopulateHorses() {
+    $( ".race-result" ).each( function () {
+        $(".race-result option").remove();
+    });
+    $('#message table').remove();
+};
+
+
+function populateHorses(raceNumber, eventNumber) {
+    enterResultFormHTML();
+    console.log(horseList);
+// TODO for your specific case: Use ajax to get a list of horses for that raceNumber
+    $( ".race-result" ).prepend( "<option value='0'>Horse#</option>" );
+    // horsesList.forEach(horse => {
+    //     $('#win-result option:last-of-type').clone().
+    //     attr('value', horse).text(horse).appendTo('.race-result');
+    // })
+    for (let i = 0; i < horseList.length; i++) {
+        // console.log(horseList[i]);
+        $('#win-result option:last-of-type').clone().
+        attr('value', horseList[i]).text(horseList[i]).appendTo('.race-result');
+    }
+    // if (racesResultsTrack.has((raceNumber + 'w'))) {
+    //     $('#win-result').val(racesResultsTrack.get((raceNumber + 'w'))[0]);
+    //     $('#win1').val(racesResultsTrack.get((raceNumber + 'w'))[1]);
+    //     $('#place1').val(racesResultsTrack.get((raceNumber + 'w'))[2]);
+    //     $('#show1').val(racesResultsTrack.get((raceNumber + 'w'))[3]);
+    // }
+    // if (racesResultsTrack.has((raceNumber + 'p'))) {
+    //     $('#place-result').val(racesResultsTrack.get((raceNumber + 'p'))[0]);
+    //     $('#place2').val(racesResultsTrack.get((raceNumber + 'p'))[1]);
+    //     $('#show2').val(racesResultsTrack.get((raceNumber + 'p'))[2]);
+    // }
+    // if (racesResultsTrack.has((raceNumber + 's'))) {
+    //     $('#show-result').val(racesResultsTrack.get((raceNumber + 's'))[0]);
+    //     $('#show3').val(racesResultsTrack.get((raceNumber + 's'))[1]);
+    // }
+};
+function enterResultForRace(eventNumber, raceNumber) {
+    $('#collapse' + raceNumber).addClass('show');
+    let oldWin = null;
+    let oldPlace = null;
+    let oldShow = null;
+    // if (racesResultsTrack.has((raceNumber + 'w')) &&
+    //     racesResultsTrack.has((raceNumber + 'p')) &&
+    //     racesResultsTrack.has((raceNumber + 'w'))) {
+    //     oldWin = racesResultsTrack.get((raceNumber + 'w'));
+    //     oldPlace = racesResultsTrack.get((raceNumber + 'p'));
+    //     oldShow = racesResultsTrack.get((raceNumber + 's'));
+    // }
+    let win = [];
+    win.push($('#win-result').val());
+    win.push($('#win1').val());
+    win.push($('#place1').val());
+    win.push($('#show1').val());
+    let place = [];
+    place.push($('#place-result').val());
+    place.push($('#place2').val());
+    place.push($('#show2').val());
+    let show = [];
+    show.push($('#show-result').val());
+    show.push($('#show3').val());
+    depopulateHorses();
+    let data = {win: win, place: place, show: show}
+    if (oldWin != null && oldPlace != null && oldShow != null)
+        data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
+    $.ajax({
+        method: 'POST',
+        url: '/admin/events/race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
+        data: data,
+        dataType: 'json',
+        success: function (data) {
+            $('main').prepend(data['alert']);
+            $('#alert').delay( 3000 ).fadeOut( 400 );
+        }
+    });
+}
+</script>
 {header}
 {main_nav}
 <main role="main" id="races_page">
@@ -260,6 +427,16 @@ MEMORIAL;
                         <input class="btn btn-primary" type="submit" value="Submit">
                     </div>
                 </form>
+                <?php
+                    if ($_SESSION['admin']) {
+                        echo <<< CLOSE
+                            <form action="close-race.php" method="POST">
+                                <input type="hidden" value=$race name="currentRace" id="currentRace">
+                                <input class="btn btn-primary" type="submit" value="Close Betting Window">
+                            </form>
+CLOSE;
+                    }
+                ?>
         <?php } 
         elseif ($race_info['window_closed'] == '1') {
 			?>
@@ -312,6 +489,36 @@ MEMORIAL;
                     </table>
 HERE;
 
+                    }
+                    // To cancel a race
+                    if ($_SESSION['admin']) {
+                        echo <<< CANCEL
+                            <form action="" method="POST">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="cancel_race">
+                                    <label class="form-check-label" for="cancel_race">Cancel Race</label>
+                                </div>
+                            </form>
+                            
+                            <button type="submit" class="btn btn-primary" id="race_results_button"
+                                    data-toggle="modal" 
+                                    data-target="#mainModal" 
+                                    data-title="Race $race Results"
+                                    data-button-primary-text="Save" 
+                                    data-button-primary-action="enterResultForRace($event, $race);" 
+                                    data-button-secondary-text="Cancel" 
+                                    data-button-secondary-action=""
+                                    onClick="populateHorses($race, $event);">Enter Race Results</button>
+                            <button type="" class="btn btn-primary" id="confirm_cancel_button"
+                                    data-toggle="modal" 
+                                    data-target="#mainModal" 
+                                    data-title="Are you sure you want to cancel this race?" 
+                                    data-message="Cancelling race $race will result in no payouts for all bets."
+                                    data-button-primary-text="Yes, Cancel" 
+                                    data-button-primary-action="" 
+                                    data-button-secondary-text="Go Back" 
+                                    data-button-secondary-action="">Confirm</button>
+CANCEL;
                     }
                 } 
                 else { // SHOULD NEVER REACH HERE!!!
