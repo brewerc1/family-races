@@ -77,27 +77,27 @@ if (isset($_POST['next-btn'])) {
 ?>
 {header}
 {main_nav}
-<h1>Your Profile</h1>
-
-
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
-                <div class="form-group">
-                    <p>First name and last name are REQUIRED even if you choose to skip the rest!</p>
-                    <input  type="text"  required class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="text"  required class= "form-control" id="last_name" name="last_name"  placeholder="Last Name"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="text"  class= "form-control" id="city" name="city" placeholder="City"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="text" class= "form-control" id="state" name="state" placeholder="State"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
-                </div>
-                    <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
-    </form>
-    {footer}
+	<main role="main" id="onboarding_page">
+	    <h1 class="mb-5 sticky-top">Profile Information</h1>
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+	        <div class="form-group">
+	            <p>First name and last name are REQUIRED even if you choose to skip the rest!</p>
+	            <input  type="text"  required class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
+	        </div>
+	        <div class="form-group">
+	            <input  type="text"  required class= "form-control" id="last_name" name="last_name"  placeholder="Last Name"></input>
+	        </div>
+	        <div class="form-group">
+	            <input  type="text"  class= "form-control" id="city" name="city" placeholder="City"></input>
+	        </div>
+	        <div class="form-group">
+	            <input  type="text" class= "form-control" id="state" name="state" placeholder="State"></input>
+	        </div>
+	        <div class="form-group">
+	            <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
+	        </div>
+	            <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
+		</form>
+	</main>
+	{footer}
 <?php ob_end_flush(); ?>

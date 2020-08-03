@@ -16,6 +16,7 @@ body {
 	font-smooth: always;
 	*/
 	letter-spacing: 0px;
+	background-color: #252625;
 }
 
 b,
@@ -44,6 +45,10 @@ label,
     padding-top: 4px;
 }
 
+.bg-dark {
+	background-color: #373837 !important;
+  }
+
 .vertical-center {
     margin: 0;
     position: absolute;
@@ -70,8 +75,8 @@ main {
     min-height: 100%;
     margin: 0 auto;
     box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
-    border-left: 1px solid rgba(200,199,200,0.6);
-    border-right: 1px solid rgba(200,199,200,0.6);
+    border-left: 1px solid rgba(120,120,120,0.9);
+    border-right: 1px solid rgba(120,120,120,0.9);
 }
 
 @media (min-width: 1024px) {
@@ -101,7 +106,8 @@ main {
 #hof_page > h1,
 #faq_page > h1,
 #admin_page > h1,
-#admin_site_settings > h1
+#admin_site_settings > h1, 
+#onboarding_page > h1
 {
     border-bottom: 1px solid #ccc;
     margin-left: -20px;
@@ -124,6 +130,9 @@ main {
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
+}
+.form-control {
+	border: 1px solid #ddd;
 }
 
 
@@ -275,52 +284,50 @@ span.navbar-text {
 
 
 /* ============== Races Page: #races_page ============== */
-#races_page .card {
-    min-height: 400px; 
+#races_page #pick_block {
+    min-height: 350px; 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: bottom center;
     margin: 0px -21px 0px -21px;
-    padding: 21px 21px 0 21px;
+	padding: 20px 20px 0 20px;
+	background-color: transparent;
 }
 #races_page #window_closed {
     color: #fff;
     text-shadow: 0px 16px 10px rgba(0,0,0,.2), 1px 6px 8px rgba(0,0,0,.6);
 }
-#races_page .card .input-group {
+#races_page #pick_block .input-group {
     z-index: 800;
 }
-#races_page #window_closed > .card-meta{
+#races_page #pick_block .card-blur{
     position: absolute;
     top: 0px;
-    left: 0;
-    font-size: 1.2em;
-    width: 100%;
-    margin: 0 -1px 0 -1px;
-    text-align: center;
+	left: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+	width: 100%;
+	height: 100%;
     background-color: rgba(0,0,0,.2);
-    padding: 130px 0 0 0;
-    margin-bottom: 10px;
-    color: #fff;
-    height: 100%;
     z-index: -1;
-    text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 10px rgba(0,0,0,.3);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(7px);
 }
-#races_page .card-body {
+#races_page #pick_block .card-body {
     padding: 0;
     border-radius: 5px;
     
 }
-#races_page .card-text {
+#races_page #pick_block .card-text {
     margin-top: 0px;
     color: #fff;
 }
-#races_page .card-text h1 {
+#races_page #pick_block .card-text h1 {
     font-size: 1em;
 }
-#races_page .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
+#races_page #pick_block .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
     color: #fff;
 }
 #race_leaderboard .no-results {
@@ -345,24 +352,10 @@ span.navbar-text {
     text-align: right;
     background-color: rgba(82, 86, 83, .9);
     border-radius: 3px;
-    margin: 1.2rem 0 1.2rem 0;
+    margin: 1rem auto;
     box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
-    width: 100%;
+    width: auto;
     padding: 5px;
-}
-@media (min-width: 576px) {
-    #scoreboard {
-        border-collapse: separate;
-        border-spacing: 10px 5px;
-        text-align: right;
-        background-color: rgba(82, 86, 83, .9);
-        border-radius: 3px;
-        margin: 2rem auto 0 auto;
-        width: auto;
-    }
-    #races_page .card-body {
-        margin: 1rem;
-    }
 }
 #scoreboard #title_row td {
     background-color: initial;
@@ -375,7 +368,8 @@ span.navbar-text {
     font-size: 1.4rem;
     padding: 0 0 10px 0;
     line-height: 1.2rem;
-    font-weight: 700;
+	font-weight: 700;
+	text-align: center;
 }
 #scoreboard #title_row td img {
     width: 60px;
@@ -387,7 +381,9 @@ span.navbar-text {
 }
 #scoreboard th {
     text-align: right;
-    border-radius: 3px;
+	border-radius: 3px;
+	color: #ddd;
+	width: auto;
 }
 #scoreboard td {
     background-color: #000;
@@ -396,12 +392,42 @@ span.navbar-text {
     font-family: 'Score Board';
     font-weight: normal;
     font-style: normal;
-    font-size: 1.2rem;
-    width: 4rem;
+    font-size: 1rem;
+    width: auto;
     border-radius: 3px;
 }
 #scoreboard #second>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(3){
     background-color: transparent;
+}
+#memorial_race_content {
+	color: #fff;
+	text-align:center;
+	margin-bottom: 1rem;
+}
+#memorial_race_content img {
+	width: 100%;
+	max-width: 640px;
+}
+@media (min-width: 576px) {
+    #scoreboard {
+        border-collapse: separate;
+        border-spacing: 10px 5px;
+        text-align: right;
+        background-color: rgba(82, 86, 83, .9);
+        border-radius: 3px;
+        margin: 0rem auto 2rem auto;
+        width: auto;
+	}
+	#scoreboard td {
+		width: auto;
+		font-size: 1.5rem;
+	}
+    #races_page #pick_block .card-body {
+		margin: 1rem;
+	}
+	#races_page #pick_block {
+		min-height: 400px;
+	}
 }
 
 
@@ -499,6 +525,10 @@ span.navbar-text {
 
 }
 
+/* ============== Onboarding Pages: #onboarding_page ============== */
+#onboarding_page {
+
+}
 
 
 
