@@ -112,13 +112,11 @@ if ($updatePhoto)  {
 <main role="main" id="onboarding_page">
     <h1 class="mb-5 sticky-top"> Profile Photo </h1>
         <p class="text-center">If you do not choose to upload a photo a no-user photo will be placed as your Profile Photo</p>
-        <section class="form-row">
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
-                <div class="text-center">
-                    <div class="form-group col">
-                        <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
-                        <div id="ajax_alert"></div>
-                    </div>
+            <section class="form-row text-center">
+                <div class="form-group col">
+                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                    <div id="ajax_alert"></div>
                 </div>
             </section>
             <section class="form-row">    
@@ -132,6 +130,7 @@ if ($updatePhoto)  {
                     <input type="submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
                 </div>
             </form>
+
 
         <!-- modal for photo cropping -->
         <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
@@ -156,6 +155,6 @@ if ($updatePhoto)  {
         </div>
         <!-- END: modal for photo cropping -->
 
-    </main>
+</main> 
 {footer}
 <?php ob_end_flush(); ?>
