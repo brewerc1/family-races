@@ -29,7 +29,7 @@ $javascript = '';
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
 
-    // create vars and trim for email and code and password and password2
+// create vars and trim for email and code and password and password2
 
 //Validation Email filed filled and email exist
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
@@ -99,28 +99,24 @@ if (isset($_POST['createAccount-btn'])) {
 ?>
 
 {header}
-<main>
-    <h1>Sign Up</h1>
-        <div>  
-            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
-                <div class="form-group">
-                    <input  type="email" required class="form-control" name ="email" id="email"  value="<?php echo $getemail ?>" placeholder="Enter Email"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="textbox" required class="form-control" name="code" id="code"  value="<?php echo $getcode ?>"placeholder="Enter Code"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="password"  required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
-                </div>
-                    <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
-            </form>
-            <p>Already have a Account? <a href="/login/">Login</a></p>
-    
-    
-        </div>
-</main>
+	<main id="onboarding_page">
+		<h1 class="mb-5 sticky-top">Sign Up</h1>
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+			<div class="form-group">
+	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $getemail ?>" placeholder="Enter Email"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $getcode ?>"placeholder="Enter Code"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
+	        </div>
+	            <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
+	    </form>
+	    <p>Already have a Account? <a href="/login/">Login</a></p>
+	</main>
     {footer}
 <?php ob_end_flush(); ?>

@@ -84,7 +84,7 @@ if($_SESSION['site_memorial_race_enable'] == '1'){
 }
 
 ///// DEBUG
-$debug = debug("UID: $uid<br>Event: $event<br>Race: $race");
+//$debug = debug();
 ///// end DEBUG
 
 // Gather data for this page
@@ -156,24 +156,23 @@ $show_horse = $show_horse_result->fetch();
 
 $background_image = random_photo();
 
+$memorial_race_content = '';
+if ($memorial_race_number == $race) {
+    $memorial_race_content =<<< MEMORIAL
+    <div id="memorial_race_content"><img src="https://fakeimg.pl/640x360"></div>
+MEMORIAL;
+}
+
 ?>
 {header}
 {main_nav}
 <main role="main" id="races_page">
-
-    <?php
-        if ($memorial_race_number == $race) {
-            echo <<< MEMORIAL
-            <div class="memorial-banner">
-            </div>
-MEMORIAL;
-        }?>
-
-    <div class="card sticky-top" style="background-image: url(<?php echo $background_image['filename'];?>);">
+	<div class="card sticky-top" id="pick_block" style="background-image: url(<?php echo $background_image['filename'];?>);">
+		<div class='card-blur'></div>
         <div class="input-group input-group-lg mb-3 pt-2 pl-2 pr-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
-            </div>
+			</div>
             <select class="custom-select" id="race_picker">
                 <?php
                     for($i = 1; $i <= $num_races; $i++) {
@@ -202,7 +201,8 @@ MEMORIAL;
                     }
                 ?>
             </select>
-        </div>
+		</div>
+		<?php echo $memorial_race_content;?>
         <?php if ($race_info) { // Checks to see if there is race info for the race (used to check 'All Races')
             if($race_info['window_closed'] == '0') {?>
                 <form action="bets.php" method="POST">
@@ -261,29 +261,27 @@ MEMORIAL;
                     </div>
                 </form>
         <?php } 
-        elseif ($race_info['window_closed'] == '1') {?>
+        elseif ($race_info['window_closed'] == '1') {
+			?>
             <div class="card-body" id="window_closed">
-                <?php if ($win_horse) {
-                        echo "<div class='card-meta'></div>";
-                    }
-                    else {
-                        echo "<div class='card-meta'></div>
-                        <div class='corner-ribbon top-left sticky red shadow'>Awaiting race results</div>";
-                    }
+				<div class="card-text" id="no_pick">
+                <?php 
                     if($pick){ ?>
-                    <div class="card-text" id="your_bet">
                         <h1>You picked horse #<?php echo "<span class='horse-number animate__animated animate__bounceIn'>{$pick['horse_number']}</span> to <span class='horse-finish animate__animated animate__bounceIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
                         <?php if ($race_standings_info) {
                             echo "<h3>Your purse: $" . $race_standings_info['earnings'] . "</h3>";
-                        }?>
+						}
+						if (!$win_horse) {
+							echo "<h3>Awaiting race results</h3>";
+						}
+						?>
                     </div>
                 <?php } else { ?>
-                    <div class="card-text" id="no_bet">
-                        <h2 class="card-title">You didn't place a bet</h2>
-                        <!-- When there is no bet, they will not win anything, so default to $0.00 -->
+                        <h1>You didn't make a pick</h1>
                         <h3>Purse: $0.00</h3>
-                    </div>
-                <?php }
+				<?php } ?>
+					</div>
+				<?php
                     if ($win_horse) {
                         echo <<< HERE
                     <table id="scoreboard">

@@ -154,13 +154,10 @@ $random_image = array_rand($background_images);
             <div class="form-group">
                 <label for="password" class="sr-only">Password</label>
                 <input type="password" class="form-control" id="password" name="pwd" placeholder="password" required aria-describedby="passwordHelpBlock">
-                <small id="passwordHelpBlock" class="form-text text-muted">
-                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-                </small>
             </div>
             <input type="submit" value="Login" name="login" class="btn btn-primary btn-block">
-            <div id="forgot_pwd">
-                <a href="/password/">Forgot Password</a>
+            <div id="forgot_pwd" class="text-secondary d-block mt-2 text-center">
+                <a href="/password/">Forgot Password?</a>
             </div>
         </form>
         <span id="photo_credit">Photo by <?php echo $background_images[$random_image][0];?></span>
