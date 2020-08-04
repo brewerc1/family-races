@@ -183,7 +183,7 @@ $num_display_user_results = $display_user_result->rowCount();
 ?>
 {header}
 {main_nav}
-	<main role="main" id="admin_page">
+	<main role="main" id="admin_users_page">
 		<h1 class="mb-5 sticky-top">User Management</h1>
         <section id="User_invite" class="mt-3 mb-4">
             <form method="post" action="./invite_user.php" id="invite_form">
@@ -218,7 +218,7 @@ $num_display_user_results = $display_user_result->rowCount();
                     // handle user with invite but hasn't accepted
                     if(!is_null($row["invite_code"])) {
                         $pending = true;
-                        $pending_html = "<span class='badge badge-primary badge-pill float-right px-2' id='pending_badge'>pending</span>";
+                        $pending_html = "<span class='badge badge-warning badge-pill float-right px-2' id='pending_badge'>pending</span>";
                         $name = $row["email"];
                     } else {
                         $name = $row["first_name"] . ' ' . $row["last_name"];
@@ -262,15 +262,16 @@ $num_display_user_results = $display_user_result->rowCount();
                 // output row of user data
 $output = <<< ENDUSER
                 <li class="list-group-item">
-                    <div class="media">
+                    <div class="media" id="user_{$row['id']}_button" aria-controls="user_{$row['id']}_collapse" data-target="#user_{$row['id']}_collapse" data-toggle="collapse" aria-expanded="false">
                         <a href="/user/?u={$row['id']}">
                             <img src="$photo" alt="$alt" class="rounded-circle">
                         </a>
-                        <div class="media-body">
-                            <a class="user_name d-inline-block px-3" data-toggle="collapse" href="#user_{$row['id']}_collapse">$name</a> {$pending_html}
+						<div class="media-body">
+							$pending_html
+                            <span class="user_name d-inline-block px-3">$name</span>
                         </div>
                     </div><!-- end .media -->
-                    <div class="collapse" id="user_{$row['id']}_collapse">
+					<div class="collapse" id="user_{$row['id']}_collapse" aria-labelledby="#user_{$row['id']}_button" class="collapse show" data-parent="#display_current_users">
                         <div class="card card-body">
                             <form action="{$_SERVER['PHP_SELF']}" method="post" >
                                 <div id="ajax_alert{$row['id']}"></div>

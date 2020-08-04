@@ -106,6 +106,7 @@ main {
 #hof_page > h1,
 #faq_page > h1,
 #admin_page > h1,
+#admin_users_page > h1,
 #admin_site_settings > h1, 
 #onboarding_page > h1
 {
@@ -487,47 +488,71 @@ span.navbar-text {
 #faq_page mark {
     color: #666;
 }
-#faq_page [aria-expanded="true"][data-toggle="collapse"]:after {
-    display: inline-block;
-    font: normal normal normal 14px/1 "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 1rem;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: "\f054";
-    transform: rotate(-90deg);
-    transition: all linear 0.25s;
-    margin-left: 20px;
-}
-#faq_page [aria-expanded="false"][data-toggle="collapse"]:after {
-    display: inline-block;
-    font: normal normal normal 14px/1 "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 1rem;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: "\f054";
-    transform: rotate(-270deg);
-    transition: all linear 0.25s;
-    margin-left: 30px;
-}
-#faq_page [data-toggle="collapse"].collapsed:after {
-  transform: rotate(90deg) ;
-  color: rgb(179, 109, 6);
-}
 
 
-/* ============== Admin Users Page: #admin_users ============== */
 
-#admin_users {
+/* ============== Admin Users Page: #admin_users_page ============== */
 
+#admin_users_page #display_current_users .card {
+	margin-left: 80px;
 }
+#admin_users_page .custom-switch {
+	margin-bottom: 0;
+}
+#admin_users_page .user_name {
+	line-height: 70px;
+    width: calc( 100% - 12px);
+}
+#admin_users_page .custom-switch.custom-switch-lg .custom-control-label {
+	padding-bottom: 1rem;
+}
+#admin_users_page #pending_badge {
+	font-weight: 400;
+    padding: .28rem;
+    position: absolute;
+    top: 34px;
+    right: 3rem;
+}
+
 
 /* ============== Onboarding Pages: #onboarding_page ============== */
 #onboarding_page {
+}
 
+
+/* Accordion collapses */
+#faq_page [aria-expanded="true"][data-toggle="collapse"]:after, 
+#admin_users_page [aria-expanded="true"][data-toggle="collapse"]:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 "Font Awesome 5 Free";
+    font-weight: 900;
+	font-size: .8rem;
+	color: #ccc;
+    content: "\f054";
+    transform: rotate(-90deg);
+    transition: all ease-in-out 0.35s;
+	margin-left: 20px;
+	position: relative;
+	top: -3px;
+}
+#faq_page [aria-expanded="false"][data-toggle="collapse"]:after,
+#admin_users_page [aria-expanded="false"][data-toggle="collapse"]:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 "Font Awesome 5 Free";
+    font-weight: 900;
+	font-size: .8rem;
+	color: #ccc;
+    content: "\f054";
+    transform: rotate(-630deg);
+    transition: all ease-in-out 0.35s;
+	margin-left: 20px;
+	position: relative;
+	top: -3px;
+}
+#faq_page [data-toggle="collapse"].collapsed:after,
+#admin_users_page [data-toggle="collapse"].collapsed:after {
+  transform: rotate(-630deg);
+  color: #ccc;
 }
 
 
