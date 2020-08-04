@@ -28,7 +28,7 @@ $javascript = '';
 //$debug = debug();
 ///// end DEBUG
 
-//$notification = array();
+
 
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
