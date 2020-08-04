@@ -38,6 +38,8 @@ if (!$_SESSION["admin"]) {
 $event_name = "Event Name";
 $event_date = "Event Date";
 $event_pot = 0;
+$disabled_add_race_button = "disabled";
+$jackpot_btn_none = "d-none";
 
 
 $e = isset($_GET["e"]) ? $_GET["e"] : 0;
@@ -62,6 +64,8 @@ if ($event_id == 0) {
         $event_date = $row["date"];
         $event_status = $row["status"];
         $event_pot = $row["pot"];
+        $disabled_add_race_button = "";
+        $jackpot_btn_none = "";
     }
 }
 
@@ -73,8 +77,8 @@ $debug = debug();
 <script>
     const defaultHorseCount = <?php echo isset($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
+    const eventNumber = <?php echo $event_id; ?>;
 
-    let newRaces = [];
     let raceHorses = new Map();
     let racesResultsTrack = new Map();
     let resultList = new Map();
@@ -126,7 +130,7 @@ $debug = debug();
 
             $.ajax({
                 type: 'POST',
-                url: './race.php?e=2&r=' + this.id.charAt(6) + '&q=' + 2,
+                url: './race.php?e='+ eventNumber +'&r=' + this.id.charAt(6) + '&q=' + 2,
                 data: {is_checked: isChecked},
                 success: function (data) {
                     $( ".close-btn" ).toggleClass( 'disabled', (isChecked === 1) );
@@ -166,7 +170,7 @@ $debug = debug();
         });
     }
 
-    function updateRace(eventNumber, raceNumber) {
+    function updateRace(raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         let horses = [];
@@ -248,16 +252,22 @@ $debug = debug();
         }
     }
 
-    function deleteRace(eventNumber, raceNumber) {
+    function deleteRace(raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         $.ajax({
             url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 4,
+            dataType: 'json',
             success: function (data) {
-                $('main').prepend(data);
+                $('main').prepend(data['alert']);
                 $('#alert').delay( 3000 ).fadeOut( 400 );
 
-                $('#group' + raceNumber).remove();
+                if (data['deleted'] === 1) {
+                    $('#group' + raceNumber).remove();
+                    raceHorses.delete(raceNumber);
+                    console.log(raceHorses)
+                }
+
             }
         });
     }
@@ -355,7 +365,7 @@ $debug = debug();
         });
     }
 
-    function resultWereEnteredForRace(eventNumber, raceNumber) {
+    function resultWereEnteredForRace(raceNumber) {
         $('#c' + raceNumber + ' div.custom-control').remove();
         $('#open' + raceNumber).remove();
         $('#result' + raceNumber).text('Edit Result for race ' + raceNumber).
@@ -388,7 +398,7 @@ $debug = debug();
     function bettingWindow(raceNumber, isOpen, firstId, secondId, del=0) {
         $.ajax({
             type: 'POST',
-            url: './race.php?e=2&r=' + raceNumber + '&q=' + 1,
+            url: './race.php?e='+ eventNumber +'&r=' + raceNumber + '&q=' + 1,
             data: {open: isOpen},
             success: function (data) {
                 $('main').prepend(data);
@@ -414,8 +424,105 @@ $debug = debug();
         bettingWindow(raceNumber, 1, ('#card' + raceNumber), ('#c' + raceNumber));
     }
 
+    function addRace() {
+        // Get the last race Number
+        // New race number is the last race number plus one
+        let keys = Array.from(raceHorses.keys());
+        const raceNumber = keys[keys.length - 1] + 1;
+        $.ajax({
+            type: 'POST',
+            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 7,
+            data: {race: raceNumber},
+            dataType: 'json',
+            success: function (data) {
+                $('main').prepend(data['alert']);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
+                if (data['created'] === 1) {
+                    raceHorses.set(raceNumber, ['']);
+                    console.log(raceHorses)
+
+                    // UI
+                    const groupId = 'group' + raceNumber;
+                    $('#group0').clone().removeClass('d-none').attr('id', groupId ).appendTo('#accordion01');
+                    $('#' + groupId + ' button#btn0').text('Race ' + raceNumber).
+                    attr('id', 'btn' + raceNumber).
+                    attr('data-target', '#collapse' + raceNumber);
+                    $('#' + groupId + ' div.d-flex:first-of-type a:first-of-type').
+                    attr('href', '/races/?e=' + eventNumber + '&r' + raceNumber);
+
+                    const collapseId = 'collapse' + raceNumber;
+                    $('#' + groupId + ' div#collapse0').attr('id', collapseId);
+
+                    const cId = 'c' + raceNumber;
+                    $('#' + collapseId + ' div#c0').attr('id', cId);
+                    $('#' + cId + ' div.custom-checkbox input').attr('id', 'cancel' + raceNumber);
+                    $('#' + cId + ' div.custom-checkbox label').text('Cancel Race ' + raceNumber)
+                        .attr('for', 'cancel' + raceNumber);
+                    $('#' + cId + ' div.card-body a#result0').text('Enter Results for Race ' + raceNumber).
+                    attr({
+                        id: 'result' + raceNumber,
+                        onclick: 'populateHorses(' + raceNumber + ')'
+                    }).attr('data-title', 'Race ' + raceNumber + ' Results').
+                    attr('data-button-primary-action', 'enterresultForRace(' + raceNumber + ')');
+                    $('#' + cId + ' div.card-body a#open0').attr({
+                        id: 'open' + raceNumber,
+                        onclick: 'openWindow(' + raceNumber + ')'
+                    });
+
+                    const cardId = 'card' + raceNumber;
+                    $('#' + collapseId + ' div#card0').attr('id', cardId);
+                    $('#' + cardId + ' div.d-flex a#deleteRace0').text('Delete Race ' + raceNumber).attr({
+                        id: 'deleteRace' + raceNumber,
+                        href: ''
+                    }).attr('data-title', 'Delete Race ' + raceNumber).
+                    attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + ' ?').
+                    attr('data-button-primary-action', 'deleteRace(' + raceNumber + ')');
+
+                    $('#' + cardId + ' div select#0').attr('id', raceNumber);
+
+                    const addInputId = 'addInput' + raceNumber;
+                    $('#' + cardId + ' div#addInput0').attr('id', addInputId);
+                    $('#' + addInputId + ' div#horse0').attr('id', 'horse' + raceNumber);
+                    $('#horse' + raceNumber + ' input#id0').attr({
+                        id: 'id' + raceNumber,
+                        name: 'horses[' + raceNumber +'][0]'
+                    });
+                    $('#horse' + raceNumber + ' span#00').attr({
+                        id: raceNumber + '0',
+                        onclick: "deleteHorse('horse" +raceNumber + "', '" + raceNumber + "0')"
+                    });
+
+                    $('#' + cardId + ' div span#addHorse0').attr({
+                        id: 'addHorse' + raceNumber,
+                        onclick: "addHorse('addHorse" + raceNumber +"')"
+                    });
+
+                    $('#' + cardId + ' div a#update0').text('Save Race ' + raceNumber).
+                    attr('id', 'update' + raceNumber).
+                    attr('data-title', 'Save Changes for Race' + raceNumber).
+                    attr('data-message', 'Are you sure you want to update Race ' + raceNumber + ' ?').
+                    attr('data-button-primary-action', 'updateRace(' + eventNumber + ', ' + raceNumber + ')').
+                    attr('data-button-secondary-action', 'dismiss(' + raceNumber + ')');
+
+                    $('#' + cardId + ' div a#wind0').attr({
+                        id: 'wind' + raceNumber,
+                        onclick: "closeWindow(" + raceNumber + ")"
+                    });
+
+                    // Re-bind
+                    updateNumberOfHorsesInputValue();
+                    bindOnChangeOnSelectMenu();
+                    bindOnClickCancelRace();
+
+                }
+            }
+        });
+
+    }
+
 
     $( document ).ready( function () {
+        $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         updateNumberOfHorsesInputValue();
         bindOnChangeOnSelectMenu();
@@ -485,114 +592,22 @@ $debug = debug();
             "    </table>");
     }
 
-    function addRace(eventNumber) {
-        // Get the last race Number
-        // New race number is the last race number plus one
-        let keys = Array.from(raceHorses.keys());
-        const raceNumber = keys[keys.length - 1] + 1;
-        raceHorses.set(raceNumber, ['']);
+    function editPot() {
+        $.ajax({
+            type: 'POST',
+            url: './race.php?e='+ eventNumber +'&r=' + 1 + '&q=' + 8,
+            data: {pot: $('#jackpotEdit').val() },
+            dataType: 'json',
+            success: function (data) {
+                $('main').prepend(data['alert']);
+                $('#alert').delay( 3000 ).fadeOut( 400 );
 
-        const groupId = 'group' + raceNumber;
-        $('#group0').clone().removeClass('d-none').attr('id', groupId ).appendTo('#accordion01');
-        $('#' + groupId + ' button#btn0').text('Race ' + raceNumber).
-        attr('id', 'btn' + raceNumber).
-        attr('data-target', '#collapse' + raceNumber);
-        $('#' + groupId + ' div.d-flex:first-of-type a:first-of-type').
-        attr('href', '/races/?e=' + eventNumber + '&r' + raceNumber);
-
-        const collapseId = 'collapse' + raceNumber;
-        $('#' + groupId + ' div#collapse0').attr('id', collapseId);
-
-        const cId = 'c' + raceNumber;
-        $('#' + collapseId + ' div#c0').attr('id', cId);
-        $('#' + cId + ' div.custom-checkbox input').attr('id', 'cancel' + raceNumber);
-        $('#' + cId + ' div.custom-checkbox label').text('Cancel Race ' + raceNumber)
-            .attr('for', 'cancel' + raceNumber);
-        $('#' + cId + ' div.card-body a#result0').text('Enter Results for Race ' + raceNumber).
-        attr({
-            id: 'result' + raceNumber,
-            onclick: 'populateHorses(' + raceNumber + ')'
-        }).attr('data-title', 'Race ' + raceNumber + ' Results').
-        attr('data-button-primary-action', 'enterresultForRace(' + eventNumber + ', ' + raceNumber + ')');
-        $('#' + cId + ' div.card-body a#open0').attr({
-            id: 'open' + raceNumber,
-            onclick: 'openWindow(' + raceNumber + ')'
-        });
-
-        const cardId = 'card' + raceNumber;
-        $('#' + collapseId + ' div#card0').attr('id', cardId);
-        $('#' + cardId + ' div.d-flex a#deleteRace0').text('Delete Race ' + raceNumber).attr({
-            id: 'deleteRace' + raceNumber,
-            href: ''
-        }).attr('data-title', 'Delete Race ' + raceNumber).
-        attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + ' ?').
-        attr('data-button-primary-action', 'deleteRace(' + eventNumber + ', ' + raceNumber + ')');
-
-        $('#' + cardId + ' div select#0').attr('id', raceNumber);
-
-        const addInputId = 'addInput' + raceNumber;
-        $('#' + cardId + ' div#addInput0').attr('id', addInputId);
-        $('#' + addInputId + ' div#horse0').attr('id', 'horse' + raceNumber);
-        $('#horse' + raceNumber + ' input#id0').attr({
-            id: 'id' + raceNumber,
-            name: 'horses[' + raceNumber +'][0]'
-        });
-        $('#horse' + raceNumber + ' span#00').attr({
-            id: raceNumber + '0',
-            onclick: "deleteHorse('horse" +raceNumber + "', '" + raceNumber + "0')"
-        });
-
-        $('#' + cardId + ' div span#addHorse0').attr({
-            id: 'addHorse' + raceNumber,
-            onclick: "addHorse('addHorse" + raceNumber +"')"
-        });
-
-        $('#' + cardId + ' div a#update0').text('Save Race ' + raceNumber).
-        attr('id', 'update' + raceNumber).
-        attr('data-title', 'Save Changes for Race' + raceNumber).
-        attr('data-message', 'Are you sure you want to update Race ' + raceNumber + ' ?').
-        attr('data-button-primary-action', 'updateRace(' + eventNumber + ', ' + raceNumber + ')').
-        attr('data-button-secondary-action', 'dismiss(' + raceNumber + ')');
-
-        $('#' + cardId + ' div a#wind0').attr({
-            id: 'wind' + raceNumber,
-            onclick: "closeWindow(" + raceNumber + ")"
-        });
-
-
-        // Re-bind for all the current select.group-select
-        // TODO Create a race in DB
-        $('.group-select').bind('change', function () {
-            numberOfHorses = $('#addInput' + this.id + ' div.group-horse').length;
-
-            if (this.value < numberOfHorses) {
-                const amountToDecrement = numberOfHorses - this.value;
-                removeInput(this.id, amountToDecrement);
-                $('#addHorse' + this.id ).removeClass('disabled');
-            }
-
-            if (this.value > numberOfHorses) {
-                for (numberOfHorses; numberOfHorses < this.value; numberOfHorses++) {
-                    $('#addInput' + this.id + ' div.group-horse div.input-group-append span').
-                    removeClass('d-none');
-                    duplicateHorseInput(this.id, numberOfHorses);
-                }
-                if (numberOfHorses === defaultHorseCount) {
-                    $('#addHorse' + this.id ).addClass('disabled');
+                if (data['edited'] === 1) {
+                    $('#pot').val(data['pot']);
+                    $('#jackpotEdit').val(data['pot']);
                 }
             }
-
         });
-
-        json(eventNumber, raceNumber);
-
-    }
-
-    function json(eventNumber, race) {
-        $('#event').removeClass('d-none');
-        newRaces.push(race)
-        let js = '{ "e":'+ eventNumber + ', "r":[' + newRaces +'], "pot":' + $('#pot').val() + '}';
-        $('#hidden').attr('value', js);
     }
 
 
@@ -605,18 +620,37 @@ $debug = debug();
             <h2><?php echo $event_name ?></h2>
             <span><?php echo $event_date ?></span>
         </div>
-
-        <form method="POST" class="mt-3" action="./post.php">
+        <form method="POST" class="mt-3">
             <div class="form-row">
                 <div class="input-group mb-3">
                     <label class="col-sm-2 col-form-label"  for="pot">Jackpot</label>
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="text" class="form-control" name="pot" id="pot" aria-label="Amount (to the nearest dollar)" value="<?php echo $event_pot ?>">
-<!--                    <div class="input-group-append">-->
-<!--                        <span class="input-group-text">.00</span>-->
-<!--                    </div>-->
+                    <input type="text" class="form-control" name="pot" id="pot" aria-label="Amount (to the nearest dollar)" value="<?php echo $event_pot ?>" readonly>
+                    <div class="input-group-append">
+                        <a href="#" class="btn input-group-text <?php echo $jackpot_btn_none?>"
+                           data-toggle="modal"
+                           data-target="#mainModal"
+                           data-title="Edit Jackpot"
+                           data-message="
+                            <div class='input-group input-group-sm mb-3'>
+                                <div class='input-group-prepend'>
+                                    <span class='input-group-text'>$</span>
+                                </div>
+                                <input type='text' id='jackpotEdit' class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-sm' value='<?php echo $event_pot ?>'>
+                            </div>"
+                           data-button-primary-text="Save"
+                           data-button-primary-action="editPot()"
+                           data-button-secondary-text="Cancel"
+                           data-button-secondary-action=""
+                        >
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -668,7 +702,7 @@ $debug = debug();
                                    data-title="Delete Race 0"
                                    data-message="Are you sure you want to delete Race 0?"
                                    data-button-primary-text="Confirm"
-                                   data-button-primary-action="deleteRace('0', '0')"
+                                   data-button-primary-action="deleteRace('0')"
                                    data-button-secondary-text="Cancel"
                                    data-button-secondary-action=""
                                 >Delete Race 0</a>
@@ -770,7 +804,7 @@ $race_HTML = <<< HTML
                                             data-target="#mainModal" 
                                             data-title="Race $race_num Results"
                                             data-button-primary-text="Save" 
-                                            data-button-primary-action="enterResultForRace($event_id, $race_num)" 
+                                            data-button-primary-action="enterResultForRace($race_num)" 
                                             data-button-secondary-text="Exit" 
                                             data-button-secondary-action="depopulateHorses()"
                                              onclick="populateHorses($race_num)"
@@ -787,7 +821,7 @@ $race_HTML = <<< HTML
                                         data-title="Delete Race $race_num" 
                                         data-message="Are you sure you want to delete Race $race_num?"
                                         data-button-primary-text="Confirm" 
-                                        data-button-primary-action="deleteRace('$event_id', '$race_num')" 
+                                        data-button-primary-action="deleteRace('$race_num')" 
                                         data-button-secondary-text="Cancel" 
                                         data-button-secondary-action=""
                                     >Delete Race $race_num</a>
@@ -874,7 +908,7 @@ $race_HTML .= <<< HTML
                                                             data-title="Save Changes for Race $race_num" 
                                                             data-message="Are you sure you want to update Race $race_num?"
                                                             data-button-primary-text="Confirm" 
-                                                            data-button-primary-action="updateRace($event_id, $race_num)" 
+                                                            data-button-primary-action="updateRace($race_num)" 
                                                             data-button-secondary-text="Cancel" 
                                                             data-button-secondary-action="dismiss($race_num)"
                                                         >Save Race $race_num</a>
@@ -889,13 +923,12 @@ HTML;
                                 // Check if result exist in the DB
                             if (key_exists(($race_num - 1), $finish)) {
                                 for ($k = 0; $k < count($finish[$race_num - 1]); $k++) {
-                                    //echo count($finish[$race_num - 1]);
 
                                     if (!empty($finish[$race_num - 1][$k])) {
                                         $race_HTML .= <<< HTML
                                                 <script>
                                                         $( document ).ready(function() {
-                                                            resultWereEnteredForRace($event_id, $race_num);
+                                                            resultWereEnteredForRace($race_num);
                                                         })
                                                 </script>
 HTML;
@@ -913,13 +946,11 @@ HTML;
 
             </fieldset>
             <div class="text-center mt-4">
-                <input type="hidden" id="hidden" name="db" value>
-                <a href="#" id="addRace" class="btn btn-primary" onclick="addRace(<?php echo $event_id?>)"> Add a Race </a>
-                <!--<a href="#" id="deleteRace" class="btn btn-danger disabled">Delete a Race</a>-->
+                <a href="#" id="addRace" class="btn btn-primary <?php echo $disabled_add_race_button ?>" onclick="addRace()"> Add a Race </a>
             </div>
-            <div class="text-center mt-3">
-                <input type="submit" id="event" name="update_event" value="Update Event" class="btn btn-primary d-none">
-            </div>
+<!--            <div class="text-center mt-3">-->
+<!--                <input type="submit" id="event" name="update_event" value="Update Event" class="btn btn-primary d-none">-->
+<!--            </div>-->
         </form>
     </section>
 </main>
