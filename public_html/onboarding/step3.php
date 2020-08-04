@@ -106,7 +106,7 @@ if ($updatePhoto)  {
     $_SESSION ['photo'] = $row['photo'];
     header("Location: /races/");
     exit;
-    }else{
+}else{
         header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
         exit;
     }
