@@ -22,13 +22,13 @@ if (isset($_POST['next-btn'])) {
     if(!empty($_POST['first_name'])) {
         $first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
     } else {
-        $notification = "Please fill in a first name";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=19&s=warning");
         exit;
     }
     if(!empty($_POST['last_name'])){
         $last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
     } else {
-        $notification = "Please fill in a last name";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=20&s=warning");        
         exit;
     }
     if(!empty($_POST['city'])){
