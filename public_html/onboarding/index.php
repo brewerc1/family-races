@@ -39,7 +39,7 @@ if (isset($_POST['createAccount-btn'])) {
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     }else{
-        $notification ['email'] = 'Email is Required and must be valid';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=2&s=warning");
         exit;
     }
 //Validation Code
@@ -47,7 +47,7 @@ if (isset($_POST['createAccount-btn'])) {
         $code = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         
     } else{
-        $notification ['code'] = 'Code Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 //Validation Password
@@ -55,9 +55,11 @@ if (isset($_POST['createAccount-btn'])) {
         $password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);
         $confirmPassword = filter_var($_POST['confirmPassword'], FILTER_SANITIZE_STRING);
         if($password != $confirmPassword){
+            header("Location: ".$_SERVER['PHP_SELF']."?m=5&s=warning");
+            exit; 
         }
     }else{ 
-        $notification ['password'] = 'Password Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 
