@@ -122,9 +122,11 @@ if (isset($_POST['createAccount-btn'])) {
                 <div class="form-group">
                     <input  type="password" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
                 </div>
+                <div class="text-center">
                     <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
+                </div>
             </form>
-            <p>Already have a Account? <a href="/login/">Login</a></p>
+            <p class="text-center">Already have a Account? <a href="/login/">Login</a></p>
     
     
         </div>
