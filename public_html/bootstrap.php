@@ -143,7 +143,8 @@ $messages = array(
     16 => "User deactivated.",
     17 => "User activated.",
     18 => "Invite deleted.",
-    19 => "Race Closed!"
+    19 => "Race Closed!",
+    20 => "Race Cancelled!"
 );
 
 $notification = '';

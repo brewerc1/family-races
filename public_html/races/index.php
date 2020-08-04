@@ -40,22 +40,17 @@ $(function(){
     return false;
     });
 });
-function test() {
-    console.log("TEST!");
-}
 $('#confirm_cancel_button').hide();
 $(document).ready(function(){
     $("input:checkbox").change(function() { 
         if($(this).is(":checked")) {
-            console.log('checked'); 
             $('#confirm_cancel_button').show();
             $('#race_results_button').hide();
         } else {
-            console.log('unchecked');
             $('#confirm_cancel_button').hide();
             $('#race_results_button').show();
         }
-    }); 
+    });
 });
 JAVASCRIPT;
 
@@ -190,6 +185,7 @@ MEMORIAL;
 <script>
 let horseList = [];
 <?php 
+// SQL Queries to populate the 'enter race results' modal
 $modal_horses_result = $pdo->prepare($horses_sql);
 $modal_horses_result->execute(['event' => $event, 'race' => $race]);
 $modal_horse = $modal_horses_result->fetch();
@@ -200,15 +196,69 @@ for ($i = 0; $i < $horses_count; $i++) {
     $modal_horse = $modal_horses_result->fetch();
 }
  ?>
+function set_horse_val(finish) {
+    let win_horse_number, place_horse_number, show_horse_number;
+    if (finish == "win") {
+        win_horse_number = $('#win-result').val();
+        place_horse_number = $('#place-result').val();
+        show_horse_number = $('#show-result').val();
+        $('#place-result option').removeAttr("disabled")
+        $('#place-result option[value=0]').attr("disabled", "disabled");
+        $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+        $('#show-result option').removeAttr("disabled")
+        $('#show-result option[value=0]').attr("disabled", "disabled");
+        $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+        if (place_horse_number != null) {
+            $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+        }
+        if (show_horse_number != null) {
+            $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+        }
+    }
+    if (finish == "place") {
+        win_horse_number = $('#win-result').val();
+        place_horse_number = $('#place-result').val();
+        show_horse_number = $('#show-result').val();
+        $('#win-result option').removeAttr("disabled")
+        $('#win-result option[value=0]').attr("disabled", "disabled");
+        $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+        $('#show-result option').removeAttr("disabled")
+        $('#show-result option[value=0]').attr("disabled", "disabled");
+        $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+        if (win_horse_number != null) {
+            $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+        }
+        if (show_horse_number != null) {
+            $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+        }
+    }
+    if (finish == "show") {
+        win_horse_number = $('#win-result').val();
+        place_horse_number = $('#place-result').val();
+        show_horse_number = $('#show-result').val();
+        $('#win-result option').removeAttr("disabled")
+        $('#win-result option[value=0]').attr("disabled", "disabled");
+        $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+        $('#place-result option').removeAttr("disabled")
+        $('#place-result option[value=0]').attr("disabled", "disabled");
+        $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+        if (win_horse_number != null) {
+            $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+        }
+        if (place_horse_number != null) {
+            $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+        }
+    }
+}
 
 function enterResultFormHTML() {
     $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-    $('#message').html("<table class='table table-borderless'>\n" +
+    $('#message').html("<table class='table table-borderless' id='edit-results'>\n" +
         "    <!-- Row A -->\n" +
         "    <thead>\n" +
         "        <tr>\n" +
-        "          <th scope='col'>Horse#</th>\n" +
+        "          <th scope='col'>Horse #</th>\n" +
         "          <th scope='col'>Win</th>\n" +
         "          <th scope='col'>Place</th>\n" +
         "          <th scope='col'>Show</th>\n" +
@@ -217,43 +267,46 @@ function enterResultFormHTML() {
         "    <!-- Row B -->\n" +
         "    <tr>\n" +
         "        <td>\n" +
-        "            <select  id='win-result' class='race-result'>\n" +
+        "            <select  id='win-result' class='race-result' onchange='set_horse_val(`win`)'>\n" +
+        "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='win1' class='w-100 form-control'>\n" +
+        "                <input type='text' id='win1' class='w-100''>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='place1' class='w-100 form-control'>\n" +
+        "                <input type='text' id='place1' class='w-100'>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='show1' class='w-100 form-control'>\n" +
+        "                <input type='text' id='show1' class='w-100'>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    <!-- Row C -->\n" +
         "    <tr>\n" +
         "        <td>\n" +
-        "            <select  id='place-result' class='race-result'>\n" +
+        "            <select  id='place-result' class='race-result' onchange='set_horse_val(`place`)'>\n" +
+        "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td></td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='place2' class='w-100 form-control'>\n" +
+        "                <input type='text' id='place2' class='w-100'>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show2' class='w-100 form-control'>\n" +
+        "            <input type='text' id='show2' class='w-100'>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    <!-- Row D -->\n" +
         "    <tr>\n" +
         "        <td>\n" +
-        "            <select  id='show-result' class='race-result'>\n" +
+        "            <select  id='show-result' class='race-result' onchange='set_horse_val(`show`)'>\n" +
+        "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td></td>\n" +
         "        <td></td>\n" +
         "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show3' class='w-100 form-control'>\n" +
+        "            <input type='text' id='show3' class='w-100'>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    </table>");
@@ -269,46 +322,17 @@ function depopulateHorses() {
 
 function populateHorses(raceNumber, eventNumber) {
     enterResultFormHTML();
-    console.log(horseList);
-// TODO for your specific case: Use ajax to get a list of horses for that raceNumber
-    $( ".race-result" ).prepend( "<option value='0'>Horse#</option>" );
-    // horsesList.forEach(horse => {
-    //     $('#win-result option:last-of-type').clone().
-    //     attr('value', horse).text(horse).appendTo('.race-result');
-    // })
     for (let i = 0; i < horseList.length; i++) {
-        // console.log(horseList[i]);
-        $('#win-result option:last-of-type').clone().
-        attr('value', horseList[i]).text(horseList[i]).appendTo('.race-result');
+        $('#win-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
+        $('#place-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
+        $('#show-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
     }
-    // if (racesResultsTrack.has((raceNumber + 'w'))) {
-    //     $('#win-result').val(racesResultsTrack.get((raceNumber + 'w'))[0]);
-    //     $('#win1').val(racesResultsTrack.get((raceNumber + 'w'))[1]);
-    //     $('#place1').val(racesResultsTrack.get((raceNumber + 'w'))[2]);
-    //     $('#show1').val(racesResultsTrack.get((raceNumber + 'w'))[3]);
-    // }
-    // if (racesResultsTrack.has((raceNumber + 'p'))) {
-    //     $('#place-result').val(racesResultsTrack.get((raceNumber + 'p'))[0]);
-    //     $('#place2').val(racesResultsTrack.get((raceNumber + 'p'))[1]);
-    //     $('#show2').val(racesResultsTrack.get((raceNumber + 'p'))[2]);
-    // }
-    // if (racesResultsTrack.has((raceNumber + 's'))) {
-    //     $('#show-result').val(racesResultsTrack.get((raceNumber + 's'))[0]);
-    //     $('#show3').val(racesResultsTrack.get((raceNumber + 's'))[1]);
-    // }
 };
 function enterResultForRace(eventNumber, raceNumber) {
     $('#collapse' + raceNumber).addClass('show');
     let oldWin = null;
     let oldPlace = null;
     let oldShow = null;
-    // if (racesResultsTrack.has((raceNumber + 'w')) &&
-    //     racesResultsTrack.has((raceNumber + 'p')) &&
-    //     racesResultsTrack.has((raceNumber + 'w'))) {
-    //     oldWin = racesResultsTrack.get((raceNumber + 'w'));
-    //     oldPlace = racesResultsTrack.get((raceNumber + 'p'));
-    //     oldShow = racesResultsTrack.get((raceNumber + 's'));
-    // }
     let win = [];
     win.push($('#win-result').val());
     win.push($('#win1').val());
@@ -335,6 +359,11 @@ function enterResultForRace(eventNumber, raceNumber) {
             $('#alert').delay( 3000 ).fadeOut( 400 );
         }
     });
+}
+function cancelRace(eventNumber, raceNumber) {
+    console.log('Cancelling event ' + eventNumber + ' race ' + raceNumber);
+    document.getElementById('cancel_race_form').submit();
+    console.log('done');
 }
 </script>
 {header}
@@ -376,8 +405,18 @@ function enterResultForRace(eventNumber, raceNumber) {
             </select>
 		</div>
 		<?php echo $memorial_race_content;?>
-        <?php if ($race_info) { // Checks to see if there is race info for the race (used to check 'All Races')
-            if($race_info['window_closed'] == '0') {?>
+        <?php 
+        if ($race_info) { // Checks to see if there is race info for the race (used to check 'All Races')
+            if ($race_info['cancelled'] == '1') {
+                echo <<< CANCEL
+                <div class="card-text">
+                    <h1>Race has been canceled!</h1>
+                    <h1>No bets will be processed for this race.</h1>
+                </div>
+CANCEL;
+            }
+            else {
+                if($race_info['window_closed'] == '0' && $race_info['cancelled'] == 0) {?>
                 <form action="bets.php" method="POST">
                     <div class="card-body">
                         <div class="form-group input-group input-group-lg mb-3">
@@ -467,43 +506,44 @@ CLOSE;
 				<?php
                     if ($win_horse) {
                         echo <<< HERE
-                    <table id="scoreboard">
-                        <tr id="title_row">
-                            <td colspan="5"><img src="/images/kc-logo-white.svg" alt="Keene Challenge logo"> Keene Challenge</td>
-                        </tr>
-                        <tr id="first">
-                            <th>1st</th>
-                            <td>{$win_horse['horse_number']}</td>
-                            <td>&#36;{$win_horse['win_purse']}</td>
-                            <td>&#36;{$win_horse['place_purse']}</td>
-                            <td>&#36;{$win_horse['show_purse']}</td>
-                        </tr>
-                        <tr id="second">
-                            <th>2nd</th>
-                            <td>{$place_horse['horse_number']}</td>
-                            <td></td>
-                            <td>&#36;{$place_horse['place_purse']}</td>
-                            <td>&#36;{$place_horse['show_purse']}</td>
-                        </tr>
-                        <tr id="third">
-                            <th>3rd</th>
-                            <td>{$show_horse['horse_number']}</td>
-                            <td></td>
-                            <td></td>
-                            <td>&#36;{$show_horse['show_purse']}</td>
-                        </tr>
-                    </table>
+                            <table id="scoreboard">
+                                <tr id="title_row">
+                                    <td colspan="5"><img src="/images/kc-logo-white.svg" alt="Keene Challenge logo"> Keene Challenge</td>
+                                </tr>
+                                <tr id="first">
+                                    <th>1st</th>
+                                    <td>{$win_horse['horse_number']}</td>
+                                    <td>&#36;{$win_horse['win_purse']}</td>
+                                    <td>&#36;{$win_horse['place_purse']}</td>
+                                    <td>&#36;{$win_horse['show_purse']}</td>
+                                </tr>
+                                <tr id="second">
+                                    <th>2nd</th>
+                                    <td>{$place_horse['horse_number']}</td>
+                                    <td></td>
+                                    <td>&#36;{$place_horse['place_purse']}</td>
+                                    <td>&#36;{$place_horse['show_purse']}</td>
+                                </tr>
+                                <tr id="third">
+                                    <th>3rd</th>
+                                    <td>{$show_horse['horse_number']}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>&#36;{$show_horse['show_purse']}</td>
+                                </tr>
+                            </table>
 HERE;
-
                     }
                     // To cancel a race
-                    if ($_SESSION['admin']) {
+                    if ($_SESSION['admin'] && !($pick) && !($win_horse)) {
                         echo <<< CANCEL
-                            <form action="" method="POST">
+                            <form action="cancel-race.php" method="POST" id="cancel_race_form">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="cancel_race">
                                     <label class="form-check-label" for="cancel_race">Cancel Race</label>
                                 </div>
+                                <input type="hidden" value=$event name="currentEventNumber" id="currentEventNumber">
+                                <input type="hidden" value=$race name="currentRaceNumber" id="currentRaceNumber">
                             </form>
                             
                             <button type="submit" class="btn btn-primary" id="race_results_button"
@@ -521,7 +561,7 @@ HERE;
                                     data-title="Are you sure you want to cancel this race?" 
                                     data-message="Cancelling race $race will result in no payouts for all bets."
                                     data-button-primary-text="Yes, Cancel" 
-                                    data-button-primary-action="" 
+                                    data-button-primary-action="cancelRace($event, $race);" 
                                     data-button-secondary-text="Go Back" 
                                     data-button-secondary-action="">Confirm</button>
 CANCEL;
@@ -531,6 +571,7 @@ CANCEL;
                 echo "<h1> ERROR! </h1>";
                 }
             }
+        }
         else { // Comes here when showing 'All Races'
             echo "<div class='card-body' id='window_closed'><h1 class='card-title'>Current Event Leaderboard</h1></div>";
         }?>
