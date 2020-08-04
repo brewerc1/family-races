@@ -494,7 +494,9 @@ span.navbar-text {
 /* ============== Admin Users Page: #admin_users_page ============== */
 
 #admin_users_page #display_current_users .card {
-	margin-left: 80px;
+	margin: 0;
+	border-width: 0;
+	background-color: transparent;
 }
 #admin_users_page .custom-switch {
 	margin-bottom: 0;
@@ -513,6 +515,29 @@ span.navbar-text {
     top: 34px;
     right: 3rem;
 }
+#admin_users_page [aria-expanded="true"][data-toggle="collapse"] .chevron {
+    display: inline-block;
+	font-size: .8rem;
+	color: #ccc;
+    transform: rotate(-90deg);
+    transition: all ease-in-out 0.35s;
+}
+#admin_users_page [aria-expanded="false"][data-toggle="collapse"] .chevron {
+    display: inline-block;
+	font-size: .8rem;
+	color: #ccc;
+    transform: rotate(-630deg);
+    transition: all ease-in-out 0.35s;
+}
+#admin_users_page [data-toggle="collapse"].collapsed .chevron {
+	transform: rotate(-630deg);
+	color: #ccc;
+}
+@media (min-width: 576px) {
+	#admin_users_page #display_current_users .card {
+
+	}
+}
 
 
 /* ============== Onboarding Pages: #onboarding_page ============== */
@@ -521,8 +546,7 @@ span.navbar-text {
 
 
 /* Accordion collapses */
-#faq_page [aria-expanded="true"][data-toggle="collapse"]:after, 
-#admin_users_page [aria-expanded="true"][data-toggle="collapse"]:after {
+#faq_page [aria-expanded="true"][data-toggle="collapse"]:after{
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
@@ -535,8 +559,7 @@ span.navbar-text {
 	position: relative;
 	top: -3px;
 }
-#faq_page [aria-expanded="false"][data-toggle="collapse"]:after,
-#admin_users_page [aria-expanded="false"][data-toggle="collapse"]:after {
+#faq_page [aria-expanded="false"][data-toggle="collapse"]:after {
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
@@ -549,10 +572,9 @@ span.navbar-text {
 	position: relative;
 	top: -3px;
 }
-#faq_page [data-toggle="collapse"].collapsed:after,
-#admin_users_page [data-toggle="collapse"].collapsed:after {
-  transform: rotate(-630deg);
-  color: #ccc;
+#faq_page [data-toggle="collapse"].collapsed:after{
+	transform: rotate(-630deg);
+	color: #ccc;
 }
 
 

@@ -262,18 +262,18 @@ $num_display_user_results = $display_user_result->rowCount();
                 // output row of user data
 $output = <<< ENDUSER
                 <li class="list-group-item">
-                    <div class="media" id="user_{$row['id']}_button" aria-controls="user_{$row['id']}_collapse" data-target="#user_{$row['id']}_collapse" data-toggle="collapse" aria-expanded="false">
+					<div class="media" id="user_{$row['id']}_button" aria-controls="user_{$row['id']}_collapse" data-target="#user_{$row['id']}_collapse" data-toggle="collapse" aria-expanded="false">
                         <a href="/user/?u={$row['id']}">
                             <img src="$photo" alt="$alt" class="rounded-circle">
                         </a>
-						<div class="media-body">
+						<div class="media-body d-flex align-items-center">
 							$pending_html
-                            <span class="user_name d-inline-block px-3">$name</span>
+                            <span class="user_name d-inline-block px-3">$name</span> <i class="fa fa-chevron-right chevron" aria-hidden="true"></i>
                         </div>
                     </div><!-- end .media -->
-					<div class="collapse" id="user_{$row['id']}_collapse" aria-labelledby="#user_{$row['id']}_button" class="collapse show" data-parent="#display_current_users">
+					<div class="collapse animate__animated animate__backInUp" style="animation-duration: .7s;" id="user_{$row['id']}_collapse" aria-labelledby="#user_{$row['id']}_button" class="collapse show" data-parent="#display_current_users">
                         <div class="card card-body">
-                            <form action="{$_SERVER['PHP_SELF']}" method="post" >
+                            <form action="{$_SERVER['PHP_SELF']}" method="post">
                                 <div id="ajax_alert{$row['id']}"></div>
                                 <div class="form-group">
                                     <input class="form-control" type="text" name="{$field_name}" value="{$row['email']}">
