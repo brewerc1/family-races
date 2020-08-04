@@ -128,6 +128,7 @@ if ($updatePhoto)  {
                 </div>
                 </div>
                 
+                
             </section>
             <div class="text-center">
             <input type="submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
