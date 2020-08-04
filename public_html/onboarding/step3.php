@@ -102,7 +102,9 @@ if ($updatePhoto)  {
     $getsessionsql ="SELECT * FROM user where id = {$_SESSION['id']}";
     $updatesession = $pdo->prepare($getsessionsql);
     $updatesession->execute();
-
+    $row= $updatesession->fetch();
+    $_SESSION ['photo'] = $row['photo'];
+    header("Location: /races/");
     }
     }
     
