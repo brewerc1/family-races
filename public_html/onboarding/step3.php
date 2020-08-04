@@ -105,6 +105,10 @@ if ($updatePhoto)  {
     $row= $updatesession->fetch();
     $_SESSION ['photo'] = $row['photo'];
     header("Location: /races/");
+    exit;
+    }else{
+        header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
+        exit;
     }
     }
     
