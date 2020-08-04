@@ -112,7 +112,9 @@ if (isset($_POST['next-btn'])) {
                     <input  type="text" class="form-control" id="motto" name="motto"></input>
                 </div>
                 </div>
+                <div class="text-center">
                     <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
+                </div>
     </form>
     {footer}
 <?php ob_end_flush(); ?>
