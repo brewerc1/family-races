@@ -81,40 +81,40 @@ if (isset($_POST['next-btn'])) {
 <h1>Your Profile</h1>
 
     <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
-            <p class="text-white">First name and last name are REQUIRED even if you choose to skip the rest.</p>
-                <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="motto" class="col-form-label text-white" >First Name:</label>
-                    <input  type="text"  required class="form-control" id="first_name" name="first_name"></input>
-                </div>
-                </div>
-                <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="motto" class="col-form-label text-white" >Last Name:</label>
-                    <input  type="text"  required class="form-control" id="last_name" name="last_name"></input>
-                </div>
-                </div>
-                <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="city" class="col-form-label text-white" >City:</label>
-                    <input  type="text"  class="form-control" id="city" name="city"></input>
-                </div>
-                </div>
-                <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="state" class="col-form-label text-white" >State:</label>
-                    <input  type="text" class="form-control" id="state" name="state"></input>
-                </div>
-                </div>
-                <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="motto" class="col-form-label text-white" >Motto:</label>
-                    <input  type="text" class="form-control" id="motto" name="motto"></input>
-                </div>
-                </div>
-                <div class="text-center">
-                    <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
-                </div>
+        <p class="text-white">First name and last name are REQUIRED even if you choose to skip the rest.</p>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="motto" class="col-form-label text-white" >First Name:</label>
+                <input  type="text"  required class="form-control" id="first_name" name="first_name"></input>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="motto" class="col-form-label text-white" >Last Name:</label>
+                <input  type="text"  required class="form-control" id="last_name" name="last_name"></input>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="city" class="col-form-label text-white" >City:</label>
+                <input  type="text"  class="form-control" id="city" name="city"></input>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="state" class="col-form-label text-white" >State:</label>
+                <input  type="text" class="form-control" id="state" name="state"></input>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="motto" class="col-form-label text-white" >Motto:</label>
+                <input  type="text" class="form-control" id="motto" name="motto"></input>
+            </div>
+        </div>
+        <div class="text-center">
+            <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
+        </div>
     </form>
     {footer}
 <?php ob_end_flush(); ?>
