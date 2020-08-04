@@ -8,7 +8,7 @@ ob_start('template');
 // start a session
 session_start();
 if (isset($_SESSION ['id'])) {
-    http_response_code(401);
+    header('Location:/races/');
     exit;
 } 
 if (!empty($_GET['email'])){
