@@ -97,7 +97,8 @@ if (isset($_POST['createAccount-btn'])) {
         header('Location:/onboarding/step2.php');
 
     } else {
-        //$errors['db_error'] = "Database error: Failed to Register";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
+        exit;
     }
     }
 
