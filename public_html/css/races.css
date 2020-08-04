@@ -101,7 +101,8 @@ main {
 #hof_page > h1,
 #faq_page > h1,
 #admin_page > h1,
-#admin_site_settings > h1
+#admin_site_settings > h1,
+#onboarding_page > h1
 {
     border-bottom: 1px solid #ccc;
     margin-left: -20px;
