@@ -5,8 +5,8 @@
  * 
  * This page fetches and displays data for all users. 
  * Registered users are displayed as a picture, first name, last name.
- * Invited users are displayed with their email, and a pending tag. 
- * A user can be invited by entering an email.
+ * pending users are displayed with their email, and a pending tag. 
+ * A user can be pending by entering an email.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -22,11 +22,11 @@ $page_title = "User Management";
 
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
+    // Make sure the rest of code is not executed
     exit;
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
+    // Make sure the rest of code is not executed
     exit;
 }
 
@@ -52,6 +52,8 @@ if (isset($_POST['submit'])){
         $update_user_sql = "UPDATE user SET email = :email WHERE id = :uid";
         $update_user_result = $pdo->prepare($update_user_sql);
         $update_user_result->execute(['uid' => $uid, 'email' => $email]);
+
+        if ($update_user_result){header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");}
         }
 
     }
@@ -93,23 +95,6 @@ if (isset($_POST['submit'])){
                         exit;
                     }
                 }               
-
-
-            /* POST to invite_user
-            $url = './invite_user.php';
-            $field = array(
-                'email' => $email
-            );
-            $postvars = http_build_query($field);
-            $ch = curl_init();
-            
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, count($field));
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
-
-            $result = curl_exec($ch);
-            curl_close($ch);
-            */
         }
     }
 }
@@ -134,7 +119,10 @@ $('.admin_switch').each(function(index){
                 },
                 success:function(data)
                 {
-                    $('#ajax_alert').html(data);
+
+                    console.log("success");
+                    console.log('#ajax_alert' + user);
+                    $('#ajax_alert' + user).html(data);
                 }
             }
         );
@@ -208,7 +196,7 @@ $num_display_user_results = $display_user_result->rowCount();
             <form method="post" action="./invite_user.php" id="invite_form">
                 <div class="form-row align-items-center justify-content-center">
                     <div class="col-auto">
-                        <label class="sr-only" for="inlineFormInputName">Email address</label>
+                        <label class="sr-only" for="email">Email address</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">@</div>
@@ -225,17 +213,19 @@ $num_display_user_results = $display_user_result->rowCount();
 
         <section id="display_current_users">
             <ul class="user-list list-group list-group-flush">
-            <?php
+<?php
             if ($num_display_user_results > 0) {
 
                 // loop through DB return
                 while($row = $display_user_result->fetch()) {
                     // Has to be inside the loop so in every iteration, it's gonna be empty
-                    $invited = "";
+                    $pending = false;
+                    $pending_html = "";
                     $update_time_stamp = strtotime($row["update_time"]); // convert to timestamp for cache-busting
                     // handle user with invite but hasn't accepted
                     if(!is_null($row["invite_code"])) {
-                        $invited = "<span class='badge badge-primary badge-pill float-right px-2' id='invited_badge'>pending</span>";
+                        $pending = true;
+                        $pending_html = "<span class='badge badge-primary badge-pill float-right px-2' id='pending_badge'>pending</span>";
                         $name = $row["email"];
                     } else {
                         $name = $row["first_name"] . ' ' . $row["last_name"];
@@ -248,87 +238,88 @@ $num_display_user_results = $display_user_result->rowCount();
                         $photo = $row["photo"] ."?$update_time_stamp"; // cache-bust this image
                         $alt = "A photo of $name";
                     }
-                    if ($row['admin']=== 1) {
+                    if ($row['admin'] == 1) {
                         $user_admin_check = "checked";
                     } else {
-                        $user_admin_check ="";
+                        $user_admin_check = "";
                     }
 
-                    if(!empty($invited)) { // user invited no sign up
+                    if($pending == true) { // invite pending
                         $title = 'Delete Invite';
                         $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=delete";
                         $message="Are you sure you want to delete the invite to {$row['email']}?";
                         $value ="Resend Invite";
                         $field_name = "resend_invite";
                     }else{
-                    
-                    if($row['inactive'] == 0){ // active user deactivated
-                        $title = 'Deactivate User';
-                        $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
-                        $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
-                        $value = "Reset Email";
-                        $field_name = "reset_email";
-                    }else{ //deactivated user reactivated
-                        $title = 'Reactivate User';
-                        $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
-                        $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
-                        $value = "Reset Email";
-                        $field_name = "reset_email";
-                    }
+                        if($row['inactive'] == 0){ // Currently active user
+                            $title = 'Deactivate User';
+                            $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=deactivate";
+                            $message="Are you sure you want to deactivate {$row['first_name']} {$row['last_name']}?";
+                            $value = "Reset Email";
+                            $field_name = "reset_email";
+                        }else{ // Currently deactivated user
+                            $title = 'Reactivate User';
+                            $action = $_SERVER['PHP_SELF']."?u={$row['id']}&mode=reactivate";
+                            $message="Are you sure you want to reactivate {$row['first_name']} {$row['last_name']}?";
+                            $value = "Reset Email";
+                            $field_name = "reset_email";
+                        }
                     }
 
                 // output row of user data
 $output = <<< ENDUSER
                 <li class="list-group-item">
                     <div class="media">
-                        <a href="/user/?u={$row['id']}"><img src="$photo" alt="$alt" class="rounded-circle"></a>
-                        <div class="media-body"><span class="user_name d-inline-block px-3" data-toggle="collapse" href="#user_{$row['id']}_collapse">$name</span> {$invited}</div>
+                        <a href="/user/?u={$row['id']}">
+                            <img src="$photo" alt="$alt" class="rounded-circle">
+                        </a>
+                        <div class="media-body">
+                            <a class="user_name d-inline-block px-3" data-toggle="collapse" href="#user_{$row['id']}_collapse">$name</a> {$pending_html}
+                        </div>
                     </div>
                     <div class="collapse" id="user_{$row['id']}_collapse">
                         <div class="card card-body">
-                            <form class="mt-5" id="email_form" action="{$_SERVER['PHP_SELF']}" method="post" >
+                            <form action="{$_SERVER['PHP_SELF']}" method="post" >
+                                <div id="ajax_alert{$row['id']}"></div>
                                 <div class="form-group">
                                     <input class="form-control" type="text" name="{$field_name}" value="{$row['email']}">
-                                    <input type="hidden" id="hidden_id" name="hidden_id" value="{$row['id']}">
+                                    <input type="hidden" name="hidden_id" value="{$row['id']}">
                                 </div>
                                 <div class="form-group">
-ENDUSER;
-
-
-
-    $output .= <<< ENDUSER
                                     <input class="btn btn-primary" type="submit" name="submit" value="$value">
 ENDUSER;
 
-if ($row['id'] != 1) { // not admin user 1
+if ($row['id'] != 1) { // display "deactivate/reactive" link if not an admin user 1
     $output .= <<< ENDUSER
                                     <a class="ml-4" href="#" 
-                                    data-toggle="modal" 
-                                    data-target="#mainModal" 
-                                    data-title="$title" 
-                                    data-message="$message"
-                                    data-button-primary-text="$title" 
-                                    data-button-primary-action="window.location.href='$action'" 
-                                    data-button-secondary-text="Cancel" 
-                                    data-button-secondary-action="" 
+                                        data-toggle="modal" 
+                                        data-target="#mainModal" 
+                                        data-title="$title" 
+                                        data-message="$message"
+                                        data-button-primary-text="$title" 
+                                        data-button-primary-action="window.location.href='$action'" 
+                                        data-button-secondary-text="Cancel" 
+                                        data-button-secondary-action="" 
                                     >$title</a>
-                                </div>
 ENDUSER;
 }
-if(empty($invited) && $row['id'] != 1){ // not admin user 1
+
+$output .= "\t\t\t\t\t\t\t\t</div><!-- end .form-group-->";
+
+if($pending == false && $row['id'] != 1){ // a regular user who has signed up
 $output .= <<< ENDUSER
                                 <div class="form-group custom-control custom-switch custom-switch-lg">
                                     <input class="custom-control-input admin_switch" type="checkbox" id="{$row['id']}admin" name="{$row['id']}" {$user_admin_check}>
                                     <label class="custom-control-label" for="{$row['id']}admin"> Admin </label>
                                 </div>
-                                <div id="ajax_alert"></div>
-                            </form>
 ENDUSER;
 }
-if($row['id'] == 1){$output .= "</div></form>";} // close out email form for the admin
+
 $output .= <<< ENDUSER
-                        </div>
-                    </div>
+                                
+                            </form>
+                        </div><!-- end .card.card-body-->
+                    </div><!-- end .collapse-->
                 </li>
 ENDUSER;                  
                     echo $output;    
