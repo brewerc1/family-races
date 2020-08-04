@@ -113,13 +113,15 @@ if ($updatePhoto)  {
         <p>If you do not choose to upload a photo a no-user photo will be placed as your Profile Photo</p>
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
-                <div>
+                
                 <div class="form-group col">
                     <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
                     <div id="ajax_alert"></div>
                 </div>
-                </div>
-                <div class="form-group col">
+            </section>
+            <section class="form-row">    
+                
+                <div class="form-group">
                 <div id="photo_upload" class="form-group col-sm-8 d-flex">
                     <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
                 </div>
