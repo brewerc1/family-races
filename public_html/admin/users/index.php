@@ -40,37 +40,35 @@ if (!$_SESSION["admin"]) {
 
 // Process Reset Email or Resend Invite
 if (isset($_POST['submit'])){
-    // If it's reset email
+    // handle a request to reset email
     if (!empty($_POST['reset_email'])){
         $uid = trim($_POST['hidden_id']);
         $email = trim($_POST['reset_email']);
-
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+		header("Location: ".$_SERVER['PHP_SELF']."m=10&s=warning");
         } else{
-
-        $update_user_sql = "UPDATE user SET email = :email WHERE id = :uid";
-        $update_user_result = $pdo->prepare($update_user_sql);
-        $update_user_result->execute(['uid' => $uid, 'email' => $email]);
-
-        if ($update_user_result){header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");}
-        }
-
+		$update_user_sql = "UPDATE user SET email = :email WHERE id = :uid";
+		$update_user_result = $pdo->prepare($update_user_sql);
+		$update_user_result->execute(['uid' => $uid, 'email' => $email]);
+        	if ($update_user_result){
+			header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
+		}
+	}
     }
-    //if its resend invite
+    // handle a request to resend the invite
     if (!empty($_POST['resend_invite'])){
         $uid = trim($_POST['hidden_id']);
         $email = trim($_POST['resend_invite']);
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: ".$_SERVER["PHP_SELF"]."m=10&s=warning");
+            header("Location: {$_SERVER['PHP_SELF']}?m=10&s=warning");
         } else {
             // We know this user exists so we use the passed hidden_id to update email and/or invite code
                 try {
                     $unique_code = generateCode();
                 } catch (Exception $e) {
                     header("Location: ./?m=6&s=warning");
-                    exit; //
+                    exit;
                 }
                 // write to the db
                 $sql = "UPDATE user SET email = :email, invite_code = :invite_code WHERE id = :uid";
@@ -89,7 +87,6 @@ if (isset($_POST['submit'])){
 
                         header("Location: ./?m=8&s=warning");
                         exit;
-
                     } else {
                         header("Location: ./?m=9&s=success");
                         exit;
@@ -119,17 +116,14 @@ $('.admin_switch').each(function(index){
                 },
                 success:function(data)
                 {
-
                     console.log("success");
                     console.log('#ajax_alert' + user);
                     $('#ajax_alert' + user).html(data);
                 }
             }
         );
-
     }));
 });
-
 
 JAVASCRIPT;
 
@@ -151,8 +145,9 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     $update_preferences_result->execute(['uid' => $uid]);
  
     // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=16&s=success");
-    }
+	header("Location: {$_SERVER['PHP_SELF']}?m=16&s=success");
+	exit;
+}
  
 // reactivate a registered user
 if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' && $_SESSION['admin'] == 1 ){
@@ -163,7 +158,8 @@ if(!empty($_GET["u"]) && !empty($_GET['mode']) && $_GET['mode'] == 'reactivate' 
     $update_preferences_result->execute(['uid' => $uid]);
  
     // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=17&s=success");
+    header("Location: {$_SERVER['PHP_SELF']}?m=17&s=success");
+	exit;
 }
     
 // delete an invite
@@ -175,18 +171,15 @@ if(!empty($_GET["u"]) && $_GET['u'] != 1 && !empty($_GET['mode']) && $_GET['mode
     $update_preferences_result->execute(['uid' => $uid]);
  
     // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=18&s=success");
+    header("Location: {$_SERVER['PHP_SELF']}?m=18&s=success");
+	exit;
 }
 
-
-
 // SQL to fetch user data
-
 $display_user_sql = "SELECT id, first_name, last_name, photo, email, invite_code, update_time, admin, inactive FROM user";
 $display_user_result = $pdo->prepare($display_user_sql);
 $display_user_result->execute();
 $num_display_user_results = $display_user_result->rowCount();
-
 ?>
 {header}
 {main_nav}
@@ -276,7 +269,7 @@ $output = <<< ENDUSER
                         <div class="media-body">
                             <a class="user_name d-inline-block px-3" data-toggle="collapse" href="#user_{$row['id']}_collapse">$name</a> {$pending_html}
                         </div>
-                    </div>
+                    </div><!-- end .media -->
                     <div class="collapse" id="user_{$row['id']}_collapse">
                         <div class="card card-body">
                             <form action="{$_SERVER['PHP_SELF']}" method="post" >
@@ -329,7 +322,7 @@ ENDUSER;
                     }//if return is greater than 0
                     ?>
                 </ul>
-        </section> <!-- END display_current_users -->
+        </section><!-- END #display_current_users -->
     </main>
 
 {footer}
