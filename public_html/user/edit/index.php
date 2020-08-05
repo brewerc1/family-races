@@ -240,7 +240,7 @@ if(isset($_POST['save_button'])){
 }
 
 ///// DEBUG
-$debug = debug($_POST);
+//$debug = debug($_POST);
 ///// end DEBUG
 ?>
   {header}
