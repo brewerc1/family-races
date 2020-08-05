@@ -40,7 +40,7 @@ $page_title = "Update User";
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     } else {
         echo <<< ALERT
     <div id="photo_ajax_message_wrapper" class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -49,6 +49,6 @@ $page_title = "Update User";
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     }
 ?>

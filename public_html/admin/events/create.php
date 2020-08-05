@@ -1,7 +1,4 @@
 <?php
-
-// Refactoring in Progress
-
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
@@ -42,8 +39,8 @@ if (isset($_POST["submit"])) {
         'race_number' => 1]);
 
     // Redirect to Manage Event page
-	header("Location: ./event.php?e=$event_id");
-	exit;
+    header("Location: ./event.php?e=$event_id");
+    exit;
 }
 
 
