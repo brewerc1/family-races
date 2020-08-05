@@ -10,24 +10,15 @@ session_start();
 
 $page_title = "Create Event";
 
-if (!isset($_SESSION["id"])) {
+// Check login state
+if(empty($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
-
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
+} elseif($_SESSION["admin"] != 1) { // Only allow admin
+    header("Location: /races/");
     exit;
 }
 
-// To be reviewed
-if (!$_SESSION["admin"]) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
-    exit;
-}
 $debug = debug();
 
 if (isset($_POST["submit"])) {
@@ -51,7 +42,8 @@ if (isset($_POST["submit"])) {
         'race_number' => 1]);
 
     // Redirect to Manage Event page
-    header("Location: ./event.php?e=" . $event_id);
+	header("Location: ./event.php?e=$event_id");
+	exit;
 }
 
 
@@ -59,11 +51,11 @@ if (isset($_POST["submit"])) {
 {header}
 {main_nav}
 
-    <main role="main">
-        <section>
-            <h1>Create an Event</h1>
+    <main role="main" id="admin_event_create_page">
+		<h1 class="mb-5 sticky-top">Create an Event</h1>
+		<section>
 
-            <form method="POST" action=<?php echo $_SERVER["PHP_SELF"] ?>>
+            <form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
                 <!-- Event Name -->
                 <div class="form-group row">
                     <div class="col">

@@ -11,6 +11,7 @@ body {
 	background-position: bottom;
 	background-attachment: fixed;
 	letter-spacing: 0px;
+	font-size: 1.1rem;
 }
 
 b,
@@ -52,17 +53,6 @@ label,
     transform: translate(-50%, -50%);
 }
 
-#body_overlay {
-    height: 100vh;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    backdrop-filter: blur(8px) saturate(1%) sepia(50%);
-    -webkit-backdrop-filter: blur(8px) saturate(1%) sepia(50%);
-    -moz-backdrop-filter: blur(8px) saturate(1%) sepia(50%);
-}
-
 main {
     padding: 0px 20px 92px 20px;
     background-color: rgba(255, 255, 255, 1);
@@ -71,6 +61,14 @@ main {
     box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
     border-left: 1px solid rgba(120,120,120,0.9);
     border-right: 1px solid rgba(120,120,120,0.9);
+}
+
+.btn {
+	border-radius: 7px;
+	box-shadow: 0px 0px 14px -1px rgba(255,255,255,0.7);
+}
+.input-group-lg .input-group-prepend, .input-group-lg .input-group-append {
+	height: calc(1.5em + 4rem + 0px);
 }
 
 @media (min-width: 1024px) {
@@ -99,8 +97,11 @@ main {
 #faq_page > h1,
 #admin_page > h1,
 #admin_users_page > h1,
-#admin_site_settings > h1, 
-#onboarding_page > h1
+#admin_site_settings > h1,
+#onboarding_page > h1,
+#welcome_page > h1,
+#admin_events_page > h1,
+#admin_event_create_page > h1
 {
     border-bottom: 1px solid #ccc;
     margin-left: -20px;
@@ -283,8 +284,9 @@ span.navbar-text {
     background-repeat: no-repeat;
     background-position: bottom center;
     margin: 0px -21px 0px -21px;
-    padding: 20px 20px 0 20px;
-    background-color: transparent;
+    padding: 20px 20px 10px 20px;
+	background-color: transparent;
+	border-top: none;
 }
 #races_page #window_closed {
     color: #fff;
@@ -502,7 +504,7 @@ span.navbar-text {
 #admin_users_page .custom-switch.custom-switch-lg .custom-control-label {
     padding-bottom: 1rem;
 }
-#admin_users_page #pending_badge {
+#admin_users_page .pending_badge {
     font-weight: 400;
     padding: .28rem;
     position: absolute;
@@ -535,6 +537,14 @@ span.navbar-text {
 
 /* ============== Onboarding Pages: #onboarding_page ============== */
 #onboarding_page {
+}
+
+
+
+/* ============== Admin Events Page: #admin_events_page ============== */
+#admin_events_page .completed_badge {
+    font-weight: 400;
+    padding: .28rem;
 }
 
 
@@ -781,7 +791,8 @@ span.navbar-text {
     top: 2px;
     right: 2px;
     background-color: rgba(0, 0, 0, .6);
-    color: #fff;
+	color: #fff;
+	z-index: 2000;
 }
 #debug {
     position: fixed;
