@@ -106,15 +106,15 @@ main {
     border-bottom: 1px solid #ccc;
     margin-left: -20px;
     margin-right: -20px;
-	background-color: rgba(0,0,0,.0);
-	-webkit-backdrop-filter: blur(7px);
-	backdrop-filter: blur(7px);
+    background-color: rgba(0,0,0,.0);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
     line-height: 4rem;
-	padding: 2.5rem 0 2rem 0;
-	z-index: 1000;
+    padding: 2.5rem 0 2rem 0;
+    z-index: 1000;
 }
 #user_profile_page, #user_profile_edit_page {
-	padding-top: 1.5rem;
+    padding-top: 1.5rem;
 }
 
 
@@ -126,7 +126,7 @@ main {
     font-size: 0.9em;
 }
 .form-control {
-	border: 1px solid #ddd;
+    border: 1px solid #ddd;
 }
 
 
@@ -214,8 +214,8 @@ form#login {
 	text-align: center;
 }
 #user_profile_photo {
-	width: 100%;
-	max-width: 300px;
+    width: 100%;
+    max-width: 300px;
 }
 #user_name h1 {
     margin: 1.5rem 0;
@@ -251,7 +251,7 @@ form#login {
     font-weight: 400;
 }
 table#profile_records {
-	max-width: 500px;
+    max-width: 500px;
 }
 
 
@@ -284,8 +284,8 @@ span.navbar-text {
     background-repeat: no-repeat;
     background-position: bottom center;
     margin: 0px -21px 0px -21px;
-	padding: 20px 20px 0 20px;
-	background-color: transparent;
+    padding: 20px 20px 0 20px;
+    background-color: transparent;
 }
 #races_page #window_closed {
     color: #fff;
@@ -297,13 +297,13 @@ span.navbar-text {
 #races_page #pick_block .card-blur{
     position: absolute;
     top: 0px;
-	left: 0;
-	padding: 0;
-	margin: 0;
-	border: 0;
-	border-radius: 0;
-	width: 100%;
-	height: 100%;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0,0,0,.2);
     z-index: -1;
     -webkit-backdrop-filter: blur(12px);
@@ -362,8 +362,8 @@ span.navbar-text {
     font-size: 1.4rem;
     padding: 0 0 10px 0;
     line-height: 1.2rem;
-	font-weight: 700;
-	text-align: center;
+    font-weight: 700;
+    text-align: center;
 }
 #scoreboard #title_row td img {
     width: 60px;
@@ -375,9 +375,9 @@ span.navbar-text {
 }
 #scoreboard th {
     text-align: right;
-	border-radius: 3px;
-	color: #ddd;
-	width: auto;
+    border-radius: 3px;
+    color: #ddd;
+    width: auto;
 }
 #scoreboard td {
     background-color: #000;
@@ -396,13 +396,13 @@ span.navbar-text {
     background-color: transparent;
 }
 #memorial_race_content {
-	color: #fff;
-	text-align:center;
-	margin-bottom: 1rem;
+    color: #fff;
+    text-align:center;
+    margin-bottom: 1rem;
 }
 #memorial_race_content img {
-	width: 100%;
-	max-width: 640px;
+    width: 100%;
+    max-width: 640px;
 }
 @media (min-width: 576px) {
     #scoreboard {
@@ -415,7 +415,7 @@ span.navbar-text {
         width: auto;
 	}
 	#scoreboard td {
-		width: auto;
+    width: auto;
 		font-size: 1.5rem;
 	}
     #races_page #pick_block .card-body {
@@ -429,31 +429,31 @@ span.navbar-text {
 
 /* ============== HOF Index Page: #hof_page ============== */
 #hof_page img{
-	max-width: 500px;
+    max-width: 500px;
 }
  
 #hof_page .champion{
-	font-family: 'Lato', Sans-Serif;
-	font-size: 1.9rem;
-	font-weight: 400;
-	text-transform: capitalize;
+    font-family: 'Lato', Sans-Serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    text-transform: capitalize;
 }
 #hof_page .champion span{
-	font-weight: 300;
+    font-weight: 300;
 }
 #hof_page .champion .badge {
-	line-height: 1.8rem;
-	font-size: 1.4rem;
-	font-weight: 400;
-	background-color: rgba(127,204,154,1);
-	position: relative;
-	top: -4px;
+    line-height: 1.8rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    background-color: rgba(127,204,154,1);
+    position: relative;
+    top: -4px;
 }
 #prior_champions .card .card {
-	margin: 2.5rem 2.5rem 0 2.5rem;
+    margin: 2.5rem 2.5rem 0 2.5rem;
 }
 #prior_champions .card .card:last-of-type {
-	margin: 2.5rem;
+    margin: 2.5rem;
 }
 
 
@@ -489,22 +489,22 @@ span.navbar-text {
 /* ============== Admin Users Page: #admin_users_page ============== */
 
 #admin_users_page #display_current_users .card {
-	margin: 0;
-	border-width: 0;
-	background-color: transparent;
+    margin: 0;
+    border-width: 0;
+    background-color: transparent;
 }
 #admin_users_page .custom-switch {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 #admin_users_page .user_name {
-	line-height: 70px;
+    line-height: 70px;
     width: calc( 100% - 12px);
 }
 #admin_users_page .custom-switch.custom-switch-lg .custom-control-label {
-	padding-bottom: 1rem;
+    padding-bottom: 1rem;
 }
 #admin_users_page #pending_badge {
-	font-weight: 400;
+    font-weight: 400;
     padding: .28rem;
     position: absolute;
     top: 34px;
@@ -512,25 +512,24 @@ span.navbar-text {
 }
 #admin_users_page [aria-expanded="true"][data-toggle="collapse"] .chevron {
     display: inline-block;
-	font-size: .8rem;
-	color: #ccc;
+    font-size: .8rem;
+    color: #ccc;
     transform: rotate(-90deg);
     transition: all ease-in-out 0.35s;
 }
 #admin_users_page [aria-expanded="false"][data-toggle="collapse"] .chevron {
     display: inline-block;
-	font-size: .8rem;
-	color: #ccc;
+    font-size: .8rem;
+    color: #ccc;
     transform: rotate(-630deg);
     transition: all ease-in-out 0.35s;
 }
 #admin_users_page [data-toggle="collapse"].collapsed .chevron {
-	transform: rotate(-630deg);
-	color: #ccc;
+    transform: rotate(-630deg);
+    color: #ccc;
 }
 @media (min-width: 576px) {
-	#admin_users_page #display_current_users .card {
-
+    #admin_users_page #display_current_users .card {
 	}
 }
 
@@ -545,31 +544,31 @@ span.navbar-text {
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
-	font-size: .8rem;
-	color: #ccc;
+    font-size: .8rem;
+    color: #ccc;
     content: "\f054";
     transform: rotate(-90deg);
     transition: all ease-in-out 0.35s;
-	margin-left: 20px;
-	position: relative;
-	top: -3px;
+    margin-left: 20px;
+    position: relative;
+    top: -3px;
 }
 #faq_page [aria-expanded="false"][data-toggle="collapse"]:after {
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
-	font-size: .8rem;
-	color: #ccc;
+    font-size: .8rem;
+    color: #ccc;
     content: "\f054";
     transform: rotate(-630deg);
     transition: all ease-in-out 0.35s;
-	margin-left: 20px;
-	position: relative;
-	top: -3px;
+    margin-left: 20px;
+    position: relative;
+    top: -3px;
 }
 #faq_page [data-toggle="collapse"].collapsed:after{
-	transform: rotate(-630deg);
-	color: #ccc;
+    transform: rotate(-630deg);
+    color: #ccc;
 }
 
 

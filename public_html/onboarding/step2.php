@@ -22,13 +22,13 @@ if (isset($_POST['next-btn'])) {
     if(!empty($_POST['first_name'])) {
         $first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
     } else {
-        $notification = "Please fill in a first name";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=19&s=warning");
         exit;
     }
     if(!empty($_POST['last_name'])){
         $last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
     } else {
-        $notification = "Please fill in a last name";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=20&s=warning");        
         exit;
     }
     if(!empty($_POST['city'])){
@@ -69,7 +69,8 @@ if (isset($_POST['next-btn'])) {
         header('Location:/onboarding/step3.php');
                 
             } else {
-                        //$errors['db_error'] = "Database error: Failed to Register";
+                header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
+                exit;
                     }
 
 }
@@ -77,27 +78,42 @@ if (isset($_POST['next-btn'])) {
 ?>
 {header}
 {main_nav}
-	<main role="main" id="onboarding_page">
-	    <h1 class="mb-5 sticky-top">Profile Information</h1>
-		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-	        <div class="form-group">
-	            <p>First name and last name are REQUIRED even if you choose to skip the rest!</p>
-	            <input  type="text"  required class= "form-control" id="first_name" name="first_name"  placeholder="First Name"></input>
-	        </div>
-	        <div class="form-group">
-	            <input  type="text"  required class= "form-control" id="last_name" name="last_name"  placeholder="Last Name"></input>
-	        </div>
-	        <div class="form-group">
-	            <input  type="text"  class= "form-control" id="city" name="city" placeholder="City"></input>
-	        </div>
-	        <div class="form-group">
-	            <input  type="text" class= "form-control" id="state" name="state" placeholder="State"></input>
-	        </div>
-	        <div class="form-group">
-	            <input  type="text" class= "form-control" id="motto" name="motto" placeholder="Motto"></input>
-	        </div>
-	            <input type="submit" class="btn btn-primary" name="next-btn" value="Next"></input>
-		</form>
-	</main>
-	{footer}
+<main role="main" id="onboarding_page">
+    <h1 class="mb-5 sticky-top">Your Profile</h1>
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>"  method="POST">
+            <p class="text-center">Take a moment to fill out your profile. Your first and last name are required.</p>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="first_name" class="col-form-label">First Name:</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="last_name" class="col-form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="city" class="col-form-label">City:</label>
+                        <input type="text" class="form-control" id="city" name="city">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="state" class="col-form-label">State:</label>
+                        <input type="text" class="form-control" id="state" name="state">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="motto" class="col-form-label" >Motto:</label>
+                        <textarea class="form-control" id="motto" name="motto"></textarea>
+                    </div>
+                </div>
+            </section>
+            <div class="text-center">
+                <input type="submit" class="btn btn-primary" name="next-btn" value="Next">
+            </div>
+        </form>
+</main>
+    {footer}
 <?php ob_end_flush(); ?>
