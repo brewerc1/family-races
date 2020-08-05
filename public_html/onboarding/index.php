@@ -70,6 +70,7 @@ if (isset($_POST['createAccount-btn'])) {
         $stmt1_Result=$stmt1->rowCount();
         $row = $stmt1->fetch();
         $user_id = $row['id'];
+        $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $password, $pepper), PASSWORD_BCRYPT);
         //echo var_dump($stmt);
         //exit;
         if($stmt1) {
@@ -77,7 +78,7 @@ if (isset($_POST['createAccount-btn'])) {
                 SET password = :password, invite_code = NULL
                 WHERE invite_code = :code AND email = :email";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['password'=> $password, 'code' => $code, 'email' => $email]);
+            $stmt->execute(['password'=> $hashed_pwd, 'code' => $code, 'email' => $email]);
         }
         else{
             $notification ['db_error'] = "The code and or email you provided do not match the values in the database. Please Try Again!";
