@@ -20,21 +20,12 @@ session_start();
 // set the page title for the template
 $page_title = "User Management";
 
-if (!isset($_SESSION["id"])) {
+// Check login state
+if(empty($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not executed
     exit;
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not executed
-    exit;
-}
-
-// To be reviewed
-if (!$_SESSION["admin"]) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
+} elseif($_SESSION["admin"] != 1) { // Only allow admin
+    header("Location: /races/");
     exit;
 }
 
@@ -193,7 +184,7 @@ $num_display_user_results = $display_user_result->rowCount();
                             <div class="input-group-prepend">
                                 <div class="input-group-text">@</div>
                             </div>
-                            <input type="email" class="form-control" name="email" id="email" placeholder="Email address to invite" required>
+                            <input type="email" class="form-control custom-input" name="email" id="email" placeholder="Email address to invite" required>
                         </div>
                     </div>
                     <div class="col-auto">
