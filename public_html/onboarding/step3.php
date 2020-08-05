@@ -9,6 +9,7 @@ session_start();
 
 // Set the page title for the template
 $page_title = "Your Profile Photo";
+
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 
@@ -116,51 +117,49 @@ if ($updatePhoto)  {
 {header}
 {main_nav}
 <main role="main" id="onboarding_page">
-    <h1 class="mb-5 sticky-top"> Profile Photo </h1>
-        <p class="text-center">If you do not choose to upload a photo a no-user photo will be placed as your Profile Photo</p>
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
-            <section class="form-row text-center">
-                <div class="form-group col">
-                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
-                    <div id="ajax_alert"></div>
-                </div>
-            </section>
-            <section class="form-row">    
-                <div class="form-group col">
-                    <div id="photo_upload" class="form-group col-sm-8 d-flex">
-                        <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
-                    </div>
-                </div>
-            </section>
-                <div class="text-center">
-                    <input type="submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
-                </div>
-            </form>
-
-
-        <!-- modal for photo cropping -->
-        <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
-                <div id="croppie_element"></div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary crop_image">Save</button>
-              </div>
+    <h1 class="mb-5 sticky-top">Profile Photo</h1>
+    <p class="text-center">Take a photo to complete your profile. This step is optional. You can add a photo later by editing your profile.</p>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
+        <section class="form-row text-center">
+            <div class="form-group col">
+                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                <div id="ajax_alert"></div>
             </div>
+        </section>
+        <section class="form-row">    
+            <div class="form-group col">
+                <div id="photo_upload" class="form-group col-sm-8 d-flex">
+                    <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
+                </div>
+            </div>
+        </section>
+        <div class="text-center">
+            <input type="submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
+        </div>
+    </form>
+
+    <!-- modal for photo cropping -->
+    <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
+            <div id="croppie_element"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary crop_image">Save</button>
           </div>
         </div>
-        <!-- END: modal for photo cropping -->
-
+      </div>
+    </div>
+    <!-- END: modal for photo cropping -->
 </main> 
 {footer}
 <?php ob_end_flush(); ?>
