@@ -7,6 +7,10 @@ ob_start('template');
  
 // start a session
 session_start();
+if (isset($_SESSION ['id'])) {
+    header('Location:/races/');
+    exit;
+} 
 if (!empty($_GET['email'])){
     $getemail = filter_var(trim($_GET['email']), FILTER_SANITIZE_EMAIL);
 } else { $getemail= "";}
@@ -24,18 +28,18 @@ $javascript = '';
 //$debug = debug();
 ///// end DEBUG
 
-//$notification = array();
+
 
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
 
-    // create vars and trim for email and code and password and password2
+// create vars and trim for email and code and password and password2
 
 //Validation Email filed filled and email exist
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     }else{
-        $notification ['email'] = 'Email is Required and must be valid';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=2&s=warning");
         exit;
     }
 //Validation Code
@@ -43,7 +47,7 @@ if (isset($_POST['createAccount-btn'])) {
         $code = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         
     } else{
-        $notification ['code'] = 'Code Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 //Validation Password
@@ -51,9 +55,11 @@ if (isset($_POST['createAccount-btn'])) {
         $password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);
         $confirmPassword = filter_var($_POST['confirmPassword'], FILTER_SANITIZE_STRING);
         if($password != $confirmPassword){
+            header("Location: ".$_SERVER['PHP_SELF']."?m=5&s=warning");
+            exit; 
         }
     }else{ 
-        $notification ['password'] = 'Password Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 
@@ -91,7 +97,8 @@ if (isset($_POST['createAccount-btn'])) {
         header('Location:/onboarding/step2.php');
 
     } else {
-        //$errors['db_error'] = "Database error: Failed to Register";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
+        exit;
     }
     }
 
@@ -99,28 +106,24 @@ if (isset($_POST['createAccount-btn'])) {
 ?>
 
 {header}
-<main>
-    <h1>Sign Up</h1>
-        <div>  
-            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>"  method="post">
-                <div class="form-group">
-                    <input  type="email" required class="form-control" name ="email" id="email"  value="<?php echo $getemail ?>" placeholder="Enter Email"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="textbox" required class="form-control" name="code" id="code"  value="<?php echo $getcode ?>"placeholder="Enter Code"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="password"  required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
-                </div>
-                <div class="form-group">
-                    <input  type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
-                </div>
-                    <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
-            </form>
-            <p>Already have a Account? <a href="/login/">Login</a></p>
-    
-    
-        </div>
-</main>
+	<main id="onboarding_page">
+		<h1 class="mb-5 sticky-top">Sign Up</h1>
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+			<div class="form-group">
+	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $getemail ?>" placeholder="Enter Email"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $getcode ?>"placeholder="Enter Code"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
+	        </div>
+	        <div class="form-group">
+	            <input type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
+	        </div>
+	            <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
+	    </form>
+	    <p class="text-center">Already have a Account? <a href="/login/">Login</a></p>
+	</main>
     {footer}
 <?php ob_end_flush(); ?>

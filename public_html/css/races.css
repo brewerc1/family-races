@@ -1,18 +1,16 @@
 html,body{
-    height: 100%;
+	height: 100%;
 }
 body {
-    font-Family: 'Lato', Sans-Serif;
-    background-color: rgba(0, 0, 0, .05);
-    background-image: linear-gradient(black, black), url('/images/photos/background/horse-racing-2714854_1280.jpg'), linear-gradient(270deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%);
-    background-blend-mode: saturation;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: bottom;
-    background-attachment: fixed;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-smooth: always;
+	font-family: 'Lato', Sans-Serif;
+	background-color: rgba(0, 0, 0, .05);
+	background-image: linear-gradient(black, black), url('/images/photos/background/horse-racing-2714854_1280.jpg'), linear-gradient(270deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%);
+	background-blend-mode: saturation;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: bottom;
+	background-attachment: fixed;
+	letter-spacing: 0px;
 }
 
 b,
@@ -41,6 +39,10 @@ label,
     padding-top: 4px;
 }
 
+.bg-dark {
+	background-color: #373837 !important;
+  }
+
 .vertical-center {
     margin: 0;
     position: absolute;
@@ -67,16 +69,13 @@ main {
     min-height: 100%;
     margin: 0 auto;
     box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
-    border-left: 1px solid rgba(200,199,200,0.6);
-    border-right: 1px solid rgba(200,199,200,0.6);
+    border-left: 1px solid rgba(120,120,120,0.9);
+    border-right: 1px solid rgba(120,120,120,0.9);
 }
 
 @media (min-width: 1024px) {
     main {
         max-width: 1024px;
-        border-color: rgba(0, 0, 0, .1);
-        border-width: 0 1px;
-        border-style: solid;
     }
     #main_navigation {
         max-width: 1024px;
@@ -96,6 +95,26 @@ main {
 
 
 
+#hof_page > h1,
+#faq_page > h1,
+#admin_page > h1,
+#admin_users_page > h1,
+#admin_site_settings > h1, 
+#onboarding_page > h1
+{
+    border-bottom: 1px solid #ccc;
+    margin-left: -20px;
+    margin-right: -20px;
+    background-color: rgba(0,0,0,.0);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    line-height: 4rem;
+    padding: 2.5rem 0 2rem 0;
+    z-index: 1000;
+}
+#user_profile_page, #user_profile_edit_page {
+    padding-top: 1.5rem;
+}
 
 
 /* Forms */
@@ -104,6 +123,9 @@ main {
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
+}
+.form-control {
+    border: 1px solid #ddd;
 }
 
 
@@ -182,14 +204,17 @@ form#login {
 }
 
 
-/* ============== Profile Page: ============== */
+/* ============== Profile Page: #user_profile_page ============== */
 #photo_upload {
     align-items: center;
     justify-content: center;
 }
+#photo_container {
+	text-align: center;
+}
 #user_profile_photo {
     width: 100%;
-    margin-right: 10px;
+    max-width: 300px;
 }
 #user_name h1 {
     margin: 1.5rem 0;
@@ -198,7 +223,10 @@ form#login {
     #edit_buttons {
         position: relative;
         top: -50px;
-    }
+	}
+	#user_profile_photo {
+		margin-right: 10px;
+	}
 }
 #edit_buttons.btn-group>.btn:not(:first-of-type):not(.dropdown-toggle) {
     border-left: 1px solid rgba(255, 255, 255, 0.4);
@@ -220,6 +248,9 @@ form#login {
 #user_meta li span {
     text-transform: uppercase;
     font-weight: 400;
+}
+table#profile_records {
+    max-width: 500px;
 }
 
 
@@ -246,52 +277,50 @@ span.navbar-text {
 
 
 /* ============== Races Page: #races_page ============== */
-#races_page .card {
-    min-height: 400px; 
+#races_page #pick_block {
+    min-height: 350px; 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: bottom center;
     margin: 0px -21px 0px -21px;
-    padding: 21px 21px 0 21px;
+    padding: 20px 20px 0 20px;
+    background-color: transparent;
 }
 #races_page #window_closed {
     color: #fff;
     text-shadow: 0px 16px 10px rgba(0,0,0,.2), 1px 6px 8px rgba(0,0,0,.6);
 }
-#races_page .card .input-group {
+#races_page #pick_block .input-group {
     z-index: 800;
 }
-#races_page #window_closed > .card-meta{
+#races_page #pick_block .card-blur{
     position: absolute;
     top: 0px;
     left: 0;
-    font-size: 1.2em;
-    width: calc(100% + 2px );
-    margin: 0 -1px 0 -1px;
-    text-align: center;
-    background-color: rgba(0,0,0,.2);
-    padding: 130px 0 0 0;
-    margin-bottom: 10px;
-    color: #fff;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    width: 100%;
     height: 100%;
+    background-color: rgba(0,0,0,.2);
     z-index: -1;
-    text-shadow: 0px 2px 1px rgba(0,0,0,.5), 1px -3px 10px rgba(0,0,0,.3);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(7px);
 }
-#races_page .card-body {
+#races_page #pick_block .card-body {
     padding: 0;
     border-radius: 5px;
     
 }
-#races_page .card-text {
+#races_page #pick_block .card-text {
     margin-top: 0px;
     color: #fff;
 }
-#races_page .card-text h1 {
+#races_page #pick_block .card-text h1 {
     font-size: 1em;
 }
-#races_page .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
+#races_page #pick_block .card-text h1, #races_page .card-text h2, #races_page .card-text h3 {
     color: #fff;
 }
 #race_leaderboard .no-results {
@@ -316,24 +345,10 @@ span.navbar-text {
     text-align: right;
     background-color: rgba(82, 86, 83, .9);
     border-radius: 3px;
-    margin: 1.2rem 0 1.2rem 0;
+    margin: 1rem auto;
     box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
-    width: 100%;
+    width: auto;
     padding: 5px;
-}
-@media (min-width: 576px) {
-    #scoreboard {
-        border-collapse: separate;
-        border-spacing: 10px 5px;
-        text-align: right;
-        background-color: rgba(82, 86, 83, .9);
-        border-radius: 3px;
-        margin: 2rem auto 0 auto;
-        width: auto;
-    }
-    #races_page .card-body {
-        margin: 1rem;
-    }
 }
 #scoreboard #title_row td {
     background-color: initial;
@@ -347,6 +362,7 @@ span.navbar-text {
     padding: 0 0 10px 0;
     line-height: 1.2rem;
     font-weight: 700;
+    text-align: center;
 }
 #scoreboard #title_row td img {
     width: 60px;
@@ -359,6 +375,8 @@ span.navbar-text {
 #scoreboard th {
     text-align: right;
     border-radius: 3px;
+    color: #ddd;
+    width: auto;
 }
 #scoreboard td {
     background-color: #000;
@@ -367,20 +385,78 @@ span.navbar-text {
     font-family: 'Score Board';
     font-weight: normal;
     font-style: normal;
-    font-size: 1.2rem;
-    width: 4rem;
+    font-size: 1rem;
+    width: auto;
     border-radius: 3px;
 }
-#scoreboard #second>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(2), #scoreboard #third>td:nth-of-type(3){
+#scoreboard #second>td:nth-of-type(2), 
+#scoreboard #third>td:nth-of-type(2), 
+#scoreboard #third>td:nth-of-type(3){
     background-color: transparent;
+}
+#memorial_race_content {
+    color: #fff;
+    text-align:center;
+    margin-bottom: 1rem;
+}
+#memorial_race_content img {
+    width: 100%;
+    max-width: 640px;
+}
+@media (min-width: 576px) {
+    #scoreboard {
+        border-collapse: separate;
+        border-spacing: 10px 5px;
+        text-align: right;
+        background-color: rgba(82, 86, 83, .9);
+        border-radius: 3px;
+        margin: 0rem auto 2rem auto;
+        width: auto;
+	}
+	#scoreboard td {
+    width: auto;
+		font-size: 1.5rem;
+	}
+    #races_page #pick_block .card-body {
+		margin: 1rem;
+	}
+	#races_page #pick_block {
+		min-height: 400px;
+	}
+}
+
+
+/* ============== HOF Index Page: #hof_page ============== */
+#hof_page img{
+    max-width: 500px;
+}
+ 
+#hof_page .champion{
+    font-family: 'Lato', Sans-Serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    text-transform: capitalize;
+}
+#hof_page .champion span{
+    font-weight: 300;
+}
+#hof_page .champion .badge {
+    line-height: 1.8rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    background-color: rgba(127,204,154,1);
+    position: relative;
+    top: -4px;
+}
+#prior_champions .card .card {
+    margin: 2.5rem 2.5rem 0 2.5rem;
+}
+#prior_champions .card .card:last-of-type {
+    margin: 2.5rem;
 }
 
 
 /* ============== FAQ Page: #faq_page ============== */
-#faq_page > h1 {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 1rem;
-}
 #faq_page h2, #faq_page h3, #faq_page h4, #faq_page h5 {
     text-align: left;
 }
@@ -406,37 +482,93 @@ span.navbar-text {
 #faq_page mark {
     color: #666;
 }
-#faq_page [aria-expanded="true"][data-toggle="collapse"]:after {
+
+
+
+/* ============== Admin Users Page: #admin_users_page ============== */
+
+#admin_users_page #display_current_users .card {
+    margin: 0;
+    border-width: 0;
+    background-color: transparent;
+}
+#admin_users_page .custom-switch {
+    margin-bottom: 0;
+}
+#admin_users_page .user_name {
+    line-height: 70px;
+    width: calc( 100% - 12px);
+}
+#admin_users_page .custom-switch.custom-switch-lg .custom-control-label {
+    padding-bottom: 1rem;
+}
+#admin_users_page #pending_badge {
+    font-weight: 400;
+    padding: .28rem;
+    position: absolute;
+    top: 34px;
+    right: 3rem;
+}
+#admin_users_page [aria-expanded="true"][data-toggle="collapse"] .chevron {
+    display: inline-block;
+    font-size: .8rem;
+    color: #ccc;
+    transform: rotate(-90deg);
+    transition: all ease-in-out 0.35s;
+}
+#admin_users_page [aria-expanded="false"][data-toggle="collapse"] .chevron {
+    display: inline-block;
+    font-size: .8rem;
+    color: #ccc;
+    transform: rotate(-630deg);
+    transition: all ease-in-out 0.35s;
+}
+#admin_users_page [data-toggle="collapse"].collapsed .chevron {
+    transform: rotate(-630deg);
+    color: #ccc;
+}
+@media (min-width: 576px) {
+    #admin_users_page #display_current_users .card {
+	}
+}
+
+
+/* ============== Onboarding Pages: #onboarding_page ============== */
+#onboarding_page {
+}
+
+
+/* Accordion collapses */
+#faq_page [aria-expanded="true"][data-toggle="collapse"]:after{
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 1rem;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-size: .8rem;
+    color: #ccc;
     content: "\f054";
     transform: rotate(-90deg);
-    transition: all linear 0.25s;
+    transition: all ease-in-out 0.35s;
     margin-left: 20px;
+    position: relative;
+    top: -3px;
 }
 #faq_page [aria-expanded="false"][data-toggle="collapse"]:after {
     display: inline-block;
     font: normal normal normal 14px/1 "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 1rem;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-size: .8rem;
+    color: #ccc;
     content: "\f054";
-    transform: rotate(-270deg);
-    transition: all linear 0.25s;
-    margin-left: 30px;
+    transform: rotate(-630deg);
+    transition: all ease-in-out 0.35s;
+    margin-left: 20px;
+    position: relative;
+    top: -3px;
 }
-#faq_page [data-toggle="collapse"].collapsed:after {
-  transform: rotate(90deg) ;
-  color: rgb(179, 109, 6);
+#faq_page [data-toggle="collapse"].collapsed:after{
+    transform: rotate(-630deg);
+    color: #ccc;
 }
-
 
 
 

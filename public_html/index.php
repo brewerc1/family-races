@@ -35,7 +35,8 @@ $random_image = array_rand($background_images);
 ?>
 {header}
 <main role="main" id="index_page" style="background-image: url('/images/photos/splash/<?php echo $random_image;?>');background-position:<?php echo $background_images[$random_image][1];?>">
-    <div id="logo_wrapper" class="vertical-center animate__animated animate__bounceOuts">
+    <a href="/login/">
+		<div id="logo_wrapper" class="vertical-center animate__animated animate__bounceOuts">
         <svg id="logo" class="animate__animated animate__flip" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 559.47 264.1">
             <defs>
                 <style>.cls-1{fill:#fff;}</style>
@@ -54,7 +55,8 @@ $random_image = array_rand($background_images);
         </svg>
         <h1 class="fade-in animate__animated animate__tada" id="logo_text">Keene Challenge</h1>
     </div>
-    <span id="photo_credit">Photo by <?php echo $background_images[$random_image][0];?></span>
+	<span id="photo_credit">Photo by <?php echo $background_images[$random_image][0];?></span>
+	</a>
 </main>
 {footer}
 <?php ob_end_flush(); ?>

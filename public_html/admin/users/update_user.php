@@ -34,21 +34,21 @@ $page_title = "Update User";
 
         // Looks like we made it.
         echo <<< ALERT
-    <div id="photo_ajax_message_wrapper" class="floating-alert alert alert-success alert-dismissible fade show" role="alert">
+    <div id="photo_ajax_message_wrapper" class="alert alert-success alert-dismissible fade show" role="alert">
     <span id="photo_ajax_message">Setting Changed.</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     } else {
         echo <<< ALERT
-    <div id="photo_ajax_message_wrapper" class="floating-alert alert alert-warning alert-dismissible fade show" role="alert">
+    <div id="photo_ajax_message_wrapper" class="alert alert-warning alert-dismissible fade show" role="alert">
     <span id="photo_ajax_message">Unrecoverable error.</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     }
 ?>

@@ -31,7 +31,7 @@ if (!isset($_SESSION["id"])) {
 }
 
 ///// DEBUG
-$debug = debug();
+//$debug = debug();
 ///// end DEBUG
 
 // logged in user
@@ -100,14 +100,14 @@ if ($num_records_result > 0 ){
 ?>
 {header}
 {main_nav}
-    <main role="main">
+    <main role="main" id="user_profile_page">
 
         <section class="row" id="user_head">
-            <div class="group col-sm-5">
+            <div class="group col-sm-5" id="photo_container">
                 <img class="rounded-circle" id="user_profile_photo" src="<?php echo "$photo?$update_time_stamp" ?>" alt="My Photo">
             </div>
             <div id="user_name" class="group col-sm-7">
-                <h1>
+                <h1 class="sticky-top">
                     <?php echo $full_name ?>
                 </h1>
             </div>
@@ -117,7 +117,7 @@ if (!isset($_GET["u"]) || $_GET["u"] == $_SESSION["id"]){
                 <div id="edit_buttons" class="btn-group col-sm-7 ml-sm-auto text-center" role="group" aria-label="Profile Controls">
                     <a href="/user/edit/" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
                     <a href="/user/settings/" class="btn btn-primary btn-sm" id="user_settings">Settings</a>
-                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="user_settings">Reset Password</a>
+                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="change_password">Change Password</a>
                 </div>
 LINKS;
 }
@@ -149,7 +149,7 @@ LINKS;
                 
             <section id="user_records" class="mt-4">
                 <h2>Event Records</h2>
-                <table class="table">
+                <table class="table" id="profile_records">
                     <tbody>
                         <?php 
 // takes the array generated from the event table to determine historical event placement
@@ -161,28 +161,16 @@ LINKS;
                             </tr>
 ENDRECORD;
                         } else {
+							$locale = 'en_US';
+							$nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
                             foreach ($user_records_array as $record) {
                                 foreach ($record as $key => $value) {
-                                    $placement = $record['placement'];
-                                    switch ($placement) {
-                                        case '1':
-                                            $placement = "1st";
-                                            break;
-                                        case '2':
-                                            $placement = "2nd";
-                                            break;
-                                        case '3':
-                                            $placement = "3rd";
-                                            break;
-                                        default:
-                                            $placement = $placement."th";
-                                            break;
-                                    }
-                                    $earnings = "$".$record['earnings'];
+									$placement = $nf->format($record['placement']);
                                 }
 echo <<< ENDRECORD
                             <tr>
-                                <th>{$record['event_name']}</th> <td>Placement: {$placement} with {$earnings}</td>
+								<th>{$record['event_name']}</th>
+								<td><strong class="text-muted">{$placement} place</strong> with <strong class="text-muted">\${$record['earnings']}</strong></td>
                             </tr>
 ENDRECORD;
                             }

@@ -1,18 +1,36 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-$page_title = "Frequently Asked Questions";
-$javascript = <<<HERE
+/**
+ * Page to display Frequently Asked Questions
+ * 
+ * This page displays the Frequently Asked Questions.
+ * Logged in users view this page.
+ */
 
-HERE;
-// turn on output buffering 
+require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+
+// turn on output buffering
 ob_start('template');
+
+// start a session
 session_start();
+
+// Test for authorized user
+if (empty($_SESSION["id"])) {
+    header("Location: /login/");
+    exit;
+}
+
+//$debug = debug();
+
+$page_title = "Frequently Asked Questions";
+$javascript = '';
+
 ?>
 {header}
 {main_nav}
 
     <main role="main" id="faq_page">
-        <h1 class="mb-5">FAQ</h1>
+        <h1 class="mb-5 sticky-top">FAQ</h1>
         <section class="accordion" id="faq_overview">
             <h2 id="h1" aria-controls="c1" data-target="#c1" data-toggle="collapse" aria-expanded="true">What's the deal?</h2>
             <p id="c1" aria-labelledby="h1" class="collapse show" data-parent="#faq_overview">The objective of the Challenge is to earn the highest purse/winnings for one day at the racetrack.</p>

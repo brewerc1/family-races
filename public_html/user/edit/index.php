@@ -240,12 +240,12 @@ if(isset($_POST['save_button'])){
 }
 
 ///// DEBUG
-$debug = debug($_POST);
+//$debug = debug($_POST);
 ///// end DEBUG
 ?>
   {header}
   {main_nav}
-    <main role="main">
+    <main role="main" id="user_profile_edit_page">
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
             <section class="form-row">
                 <div class="form-group col">

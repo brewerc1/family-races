@@ -81,22 +81,25 @@ if (isset($_POST["change_pwd"])) {
 ?>
 {header}
 {main_nav}
-    <main role="main">
-        <div class="container">
-            <form class="mt-5" method="POST" action=<?php $_SERVER["PHP_SELF"] ?> >
-                <div class="form-group">
-                    <label for="pwd" class="sr-only">New Password</label>
-                    <input type="password" name="pwd" placeholder="New Password">
-                </div>
-                <div class="form-group">
-                    <label for="confirm_pwd" class="sr-only">Confirm Password</label>
-                    <input type="password" name="confirm_pwd" placeholder="Confirm Password">
-                </div>
-                <!-- <button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>-->
-                <input type="submit" name="change_pwd" value="Change Password" class="btn btn-primary btn-block">
-                <a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
-            </form>
-        </div>
+	<main role="main" id="admin_site_settings">
+		<h1 class="mb-5 sticky-top">Change Password</h1>
+    	<section>
+			<form class="mt-5" method="POST" action="<?php $_SERVER['PHP_SELF'];?>">
+				<small id="passwordHelpBlock" class="form-text text-muted mb-4">
+                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                </small>
+	            <div class="form-group col-md-6">
+	                <label for="pwd" cclass="col-form-label">New Password</label>
+	                <input type="password" class="form-control" id="pwd" name="pwd">
+				</div>
+	            <div class="form-group col-md-6">
+	                <label for="confirm_pwd" class="col-form-label">Confirm Password</label>
+	                <input type="password" class="form-control" id="confirm_pwd" name="confirm_pwd">
+	            </div>
+				<button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>
+	            <a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
+			</form>
+		</section>
     </main>
 {footer}
 <?php ob_end_flush(); ?>

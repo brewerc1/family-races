@@ -1,10 +1,15 @@
 <?php
+/**
+ * Page to Logout the User
+ * 
+ * This page logs out the user by: 
+ * - Unsetting the session keys;
+ * - Expiring the session cookie in the user's browser;
+ * - Destroying the session.
+ */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-// Authentication System
-ob_start();
-session_start();
 
-session_destroy();
+session_start();
 
 // unset session variables
 unset($_SESSION["id"]);
@@ -21,8 +26,15 @@ unset($_SESSION["sound_fx"]);
 unset($_SESSION["voiceovers"]);
 unset($_SESSION["admin"]);
 
-// Clean (erase) the output buffer and turn off output buffering
-ob_end_clean();
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
+
+session_destroy();
 
 header("Location: /");
-
+exit;

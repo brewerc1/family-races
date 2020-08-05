@@ -35,7 +35,7 @@ if (empty($_SESSION["id"])) {
     exit;
 }
 ///// DEBUG
-$debug = debug($_POST);
+//$debug = debug($_POST);
 ///// end DEBUG
 
 // Get UID
@@ -73,39 +73,32 @@ if(isset($_POST['save_button'])){
         $_SESSION['voiceovers'] = $row['voiceovers'];
 
         // confirm update
-        header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
+        header("Location: ".$_SERVER['PHP_SELF']."?m=15&s=success");
     }
 }
 ?>
     {header}
     {main_nav}
-    <main role="main">
-        <div class="container">
-            <section id="user_settings">
-                <h1>Settings</h1>
-
-                <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-                    <!-- Sound Effects enable -->
-                    <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';}?><?php if ($_SESSION['site_sound_fx'] == 0){echo ' disabled';} ?>>
-                        <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
-                    </div>
-
-                    <!-- Voiceovers enable -->
-                    <div class="form-group custom-control custom-switch custom-switch-lg">
-                        <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?><?php if ($_SESSION['site_voiceovers'] == 0){echo ' disabled';} ?>>
-                        <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
-                    <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
-                </form>
-                <div id="bottom_links">
-                    <a href="/user/settings/reset.php" >Change Password</a>
+    <main role="main" id="admin_site_settings">
+		<h1 class="mb-5 sticky-top">Settings</h1>
+		<section>
+            <form class="mt-5" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <!-- Sound Effects enable -->
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';}?><?php if ($_SESSION['site_sound_fx'] == 0){echo ' disabled';} ?>>
+                    <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
                 </div>
 
-            </section> <!-- END id user_settings -->
-        </div>
+                <!-- Voiceovers enable -->
+                <div class="form-group custom-control custom-switch custom-switch-lg">
+                    <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['voiceovers'] == 1){echo 'checked';} ?><?php if ($_SESSION['site_voiceovers'] == 0){echo ' disabled';} ?>>
+                    <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+                <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+            </form>
+        </section> <!-- END id user_settings -->
     </main>
     {footer}
 <?php ob_end_flush(); ?>
