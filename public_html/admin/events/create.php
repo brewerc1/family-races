@@ -30,9 +30,9 @@ if (isset($_POST["submit"])) {
     // Create event
     $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
     $stmt= $pdo->prepare($sql);
-//    $stmt->execute(['name' => $_POST["event_name"],
-//        'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]])
-    if (false) {
+
+    if ($stmt->execute(['name' => $_POST["event_name"],
+        'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]])) {
 
         // Get event ID
         $sql = "SELECT id FROM event WHERE name=:name";
