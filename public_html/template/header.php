@@ -72,7 +72,6 @@ return <<< HTML
 	</script>
 </head>
 <body>
-	<div id="body_overlays"></div>
 	<!-- #mainModal -->
 	<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" data-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
