@@ -508,7 +508,7 @@ CLOSE;
                         echo <<< HERE
                             <table id="scoreboard">
                                 <tr id="title_row">
-                                    <td colspan="5"><img src="/images/kc-logo-white.svg" alt="Keene Challenge logo"> Keene Challenge</td>
+                                    <td colspan="4"><img src="/images/kc-logo-white.svg" alt="{$_SESSION['site_name']} logo"> {$_SESSION['site_name']}</td>
                                 </tr>
                                 <tr id="first">
                                     <th>1st</th>

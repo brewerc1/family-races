@@ -67,6 +67,9 @@ main {
 	border-radius: 7px;
 	box-shadow: 0px 0px 14px -1px rgba(255,255,255,0.7);
 }
+.btn-secondary {
+	background-color: #ccc;
+}
 .input-group-lg .input-group-prepend, .input-group-lg .input-group-append {
 	height: calc(1.5em + 4rem + 0px);
 }
@@ -101,7 +104,8 @@ main {
 #onboarding_page > h1,
 #welcome_page > h1,
 #admin_events_page > h1,
-#admin_event_create_page > h1
+#admin_event_create_page > h1,
+#admin_manage_event_page > h1
 {
     border-bottom: 1px solid #ccc;
     margin-left: -20px;
@@ -342,6 +346,21 @@ span.navbar-text {
 #races_page .input-group-lg>.input-group-prepend>.input-group-text {
     opacity: 0.9;
 }
+/* SCOREBOARD */
+@font-face {
+    font-family: 'Score Board';
+    src: url('/css/ScoreBoard.woff2') format('woff2'),
+		url('/css/ScoreBoard.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.scoreboard {
+    font-family: 'Score Board';
+    font-weight: normal;
+    font-style: normal;
+    color: orange;
+}
 #scoreboard {
     border-collapse: separate;
     text-align: right;
@@ -351,6 +370,9 @@ span.navbar-text {
     box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
     width: auto;
     padding: 5px;
+}
+#admin_manage_event_page #scoreboard {
+	box-shadow: none;
 }
 #scoreboard #title_row td {
     background-color: initial;
@@ -377,7 +399,7 @@ span.navbar-text {
 #scoreboard th {
     text-align: right;
     border-radius: 3px;
-    color: #ddd;
+    color: #989898;
     width: auto;
 }
 #scoreboard td {
@@ -395,6 +417,17 @@ span.navbar-text {
 #scoreboard #third>td:nth-of-type(2), 
 #scoreboard #third>td:nth-of-type(3){
     background-color: transparent;
+}
+#scoreboard input, #scoreboard select {
+	background-color: #000;
+    border: none;
+    color: orange;
+	text-align: right;
+	font-size: 1.2rem;
+}
+#scoreboard thead th {
+	padding: 0;
+	text-align: center;
 }
 #memorial_race_content {
     color: #fff;
@@ -545,6 +578,14 @@ span.navbar-text {
 #admin_events_page .completed_badge {
     font-weight: 400;
     padding: .28rem;
+}
+
+
+
+/* ============== Admin Manage Event Page: #admin_manage_event_page ============== */
+#admin_manage_event_page .go_to_races_button {
+	font-size: 1.2rem;
+	float:right;
 }
 
 
@@ -816,21 +857,4 @@ span.navbar-text {
     font-size: .8em;
     backdrop-filter: blur(6px);
     background-color: rgba(0, 0, 0, .6);
-}
-
-
-/* SCOREBOARD */
-@font-face {
-    font-family: 'Score Board';
-    src: url('/css/ScoreBoard.woff2') format('woff2'),
-        url('/css/ScoreBoard.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-.scoreboard {
-    font-family: 'Score Board';
-    font-weight: normal;
-    font-style: normal;
-    color: #fff;
 }
