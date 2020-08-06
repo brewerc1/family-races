@@ -16,7 +16,61 @@ if (!isset($_SESSION["id"])){
     header("Location: /login/");
     exit;
 }
-
+// State Select Array
+$state_array = array(	
+	"AK" => "Alaska",
+	"AL" => "Alabama",
+	"AR" => "Arkansas",
+	"AZ" => "Arizona",
+	"CA" => "California",
+	"CO" => "Colorado",
+	"CT" => "Connecticut",
+	"DC" => "District of Columbia",
+	"DE" => "Delaware",
+	"FL" => "Florida",
+	"GA" => "Georgia",
+	"HI" => "Hawaii",
+	"IA" => "Iowa",
+	"ID" => "Idaho",
+	"IL" => "Illinois",
+	"IN" => "Indiana",
+	"KS" => "Kansas",
+	"KY" => "Kentucky",
+	"LA" => "Louisiana",
+	"MA" => "Massachusetts",
+	"MD" => "Maryland",
+	"ME" => "Maine",
+	"MI" => "Michigan",
+	"MN" => "Minnesota",
+	"MO" => "Missouri",
+	"MS" => "Mississippi",
+	"MT" => "Montana",
+	"NC" => "North Carolina",
+	"ND" => "North Dakota",
+	"NE" => "Nebraska",
+	"NH" => "New Hampshire",
+	"NJ" => "New Jersey",
+	"NM" => "New Mexico",
+	"NV" => "Nevada",
+	"NY" => "New York",
+	"OH" => "Ohio",
+	"OK" => "Oklahoma",
+	"OR" => "Oregon",
+	"PA" => "Pennsylvania",
+	"PR" => "Puerto Rico",
+	"RI" => "Rhode Island",
+	"SC" => "South Carolina",
+	"SD" => "South Dakota",
+	"TN" => "Tennessee",
+	"TX" => "Texas",
+	"UT" => "Utah",	
+	"VA" => "Virginia",
+	"VT" => "Vermont",
+	"WA" => "Washington",
+	"WI" => "Wisconsin",
+	"WV" => "West Virginia",
+	"WY" => "Wyoming"
+);
 
 if (isset($_POST['next-btn'])) {
     if(!empty($_POST['first_name'])) {
@@ -36,8 +90,8 @@ if (isset($_POST['next-btn'])) {
     } else{
         $city = "";
     }
-    if(!empty($_POST['state'])){
-        $state = filter_var(trim($_POST['state']), FILTER_SANITIZE_STRING);
+    if(!empty($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
+        $state = (trim($_POST['state']));
     } else{
         $state = "";
     }
@@ -100,7 +154,16 @@ if (isset($_POST['next-btn'])) {
                     </div>
                     <div class="form-group col-md-6">
                         <label for="state" class="col-form-label">State:</label>
-                        <input type="text" class="form-control" id="state" name="state">
+                        <select class="form-control" id="state" name="state">
+                            <?php
+                            foreach ($state_array as $key => $value) {
+                                
+echo <<<ENDOPTION
+                                <option value="$key">$value</option>\n
+ENDOPTION;
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
