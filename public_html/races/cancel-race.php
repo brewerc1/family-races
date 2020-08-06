@@ -24,6 +24,6 @@ $race = $_POST['currentRaceNumber'];
 $close_race_sql = "UPDATE `race` SET `cancelled` = 1 WHERE `race`.`event_id` = :event AND `race`.`race_number` = :race";
 $close_race = $pdo->prepare($close_race_sql);
 $close_race->execute(['event' => $event, 'race' => $race]);
-header("Location: /races/?e={$event}&r={$race}&m=20&s=success");
+header("Location: /races/?e={$event}&r={$race}&m=23&s=success");
 
 ?> 
