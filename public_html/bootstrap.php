@@ -1,7 +1,27 @@
 <?php
-
 // Get the configuration array from the config file located outside the document root.
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/../system/config.php');
+
+// Set up default cookie parameters
+$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? "{$_SERVER['HTTP_HOST']}" : false;
+if(PHP_VERSION_ID < 70300) {
+    session_set_cookie_params(
+		$config['cookie_lifetime'], 
+		'/; samesite='.$config['cookie_samesite'], 
+		$domain, 
+		$config['cookie_use_https'], 
+		$config['cookie_http_only']
+	);
+} else {
+    session_set_cookie_params([
+        'lifetime' => $config['cookie_lifetime'],
+        'path' => '/',
+        'domain' => $domain,
+        'secure' => $config['cookie_use_https'],
+        'httponly' => $config['cookie_http_only'],
+        'samesite' => $config['cookie_samesite']
+    ]);
+}
 
 // Code for page templating
 function template($buffer)
@@ -143,8 +163,11 @@ $messages = array(
     16 => "User deactivated.",
     17 => "User activated.",
     18 => "Invite deleted.",
-    19 => "Race Closed!",
-    20 => "Race Cancelled!"
+    19 => "Please fill in a first name",
+    20 => "Please fill in last name",
+    21 => "Please fill in code",
+    22 => "Race Closed!",
+    23 => "Race Cancelled!"
 );
 
 $notification = '';

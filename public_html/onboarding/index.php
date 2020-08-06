@@ -7,6 +7,10 @@ ob_start('template');
  
 // start a session
 session_start();
+if (isset($_SESSION ['id'])) {
+    header('Location:/races/');
+    exit;
+} 
 if (!empty($_GET['email'])){
     $getemail = filter_var(trim($_GET['email']), FILTER_SANITIZE_EMAIL);
 } else { $getemail= "";}
@@ -24,7 +28,41 @@ $javascript = '';
 //$debug = debug();
 ///// end DEBUG
 
-//$notification = array();
+// Load site settings and event session variables
+$query = "SELECT * FROM site_settings";
+$site_setts = $pdo->prepare($query);
+if ($site_setts->execute() ) {
+    if ($site_setts->rowCount() > 0) {
+        $site_row = $site_setts->fetch();
+        $_SESSION["site_name"] = $site_row["name"];
+        $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
+        $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
+        $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
+        $_SESSION["site_terms_text"] = $site_row["terms_text"];
+        $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
+        $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
+        $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
+        $_SESSION["site_memorial_race_number"] = $site_row["memorial_race_number"];
+        $_SESSION["site_welcome_video_url"] = $site_row["welcome_video_url"];
+        $_SESSION["site_invite_email_subject"] = $site_row["invite_email_subject"];
+        $_SESSION["site_invite_email_body"] = $site_row["invite_email_body"];
+        $_SESSION["site_email_server"] = $site_row["email_server"];
+        $_SESSION["site_email_server_port"] = $site_row["email_server_port"];
+        $_SESSION["site_email_server_account"] = $site_row["email_server_account"];
+        $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
+        $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
+        $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
+    }
+}
+
+// Current event session variable: Please check if it's set
+$query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
+$current_event = $pdo->prepare($query);
+if ($current_event->execute()) {
+     if ($current_event->rowCount() > 0) {
+         $_SESSION["current_event"] = $current_event->fetch()["id"];
+     }
+}
 
 // Check if the CreateAccount button is clicked
 if (isset($_POST['createAccount-btn'])) {
@@ -35,7 +73,7 @@ if (isset($_POST['createAccount-btn'])) {
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     }else{
-        $notification ['email'] = 'Email is Required and must be valid';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=2&s=warning");
         exit;
     }
 //Validation Code
@@ -43,7 +81,7 @@ if (isset($_POST['createAccount-btn'])) {
         $code = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         
     } else{
-        $notification ['code'] = 'Code Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 //Validation Password
@@ -51,9 +89,11 @@ if (isset($_POST['createAccount-btn'])) {
         $password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);
         $confirmPassword = filter_var($_POST['confirmPassword'], FILTER_SANITIZE_STRING);
         if($password != $confirmPassword){
+            header("Location: ".$_SERVER['PHP_SELF']."?m=5&s=warning");
+            exit; 
         }
     }else{ 
-        $notification ['password'] = 'Password Required';
+        header("Location: ".$_SERVER['PHP_SELF']."?m=21&s=warning");
         exit;
     }
 
@@ -64,6 +104,7 @@ if (isset($_POST['createAccount-btn'])) {
         $stmt1_Result=$stmt1->rowCount();
         $row = $stmt1->fetch();
         $user_id = $row['id'];
+        $hashed_pwd = password_hash(hash_hmac($hash_algorithm, $password, $pepper), PASSWORD_BCRYPT);
         //echo var_dump($stmt);
         //exit;
         if($stmt1) {
@@ -71,7 +112,7 @@ if (isset($_POST['createAccount-btn'])) {
                 SET password = :password, invite_code = NULL
                 WHERE invite_code = :code AND email = :email";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['password'=> $password, 'code' => $code, 'email' => $email]);
+            $stmt->execute(['password'=> $hashed_pwd, 'code' => $code, 'email' => $email]);
         }
         else{
             $notification ['db_error'] = "The code and or email you provided do not match the values in the database. Please Try Again!";
@@ -88,10 +129,21 @@ if (isset($_POST['createAccount-btn'])) {
         $_SESSION['email'] = $row['email'];
         $_SESSION['password'] = $row['password'];
         $_SESSION['photo'] = $row['photo'];
+        $_SESSION["first_name"] = $user_row["first_name"];
+        $_SESSION["last_name"] = $user_row["last_name"];
+        $_SESSION["create_time"] = $user_row["create_time"];
+        $_SESSION["update_time"] = $user_row["update_time"];
+        $_SESSION["city"] = $user_row["city"];
+        $_SESSION["state"] = $user_row["state"];
+        $_SESSION["motto"] = $user_row["motto"];
+        $_SESSION["sound_fx"] = $user_row["sound_fx"];
+        $_SESSION["voiceovers"] = $user_row["voiceovers"];
+        $_SESSION["admin"] = $user_row["admin"];
         header('Location:/onboarding/step2.php');
 
     } else {
-        //$errors['db_error'] = "Database error: Failed to Register";
+        header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
+        exit;
     }
     }
 
@@ -116,7 +168,7 @@ if (isset($_POST['createAccount-btn'])) {
 	        </div>
 	            <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
 	    </form>
-	    <p>Already have a Account? <a href="/login/">Login</a></p>
+	    <p class="text-center">Already have a Account? <a href="/login/">Login</a></p>
 	</main>
     {footer}
 <?php ob_end_flush(); ?>
