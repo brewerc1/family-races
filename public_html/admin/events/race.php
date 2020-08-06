@@ -31,6 +31,7 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
+//!isset($_GET["r"]) &&
 if (!isset($_GET["r"]) && !isset($_GET["q"]) && !isset($_GET["e"])) {
     header("HTTP/1.1 401 Unauthorized");
     // An error page
@@ -38,6 +39,9 @@ if (!isset($_GET["r"]) && !isset($_GET["q"]) && !isset($_GET["e"])) {
     exit;
 }
 
+
+$site_default_horse_count = !empty($_SESSION["site_default_horse_count"]) ?
+    $_SESSION["site_default_horse_count"] : 1;
 
 // All of these arrays are used to isolate each action handled by the current file.
 $request_array = array(
@@ -59,6 +63,14 @@ $result = array(
 
 $get_result = array(
     6 => "get"
+);
+
+$addRace = array(
+    7 => "Add a Race"
+);
+
+$edit_pot = array(
+    8 => "pot"
 );
 
 
@@ -99,6 +111,9 @@ $q = validateInt($_GET["q"]);
 $race_number = validateInt($_GET["r"]);
 $event_id = validateInt($_GET["e"]);
 
+
+
+
 // Update window_closed/cancelled
 if (key_exists($q, $request_array)) {
 
@@ -107,6 +122,7 @@ if (key_exists($q, $request_array)) {
      * @param $pdo
      * @param $field_name
      * @param $race_number
+     * @param $event_id
      * @param $value
      * @param $message1
      * @param $message2
@@ -114,14 +130,14 @@ if (key_exists($q, $request_array)) {
      *
      * Encapsulates logic on cancelling or opening or closing a Race
      */
-    function raceUpdate($pdo, $field_name, $race_number, $value, $message1, $message2, $message3) {
-        $update_query = "UPDATE race SET " . $field_name . " = :respond WHERE race_number = :race_number";
+    function raceUpdate($pdo, $field_name, $race_number, $event_id, $value, $message1, $message2, $message3) {
+        $update_query = "UPDATE race SET " . $field_name . " = :respond WHERE event_id = :event_id AND race_number = :race_number";
         $stmt = $pdo->prepare($update_query);
-        if ($stmt->execute(["respond" => $value, 'race_number' => $race_number])) {
+        if ($stmt->execute(["respond" => $value, 'event_id' => $event_id, 'race_number' => $race_number])) {
 
-            $query = "SELECT ". $field_name ." FROM race WHERE race_number = :race_number";
+            $query = "SELECT ". $field_name ." FROM race WHERE event_id = :event_id AND race_number = :race_number";
             $race = $pdo->prepare($query);
-            if ($race->execute(['race_number' => $race_number]) && $race->rowCount() > 0) {
+            if ($race->execute(['event_id' => $event_id, 'race_number' => $race_number]) && $race->rowCount() > 0) {
                 $respond = $race->fetch()[$field_name];
                 $message = $respond ? $message1 : $message2;
                 echo alert($message);
@@ -133,75 +149,280 @@ if (key_exists($q, $request_array)) {
     }
 
 
+
+
     // Cancel A Race
     if (isset($_POST["is_checked"])) {
-        raceUpdate($pdo, $request_array[$q], $race_number,
+        raceUpdate($pdo, $request_array[$q], $race_number, $event_id,
             $_POST["is_checked"], "Race $race_number is cancelled",
             "Race $race_number is uncancelled",
             "Can't cancel Race $race_number at the moment, please try again");
     }
 
+
+
+
     // Close/Reopen betting window
     if (isset($_POST["open"])) {
-        raceUpdate($pdo, $request_array[$q], $race_number,
-            intval($_POST["open"]), "Race $race_number window is reopened",
-            "Race $race_number window is closed",
+        raceUpdate($pdo, $request_array[$q], $race_number, $event_id,
+            intval($_POST["open"]), "Race $race_number window is closed",
+            "Race $race_number window is reopened",
             "Can't reopen Race $race_number window at the moment, please try again");
     }
+
+
+
+
 }
 
-// Update horses for a race
+
+
+
+
+
+
+
+
+/**
+ *  Actions
+ *
+ *  Insert horses
+ *  Delete horses
+ *  Create race if not exist
+ */
 if (key_exists($q, $update)) {
-    if (isset($_POST["horse_array"])) {
 
-        // Delete all horses associated to the (race number and event number)
-        $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+
+
+    /**
+     * @param $pdo
+     * @param $event_id
+     * @param $race_number
+     * @return mixed
+     *
+     * Returns list of horses to be displayed in the UI
+     */
+    function getHorses($pdo, $event_id, $race_number) {
+        $horses_array = array();
+        $query = "SELECT horse_number FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
         $horses = $pdo->prepare($query);
-        if ($horses->execute(["race_event_id" => $event_id, "race_race_number" => $race_number])) {
-            // Insert the New horses only if the old ones were removed from DB
-            $query = "INSERT INTO horse ( race_event_id, race_race_number, horse_number ) VALUES (?, ?, ?)";
-            $stmt = $pdo->prepare($query);
+        $horses->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+        $horses = $horses->fetchAll();
 
-            $horses = $_POST["horse_array"];
-            foreach ($horses as $horse) {
-                if (!empty($horse)) {
-                    // Subject to changed or be removed (line 147)
+        foreach ($horses as $row)
+            array_push($horses_array, $row['horse_number']);
+
+        return $horses_array;
+    }
+
+
+
+    /**
+     * @param $pdo
+     * @param $event_id
+     * @param $race_number
+     * @param $horse
+     * @return bool
+     *
+     * Checks if a horse number already exists (avoid duplicate of horse number for same (event and race)
+     */
+    function exist($pdo, $event_id, $race_number, $horse) {
+        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $h = $pdo->prepare($query);
+        $h->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number, 'horse_number' => $horse]);
+        return $h->rowCount() > 0;
+    }
+
+
+
+
+
+    // Check if the race exists
+    $race_query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
+    $race_stmt = $pdo->prepare($race_query);
+    $race_stmt->execute(['event_id' => $event_id, 'race_number' => $race_number]);
+    if (!$race_stmt->rowCount() > 0) {
+
+        // Create the race
+        $horses = array();
+        $race_query = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
+        $race_stmt = $pdo->prepare($race_query);
+        if (!$race_stmt->execute(['event_id' => $event_id,
+            'race_number' => $race_number])) {
+
+            if (!empty($_POST["horse_array"])) {
+                foreach ($_POST["horse_array"] as $horses) {
                     $horse = filter_var($horse, FILTER_SANITIZE_STRING);
-
-                    $success = $stmt->execute([$event_id, $race_number, $horse]);
+                    array_push($horses, $horse);
                 }
             }
-            if ($success)
-                echo alert("Race $race_number is updated.");
+            echo json_encode(array('added' => 1,
+                'alert' => alert("Race $race_number added"),
+                'horses' => $horses));
+        } else {
+            if (empty($horses))
+                echo json_encode(array('added' => 1,
+                    'alert' => alert("Race $race_number added"),
+                    'horses' => ['']));
+        }
+    }
 
+
+
+
+
+
+
+
+
+    /**
+     * Delete horses in DB
+     *
+     * First: Check if there is no bet entries for the targeted horse
+     * Second: Delete horse only if there is no bet entries otherwise do not delete
+     *
+     */
+
+    if (!empty($_POST["delete_horse"])) {
+        $horses_in_pick_table = array();
+
+        $success = 0;
+        $pick_query = "SELECT * FROM pick WHERE horse_number = :horse_number";
+        $pick = $pdo->prepare($pick_query);
+
+        $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $stmt = $pdo->prepare($query);
+
+        foreach ($_POST["delete_horse"] as $horse) {
+            if (!empty($horse)) {
+                $pick->execute(['horse_number' => $horse]);
+                if ($pick->rowCount() > 0) {
+                    $success = 1;
+                    $horse = filter_var($horse, FILTER_SANITIZE_STRING);
+                    array_push($horses_in_pick_table, $horse);
+
+                } else {
+                    $success = 1;
+                    $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number, 'horse_number' => $horse]);
+                }
+            }
         }
 
+        $message = "Race $race_number is updated.";
+        if (count($horses_in_pick_table) > 0) {
+            $message .= " Can't delete";
+            foreach ($horses_in_pick_table as $horse)
+                $message .= " " . $horse;
+        }
+
+        if ($success)
+            echo json_encode(array('added' => 1,
+                'alert' => alert($message),
+                'horses' => getHorses($pdo, $event_id, $race_number)));
+        else echo json_encode(array('added' => 1,
+            'alert' => alert("Something went wrong, please try again", "warning"),
+            'horses' => getHorses($pdo, $event_id, $race_number)));
+
     }
+
+
+
+
+
+
+
+    /**
+     * Insert horses in DB
+     *
+     * Only insert horses that aren't in DB for the race number and event id
+     *
+     *  Number of horses in DB must be less or equal to the default horse count
+     */
+    if (!empty($_POST["horse_array"])) {
+
+        $success = 0;
+        $horses_array = array();
+
+        // Get total number of horses in DB
+        $current_horse_count_in_DB = 0;
+        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+        $success = $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+        $horses = $stmt->fetchAll();
+        $current_horse_count_in_DB = $stmt->rowCount();
+        $number_of_horses_to_be_inserted = $site_default_horse_count - $current_horse_count_in_DB;
+
+        // Insert Horses to DB
+        $query = "INSERT INTO horse (race_event_id, race_race_number, horse_number) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($query);
+
+        foreach ($_POST["horse_array"] as $horse) {
+
+            if (!exist($pdo, $event_id, $race_number, $horse) && $number_of_horses_to_be_inserted > 0) {
+                $success = $stmt->execute([$event_id, $race_number, $horse]);
+            }
+            $number_of_horses_to_be_inserted--;
+        }
+
+        foreach ($horses as $row)
+            array_push($horses_array, $row['horse_number']);
+
+        if ($success)
+            echo json_encode(array('added' => 1,
+                'alert' => alert("Race $race_number is updated"),
+                'horses' => $horses_array));
+        else echo json_encode(array('added' => 1,
+            'alert' => alert("Something went wrong. Please, try again", "warning"),
+            'horses' => $horses_array));
+    }
+
 }
 
-// Delete A race
+
+
+
+
+
+
+/**
+ *  Actions
+ *
+ *  Delete race
+ */
 if (key_exists($q, $delete)) {
-    // Delete all horses associated to the (race number to be deleted and event number)
+
+
     $query = "DELETE FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
     $horses = $pdo->prepare($query);
     if ($horses->execute(["race_event_id" => $event_id, "race_race_number" => $race_number])) {
 
-        // Delete the row in the race table where race number matched the race number to be deleted
+
         $query = "DELETE FROM race WHERE event_id = :event_id AND race_number = :race_number";
         $race = $pdo->prepare($query);
         if ($race->execute(['event_id' => $event_id,'race_number' => $race_number])) {
-            echo alert("Race $race_number is deleted.");
+            echo json_encode(array("deleted" => 1,
+                "alert" => alert("Race $race_number is deleted.")));
 
-        } else echo alert("Something went wrong, Complete the deletion for Race $race_number",
-            "warning");
+        } else echo json_encode(array("deleted" => 0,
+            'alert' => alert("Something went wrong, Complete the deletion for Race $race_number",
+            "warning")));
 
-    } else echo alert("Server ERROR, try again.", "warning");
+    } else echo json_encode(array("deleted" => 0,
+        "alert" => alert("Server ERROR, try again.", "warning")));
 
-//    echo alert("Race $race_number is deleted.");
 }
 
 
-// Save or Update Race result
+
+
+
+
+/**
+ *  Actions
+ *
+ *  Save race Result
+ *  Update race Result
+ */
 if (key_exists($q, $result)) {
 
     /**
@@ -245,11 +466,12 @@ if (key_exists($q, $result)) {
 
     }
 
+
     /**
      * @return bool
      *  Check if all $_POST variables are not empty or null
      */
-    function emptyResult() {
+    function notEmptyResult() {
         return (
             !empty($_POST["win"][0]) && !empty($_POST["win"][1]) && !empty($_POST["win"][2]) &&
             !empty($_POST["win"][3]) && !empty($_POST["place"][0]) && !empty($_POST["place"][1]) &&
@@ -257,10 +479,11 @@ if (key_exists($q, $result)) {
         );
     }
 
+
     if (isset($_POST["old_win"])) {
 
         // Update result
-        if (emptyResult()) {
+        if (notEmptyResult()) {
 
             // Set the old one to Null
             saveResult($pdo, $event_id, $race_number, $_POST["old_win"][0], NULL,
@@ -279,9 +502,11 @@ if (key_exists($q, $result)) {
                 alert("Race $race_number Results cannot have empty fields, old results are kept", "warning")));
         }
 
+
     } else {
+
         // Save First time result
-        if (emptyResult()) {
+        if (notEmptyResult()) {
 
             // Write result to DB
             saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
@@ -296,9 +521,19 @@ if (key_exists($q, $result)) {
         }
 
     }
+
 }
 
-// Get the result for a race and display it in the edit race result modal
+
+
+
+
+
+/**
+ *  Actions
+ *
+ *  Get race results
+ */
 if (key_exists($q, $get_result)) {
     $data = array();
 
@@ -332,4 +567,38 @@ if (key_exists($q, $get_result)) {
     if ($success)
         echo json_encode($data);
 
+}
+
+
+
+
+
+
+
+
+/**
+ *  Actions
+ *
+ *  Edit jackpot
+ */
+if (key_exists($q, $edit_pot)) {
+
+    if (!empty($_POST['pot'])) {
+
+        $query = "UPDATE event SET pot = :pot WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        if ($stmt->execute(['pot' => $_POST['pot'], 'id' => $event_id])) {
+
+            $query = "SELECT pot FROM event WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['id' => $event_id]);
+
+            $pot = $stmt->fetch()['pot'];
+            echo json_encode(array('edited' => 1,
+                'alert' => alert("Jackpot updated"), 'pot' => $pot));
+        }
+        else echo json_encode(array('edited' => 0,
+            'alert' => alert("Something went wrong", "warning")));
+
+    }
 }
