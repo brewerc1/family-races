@@ -4,14 +4,10 @@ global $config;
 
 $config = array(
     'prod_mode' => false, // set to false for development
-//    'db_host' => 'informatics.plus',
-//    'db_name' => 'races',
-//    'db_user' => 'racesdbuser',
-//    'db_password' => 'racesdb!',
-    'db_host' => 'localhost',
-    'db_name' => 'race',
-    'db_user' => 'root',
-    'db_password' => '',
+    'db_host' => 'informatics.plus',
+    'db_name' => 'races',
+    'db_user' => 'racesdbuser',
+    'db_password' => 'racesdb!',
     'db_charset' => 'utf8mb4',
     'db_pdo_options' => [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
