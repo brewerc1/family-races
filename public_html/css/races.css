@@ -367,12 +367,12 @@ span.navbar-text {
     background-color: rgba(82, 86, 83, .9);
     border-radius: 3px;
     margin: 1rem auto;
-    box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
+    box-shadow: none;
     width: auto;
     padding: 5px;
 }
-#admin_manage_event_page #scoreboard {
-	box-shadow: none;
+#races_page #scoreboard {
+	box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
 }
 #scoreboard #title_row td {
     background-color: initial;

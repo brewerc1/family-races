@@ -586,9 +586,12 @@ $debug = debug();
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-        $('#message').html("<table class='table table-borderless'>\n" +
-            "    <!-- Row A -->\n" +
-            "    <thead>\n" +
+        $('#message').html("<table class='table table-borderless' id='scoreboard'>\n" +
+			"    <!-- Row A -->\n" +
+			"    <thead>\n" +
+			"        <tr id='title_row'>\n" +
+            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
+			"        </tr>\n" +
             "        <tr>\n" +
             "          <th scope='col'>Horse#</th>\n" +
             "          <th scope='col'>Win</th>\n" +
@@ -597,44 +600,44 @@ $debug = debug();
             "        </tr>\n" +
             "    </thead>\n" +
             "    <!-- Row B -->\n" +
-            "    <tr>\n" +
+            "    <tr id='first'>\n" +
             "        <td>\n" +
-            "            <select  id='win-result' class=' race-result w-100' required>\n" +
+            "            <select id='win-result' class='race-result w-100' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td class='position-relative'>\n" +
             "                <input type='text' id='win1' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='place1' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='show1' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
             "    <!-- Row C -->\n" +
-            "    <tr>\n" +
+            "    <tr id='second'>\n" +
             "        <td>\n" +
             "            <select  id='place-result' class=' race-result' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='place2' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "            <input type='text' id='show2' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
             "    <!-- Row D -->\n" +
-            "    <tr>\n" +
+            "    <tr id='third'>\n" +
             "        <td>\n" +
             "            <select  id='show-result' class=' race-result' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
             "        <td></td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "            <input type='text' id='show3' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
@@ -698,7 +701,7 @@ $debug = debug();
                         </a>
                     </div>
                     <div id="collapse0" class="collapse race" data-parent="#accordion01">
-                        <div class="text-center card-body  d-none group-body-d" id="c0">
+                        <div class="text-center card-body d-none group-body-d" id="c0">
                             <h4>The betting window has closed.</h4>
                             <span></span>
                             <div class="custom-control custom-checkbox mt-4 group-cancel-race">
@@ -712,7 +715,7 @@ $debug = debug();
                                    data-title="Race 0 Results"
                                    data-button-primary-text="Save"
                                    data-button-primary-action="enterResultForRace(0, 0)"
-                                   data-button-secondary-text="Exit"
+                                   data-button-secondary-text="Cancel"
                                    data-button-secondary-action="depopulateHorses()"
                                    onclick="populateHorses(0)"
                                 >Enter Results for Race 0</a>
@@ -830,7 +833,7 @@ $debug = debug();
                                             data-title="Race $race_num Results"
                                             data-button-primary-text="Save" 
                                             data-button-primary-action="enterResultForRace($race_num)" 
-                                            data-button-secondary-text="Exit" 
+                                            data-button-secondary-text="Cancel" 
                                             data-button-secondary-action="depopulateHorses()"
                                              onclick="populateHorses($race_num)"
                                     >Enter Results for Race $race_num</a>
