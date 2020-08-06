@@ -1,33 +1,14 @@
 <?php
-
-// Refactoring in Progress
-
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// turn on output buffering
-//ob_start('template');
 session_start();
 
-// set the page title for the template
-//$page_title = "Manage an Event";
-//$javascript = "";
 
-if (!isset($_SESSION["id"])) {
+if(empty($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
-
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
-    exit;
-}
-
-// To be reviewed
-if (!$_SESSION["admin"]) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
+} elseif($_SESSION["admin"] != 1) {
+    header("Location: /races/");
     exit;
 }
 
@@ -259,11 +240,6 @@ if (key_exists($q, $update)) {
             echo json_encode(array('added' => 1,
                 'alert' => alert("Something went wrong. Please, try again", "warning"),
                 'horses' => $horses));
-        } else {
-            if (empty($horses))
-                echo json_encode(array('added' => 1,
-                    'alert' => alert("Race $race_number added"),
-                    'horses' => ['']));
         }
     }
 
@@ -342,6 +318,7 @@ if (key_exists($q, $update)) {
 
         $horses_array = array();
         $message = "Race $race_number is updated.";
+        $new_race = "";
 
         // Get total number of horses in DB
         $current_horse_count_in_DB = 0;
@@ -358,7 +335,10 @@ if (key_exists($q, $update)) {
         foreach ($_POST["horse_array"] as $horse) {
 
             if (!exist($pdo, $event_id, $race_number, $horse) && $number_of_horses_to_be_inserted > 0) {
-                $success = $stmt->execute([$event_id, $race_number, $horse]);
+                if (!empty($horse)) {
+                    $success = $stmt->execute([$event_id, $race_number, $horse]);
+                    $new_race = "New race with horses";
+                }
             }
             $number_of_horses_to_be_inserted--;
             $success = 1;
@@ -371,7 +351,12 @@ if (key_exists($q, $update)) {
                 $message .= " " . $horse;
         }
 
-        if ($success)
+        if (empty($new_race))
+            echo json_encode(array('added' => 1,
+                'alert' => alert("Race $race_number added"),
+                'horses' => ['']));
+
+        elseif ($success)
             echo json_encode(array('added' => 1,
                 'alert' => alert($message),
                 'horses' => getHorses($pdo, $event_id, $race_number)));
@@ -602,7 +587,7 @@ if (key_exists($q, $edit_pot)) {
                 'alert' => alert("Jackpot updated"), 'pot' => $pot));
         }
         else echo json_encode(array('edited' => 0,
-            'alert' => alert("Something went wrong", "warning")));
+            'alert' => alert("Something went wrong", "warning"), 'pot' => 0.00));
 
     }
 }
