@@ -165,7 +165,9 @@ $messages = array(
     18 => "Invite deleted.",
     19 => "Please fill in a first name",
     20 => "Please fill in last name",
-    21 => "Please fill in code"
+    21 => "Please fill in code",
+    22 => "Race Closed!",
+    23 => "Race Cancelled!"
 );
 
 $notification = '';
