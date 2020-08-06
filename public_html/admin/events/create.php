@@ -19,7 +19,6 @@ if(empty($_SESSION["id"])) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-
     // Create event
     $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
     $stmt= $pdo->prepare($sql);
@@ -39,7 +38,7 @@ if (isset($_POST["submit"])) {
         'race_number' => 1]);
 
     // Redirect to Manage Event page
-    header("Location: ./event.php?e=$event_id");
+    header("Location: ./manage.php?e=$event_id");
     exit;
 }
 
@@ -64,7 +63,7 @@ if (isset($_POST["submit"])) {
                 <div class="form-group row">
                     <div class="col">
                         <label for="email_from_address" class="col-form-label"> Date </label>
-                        <input type="datetime-local" class="form-control" id="date" name="event_date">
+                        <input type="date" class="form-control" id="date" name="event_date">
                     </div>
                 </div>
 
