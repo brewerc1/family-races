@@ -35,15 +35,15 @@ $javascript = '';
 $uid = $_SESSION['id'];
 
 ///// DEBUG
-$debug = debug();
+//$debug = debug();
 ///// end DEBUG
 
 ?>
 {header}
 {main_nav}
-<main role="main">
-    <h1>Welcome to <?php echo $_SESSION['site_name'];?></h1>
-    <div class="mt-5 embed-responsive embed-responsive-16by9">
+<main role="main" id="welcome_page">
+    <h1 class="sticky-top">Welcome to <?php echo $_SESSION['site_name'];?></h1>
+    <div class="embed-responsive embed-responsive-16by9">
         <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     <div class="text-center">
