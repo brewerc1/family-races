@@ -72,8 +72,9 @@ HERE;
 
                 if ($_SESSION['admin']){
 $photo_upload_div =<<< ENDDIV
-						<div id="photo_upload" class="form-group">
-							<input type="file" id="champion_photo_upload" class="d-inline form-control-file" accept="image/*">
+						<div id="photo_upload" class="custom-file">
+							<input type="file" id="champion_photo_upload" class="d-inline custom-file-input" accept="image/*">
+							<label class="custom-file-label" for="customFile">Choose file</label>
 						</div>
 ENDDIV;
                 } else {
