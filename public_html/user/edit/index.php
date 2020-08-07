@@ -99,7 +99,7 @@ if (!isset($_SESSION["id"])){
 }
 
 // logged in user
-$user_id = $_SESSION['id'];
+$user_id = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
@@ -161,39 +161,37 @@ $state_array = array(
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
 
-    if(empty($_POST['first_name'])){
-        $first_name_value = $_SESSION['first_name']; 
+    if(!empty($_POST['first_name'])){
+        $first_name_value = trim($_POST['first_name']); 
     } else {
-        $first_name_value = trim($_POST['first_name']);
+        $first_name_value = $_SESSION['first_name'];
     }
 
-    if(empty($_POST['last_name'])){
-       $last_name_value = $_SESSION['last_name'];
-    } else {
+    if(!empty($_POST['last_name'])){
         $last_name_value = trim($_POST['last_name']);
+    } else {
+        $last_name_value = $_SESSION['last_name'];
     }
 
-    if(empty($_POST['motto'])){
-        $motto_value = $_SESSION['motto'];
-    } else {
+    if(!empty($_POST['motto'])){
         $motto_value = trim($_POST['motto']);
+    } else {
+        $motto_value = $_SESSION['motto'];
     }
 
-    if(empty($_POST['email'])){
+    if(!empty($_POST['email'])){
+        $email_value = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+    } else {
         $email_value = $_SESSION['email'];
-    } else {
-    // this is not adequate. What happens if validate filter fails? For debate: What method should be first? Sanitize or Validate?
-    // for example, enter (without quotes) .admin@mysite.com (note the period)...
-        $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
-    if(empty($_POST['city'])){
-        $city_value = $_SESSION['city'];
-    } else {
+    if(!empty($_POST['city'])){
         $city_value = trim($_POST['city']);
+    } else {
+        $city_value = $_SESSION['city'];
     }
 
-    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
+    if(!empty($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
         $state_value = trim($_POST['state']);
     } else {
         $state_value = $_SESSION['state'];
@@ -234,7 +232,7 @@ if(isset($_POST['save_button'])){
         }
 
         $update_time_stamp = strtotime($row["update_time"]);
-        header("Location: /user/");
+        header("Location: /user/?m=15&s=success");
         exit;
     }
 }
