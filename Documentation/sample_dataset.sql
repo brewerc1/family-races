@@ -37,7 +37,7 @@ CREATE TABLE `event` (
   `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `champion_id` smallint(6) DEFAULT NULL,
   `champion_purse` decimal(6,2) DEFAULT NULL,
-  `champion_photo` varchar(128) NOT NULL
+  `champion_photo` varchar(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -473,26 +473,27 @@ CREATE TABLE `user` (
   `voiceovers` tinyint(1) DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
   `pw_reset_code` char(8) DEFAULT NULL,
   `invite_code` char(8) DEFAULT NULL,
-  `admin` tinyint(1) NOT NULL DEFAULT 0
+  `admin` tinyint(1) NOT NULL DEFAULT 0,
+  `inactive` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `create_time`, `update_time`, `city`, `state`, `motto`, `photo`, `sound_fx`, `voiceovers`, `pw_reset_code`, `invite_code`, `admin`) VALUES
-(1, 'Boss', 'O\'Dasyte', 'admin@mysite.com', '$2y$10$3oagwP1YGgYpbyr6uCrTXOCB7pyaFEnfmV8pATvSnHo4W6h6aIbR6', '2020-06-17 15:48:06', '2020-07-14 21:50:53', 'Florence', 'KY', 'Whatever, man!', '/uploads/1.jpg', 1, 1, NULL, NULL, 1),
-(2, 'Joe', 'Blow', 'joe@blow.com', '$2y$10$pw2q39Sm3QgsLKQVsULmOeG/.8jNfnqcS/WLrbnrAlf8rI0X5hz/.', '2020-06-17 15:48:06', '2020-07-14 21:59:04', 'Fort Thomas', 'KY', 'Everything in moderation, including moderation.', '/uploads/2.jpg', 1, 1, NULL, NULL, 0),
-(3, 'Amy', 'Adams', 'amy123@gmaily.com', '$2y$10$..QfModlnxZJpu6j3GIghOqQ3aFqC6taGpXaZIy6OAaYfDtjsdQ4q', '2020-06-17 15:51:01', '2020-07-14 21:51:13', 'Boston', 'MA', 'We may encounter many defeats but we must not be defeated.', '/uploads/3.jpg', 1, 1, NULL, NULL, 0),
-(4, 'Habernathy', 'Olathe', 'hab@habbieshobbies.com', '$2y$10$pAvFnyXIfQNuzZlPrV7ngu8I33LErjK3CyRmjk2E9MRqiJkXiiwBm', '2020-06-17 15:51:01', '2020-07-14 21:51:22', 'Barstow', 'CA', 'Draco Dormiens Nunquam Titillandus', '/uploads/4.jpg', 1, 1, NULL, NULL, 0),
-(5, 'Cornelius', 'Frank', 'cfrank@enkayewe.edu', '$2y$10$FqQp9Qc9Dou1xHsNpucvMujl1PU0UvonPMdUdU/czlEndZr4f4qx.', '2020-06-17 15:54:39', '2020-07-14 21:51:28', 'Zyzzx', 'CA', 'The gull sees farthest who flies highest', '/uploads/5.jpg', 1, 1, NULL, NULL, 0),
-(6, 'Beth', 'Wilson', 'beth@wilson.com', '$2y$10$D0XWQKDM.gvRjD6/lyiG3u3kJEHbeyUmHatDhymEluaFO.ywOvL7u', '2020-06-17 15:54:39', '2020-07-14 21:51:34', 'Bethel', 'AK', 'Be sweet and carry a sharp knife.', '/uploads/6.jpg', 1, 1, NULL, NULL, 0),
-(7, 'Lemuel', 'Cricketbritches', 'cricketbritches@lemmy.com', '$2y$10$Hofalv7IJPRj07D1FQBp1ebF7zu0X7UbdrpTaORHJIq5ECdfOGI9O', '2020-06-17 15:57:12', '2020-07-14 21:51:55', 'St John\'s Wood', 'UK', 'If you\'ve already dug yourself a hole too deep to climb out of, you may as well keep digging.', '/uploads/7.jpg', 1, 1, NULL, NULL, 0),
-(8, 'John', 'Smith', 'jsmith@gmailzzz.com', '$2y$10$2cV.S5TLZ9QW9XHdXSq77e9ubKnCzv9Yh8clbsBcTJyNoj78sSjqO', '2020-06-17 15:57:12', '2020-07-10 01:38:10', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '/images/no-user-image.jpg', 1, 1, NULL, NULL, 0),
-(9, 'Jane', 'Doe', 'jane@doe.com', '$2y$10$NjspBSMZXfTsFtnYu.totO38diKzigfuEakbanIyqiOpzzr2r0Bhu', '2020-06-17 15:59:34', '2020-07-14 21:52:03', 'Monkey\'s Eyebrow', 'KY', 'Eight hours work, eight hours sleep, and ten hours recreation; Now that\'s a good day!', '/uploads/9.jpg', 1, 1, NULL, NULL, 0),
-(10, 'Larry', 'Noble', 'larrythenoble@primordialooze.org', '$2y$10$1XiQQ55K7yTgO4NEZz9IxuWuLsIjejtQVqclmuhB9.4KZfXKvcEGK', '2020-06-17 16:02:16', '2020-07-14 21:52:08', 'Scratch Ankle', 'AL', 'Envy is honor\'s foe.', '/uploads/10.jpg', 1, 1, NULL, NULL, 0),
-(11, 'Babbette', 'Lloyd', 'babs@glitterfusion.xyz', '$2y$10$5M.osBVngZBufDbjJvNu/OcgNwbqUQgsEb/b2MnJZupucbt9vf8LS', '2020-06-17 16:06:58', '2020-07-14 21:52:20', 'Truth or Consequences', 'NM', 'Truth and virtue conquer.', '/uploads/11.jpg', 1, 1, NULL, NULL, 0),
-(12, NULL, NULL, 'ashoemaker@gmail.com', '', '2020-06-17 16:06:58', '2020-06-19 15:32:11', NULL, NULL, NULL, '/images/no-user-image.jpg', 1, 1, NULL, 'b696aa76', 0);
+INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `create_time`, `update_time`, `city`, `state`, `motto`, `photo`, `sound_fx`, `voiceovers`, `pw_reset_code`, `invite_code`, `admin`, `inactive`) VALUES
+(1, 'Boss', 'O\'Dasyte', 'admin@mysite.com', '$2y$10$3oagwP1YGgYpbyr6uCrTXOCB7pyaFEnfmV8pATvSnHo4W6h6aIbR6', '2020-06-17 15:48:06', '2020-07-14 21:50:53', 'Florence', 'KY', 'Whatever, man!', '/uploads/1.jpg', 1, 1, NULL, NULL, 1, 0),
+(2, 'Joe', 'Blow', 'joe@blow.com', '$2y$10$pw2q39Sm3QgsLKQVsULmOeG/.8jNfnqcS/WLrbnrAlf8rI0X5hz/.', '2020-06-17 15:48:06', '2020-07-14 21:59:04', 'Fort Thomas', 'KY', 'Everything in moderation, including moderation.', '/uploads/2.jpg', 1, 1, NULL, NULL, 0, 0),
+(3, 'Amy', 'Adams', 'amy123@gmaily.com', '$2y$10$..QfModlnxZJpu6j3GIghOqQ3aFqC6taGpXaZIy6OAaYfDtjsdQ4q', '2020-06-17 15:51:01', '2020-07-14 21:51:13', 'Boston', 'MA', 'We may encounter many defeats but we must not be defeated.', '/uploads/3.jpg', 1, 1, NULL, NULL, 1, 0),
+(4, 'Habernathy', 'Olathe', 'hab@habbieshobbies.com', '$2y$10$pAvFnyXIfQNuzZlPrV7ngu8I33LErjK3CyRmjk2E9MRqiJkXiiwBm', '2020-06-17 15:51:01', '2020-07-14 21:51:22', 'Barstow', 'CA', 'Draco Dormiens Nunquam Titillandus', '/uploads/4.jpg', 1, 1, NULL, NULL, 0, 0),
+(5, 'Cornelius', 'Frank', 'cfrank@enkayewe.edu', '$2y$10$FqQp9Qc9Dou1xHsNpucvMujl1PU0UvonPMdUdU/czlEndZr4f4qx.', '2020-06-17 15:54:39', '2020-07-14 21:51:28', 'Zyzzx', 'CA', 'The gull sees farthest who flies highest', '/uploads/5.jpg', 1, 1, NULL, NULL, 0, 0),
+(6, 'Beth', 'Wilson', 'beth@wilson.com', '$2y$10$D0XWQKDM.gvRjD6/lyiG3u3kJEHbeyUmHatDhymEluaFO.ywOvL7u', '2020-06-17 15:54:39', '2020-07-14 21:51:34', 'Bethel', 'AK', 'Be sweet and carry a sharp knife.', '/uploads/6.jpg', 1, 1, NULL, NULL, 0, 0),
+(7, 'Lemuel', 'Cricketbritches', 'cricketbritches@lemmy.com', '$2y$10$Hofalv7IJPRj07D1FQBp1ebF7zu0X7UbdrpTaORHJIq5ECdfOGI9O', '2020-06-17 15:57:12', '2020-07-14 21:51:55', 'St John\'s Wood', 'UK', 'If you\'ve already dug yourself a hole too deep to climb out of, you may as well keep digging.', '/uploads/7.jpg', 1, 1, NULL, NULL, 0, 0),
+(8, 'John', 'Smith', 'jsmith@gmailzzz.com', '$2y$10$2cV.S5TLZ9QW9XHdXSq77e9ubKnCzv9Yh8clbsBcTJyNoj78sSjqO', '2020-06-17 15:57:12', '2020-07-10 01:38:10', 'Booger Hole', 'WV', 'All hope abandon, ye who enter here.', '/images/no-user-image.jpg', 1, 1, NULL, NULL, 0, 0),
+(9, 'Jane', 'Doe', 'jane@doe.com', '$2y$10$NjspBSMZXfTsFtnYu.totO38diKzigfuEakbanIyqiOpzzr2r0Bhu', '2020-06-17 15:59:34', '2020-07-14 21:52:03', 'Monkey\'s Eyebrow', 'KY', 'Eight hours work, eight hours sleep, and ten hours recreation; Now that\'s a good day!', '/uploads/9.jpg', 1, 1, NULL, NULL, 1, 0),
+(10, 'Larry', 'Noble', 'larrythenoble@primordialooze.org', '$2y$10$1XiQQ55K7yTgO4NEZz9IxuWuLsIjejtQVqclmuhB9.4KZfXKvcEGK', '2020-06-17 16:02:16', '2020-07-14 21:52:08', 'Scratch Ankle', 'AL', 'Envy is honor\'s foe.', '/uploads/10.jpg', 1, 1, NULL, NULL, 0, 0),
+(11, 'Babbette', 'Lloyd', 'babs@glitterfusion.xyz', '$2y$10$5M.osBVngZBufDbjJvNu/OcgNwbqUQgsEb/b2MnJZupucbt9vf8LS', '2020-06-17 16:06:58', '2020-07-14 21:52:20', 'Truth or Consequences', 'NM', 'Truth and virtue conquer.', '/uploads/11.jpg', 1, 1, NULL, NULL, 0, 0),
+(12, NULL, NULL, 'ashoemaker@gmail.com', '', '2020-06-17 16:06:58', '2020-06-19 15:32:11', NULL, NULL, NULL, '/images/no-user-image.jpg', 1, 1, NULL, 'b696aa76', 0, 0);
 
 --
 -- Indexes for dumped tables
