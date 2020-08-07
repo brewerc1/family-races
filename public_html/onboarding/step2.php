@@ -113,13 +113,14 @@ if (isset($_POST['next-btn'])) {
         //Update Session Variables
         $updateSession ="SELECT * FROM user WHERE id = {$_SESSION['id']}";
         $updateSessionResult = $pdo->prepare($updateSession);
-        $updateSessionResult->execute(['user_id' => $user_id]);
-        $row= $updateSessionResult->fetch();
+        $updateSessionResult->execute();
+        $row =$updateSessionResult->fetch();
         $_SESSION ['first_name'] = $row['first_name'];
         $_SESSION['last_name'] = $row['last_name'];
         $_SESSION['city'] = $row['city'];
         $_SESSION['state'] = $row['state'];
         $_SESSION['motto'] = $row['motto'];
+        $_SESSION['photo'] = $row['photo'];
         header('Location:/onboarding/step3.php');
                 
             } else {
