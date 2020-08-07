@@ -39,7 +39,7 @@ if (isset($_POST["submit"])) {
         'race_number' => 1]);
 
     // Redirect to Manage Event page
-    header("Location: ./event.php?e=$event_id");
+    header("Location: ./manage.php?e=$event_id");
     exit;
 }
 
@@ -56,22 +56,22 @@ if (isset($_POST["submit"])) {
                 <!-- Event Name -->
                 <div class="form-group row">
                     <div class="col">
-                        <label for="email_from_address" class="col-form-label"> Event Name </label>
+                        <label for="name" class="col-form-label"> Event Name </label>
                         <input type="text" class="form-control" id="name" name="event_name">
                     </div>
                 </div>
                 <!-- Event Date -->
                 <div class="form-group row">
                     <div class="col">
-                        <label for="email_from_address" class="col-form-label"> Date </label>
-                        <input type="datetime-local" class="form-control" id="date" name="event_date">
+                        <label for="date" class="col-form-label"> Date </label>
+                        <input type="date" class="form-control" id="date" name="event_date">
                     </div>
                 </div>
 
                 <!-- Event POT -->
                 <div class="form-group row">
                     <div class="col">
-                        <label for="email_from_address" class="col-form-label"> POT </label>
+                        <label for="pot" class="col-form-label"> POT </label>
                         <input type="text" class="form-control" id="pot" name="event_pot">
                     </div>
                 </div>
