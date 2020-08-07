@@ -19,7 +19,6 @@ if(empty($_SESSION["id"])) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-
     // Create event
     $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
     $stmt= $pdo->prepare($sql);

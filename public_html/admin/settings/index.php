@@ -282,7 +282,7 @@ ENDOPTION;
             <div class="form-group row">
                 <div class="col">
                     <label for="memorial_race_number" class="col-form-label"> Race Number </label>
-                    <select id="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
+                    <select id="memorial_race_number" name="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
                         <?php 
                         for ($i=1; $i <= 16; $i++) { 
                             if($_SESSION['site_memorial_race_number'] == $i){

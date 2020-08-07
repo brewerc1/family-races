@@ -83,7 +83,7 @@ $('.crop_image').click(function(event){
 JAVASCRIPT;
 
 if (isset($_POST['skip-btn'])) {
-    Header('Location:/races/index.php');
+    Header('Location:/login/welcome/');
 }
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
@@ -105,7 +105,7 @@ if ($updatePhoto)  {
     $updatesession->execute();
     $row= $updatesession->fetch();
     $_SESSION ['photo'] = $row['photo'];
-    header("Location: /races/");
+    header("Location: /login/welcome/");
     exit;
 }else{
         header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
