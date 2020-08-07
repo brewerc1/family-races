@@ -284,11 +284,12 @@ if (key_exists($q, $update)) {
             }
         }
 
-        $message = "Race $race_number is updated.";
+        $message = "Race $race_number is updated. ";
         if ((count($horses_in_pick_table) > 0)) {
-            $message .= " Can't delete";
+            $message .= " Can't delete ";
             foreach ($horses_in_pick_table as $horse)
                 $message .= " " . $horse;
+            $message .=  ". Horses with picks can't be deleted.";
         }
 
         if ($success && empty($_POST["horse_array"]))
