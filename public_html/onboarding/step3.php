@@ -105,8 +105,9 @@ if ($updatePhoto)  {
     $updatesession->execute();
     $row= $updatesession->fetch();
     $_SESSION ['photo'] = $row['photo'];
-    header("Location: /login/welcome/");
+    header('Location: /login/welcome/');
     exit;
+
 }else{
         header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
         exit;
@@ -154,7 +155,7 @@ if ($updatePhoto)  {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary crop_image">Save</button>
+            <button type="button" id="Save" class="btn btn-primary crop_image">Save</button>
           </div>
         </div>
       </div>
