@@ -559,11 +559,10 @@ if (key_exists($q, $result)) {
                 else {
                     if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
                         $_POST["win"][2], $_POST["win"][3], $_POST["place"][0], $_POST["place"][1],
-                        $_POST["place"][2], $_POST["show"][0], $_POST["show"][1]))
+                        $_POST["place"][2], $_POST["show"][0], $_POST["show"][1])) {
                         echo json_encode(array('saved' => 1,
                             'alert' => alert("Results for Race $race_number are updated")));
-
-                    else echo json_encode(array('saved' => 0,
+                    } else echo json_encode(array('saved' => 0,
                         'alert' => alert("Something went wrong. Please, try again.", "warning")));
                 }
 
@@ -574,28 +573,29 @@ if (key_exists($q, $result)) {
 
         } else echo json_encode(array('saved' => 0,
             'alert' => alert("Results cannot be empty. Old results are kept.", "warning")));
+    } else {
+
+        if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
+
+            try {
+
+                if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
+                    $_POST["win"][2], $_POST["win"][3], $_POST["place"][0], $_POST["place"][1],
+                    $_POST["place"][2], $_POST["show"][0], $_POST["show"][1]))
+                    echo json_encode(array('saved' => 1,
+                        'alert' => alert("Results for Race $race_number are saved")));
+
+                else echo json_encode(array('saved' => 0,
+                    'alert' => alert("Something went wrong. Please, try again.", "warning")));
+
+            } catch (Exception $e) {
+                echo json_encode(array('saved' => 0,
+                    'alert' => alert("Server ERROR", "warning")));
+            }
+
+        } else echo json_encode(array('saved' => 0,
+            'alert' => alert("Results cannot be empty.", "warning")));
     }
-
-    if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
-
-        try {
-
-            if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
-                $_POST["win"][2], $_POST["win"][3], $_POST["place"][0], $_POST["place"][1],
-                $_POST["place"][2], $_POST["show"][0], $_POST["show"][1]))
-                echo json_encode(array('saved' => 1,
-                    'alert' => alert("Results for Race $race_number are saved")));
-
-            else echo json_encode(array('saved' => 0,
-                'alert' => alert("Something went wrong. Please, try again.", "warning")));
-
-        } catch (Exception $e) {
-            echo json_encode(array('saved' => 0,
-                'alert' => alert("Server ERROR", "warning")));
-        }
-
-    } else echo json_encode(array('saved' => 0,
-        'alert' => alert("Results cannot be empty.", "warning")));
 
 
 }
