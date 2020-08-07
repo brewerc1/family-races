@@ -932,7 +932,7 @@ HTML;
                                 
                                <div class="input-group mb-1 group-horse" id="horse$parent_div">
                                     <input type="text" id="$input_id" name="horses[$race_num][]" 
-                                    class="my-1 mr-sm-2 group-input">
+                                    class="my-1 mr-sm-2 group-input new">
                                     <div class="input-group-append">
                                         <span class="btn btn-danger" id="$delete_id" 
                                         onclick="deleteHorse('horse$parent_div', '$delete_id')"><i class="fa fa-minus-circle"></i></span>
