@@ -217,10 +217,6 @@ $debug = debug();
                     if ( $( '#race_link' + raceNumber ).hasClass( 'disabled' ) ) {
                         $( '#race_link' + raceNumber ).removeClass( 'disabled' );
                     }
-
-                    if ( $( '#deleteRace' + raceNumber ).hasClass( 'disabled' ) ) {
-                        $( '#deleteRace' + raceNumber ).removeClass( 'disabled' );
-                    }
                 }
                 horsesList = [];
             }
@@ -394,8 +390,6 @@ $debug = debug();
         if (oldWin != null && oldPlace != null && oldShow != null)
             data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
 
-        console.log(data)
-
         $.ajax({
             method: 'POST',
             url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
@@ -475,9 +469,6 @@ $debug = debug();
 
     function addRace() {
         // Get the last race Number
-        // New race number is the last race number plus one
-        // let keys = Array.from(raceHorses.keys());
-        // const raceNumber = keys[keys.length - 1] + 1;
         const raceNumber = getNewRaceNumber();
 
         raceHorses.set(raceNumber, ['']);
@@ -518,7 +509,7 @@ $debug = debug();
             href: ''
         }).attr('data-title', 'Delete Race ' + raceNumber).
         attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + " ? <strong>All bets will be removed</strong>.").
-        attr('data-button-primary-action', 'deleteRace(' + raceNumber + ')').addClass('disabled');
+        attr('data-button-primary-action', 'deleteRace(' + raceNumber + ')');
 
         $('#' + cardId + ' div select#0').attr('id', raceNumber);
 
