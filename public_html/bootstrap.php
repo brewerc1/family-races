@@ -167,7 +167,8 @@ $messages = array(
     20 => "Please fill in last name",
     21 => "Please fill in code",
     22 => "Race Closed!",
-    23 => "Race Cancelled!"
+    23 => "Race Cancelled!",
+    24 => "Your account is inactive"
 );
 
 $notification = '';
