@@ -20,7 +20,7 @@ $javascript = '';
 
 
 
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
     // Make sure the rest of code is not gonna be executed
     exit;
