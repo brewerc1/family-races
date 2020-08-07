@@ -163,12 +163,12 @@ $messages = array(
     16 => "User deactivated.",
     17 => "User activated.",
     18 => "Invite deleted.",
-    19 => "Please fill in a first name",
-    20 => "Please fill in last name",
-    21 => "Please fill in code",
-    22 => "Race Closed!",
-    23 => "Race Cancelled!",
-    24 => "Your account is inactive"
+    19 => "Please fill in a first name.",
+    20 => "Please fill in last name.",
+    21 => "Please fill in code.",
+    22 => "Race Closed.",
+    23 => "Race Cancelled.",
+    24 => "Your account is inactive."
 );
 
 $notification = '';

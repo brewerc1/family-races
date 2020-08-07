@@ -63,20 +63,8 @@ if (isset($_POST["login"])) {
         }
 
         // USER: Session variables (13)
-        $_SESSION["id"] = $user_row["id"];
-        $_SESSION["first_name"] = $user_row["first_name"];
-        $_SESSION["last_name"] = $user_row["last_name"];
-        $_SESSION["email"] = $user_row["email"];
-        $_SESSION["create_time"] = $user_row["create_time"];
-        $_SESSION["update_time"] = $user_row["update_time"];
-        $_SESSION["city"] = $user_row["city"];
-        $_SESSION["state"] = $user_row["state"];
-        $_SESSION["motto"] = $user_row["motto"];
-        $_SESSION["photo"] = $user_row["photo"];
-        $_SESSION["sound_fx"] = $user_row["sound_fx"];
-        $_SESSION["voiceovers"] = $user_row["voiceovers"];
-        $_SESSION["admin"] = $user_row["admin"];
-        $_SESSION["password"] = $user_row["password"];
+        foreach ($user_row as $user_session_key => $user_session_val)
+            $_SESSION[$user_session_key] = $user_session_val;
 
 
         // SITE SETTINGS: Session variables
@@ -87,24 +75,8 @@ if (isset($_POST["login"])) {
         if ($site_setts->rowCount() > 0) {
 
             $site_row = $site_setts->fetch();
-            $_SESSION["site_name"] = $site_row["name"];
-            $_SESSION["site_sound_fx"] = $site_row["sound_fx"];
-            $_SESSION["site_voiceovers"] = $site_row["voiceovers"];
-            $_SESSION["site_terms_enable"] = $site_row["terms_enable"];
-            $_SESSION["site_terms_text"] = $site_row["terms_text"];
-            $_SESSION["site_default_horse_count"] = $site_row["default_horse_count"];
-            $_SESSION["site_memorial_race_enable"] = $site_row["memorial_race_enable"];
-            $_SESSION["site_memorial_race_name"] = $site_row["memorial_race_name"];
-            $_SESSION["site_memorial_race_number"] = $site_row["memorial_race_number"];
-            $_SESSION["site_welcome_video_url"] = $site_row["welcome_video_url"];
-            $_SESSION["site_invite_email_subject"] = $site_row["invite_email_subject"];
-            $_SESSION["site_invite_email_body"] = $site_row["invite_email_body"];
-            $_SESSION["site_email_server"] = $site_row["email_server"];
-            $_SESSION["site_email_server_port"] = $site_row["email_server_port"];
-            $_SESSION["site_email_server_account"] = $site_row["email_server_account"];
-            $_SESSION["site_email_server_password"] = $site_row["email_server_password"];
-            $_SESSION["site_email_from_name"] = $site_row["email_from_name"];
-            $_SESSION["site_email_from_address"] = $site_row["email_from_address"];
+            foreach ($site_row as $site_session_key => $site_session_val)
+                $_SESSION["site_" . $site_session_key] = $site_session_val;
 
         }
 
