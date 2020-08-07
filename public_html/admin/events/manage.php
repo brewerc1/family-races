@@ -306,7 +306,7 @@ $debug = debug();
                 if (data['deleted'] === 1) {
                     $('#group' + raceNumber).remove();
                     raceHorses.delete(raceNumber);
-                    console.log(raceHorses)
+                    displayDeleteButtonOnlyForLastRace((raceNumber - 1));
                 }
 
             }
@@ -354,7 +354,7 @@ $debug = debug();
         $('#message table').remove();
     }
 
-    function enterResultForRace(eventNumber, raceNumber) {
+    function enterResultForRace(raceNumber) {
         $('#collapse' + raceNumber).addClass('show');
 
         let oldWin = null;
@@ -424,12 +424,12 @@ $debug = debug();
                 url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 6,
                 dataType: 'json',
                 success: function (data) {
-                    let win = [data['win']['horse_number'],
-                        data['win']['win_purse'], data['win']['place_purse'],
-                        data['win']['show_purse']];
-                    let place = [data['place']['horse_number'],
-                        data['place']['place_purse'], data['place']['show_purse']]
-                    let show = [data['show']['horse_number'], data['show']['show_purse']];
+                    let win = [data['win'][0],
+                        data['win'][1], data['win'][2],
+                        data['win'][3]];
+                    let place = [data['place'][0],
+                        data['place'][1], data['place'][2]];
+                    let show = [data['show'][0], data['show'][1]];
                     racesResultsTrack.set((raceNumber + 'w'), win);
                     racesResultsTrack.set((raceNumber + 'p'), place);
                     racesResultsTrack.set((raceNumber + 's'), show);
@@ -469,9 +469,7 @@ $debug = debug();
 
     function addRace() {
         // Get the last race Number
-        // New race number is the last race number plus one
-        let keys = Array.from(raceHorses.keys());
-        const raceNumber = keys[keys.length - 1] + 1;
+        const raceNumber = getNewRaceNumber();
 
         raceHorses.set(raceNumber, ['']);
 
@@ -510,7 +508,7 @@ $debug = debug();
             id: 'deleteRace' + raceNumber,
             href: ''
         }).attr('data-title', 'Delete Race ' + raceNumber).
-        attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + ' ?').
+        attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + " ? <strong>All bets will be removed</strong>.").
         attr('data-button-primary-action', 'deleteRace(' + raceNumber + ')');
 
         $('#' + cardId + ' div select#0').attr('id', raceNumber);
@@ -549,6 +547,8 @@ $debug = debug();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
         binBlur();
+        displayDeleteButtonOnlyForLastRace(raceNumber);
+
     }
 
     function editPot() {
@@ -576,7 +576,21 @@ $debug = debug();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
         binBlur();
+
+        let keys = Array.from(raceHorses.keys());
+        const raceNumber = keys[keys.length - 1];
+        displayDeleteButtonOnlyForLastRace(raceNumber);
     });
+
+    function getNewRaceNumber() {
+        return ($('.group').length);
+    }
+
+
+    function displayDeleteButtonOnlyForLastRace(raceNumber) {
+        $('#deleteRace' + (parseInt(raceNumber) - 1)).addClass('d-none');
+        $('#deleteRace' + raceNumber).removeClass('d-none');
+    }
 
 
 
@@ -714,8 +728,8 @@ $debug = debug();
                                    data-target="#mainModal"
                                    data-title="Race 0 Results"
                                    data-button-primary-text="Save"
-                                   data-button-primary-action="enterResultForRace(0, 0)"
-                                   data-button-secondary-text="Cancel"
+                                   data-button-primary-action="enterResultForRace(0)"
+                                   data-button-secondary-text="Exit"
                                    data-button-secondary-action="depopulateHorses()"
                                    onclick="populateHorses(0)"
                                 >Enter Results for Race 0</a>
@@ -729,7 +743,7 @@ $debug = debug();
                                    data-toggle="modal"
                                    data-target="#mainModal"
                                    data-title="Delete Race 0"
-                                   data-message="Are you sure you want to delete Race 0?"
+                                   data-message="Are you sure you want to delete Race 0? <strong>All bets will be removed</strong>."
                                    data-button-primary-text="Confirm"
                                    data-button-primary-action="deleteRace('0')"
                                    data-button-secondary-text="Cancel"
@@ -847,7 +861,7 @@ $debug = debug();
                                         data-toggle="modal" 
                                         data-target="#mainModal" 
                                         data-title="Delete Race $race_num" 
-                                        data-message="Are you sure you want to delete Race $race_num?"
+                                        data-message="Are you sure you want to delete Race $race_num? <strong>All bets will be removed</strong>."
                                         data-button-primary-text="Confirm" 
                                         data-button-primary-action="deleteRace('$race_num')" 
                                         data-button-secondary-text="Cancel" 
