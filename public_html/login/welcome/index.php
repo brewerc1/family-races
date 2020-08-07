@@ -17,7 +17,7 @@ ob_start('template');
 session_start();
 
 // Test for authorized user
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;
 } elseif ($_SESSION["id"] == 0) {
