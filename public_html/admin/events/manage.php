@@ -394,6 +394,8 @@ $debug = debug();
         if (oldWin != null && oldPlace != null && oldShow != null)
             data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
 
+        console.log(data)
+
         $.ajax({
             method: 'POST',
             url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
@@ -474,8 +476,9 @@ $debug = debug();
     function addRace() {
         // Get the last race Number
         // New race number is the last race number plus one
-        let keys = Array.from(raceHorses.keys());
-        const raceNumber = keys[keys.length - 1] + 1;
+        // let keys = Array.from(raceHorses.keys());
+        // const raceNumber = keys[keys.length - 1] + 1;
+        const raceNumber = getNewRaceNumber();
 
         raceHorses.set(raceNumber, ['']);
 
@@ -554,6 +557,7 @@ $debug = debug();
         bindOnClickCancelRace();
         binBlur();
         displayDeleteButtonOnlyForLastRace(raceNumber);
+
     }
 
     function editPot() {
@@ -586,6 +590,10 @@ $debug = debug();
         const raceNumber = keys[keys.length - 1];
         displayDeleteButtonOnlyForLastRace(raceNumber);
     });
+
+    function getNewRaceNumber() {
+        return ($('.group').length);
+    }
 
 
     function displayDeleteButtonOnlyForLastRace(raceNumber) {
