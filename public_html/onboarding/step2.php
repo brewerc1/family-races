@@ -122,6 +122,7 @@ if (isset($_POST['next-btn'])) {
         $_SESSION['motto'] = $row['motto'];
         $_SESSION['photo'] = $row['photo'];
         header('Location:/onboarding/step3.php');
+        exit;
                 
             } else {
                 header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
