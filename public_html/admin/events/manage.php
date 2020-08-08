@@ -1,14 +1,9 @@
 <?php
-
-// Refactoring in Progress
-
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// turn on output buffering
 ob_start('template');
 session_start();
 
-// set the page title for the template
 $page_title = "Manage an Event";
 
 $javascript = <<< JAVASCRIPT
@@ -594,9 +589,6 @@ $debug = debug();
 
 
 
-
-    // Done
-    // TOdo fix the inputs and select options
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
