@@ -17,6 +17,8 @@ if(empty($_SESSION["id"])) {
     exit;
 }
 
+$SERVER_ERROR = 0;
+
 $event_name = "Event Name";
 $event_date = "Event Date";
 $event_pot = 0;
@@ -36,18 +38,26 @@ if ($event_id == 0) {
     ";
 } else {
 
-    $query = "SELECT name, status, date, pot FROM event WHERE id = :id";
-    $event = $pdo->prepare($query);
-    $event->execute(['id' => $event_id]);
+    try {
 
-    if ($event->rowCount() > 0) {
-        $row = $event->fetch();
-        $event_name = $row["name"];
-        $event_date = date("F j, Y", strtotime($row["date"]));
-        $event_status = $row["status"];
-        $event_pot = $row["pot"];
-        $disabled_add_race_button = "";
-        $jackpot_btn_none = "";
+        $query = "SELECT name, status, date, pot FROM event WHERE id = :id";
+        $event = $pdo->prepare($query);
+        $event->execute(['id' => $event_id]);
+
+        if ($event->rowCount() > 0) {
+            $row = $event->fetch();
+            $event_name = $row["name"];
+            $event_date = date("F j, Y", strtotime($row["date"]));
+            $event_status = $row["status"];
+            $event_pot = $row["pot"];
+            $disabled_add_race_button = "";
+            $jackpot_btn_none = "";
+        }
+
+    } catch (Exception $e) {
+
+        $SERVER_ERROR = 1;
+
     }
 }
 
@@ -308,6 +318,10 @@ $debug = debug();
         });
     }
 
+    function sameHorse() {
+
+    }
+
     function populateHorses(raceNumber) {
         enterResultFormHTML();
 
@@ -317,6 +331,7 @@ $debug = debug();
         horsesList.forEach(horse => {
             $('#win-result option:last-of-type').clone().
             attr('value', horse).text(horse).appendTo('.race-result');
+
         })
 
         if (racesResultsTrack.has((raceNumber + 'w'))) {
@@ -789,29 +804,35 @@ $debug = debug();
 
                 <?php
 
-                $query = "SELECT race_number, window_closed, window_closed, cancelled FROM race WHERE event_id = :event_id";
-                $races = $pdo->prepare($query);
-                if ($races->execute(['event_id' => $event_id])) {
-                    if ($races->rowCount() > 0) {
-                        $row = $races->fetchAll();
-                        $index = 0;
-                        while ($index < count($row)) {
-                            $race_num_if_result_were_entered = "";
-                            $race_num = $row[$index]["race_number"];
+                if (!$SERVER_ERROR) {
 
-                            $checked = $row[$index]["cancelled"] ? "checked" : "";
-                            $disabled = $row[$index]["cancelled"] ? "disabled" : "";
+                    try {
 
-                            $display_none = "";
-                            $addHorse = "";
-                            $closed = "d-none";
-                            if ($row[$index]["window_closed"]) {
-                                $display_none = "d-none";
-                                $closed = "";
-                                $addHorse = "disabled";
-                            }
 
-                            $race_HTML = <<< HTML
+
+                        $query = "SELECT race_number, window_closed, window_closed, cancelled FROM race WHERE event_id = :event_id";
+                        $races = $pdo->prepare($query);
+                        if ($races->execute(['event_id' => $event_id])) {
+                            if ($races->rowCount() > 0) {
+                                $row = $races->fetchAll();
+                                $index = 0;
+                                while ($index < count($row)) {
+                                    $race_num_if_result_were_entered = "";
+                                    $race_num = $row[$index]["race_number"];
+
+                                    $checked = $row[$index]["cancelled"] ? "checked" : "";
+                                    $disabled = $row[$index]["cancelled"] ? "disabled" : "";
+
+                                    $display_none = "";
+                                    $addHorse = "";
+                                    $closed = "d-none";
+                                    if ($row[$index]["window_closed"]) {
+                                        $display_none = "d-none";
+                                        $closed = "";
+                                        $addHorse = "disabled";
+                                    }
+
+                                    $race_HTML = <<< HTML
                 <!--- Race HTML -->
                 <div class="card group" id="group$race_num">
                    <div class="card-header group-header">
@@ -866,40 +887,40 @@ $debug = debug();
                                     
 HTML;
 
-                            // Horse count
-                            $horse_count = isset($_SESSION["site_default_horse_count"]) ?
-                                $_SESSION["site_default_horse_count"] : 1;
 
-                            for ($i = 1; $i < $horse_count + 1; $i++) {
-                                $race_HTML .= "<option value='$i'>$i</option>";
-                            }
-                            $race_HTML .= <<< HTML
+                                    $horse_count = isset($_SESSION["site_default_horse_count"]) ?
+                                        $_SESSION["site_default_horse_count"] : 1;
+
+                                    for ($i = 1; $i < $horse_count + 1; $i++) {
+                                        $race_HTML .= "<option value='$i'>$i</option>";
+                                    }
+                                    $race_HTML .= <<< HTML
                                     </select>
                                 </div>
                                     <div id="addInput$race_num" class="form-row mt-4 addSelect">
 HTML;
-                            $query = "SELECT horse_number, finish FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
-                            $horses = $pdo->prepare($query);
-                            $horses->execute(['event_id' => $event_id, 'race_num' => $race_num]);
-                            $span_d_none = ($horses->rowCount() == 1) ? "d-none" : "";
-                            if ($horses->rowCount() == $horse_count) {
-                                $addHorse = "";
-                            }
-                            if ($horses->rowCount() > 0) {
-                                $row_horse = $horses->fetchAll();
-                                $i = 0;
-                                while ($i < count($row_horse)) {
-                                    //var_dump($row_horse[$i]);
-                                    $horse_val = $row_horse[$i]["horse_number"];
-                                    $finish[$race_num - 1][$i] = $row_horse[$i]["finish"];
+
+                                    $query = "SELECT horse_number, finish FROM horse WHERE race_event_id = :event_id AND race_race_number = :race_num";
+                                    $horses = $pdo->prepare($query);
+                                    $horses->execute(['event_id' => $event_id, 'race_num' => $race_num]);
+                                    $span_d_none = ($horses->rowCount() == 1) ? "d-none" : "";
+                                    if ($horses->rowCount() == $horse_count) {
+                                        $addHorse = "";
+                                    }
+                                    if ($horses->rowCount() > 0) {
+                                        $row_horse = $horses->fetchAll();
+                                        $i = 0;
+                                        while ($i < count($row_horse)) {
+                                            $horse_val = $row_horse[$i]["horse_number"];
+                                            $finish[$race_num - 1][$i] = $row_horse[$i]["finish"];
 
 
-                                    // ids
-                                    $parent_div = "horse" . $race_num.$i . substr(microtime() . "", 2, 5);
-                                    $input_id = "id" . $race_num.$i . substr(microtime() . "", 2, 5);
-                                    $delete_id = $race_num.$i . substr(microtime() . "", 2, 5);
+                                            // ids
+                                            $parent_div = "horse" . $race_num . $i . substr(microtime() . "", 2, 5);
+                                            $input_id = "id" . $race_num . $i . substr(microtime() . "", 2, 5);
+                                            $delete_id = $race_num . $i . substr(microtime() . "", 2, 5);
 
-                                    $race_HTML .= <<< HTML
+                                            $race_HTML .= <<< HTML
      
                                             <div class="input-group mb-1 group-horse" id="$parent_div">
                                                 <input type="text" id="$input_id" name="horses[$race_num][$i]" 
@@ -912,15 +933,15 @@ HTML;
                                               </div>
                                             </div>
 HTML;
-                                    $i++;
-                                }
-                            } else {
-                                $count_horse = 1;
-                                // ids
-                                $parent_div = $race_num.$i . substr(microtime() . "", 2, 5);
-                                $input_id = "id" . $race_num.$i . substr(microtime() . "", 2, 5);
-                                $delete_id = $race_num.$i . substr(microtime() . "", 2, 5);
-                                $race_HTML .= <<< HTML
+                                            $i++;
+                                        }
+                                    } else {
+                                        $count_horse = 1;
+                                        // ids
+                                        $parent_div = $race_num . $i . substr(microtime() . "", 2, 5);
+                                        $input_id = "id" . $race_num . $i . substr(microtime() . "", 2, 5);
+                                        $delete_id = $race_num . $i . substr(microtime() . "", 2, 5);
+                                        $race_HTML .= <<< HTML
                                 
                                <div class="input-group mb-1 group-horse" id="horse$parent_div">
                                     <input type="text" id="$input_id" name="horses[$race_num][]" 
@@ -931,8 +952,8 @@ HTML;
                                     </div>
                                </div>
 HTML;
-                            }
-                            $race_HTML .= <<< HTML
+                                    }
+                                    $race_HTML .= <<< HTML
                                                 </div>
                                                     <div class="d-flex justify-content-between mt-4">
                                                         <span class="btn btn-success $addHorse" id="addHorse$race_num" r
@@ -957,27 +978,36 @@ HTML;
                                         </div> <!---END Race HTML -->
 HTML;
 
-                            // Check if result exist in the DB
-                            if (key_exists(($race_num - 1), $finish)) {
-                                for ($k = 0; $k < count($finish[$race_num - 1]); $k++) {
 
-                                    if (!empty($finish[$race_num - 1][$k])) {
-                                        $race_HTML .= <<< HTML
+                                    if (key_exists(($race_num - 1), $finish)) {
+                                        for ($k = 0; $k < count($finish[$race_num - 1]); $k++) {
+
+                                            if (!empty($finish[$race_num - 1][$k])) {
+                                                $race_HTML .= <<< HTML
                                                 <script>
                                                         $( document ).ready(function() {
                                                             resultWereEnteredForRace($race_num);
                                                         })
                                                 </script>
 HTML;
-                                        break;
+                                                break;
+                                            }
+                                        }
                                     }
+
+                                    echo $race_HTML;
+                                    $index++;
                                 }
                             }
-
-                            echo $race_HTML;
-                            $index++;
                         }
+
+
+                    } catch (Exception $e) {
+                        header("Location: ./?m=6&s=warning");
+                        exit;
                     }
+
+
                 }
                 ?>
 
@@ -985,9 +1015,6 @@ HTML;
             <div class="text-center mt-4">
                 <a href="#" id="addRace" class="btn btn-primary <?php echo $disabled_add_race_button ?>" onclick="addRace()"> Add a Race </a>
             </div>
-            <!--            <div class="text-center mt-3">-->
-            <!--                <input type="submit" id="event" name="update_event" value="Update Event" class="btn btn-primary d-none">-->
-            <!--            </div>-->
         </form>
     </section>
 </main>

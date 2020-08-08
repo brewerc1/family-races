@@ -1,18 +1,15 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// turn on output buffering
 ob_start('template');
 session_start();
 
-// set the page title for the template
 $page_title = "Events";
 
-// Check login state
 if(empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;
-} elseif($_SESSION["admin"] != 1) { // Only allow admin
+} elseif($_SESSION["admin"] != 1) {
     header("Location: /races/");
     exit;
 }
@@ -23,29 +20,36 @@ $current = '';
 $prior = '';
 $status = '';
 
-$query = "SELECT id, name, status FROM event ORDER BY id DESC";
-$events = $pdo->prepare($query);
-if ($events->execute()) {
-    if ($events->rowCount() > 0) {
-        $row = $events->fetchAll();
-        $index = 0;
-        while ($index < count($row)) {
-            $event_id = $row[$index]["id"];
-            $event_name = $row[$index]["name"];
-            $event_status = $row[$index]["status"];
+try {
 
-            if ($event_status != 1) {
-				$current = "<a class='btn btn-primary mb-3' href='./manage.php?e=$event_id'>Manage $event_name</a>";
-            } else {
-                $prior .= "<li class='list-group-item'>$event_name <span class='badge badge-success badge-pill float-right px-2 completed_badge'>completed</span></li>";
+    $query = "SELECT id, name, status FROM event ORDER BY id DESC";
+    $events = $pdo->prepare($query);
+    if ($events->execute()) {
+        if ($events->rowCount() > 0) {
+            $row = $events->fetchAll();
+            $index = 0;
+            while ($index < count($row)) {
+                $event_id = $row[$index]["id"];
+                $event_name = $row[$index]["name"];
+                $event_status = $row[$index]["status"];
+
+                if ($event_status != 1) {
+                    $current = "<a class='btn btn-primary mb-3' href='./manage.php?e=$event_id'>Manage $event_name</a>";
+                } else {
+                    $prior .= "<li class='list-group-item'>$event_name <span class='badge badge-success badge-pill float-right px-2 completed_badge'>completed</span></li>";
+                }
+                $index++;
             }
-            $index++;
+        } else {
+            $current = '<p class="alert alert-info" role="alert">No events have been created.</p>';
         }
     } else {
-        $current = '<p class="alert alert-info" role="alert">No events have been created.</p>';
+        $current = '<p class="alert alert-danger" role="alert">Something went wrong. <span>Please log out and log back in.</span></p>';
     }
-} else {
-    $current = '<p class="alert alert-danger" role="alert">Something went wrong. <span>Please log out and log back in.</span></p>';
+
+} catch (Exception $e) {
+    header("Location: ./?m=6&s=warning");
+    exit;
 }
 
 ?>
