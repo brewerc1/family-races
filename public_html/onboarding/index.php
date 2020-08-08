@@ -129,16 +129,16 @@ if (isset($_POST['createAccount-btn'])) {
         $_SESSION['email'] = $row['email'];
         $_SESSION['password'] = $row['password'];
         $_SESSION['photo'] = $row['photo'];
-        $_SESSION["first_name"] = $user_row["first_name"];
-        $_SESSION["last_name"] = $user_row["last_name"];
-        $_SESSION["create_time"] = $user_row["create_time"];
-        $_SESSION["update_time"] = $user_row["update_time"];
-        $_SESSION["city"] = $user_row["city"];
-        $_SESSION["state"] = $user_row["state"];
-        $_SESSION["motto"] = $user_row["motto"];
-        $_SESSION["sound_fx"] = $user_row["sound_fx"];
-        $_SESSION["voiceovers"] = $user_row["voiceovers"];
-        $_SESSION["admin"] = $user_row["admin"];
+        $_SESSION["first_name"] = $row["first_name"];
+        $_SESSION["last_name"] = $row["last_name"];
+        $_SESSION["create_time"] = $row["create_time"];
+        $_SESSION["update_time"] = $row["update_time"];
+        $_SESSION["city"] = $row["city"];
+        $_SESSION["state"] = $row["state"];
+        $_SESSION["motto"] = $row["motto"];
+        $_SESSION["sound_fx"] = $row["sound_fx"];
+        $_SESSION["voiceovers"] = $row["voiceovers"];
+        $_SESSION["admin"] = $row["admin"];
         header('Location:/onboarding/step2.php');
 
     } else {
