@@ -155,18 +155,18 @@ if (isset($_POST['createAccount-btn'])) {
 		<h1 class="mb-5 sticky-top">Sign Up</h1>
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 			<div class="form-group">
-	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $getemail ?>" placeholder="Enter Email"></input>
+	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $getemail ?>" placeholder="Enter Email">
 	        </div>
 	        <div class="form-group">
-	            <input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $getcode ?>"placeholder="Enter Code"></input>
+	            <input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $getcode ?>"placeholder="Enter Code">
 	        </div>
 	        <div class="form-group">
-	            <input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password"></input>
+	            <input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password">
 	        </div>
 	        <div class="form-group">
-	            <input type="textbox" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"></input>
+	            <input type="password" required class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
 	        </div>
-	            <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account"></input>
+	            <input type="submit" class="btn btn-primary" name="createAccount-btn" value="Create Account">
 	    </form>
 	    <p class="text-center">Already have a Account? <a href="/login/">Login</a></p>
 	</main>
