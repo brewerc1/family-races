@@ -20,13 +20,8 @@ $javascript = '';
 
 
 
-if (!isset($_SESSION["id"])) {
+if (empty($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
-    exit;
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
 }
 
@@ -38,13 +33,11 @@ if (isset($_POST["change_pwd"])) {
     // At least one of these is empty: Password cannot be empty
     if (empty($pwd) || empty($confirm_pwd)) {
         header("Location: ./reset.php?m=7&s=warning");
-        // Make sure the rest of code is not gonna be executed
         exit;
     } else {
 
         if ($pwd != $confirm_pwd) {
             header("Location: ./reset.php?m=5&s=warning");
-            // Make sure the rest of code is not gonna be executed
             exit;
 
         } else {
@@ -52,7 +45,6 @@ if (isset($_POST["change_pwd"])) {
             if (password_verify($pwd_peppered, $_SESSION["password"])) {
                 // can't use the old password
                 header("Location: ./reset.php?m=4&s=warning");
-                // Make sure the rest of code is not gonna be executed
                 exit;
             } else {
                 // Update the password
@@ -61,12 +53,10 @@ if (isset($_POST["change_pwd"])) {
                 if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'email' => $_SESSION["email"]])) {
                     // server error: hopefully this edge case will never happen
                     header("Location: ./reset.php?m=6&s=warning");
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 } else {
                     // Redirect back to login with a success message and email inside the email input
                     header("Location: /login/?m=3&s=success&email=" . $_SESSION["email"]);
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 }
 
