@@ -9,7 +9,7 @@ session_start();
 
 // Set the page title for the template
 $page_title = "Your Profile Photo";
-
+$update_time_stamp = strtotime($_SESSION['update_time']);
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 
@@ -83,7 +83,12 @@ $('.crop_image').click(function(event){
 JAVASCRIPT;
 
 if (isset($_POST['skip-btn'])) {
-    Header('Location:/login/welcome/');
+    header('Location:/login/welcome/');
+    exit;
+}
+if (isset($_POST['next'])) {
+    header('Location:/login/welcome/');
+    exit;
 }
 if (isset($_POST['submit-btn'])) {
     //User Photo Upload
@@ -94,7 +99,8 @@ if (!isset($_SESSION["id"])){
 } elseif ($_SESSION["id"] == 0) {
     header("Location: /login/");
     exit;
-}
+} 
+
 
 $uploadsql = "UPDATE user SET photo = :photo_value WHERE id ={$_SESSION['id']}";
 $updatePhoto = $pdo->prepare($uploadsql);
@@ -135,7 +141,8 @@ if ($updatePhoto)  {
             </div>
         </section>
         <div class="text-center">
-            <input type="submit" class="btn btn-primary" value="SKIP" name="skip-btn" > 
+            <input type="submit" id="skip" class="btn btn-primary" value="SKIP" name="skip-btn">
+            <input type="submit" id="next" class="btn btn-primary d-none" value="NEXT" name="next" > 
         </div>
     </form>
 
@@ -155,12 +162,19 @@ if ($updatePhoto)  {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" id="Save" class="btn btn-primary crop_image">Save</button>
+            <button type="button" id="Save" class="btn btn-primary crop_image" onclick="next()">Save</button>
           </div>
         </div>
       </div>
     </div>
     <!-- END: modal for photo cropping -->
+    <script>
+    function next() {
+        $('#skip').addClass('d-none');
+        $('#next').removeClass('d-none');
+        $('#profile_photo').remove();
+    }
+</script>
 </main> 
 {footer}
 <?php ob_end_flush(); ?>
