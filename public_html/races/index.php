@@ -177,7 +177,7 @@ $background_image = random_photo();
 $memorial_race_content = '';
 if ($memorial_race_number == $race) {
     $memorial_race_content =<<< MEMORIAL
-    <div id="memorial_race_content"><img src="https://fakeimg.pl/640x360"></div>
+    <div id="memorial_race_content"><img src="/uploads/memorial-race.jpg"></div>
 MEMORIAL;
 }
 
