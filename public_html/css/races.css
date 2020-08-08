@@ -70,9 +70,6 @@ main {
 .btn-secondary {
 	background-color: #ccc;
 }
-.input-group-lg .input-group-prepend, .input-group-lg .input-group-append {
-	height: calc(1.5em + 4rem + 0px);
-}
 
 @media (min-width: 1024px) {
     main {
@@ -282,6 +279,11 @@ span.navbar-text {
 
 
 /* ============== Races Page: #races_page ============== */
+#races_page {
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+}
 #races_page #pick_block {
     min-height: 350px; 
     background-size: cover; 
@@ -294,7 +296,7 @@ span.navbar-text {
 }
 #races_page #window_closed {
     color: #fff;
-    text-shadow: 0px 16px 10px rgba(0,0,0,.2), 1px 6px 8px rgba(0,0,0,.6);
+	text-shadow: 0px 16px 10px rgba(0,0,0,0.3), 0px 2px 6px rgba(0,0,0,0.8);
 }
 #races_page #pick_block .input-group {
     z-index: 800;
@@ -317,7 +319,6 @@ span.navbar-text {
 #races_page #pick_block .card-body {
     padding: 0;
     border-radius: 5px;
-    
 }
 #races_page #pick_block .card-text {
     margin-top: 0px;
@@ -344,7 +345,12 @@ span.navbar-text {
 #races_page .input-group-lg>.input-group-append>.input-group-text, 
 #races_page .input-group-lg>.input-group-prepend>.btn, 
 #races_page .input-group-lg>.input-group-prepend>.input-group-text {
-    opacity: 0.9;
+	opacity: 0.9;
+	padding: .5rem 1rem;
+	height: calc(1.5em + 3rem + 0px);
+}
+.input-group-lg .input-group-prepend, .input-group-lg .input-group-append {
+	height: calc(1.5em + 3rem + 0px);
 }
 /* SCOREBOARD */
 @font-face {
@@ -429,14 +435,15 @@ span.navbar-text {
 	padding: 0;
 	text-align: center;
 }
-#memorial_race_content {
-    color: #fff;
+#memorial_race_content{
     text-align:center;
     margin-bottom: 1rem;
 }
 #memorial_race_content img {
-    width: 100%;
-    max-width: 640px;
+    width: 90%;
+	max-width: 500px;
+	border-radius: 5px;
+	box-shadow: 0px 1px 13px 5px rgba(0,0,0,.4);
 }
 @media (min-width: 576px) {
     #scoreboard {
@@ -565,6 +572,13 @@ span.navbar-text {
 @media (min-width: 576px) {
     #admin_users_page #display_current_users .card {
 	}
+}
+
+
+
+/* ============== Onboarding Pages: #onboarding_page ============== */
+#admin_site_settings #terms_text {
+	height: 20rem;
 }
 
 

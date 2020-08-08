@@ -177,7 +177,7 @@ $background_image = random_photo();
 $memorial_race_content = '';
 if ($memorial_race_number == $race) {
     $memorial_race_content =<<< MEMORIAL
-    <div id="memorial_race_content"><img src="/uploads/memorial-race.jpg"></div>
+    <div id="memorial_race_content" class="mt-2"><img src="/uploads/memorial-race.jpg" alt="Memorial photo"></div>
 MEMORIAL;
 }
 
@@ -368,10 +368,10 @@ function cancelRace(eventNumber, raceNumber) {
 </script>
 {header}
 {main_nav}
-<main role="main" id="races_page">
-	<div class="card sticky-top" id="pick_block" style="background-image: url(<?php echo $background_image['filename'];?>);">
+<main role="main" id="races_page" style="background-image: url(<?php echo $background_image['filename'];?>);">
+	<div class="card" id="pick_block" style="">
 		<div class='card-blur'></div>
-        <div class="input-group input-group-lg mb-3 pt-2 pl-2 pr-2">
+        <div class="input-group input-group-lg mb-2 pt-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
 			</div>
@@ -418,8 +418,8 @@ CANCEL;
             else {
                 if($race_info['window_closed'] == '0' && $race_info['cancelled'] == 0) {?>
                 <form action="bets.php" method="POST">
-                    <div class="card-body">
-                        <div class="form-group input-group input-group-lg mb-3">
+                    <div class="card-body form-row ">
+                        <div class="col-xl-6 form-group input-group input-group-lg mb-2">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="horseSelection">Pick</label>
                             </div>
@@ -439,7 +439,7 @@ CANCEL;
                                 ?>
                             </select>
                         </div>
-                        <div class="form-group input-group input-group-lg mb-3">
+                        <div class="col-xl-6 form-group input-group input-group-lg 2">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="placeSelection">Finish</label>
                             </div>
@@ -475,9 +475,9 @@ CANCEL;
                 <?php
                     if ($_SESSION['admin']) {
                         echo <<< CLOSE
-                            <form action="close-race.php" method="POST">
+                            <form action="close-race.php" method="POST" class="text-center">
                                 <input type="hidden" value=$race name="currentRace" id="currentRace">
-                                <input class="btn btn-primary" type="submit" value="Close Betting Window">
+                                <input class="btn btn-danger" type="submit" value="Close Betting Window">
                             </form>
 CLOSE;
                     }
