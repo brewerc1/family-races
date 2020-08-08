@@ -19,27 +19,34 @@ if(empty($_SESSION["id"])) {
 $debug = debug();
 
 if (isset($_POST["submit"])) {
-    // Create event
-    $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute(['name' => $_POST["event_name"],
-        'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]]);
+    try {
 
-    // Get event ID
-    $sql = "SELECT id FROM event WHERE name=:name";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(['name' => $_POST["event_name"]]);
-    $event_id = $stmt->fetch()["id"];
+        $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute(['name' => $_POST["event_name"],
+            'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]]);
 
-    // Create the first Race
-    $sql = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute(['event_id' => $event_id,
-        'race_number' => 1]);
 
-    // Redirect to Manage Event page
-    header("Location: ./manage.php?e=$event_id");
-    exit;
+        $sql = "SELECT id FROM event WHERE name=:name";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['name' => $_POST["event_name"]]);
+        $event_id = $stmt->fetch()["id"];
+        $_SESSION['current_event'] = $event_id;
+
+
+        $sql = "INSERT INTO race (event_id, race_number) VALUES (:event_id, :race_number)";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute(['event_id' => $event_id,
+            'race_number' => 1]);
+
+
+        header("Location: ./manage.php?e=$event_id");
+        exit;
+
+    } catch (Exception $e) {
+        header("Location: ./?m=6&s=warning");
+        exit;
+    }
 }
 
 
