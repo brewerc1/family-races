@@ -597,6 +597,9 @@ if (key_exists($q, $result)) {
                 elseif ($pick['finish'] === 'show')
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $place[2]]);
 
+                else
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
+
             }
 
 
@@ -605,6 +608,10 @@ if (key_exists($q, $result)) {
 
                 if ($pick['finish'] === 'show')
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $show[1]]);
+
+                else
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
+
             }
 
 
