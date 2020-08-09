@@ -69,17 +69,18 @@ $debug = debug();
 <script>
     const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
-    const eventNumber = <?php echo $event_id; ?>;
+    const EVENT_ID = <?php echo $event_id; ?>;
     const DELAY = 5000;
+    const FADEOUT = 400;
 
     let raceHorses = new Map();
     let racesResultsTrack = new Map();
     let resultList = new Map();
     let numberOfHorses;
     let horsesList = [];
-    let horseToBeDeleted = new Map();
+    // let horseToBeDeleted = new Map();
 
-    function updateNumberOfHorsesInputValue() {
+    function updateNumberOfHorsesSelectValue() {
         $('.group').each( function () {
             const id = '#addInput' + this.id.charAt(5) + ' div.group-horse';
             $('#' + this.id.charAt(5)).val($( id ).length);
@@ -92,62 +93,6 @@ $debug = debug();
         });
     }
 
-
-    function binBlur() {
-        // $('.new').bind('blur', function () {
-        //     let horses = [];
-        //     const raceNumber = this.id.charAt(2);
-        //     const h = this.value;
-        //
-        //     $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
-        //         horses.push(this.value);
-        //     });
-        //     horses.splice(horses.indexOf(h), 1);
-        //     let good = true;
-        //     horses.map(horse => {
-        //         if (horse === h) {
-        //             $('#' + this.id).addClass('border border-danger');
-        //             $('#update' + raceNumber).addClass('disabled');
-        //             good = false;
-        //         }
-        //     });
-        //
-        //     if (good) {
-        //         $('#' + this.id).removeClass('border border-danger');
-        //         $('#update' + raceNumber).removeClass('disabled');
-        //     }
-        // });
-
-        // $('.new').each( function () {
-        //     console.log(this.id)
-        //     let good = true;
-        //     let raceNumber = this.id.charAt(2);
-        //     $('#' + this.id).bind('blur', function () {
-        //         let horses = [];
-        //         const h = this.value;
-        //
-        //         $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
-        //             horses.push(this.value);
-        //         });
-        //
-        //         horses.splice(horses.indexOf(h), 1);
-        //         horses.map(horse => {
-        //             if (horse === h) {
-        //                 $('#' + this.id).addClass('border border-danger');
-        //                 $('#update' + raceNumber).addClass('disabled');
-        //                 good = false;
-        //             }
-        //         });
-        //
-        //         if (good) {
-        //             $('#' + this.id).removeClass('border border-danger');
-        //             $('#update' + raceNumber).removeClass('disabled');
-        //         }
-        //     });
-        //
-        //
-        // } );
-    }
 
 
     function bindOnChangeOnSelectMenu() {
@@ -174,6 +119,8 @@ $debug = debug();
         });
     }
 
+
+
     function bindOnClickCancelRace() {
         $('.cancel-race').bind( 'click', function () {
 
@@ -181,17 +128,29 @@ $debug = debug();
 
             $.ajax({
                 type: 'POST',
-                url: './race.php?e='+ eventNumber +'&r=' + this.id.charAt(6) + '&q=' + 2,
+                url: './race.php?e='+ EVENT_ID +'&r=' + this.id.charAt(6) + '&q=' + 2,
                 data: {is_checked: isChecked},
                 success: function (data) {
                     $( ".close-btn" ).toggleClass( 'disabled', (isChecked === 1) );
                     $('main').prepend(data);
-                    $('#alert').delay( DELAY ).fadeOut( 400 );
+                    $('#alert').delay( DELAY ).fadeOut( FADEOUT );
                 }
             });
         });
     }
 
+
+
+
+
+
+    /**
+     * Removes Horse input on the UI (delete)
+     *
+     * @param raceNumber
+     * @param amountToDecrement Total number of input to be removed
+     *
+     * */
     function removeInput(raceNumber, amountToDecrement) {
         for (let k = 0; k < amountToDecrement; k++) {
             horsesList.push($('#addInput' + raceNumber + ' div.group-horse:last-of-type input').val());
@@ -199,6 +158,17 @@ $debug = debug();
         }
     }
 
+
+
+
+
+    /**
+     * Adds horse input by cloning div#addInput0 of the Race HTML To clone.
+     *
+     * @param raceNumber
+     * @param numberOfCurrentHorsesInput Total number of horses displayed on the UI.
+     *
+     * */
     function duplicateHorseInput(raceNumber, numberOfCurrentHorsesInput) {
         const parentDivId = 'horse' + raceNumber + numberOfCurrentHorsesInput + Date.now();
         const inputId = 'id' + raceNumber + numberOfCurrentHorsesInput + Date.now();
@@ -219,10 +189,21 @@ $debug = debug();
             id: spanId,
             onclick: "deleteHorse('" + parentDivId + "', '" + spanId + "')"
         });
-
-        binBlur();
     }
 
+
+
+
+
+    /**
+     * Communicate with PHP scripts to save and update race inside the DB and
+     * gets back a json object that contains 3 items:  One => alert message,
+     * Two => added: which indicates whether the DB was updated (1) or not (0).
+     * Three => A list of horses that are saved in DB, so the UI displays accurate data.
+     *
+     * @param raceNumber
+     *
+     * */
     function updateRace(raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
@@ -234,12 +215,12 @@ $debug = debug();
 
         $.ajax({
             type: 'POST',
-            url: './race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + eventNumber,
+            url: './race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + EVENT_ID,
             data: {horse_array: horses, delete_horse: horsesList},
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( DELAY ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( FADEOUT );
                 if (data['added'] === 1) {
                     horsesList = data['horses'];
                     raceHorses.set(raceNumber, horsesList);
@@ -258,6 +239,17 @@ $debug = debug();
         });
     }
 
+
+
+
+
+
+    /**
+     * Undoes the unsaved changes
+     *
+     * @param raceNumber
+     *
+     * */
     function dismiss(raceNumber) {
 
         const inputId = '#addInput' + raceNumber + ' div.group-horse';
@@ -289,6 +281,17 @@ $debug = debug();
         horsesList = [];
     }
 
+
+
+
+
+    /**
+     * Deletes horse input from the UI.
+     *
+     * @param parentDivId The id of the parent div in which the input is contains.
+     * @param selfId the id of the span node.
+     *
+     * */
     function deleteHorse(parentDivId, selfId) {
         const horse = $('#' + parentDivId + ' input').val();
         horsesList.push(horse);
@@ -313,6 +316,18 @@ $debug = debug();
 
     }
 
+
+
+
+
+
+
+    /**
+     * Adds horse input to the UI.
+     *
+     * @param btnId Id of the span node.
+     *
+     * */
     function addHorse(btnId) {
         numberOfHorses = $('#addInput' + btnId.charAt(8) + ' div.group-horse').length;
         if (numberOfHorses < defaultHorseCount && !$('#' + btnId).hasClass('disabled') ) {
@@ -328,15 +343,26 @@ $debug = debug();
         }
     }
 
+
+
+
+
+    /**
+     * Communicates with PHP script to delete race and all data associated to it.
+     * Gets back a json object that contains the alert message and a bool value deleted.
+     *
+     * @param raceNumber
+     *
+     * */
     function deleteRace(raceNumber) {
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         $.ajax({
-            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 4,
+            url: './race.php?e=' + EVENT_ID + '&r=' + raceNumber + '&q=' + 4,
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( DELAY ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( FADEOUT );
 
                 if (data['deleted'] === 1) {
                     $('#group' + raceNumber).remove();
@@ -348,6 +374,15 @@ $debug = debug();
         });
     }
 
+
+
+
+    /**
+     * Populates horses inside the selection options fo the scoreboard
+     *
+     * @param raceNumber
+     *
+     * */
     function populateHorses(raceNumber) {
         enterResultFormHTML();
 
@@ -385,6 +420,13 @@ $debug = debug();
 
     }
 
+
+
+
+    /**
+     * Does the opposite of populateHorses() function
+     *
+     * */
     function depopulateHorses() {
         $( ".race-result" ).each( function () {
             $(".race-result option").remove();
@@ -393,6 +435,15 @@ $debug = debug();
         $('#message table').remove();
     }
 
+
+
+
+
+
+
+    /**
+     *
+     * */
     function enterResultForRace(raceNumber) {
         $('#collapse' + raceNumber).addClass('show');
 
@@ -431,12 +482,12 @@ $debug = debug();
 
         $.ajax({
             method: 'POST',
-            url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
+            url: './race.php?e=' + EVENT_ID + '&r=' + raceNumber + '&q=' + 5,
             data: data,
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( DELAY ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( FADEOUT );
                 if (data['saved'] === 1) {
                     resultWereEnteredForRace(raceNumber);
                     racesResultsTrack.set((raceNumber + 'w'), win);
@@ -446,7 +497,6 @@ $debug = debug();
             }
         });
 
-        console.log(data)
     }
 
     function resultWereEnteredForRace(raceNumber) {
@@ -462,7 +512,7 @@ $debug = debug();
 
             $.ajax({
                 method: 'POST',
-                url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 6,
+                url: './race.php?e=' + EVENT_ID + '&r=' + raceNumber + '&q=' + 6,
                 dataType: 'json',
                 success: function (data) {
                     let win = [data['win'][0],
@@ -482,13 +532,13 @@ $debug = debug();
     function bettingWindow(raceNumber, isOpen, firstId, secondId, del=0) {
         $.ajax({
             type: 'POST',
-            url: './race.php?e='+ eventNumber +'&r=' + raceNumber + '&q=' + 1,
+            url: './race.php?e='+ EVENT_ID +'&r=' + raceNumber + '&q=' + 1,
             data: {open: isOpen},
             success: function (data) {
                 $('main').prepend(data);
                 $( firstId ).addClass('d-none');
                 $( secondId ).removeClass('d-none');
-                $('#alert').delay( DELAY ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( FADEOUT );
 
                 if (del === 1) {
                     numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
@@ -509,7 +559,6 @@ $debug = debug();
     }
 
     function addRace() {
-        // Get the last race Number
         const raceNumber = getNewRaceNumber();
 
         raceHorses.set(raceNumber, ['']);
@@ -522,7 +571,7 @@ $debug = debug();
         attr('data-target', '#collapse' + raceNumber);
         $('#' + groupId + ' div.group-header:first-of-type a:first-of-type').
         attr('id', 'race_link' + raceNumber).
-        attr('href', '/races/?e=' + eventNumber + '&r' + raceNumber).addClass('disabled');
+        attr('href', '/races/?e=' + EVENT_ID + '&r' + raceNumber).addClass('disabled');
 
         const collapseId = 'collapse' + raceNumber;
         $('#' + groupId + ' div#collapse0').attr('id', collapseId);
@@ -583,11 +632,9 @@ $debug = debug();
             onclick: "closeWindow(" + raceNumber + ")"
         }).addClass('disabled');
 
-        // Re-bind
-        updateNumberOfHorsesInputValue();
+        updateNumberOfHorsesSelectValue();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
-        binBlur();
         displayDeleteButtonOnlyForLastRace(raceNumber);
 
     }
@@ -595,12 +642,12 @@ $debug = debug();
     function editPot() {
         $.ajax({
             type: 'POST',
-            url: './race.php?e='+ eventNumber +'&r=' + 1 + '&q=' + 8,
+            url: './race.php?e='+ EVENT_ID +'&r=' + 1 + '&q=' + 8,
             data: {pot: $('#jackpotEdit').val() },
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( DELAY ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( FADEOUT );
 
                 if (data['edited'] === 1) {
                     $('#pot').val(data['pot']);
@@ -613,10 +660,9 @@ $debug = debug();
     $( document ).ready( function () {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-        updateNumberOfHorsesInputValue();
+        updateNumberOfHorsesSelectValue();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
-        binBlur();
 
         let keys = Array.from(raceHorses.keys());
         const raceNumber = keys[keys.length - 1];
