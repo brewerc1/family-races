@@ -472,8 +472,18 @@ if (key_exists($q, $delete)) {
  *
  *  Save race Result
  *  Update race Result
+ *
+ *  Populate race standings table
+ *
  */
 if (key_exists($q, $result)) {
+
+
+
+
+
+
+
 
     /**
      * @param $pdo
@@ -488,33 +498,43 @@ if (key_exists($q, $result)) {
      * @param $show_purse2
      * @param $show_horse
      * @param $show_purse3
-     *
-     * Write results in DB
-     *
+     * @param string $win_finish
+     * @param string $place_finish
+     * @param string $show_finish
+     * @param int $del
      * @return int
      */
     function saveResult($pdo, $event_id, $race_number, $win_horse, $win_purse,
                         $place_purse, $show_purse, $place_horse, $place_purse2,
-                        $show_purse2, $show_horse, $show_purse3) {
+                        $show_purse2, $show_horse, $show_purse3,
+                        $win_finish='win', $place_finish='place', $show_finish='show', $del=0) {
 
         try {
 
             $query = "UPDATE horse SET finish = :finish, win_purse = :win_purse, place_purse = :place_purse, show_purse = :show_purse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
             $stmt = $pdo->prepare($query);
 
-            $stmt->execute(['finish' => 'win', 'win_purse' => $win_purse, 'place_purse' => $place_purse, 'show_purse' => $show_purse,
+            $stmt->execute(['finish' => $win_finish, 'win_purse' => $win_purse, 'place_purse' => $place_purse, 'show_purse' => $show_purse,
                 'race_event_id' => $event_id, 'race_race_number' => $race_number,
                 'horse_number' => $win_horse]);
 
-            $stmt->execute(['finish' => 'place', 'win_purse' => NULL, 'place_purse' => $place_purse2, 'show_purse' => $show_purse2,
+            $stmt->execute(['finish' => $place_finish, 'win_purse' => NULL, 'place_purse' => $place_purse2, 'show_purse' => $show_purse2,
                 'race_event_id' => $event_id, 'race_race_number' => $race_number,
                 'horse_number' => $place_horse]);
 
-            $stmt->execute(['finish' => 'show', 'win_purse' => NULL, 'place_purse' => NULL, 'show_purse' => $show_purse3,
+            $stmt->execute(['finish' => $show_finish, 'win_purse' => NULL, 'place_purse' => NULL, 'show_purse' => $show_purse3,
                 'race_event_id' => $event_id, 'race_race_number' => $race_number,
                 'horse_number' => $show_horse]);
 
             $success = 1;
+
+            if ($del)
+                depopulateRaceStandings($pdo, $event_id, $race_number);
+
+            else
+                populateRaceStandings($pdo, $event_id, $race_number,
+                [$win_horse, $win_purse, $place_purse, $show_purse],
+                [$place_horse, $place_purse2, $show_purse2], [$show_horse, $show_purse3]);
 
 
         } catch (Exception $e) {
@@ -526,13 +546,113 @@ if (key_exists($q, $result)) {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * @param $pdo
+     * @param $event_id
+     * @param $race_number
+     * @param $win array
+     * @param $place array
+     * @param $show array
+     */
+    function populateRaceStandings($pdo, $event_id, $race_number, $win, $place, $show) {
+
+        $query = "SELECT user_id, horse_number, finish FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+        $picks = $stmt->fetchAll();
+
+
+        $insert_race_standings_sql = "INSERT INTO `race_standings` (race_event_id, race_race_number, user_id, earnings) VALUES (?, ?, ?, ?)";
+        $insert_race_standings = $pdo->prepare($insert_race_standings_sql);
+
+        foreach ($picks as $pick) {
+
+            // win
+            if ($pick['horse_number'] === $win[0]) {
+
+                if ($pick['finish'] === 'win')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[1]]);
+
+                elseif ($pick['finish'] === 'place')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[2]]);
+
+                elseif ($pick['finish'] === 'show')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[3]]);
+            }
+
+            // place
+            elseif ($pick['horse_number'] === $place[0]) {
+
+                if ($pick['finish'] === 'place')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $place[1]]);
+
+                elseif ($pick['finish'] === 'show')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $place[2]]);
+
+            }
+
+
+            // show
+            elseif ($pick['horse_number'] === $show[0]) {
+
+                if ($pick['finish'] === 'place')
+                    $insert_race_standings->execute([3, 1, $pick['user_id'], $show[1]]);
+            }
+
+
+            else {
+                $insert_race_standings->execute([3, 1, $pick['user_id'], 0.00]);
+            }
+
+
+        }
+    }
+
+
+
+
+
+
+
+    /**
+     * @param $pdo
+     * @param $event_id
+     * @param $race_number
+     */
+    function depopulateRaceStandings($pdo, $event_id, $race_number) {
+
+        $query = "DELETE FROM race_standings WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+
+    }
+
+
+
+
+
+
+
+
+
+
     /**
      * @param $post_win
      * @param $post_place
      * @param $post_show
      * @return bool
-     *
-     *  Check if all $_POST variables are not empty or null
      */
     function notEmptyResult($post_win, $post_place, $post_show) {
         return (
@@ -545,23 +665,38 @@ if (key_exists($q, $result)) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (isset($_POST["old_win"])) {
 
         if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
 
             try {
 
-                if (!saveResult($pdo, $event_id, $race_number, $_POST["win"][0], NULL,
-                    NULL, NULL, $_POST["place"][0], NULL,
-                    NULL, $_POST["show"][0], NULL))
+                if (!saveResult($pdo, $event_id, $race_number, $_POST["old_win"][0], NULL,
+                    NULL, NULL, $_POST["old_place"][0], NULL,
+                    NULL, $_POST["old_show"][0], NULL, NULL, NULL,
+                    NULL, 1))
                     echo json_encode(array('saved' => 0,
                         'alert' => alert("Something went wrong. Please, try again. Old result are kept", "warning")));
                 else {
+
                     if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
                         $_POST["win"][2], $_POST["win"][3], $_POST["place"][0], $_POST["place"][1],
                         $_POST["place"][2], $_POST["show"][0], $_POST["show"][1])) {
                         echo json_encode(array('saved' => 1,
                             'alert' => alert("Results for Race $race_number are updated")));
+
                     } else echo json_encode(array('saved' => 0,
                         'alert' => alert("Something went wrong. Please, try again.", "warning")));
                 }

@@ -70,7 +70,7 @@ $debug = debug();
     const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
     const eventNumber = <?php echo $event_id; ?>;
-    const DELAY = 30000;
+    const DELAY = 5000;
 
     let raceHorses = new Map();
     let racesResultsTrack = new Map();
@@ -94,29 +94,59 @@ $debug = debug();
 
 
     function binBlur() {
-        $('.new').bind('blur', function () {
-            let horses = [];
-            const raceNumber = this.id.charAt(2);
-            const h = this.value;
+        // $('.new').bind('blur', function () {
+        //     let horses = [];
+        //     const raceNumber = this.id.charAt(2);
+        //     const h = this.value;
+        //
+        //     $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
+        //         horses.push(this.value);
+        //     });
+        //     horses.splice(horses.indexOf(h), 1);
+        //     let good = true;
+        //     horses.map(horse => {
+        //         if (horse === h) {
+        //             $('#' + this.id).addClass('border border-danger');
+        //             $('#update' + raceNumber).addClass('disabled');
+        //             good = false;
+        //         }
+        //     });
+        //
+        //     if (good) {
+        //         $('#' + this.id).removeClass('border border-danger');
+        //         $('#update' + raceNumber).removeClass('disabled');
+        //     }
+        // });
 
-            $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
-                horses.push(this.value);
-            });
-            horses.splice(horses.indexOf(h), 1);
+        $('.new').each( function () {
+            console.log(this.id)
             let good = true;
-            horses.map(horse => {
-                if (horse === h) {
-                    $('#' + this.id).addClass('border border-danger');
-                    $('#update' + raceNumber).addClass('disabled');
-                    good = false;
+            let raceNumber = this.id.charAt(2);
+            $('#' + this.id).bind('blur', function () {
+                let horses = [];
+                const h = this.value;
+
+                $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
+                    horses.push(this.value);
+                });
+
+                horses.splice(horses.indexOf(h), 1);
+                horses.map(horse => {
+                    if (horse === h) {
+                        $('#' + this.id).addClass('border border-danger');
+                        $('#update' + raceNumber).addClass('disabled');
+                        good = false;
+                    }
+                });
+
+                if (good) {
+                    $('#' + this.id).removeClass('border border-danger');
+                    $('#update' + raceNumber).removeClass('disabled');
                 }
             });
 
-            if (good) {
-                $('#' + this.id).removeClass('border border-danger');
-                $('#update' + raceNumber).removeClass('disabled');
-            }
-        });
+
+        } );
     }
 
 
@@ -318,10 +348,6 @@ $debug = debug();
         });
     }
 
-    function sameHorse() {
-
-    }
-
     function populateHorses(raceNumber) {
         enterResultFormHTML();
 
@@ -339,17 +365,20 @@ $debug = debug();
             $('#win1').val(racesResultsTrack.get((raceNumber + 'w'))[1]);
             $('#place1').val(racesResultsTrack.get((raceNumber + 'w'))[2]);
             $('#show1').val(racesResultsTrack.get((raceNumber + 'w'))[3]);
+            scoreBoardSelectMenu('win-result', racesResultsTrack.get((raceNumber + 'w'))[0]);
         }
 
         if (racesResultsTrack.has((raceNumber + 'p'))) {
             $('#place-result').val(racesResultsTrack.get((raceNumber + 'p'))[0]);
             $('#place2').val(racesResultsTrack.get((raceNumber + 'p'))[1]);
             $('#show2').val(racesResultsTrack.get((raceNumber + 'p'))[2]);
+            scoreBoardSelectMenu('place-result', racesResultsTrack.get((raceNumber + 'p'))[0]);
         }
 
         if (racesResultsTrack.has((raceNumber + 's'))) {
             $('#show-result').val(racesResultsTrack.get((raceNumber + 's'))[0]);
             $('#show3').val(racesResultsTrack.get((raceNumber + 's'))[1]);
+            scoreBoardSelectMenu('show-result', racesResultsTrack.get((raceNumber + 's'))[0]);
         }
 
         horsesList = [];
@@ -623,7 +652,7 @@ $debug = debug();
             "    <!-- Row B -->\n" +
             "    <tr id='first'>\n" +
             "        <td>\n" +
-            "            <select id='win-result' class='race-result w-100' required>\n" +
+            "            <select id='win-result' class='race-result w-100' required onchange='scoreBoardSelectMenu(`win-result`)'>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td class='position-relative'>\n" +
@@ -639,7 +668,7 @@ $debug = debug();
             "    <!-- Row C -->\n" +
             "    <tr id='second'>\n" +
             "        <td>\n" +
-            "            <select  id='place-result' class=' race-result' required>\n" +
+            "            <select  id='place-result' class=' race-result' required onchange='scoreBoardSelectMenu(`place-result`)'>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
@@ -653,7 +682,7 @@ $debug = debug();
             "    <!-- Row D -->\n" +
             "    <tr id='third'>\n" +
             "        <td>\n" +
-            "            <select  id='show-result' class=' race-result' required>\n" +
+            "            <select  id='show-result' class=' race-result' required onchange='scoreBoardSelectMenu(`show-result`)'>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
@@ -666,8 +695,45 @@ $debug = debug();
     }
 
 
+    let previousWinHorse;
+    let previousPlaceHorse;
+    let previousShowHorse;
 
+    function scoreBoardSelectMenu(id, h=null) {
+        $('#' + id + ' option[value=0]').attr("disabled", "disabled");
 
+        const horse = (h === null) ? $('#' + id).val() : h;
+
+        if (id === 'win-result') {
+            $('#place-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#show-result option[value=' + horse + ']').attr("disabled", "disabled");
+            if (h === null) {
+                $('#place-result option[value=' + previousWinHorse + ']').removeAttr("disabled");
+                $('#show-result option[value=' + previousWinHorse + ']').removeAttr("disabled");
+            }
+            previousWinHorse = horse;
+        }
+
+        else if (id === 'place-result') {
+            $('#win-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#show-result option[value=' + horse + ']').attr("disabled", "disabled");
+            if (h === null) {
+                $('#win-result option[value=' + previousPlaceHorse + ']').removeAttr("disabled");
+                $('#show-result option[value=' + previousPlaceHorse + ']').removeAttr("disabled");
+            }
+            previousPlaceHorse = horse;
+        }
+
+        else if (id === 'show-result') {
+            $('#win-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#place-result option[value=' + horse + ']').attr("disabled", "disabled");
+            if (h === null) {
+                $('#win-result option[value=' + previousShowHorse + ']').removeAttr("disabled");
+                $('#place-result option[value=' + previousShowHorse + ']').removeAttr("disabled");
+            }
+            previousShowHorse = horse;
+        }
+    }
 </script>
 <main role="main" id="admin_manage_event_page">
     <h1 class="mb-5 sticky-top"><?php echo $event_name ?></h1>
