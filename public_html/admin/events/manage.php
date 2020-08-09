@@ -118,35 +118,35 @@ $debug = debug();
         //     }
         // });
 
-        $('.new').each( function () {
-            console.log(this.id)
-            let good = true;
-            let raceNumber = this.id.charAt(2);
-            $('#' + this.id).bind('blur', function () {
-                let horses = [];
-                const h = this.value;
-
-                $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
-                    horses.push(this.value);
-                });
-
-                horses.splice(horses.indexOf(h), 1);
-                horses.map(horse => {
-                    if (horse === h) {
-                        $('#' + this.id).addClass('border border-danger');
-                        $('#update' + raceNumber).addClass('disabled');
-                        good = false;
-                    }
-                });
-
-                if (good) {
-                    $('#' + this.id).removeClass('border border-danger');
-                    $('#update' + raceNumber).removeClass('disabled');
-                }
-            });
-
-
-        } );
+        // $('.new').each( function () {
+        //     console.log(this.id)
+        //     let good = true;
+        //     let raceNumber = this.id.charAt(2);
+        //     $('#' + this.id).bind('blur', function () {
+        //         let horses = [];
+        //         const h = this.value;
+        //
+        //         $('#addInput' + raceNumber + ' div.group-horse input').each(function () {
+        //             horses.push(this.value);
+        //         });
+        //
+        //         horses.splice(horses.indexOf(h), 1);
+        //         horses.map(horse => {
+        //             if (horse === h) {
+        //                 $('#' + this.id).addClass('border border-danger');
+        //                 $('#update' + raceNumber).addClass('disabled');
+        //                 good = false;
+        //             }
+        //         });
+        //
+        //         if (good) {
+        //             $('#' + this.id).removeClass('border border-danger');
+        //             $('#update' + raceNumber).removeClass('disabled');
+        //         }
+        //     });
+        //
+        //
+        // } );
     }
 
 
@@ -445,6 +445,8 @@ $debug = debug();
                 }
             }
         });
+
+        console.log(data)
     }
 
     function resultWereEnteredForRace(raceNumber) {

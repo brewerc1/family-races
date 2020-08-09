@@ -479,12 +479,6 @@ if (key_exists($q, $delete)) {
 if (key_exists($q, $result)) {
 
 
-
-
-
-
-
-
     /**
      * @param $pdo
      * @param $event_id
@@ -501,13 +495,13 @@ if (key_exists($q, $result)) {
      * @param string $win_finish
      * @param string $place_finish
      * @param string $show_finish
-     * @param int $del
+     * @param bool $del
      * @return int
      */
     function saveResult($pdo, $event_id, $race_number, $win_horse, $win_purse,
                         $place_purse, $show_purse, $place_horse, $place_purse2,
                         $show_purse2, $show_horse, $show_purse3,
-                        $win_finish='win', $place_finish='place', $show_finish='show', $del=0) {
+                        $win_finish='win', $place_finish='place', $show_finish='show', $del=false) {
 
         try {
 
@@ -530,11 +524,10 @@ if (key_exists($q, $result)) {
 
             if ($del)
                 depopulateRaceStandings($pdo, $event_id, $race_number);
-
             else
                 populateRaceStandings($pdo, $event_id, $race_number,
-                [$win_horse, $win_purse, $place_purse, $show_purse],
-                [$place_horse, $place_purse2, $show_purse2], [$show_horse, $show_purse3]);
+                array($win_horse, $win_purse, $place_purse, $show_purse),
+                array($place_horse, $place_purse2, $show_purse2), array($show_horse, $show_purse3));
 
 
         } catch (Exception $e) {
@@ -583,23 +576,23 @@ if (key_exists($q, $result)) {
             if ($pick['horse_number'] === $win[0]) {
 
                 if ($pick['finish'] === 'win')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[1]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[1]]);
 
                 elseif ($pick['finish'] === 'place')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[2]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[2]]);
 
                 elseif ($pick['finish'] === 'show')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $win[3]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[3]]);
             }
 
             // place
             elseif ($pick['horse_number'] === $place[0]) {
 
                 if ($pick['finish'] === 'place')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $place[1]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $place[1]]);
 
                 elseif ($pick['finish'] === 'show')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $place[2]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $place[2]]);
 
             }
 
@@ -608,12 +601,12 @@ if (key_exists($q, $result)) {
             elseif ($pick['horse_number'] === $show[0]) {
 
                 if ($pick['finish'] === 'place')
-                    $insert_race_standings->execute([3, 1, $pick['user_id'], $show[1]]);
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $show[1]]);
             }
 
 
             else {
-                $insert_race_standings->execute([3, 1, $pick['user_id'], 0.00]);
+                $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
             }
 
 
@@ -686,7 +679,7 @@ if (key_exists($q, $result)) {
                 if (!saveResult($pdo, $event_id, $race_number, $_POST["old_win"][0], NULL,
                     NULL, NULL, $_POST["old_place"][0], NULL,
                     NULL, $_POST["old_show"][0], NULL, NULL, NULL,
-                    NULL, 1))
+                    NULL, true))
                     echo json_encode(array('saved' => 0,
                         'alert' => alert("Something went wrong. Please, try again. Old result are kept", "warning")));
                 else {
