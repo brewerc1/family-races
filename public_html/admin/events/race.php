@@ -600,7 +600,7 @@ if (key_exists($q, $result)) {
             // show
             elseif ($pick['horse_number'] === $show[0]) {
 
-                if ($pick['finish'] === 'place')
+                if ($pick['finish'] === 'show')
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $show[1]]);
             }
 
