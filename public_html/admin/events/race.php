@@ -522,12 +522,14 @@ if (key_exists($q, $result)) {
 
             $success = 1;
 
+
             if ($del)
                 depopulateRaceStandings($pdo, $event_id, $race_number);
             else
                 populateRaceStandings($pdo, $event_id, $race_number,
                 array($win_horse, $win_purse, $place_purse, $show_purse),
                 array($place_horse, $place_purse2, $show_purse2), array($show_horse, $show_purse3));
+
 
 
         } catch (Exception $e) {
@@ -551,13 +553,14 @@ if (key_exists($q, $result)) {
 
 
 
+
     /**
      * @param $pdo
      * @param $event_id
      * @param $race_number
-     * @param $win array
-     * @param $place array
-     * @param $show array
+     * @param $win array Contains the winning horse number and dollar amounts associated to it.
+     * @param $place array Contains the placing horse number and dollar amounts associated to it.
+     * @param $show array Contains the showing horse number and dollar amount associated to it.
      */
     function populateRaceStandings($pdo, $event_id, $race_number, $win, $place, $show) {
 
@@ -572,7 +575,7 @@ if (key_exists($q, $result)) {
 
         foreach ($picks as $pick) {
 
-            // win
+
             if ($pick['horse_number'] === $win[0]) {
 
                 if ($pick['finish'] === 'win')
@@ -585,7 +588,7 @@ if (key_exists($q, $result)) {
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[3]]);
             }
 
-            // place
+
             elseif ($pick['horse_number'] === $place[0]) {
 
                 if ($pick['finish'] === 'place')
@@ -597,7 +600,7 @@ if (key_exists($q, $result)) {
             }
 
 
-            // show
+
             elseif ($pick['horse_number'] === $show[0]) {
 
                 if ($pick['finish'] === 'show')
@@ -612,6 +615,7 @@ if (key_exists($q, $result)) {
 
         }
     }
+
 
 
 
@@ -661,27 +665,21 @@ if (key_exists($q, $result)) {
 
 
 
+    try {
 
 
+        if (isset($_POST["old_win"])) {
 
-
-
-
-
-
-
-    if (isset($_POST["old_win"])) {
-
-        if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
-
-            try {
+            if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
 
                 if (!saveResult($pdo, $event_id, $race_number, $_POST["old_win"][0], NULL,
                     NULL, NULL, $_POST["old_place"][0], NULL,
                     NULL, $_POST["old_show"][0], NULL, NULL, NULL,
                     NULL, true))
                     echo json_encode(array('saved' => 0,
-                        'alert' => alert("Something went wrong. Please, try again. Old result are kept", "warning")));
+                        'alert' => alert("Something went wrong. Please, try again. Old result are kept",
+                            "warning")));
+
                 else {
 
                     if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
@@ -692,20 +690,14 @@ if (key_exists($q, $result)) {
 
                     } else echo json_encode(array('saved' => 0,
                         'alert' => alert("Something went wrong. Please, try again.", "warning")));
+
                 }
 
-            } catch (Exception $e) {
-                echo json_encode(array('saved' => 0,
-                    'alert' => alert("Server ERROR", "warning")));
-            }
+            } else echo json_encode(array('saved' => 0,
+                'alert' => alert("Results cannot be empty. Old results are kept.", "warning")));
+        } else {
 
-        } else echo json_encode(array('saved' => 0,
-            'alert' => alert("Results cannot be empty. Old results are kept.", "warning")));
-    } else {
-
-        if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
-
-            try {
+            if (notEmptyResult($_POST['win'], $_POST['place'], $_POST['show'])) {
 
                 if (saveResult($pdo, $event_id, $race_number, $_POST["win"][0], $_POST["win"][1],
                     $_POST["win"][2], $_POST["win"][3], $_POST["place"][0], $_POST["place"][1],
@@ -716,14 +708,18 @@ if (key_exists($q, $result)) {
                 else echo json_encode(array('saved' => 0,
                     'alert' => alert("Something went wrong. Please, try again.", "warning")));
 
-            } catch (Exception $e) {
-                echo json_encode(array('saved' => 0,
-                    'alert' => alert("Server ERROR", "warning")));
-            }
 
-        } else echo json_encode(array('saved' => 0,
-            'alert' => alert("Results cannot be empty.", "warning")));
+            } else echo json_encode(array('saved' => 0, 'alert' => alert("Results cannot be empty",
+                "warning")));
+        }
+
+
+    } catch (Exception $e) {
+
+        echo json_encode(array('saved' => 0, 'alert' => alert("Server ERROR",
+            "warning")));
     }
+
 
 
 }
