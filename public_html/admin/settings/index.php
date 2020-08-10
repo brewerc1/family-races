@@ -218,165 +218,204 @@ $memorial_race_selected_tag = '';
     <section id="site_settings">
             
         <form class="mt-5" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-            <!-- Sound Effects enable -->
-            <div class="form-group custom-control custom-switch custom-switch-lg">
-                <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
-                <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
-            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#general">General</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#memorial">Memorial</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#terms">Terms</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#email">Email</a>
+                </li>
+            </ul>
 
-            <!-- Voiceovers enable -->
-            <div class="form-group custom-control custom-switch custom-switch-lg">
-                <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
-                <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
-            </div>
+            <div class="tab-content">
+                <div class="tab-pane show active" id="general">
+                    <!-- Site name text field -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="memorial_race_name" class="col-form-label"> Site Name </label>          
+                            <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo $_SESSION['site_name'] ?>">
+                        </div>    
+                    </div>
 
-            <!-- Site name text field -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="memorial_race_name" class="col-form-label"> Site Name </label>          
-                    <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo $_SESSION['site_name'] ?>">
-                </div>    
-            </div> 
+                    <!-- Welcome Video URL text -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="welcome_video_url" class="col-form-label"> Welcome Video URL </label>    
+                            <input type="text" class="form-control" id="welcome_video_url" name="welcome_video_url"  value="<?php echo $_SESSION['site_welcome_video_url'] ?>">
+                        </div>
+                    </div>
 
-            <!-- Terms and Conditions enable -->
-            <div class="form-group custom-control custom-switch custom-switch-lg">
-                <input class="custom-control-input" type="checkbox" id="terms_enable" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
-                <label class="custom-control-label" for="terms_enable"> Enable Terms & Conditions </label>
-            </div>
-
-            <!-- terms text area - disabled if terms_enable is 0 -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="terms_text" class="sr-only"> Terms & Conditions </label>
-                    <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="4" ><?php if(!empty($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?></textarea>
-                </div>
-            </div>
-
-            <!-- default horse count select -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="default_horse_count" class="col-form-label"> Default Horse Count </label>
-                    <select id="default_horse_count" name="default_horse_count"class="form-control">
-                        <?php 
-                        for ($i=1; $i <= 21; $i++) { 
-                            if($_SESSION['site_default_horse_count'] == $i){
-                                $default_horse_selected_tag = "selected";
-                            } else {
-                                $default_horse_selected_tag = "";
-                            }
+                    <!-- default horse count select -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="default_horse_count" class="col-form-label"> Default Horse Count </label>
+                            <select id="default_horse_count" name="default_horse_count"class="form-control">
+                                <?php 
+                                for ($i=1; $i <= 21; $i++) { 
+                                    if($_SESSION['site_default_horse_count'] == $i){
+                                        $default_horse_selected_tag = "selected";
+                                    } else {
+                                        $default_horse_selected_tag = "";
+                                    }
 echo <<<ENDOPTION
-                        <option value="$i" $default_horse_selected_tag>$i</option>
+                                <option value="$i" $default_horse_selected_tag>$i</option>
 ENDOPTION;
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Voiceovers enable -->
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
+                        <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
+                    </div>
 
-            <!-- Memorial race enable -->
-            <div class="form-group custom-control custom-switch custom-switch-lg">
-                <input class="custom-control-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
-                <label class="custom-control-label" for="memorial_race_enable"> Enable Memorial Race </label>
-            </div>
+                    <!-- Sound Effects enable -->
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
+                        <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
+                    </div>
 
-            <!-- Memorial race number -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="memorial_race_number" class="col-form-label"> Race Number </label>
-                    <select id="memorial_race_number" name="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
-                        <?php 
-                        for ($i=1; $i <= 16; $i++) { 
-                            if($_SESSION['site_memorial_race_number'] == $i){
-                                $memorial_race_selected_tag = "selected";
-                            } else {
-                                $memorial_race_selected_tag = "";
-                            }
+                    
+                </div> <!-- END General Tab -->
+
+                <div class="tab-pane" id="memorial">
+                    <!-- Memorial race enable -->
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
+                        <label class="custom-control-label" for="memorial_race_enable"> Enable Memorial Race </label>
+                    </div>
+
+                    <!-- Memorial race number -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="memorial_race_number" class="col-form-label"> Memorial Race Number </label>
+                            <select id="memorial_race_number" name="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
+                                <?php 
+                                for ($i=1; $i <= 16; $i++) { 
+                                    if($_SESSION['site_memorial_race_number'] == $i){
+                                        $memorial_race_selected_tag = "selected";
+                                    } else {
+                                        $memorial_race_selected_tag = "";
+                                    }
 echo <<<ENDOPTION
-                        <option value="$i" $memorial_race_selected_tag>$i</option>
+                                <option value="$i" $memorial_race_selected_tag>$i</option>
 ENDOPTION;
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <!-- Memorial race name text field -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="memorial_race_name" class="col-form-label"> Memorial Race Name </label>          
-                    <input type="text" class="form-control" id="memorial_race_name" name="memorial_race_name" value="<?php echo $_SESSION['site_memorial_race_name'] ?>" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
-                </div>    
-            </div>  
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Memorial race name text field -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="memorial_race_name" class="col-form-label"> Memorial Race Name </label>          
+                            <input type="text" class="form-control" id="memorial_race_name" name="memorial_race_name" value="<?php echo $_SESSION['site_memorial_race_name'] ?>" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
+                        </div>    
+                    </div>
 
-            <!-- Welcome Video URL text -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="welcome_video_url" class="col-form-label"> Welcome Video URL </label>    
-                    <input type="text" class="form-control" id="welcome_video_url" name="welcome_video_url"  value="<?php echo $_SESSION['site_welcome_video_url'] ?>">
-                </div>
-            </div>
-  
-            <!-- Invite Email Subject -->
-            <div class="form-group row">
-                <div class="col"> 
-                    <label for="invite_email_subject" class="col-form-label"> Invite Email Subject </label>    
-                    <input type="text" class="form-control" id="invite_email_subject" name="invite_email_subject" value="<?php echo $_SESSION['site_invite_email_subject'] ?>">   
-                </div>
-            </div>
+                </div><!-- END Memorial Tab -->
 
-            <!-- Invite Email Body -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="invite_email_body" class="col-form-label"> Email Body </label>
-                    <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(!empty($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
-                </div>
-            </div>
+                <div class="tab-pane" id="terms">
+                    
+                    <!-- Terms and Conditions enable -->
+                    <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <input class="custom-control-input" type="checkbox" id="terms_enable" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
+                        <label class="custom-control-label" for="terms_enable"> Enable Terms & Conditions </label>
+                    </div>
 
-            <!-- Email Server -->
-            <div class="form-group row">
-                <div class="col"> 
-                    <label for="email_server" class="col-form-label"> Email Server </label>
-                    <input type="text" class="form-control" id="email_server" name="email_server" value="<?php echo $_SESSION["site_email_server"] ?>">
-                </div>
-            </div>
+                    <!-- terms text area - disabled if terms_enable is 0 -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="terms_text" class="sr-only"> Terms & Conditions </label>
+                            <textarea class="form-control" id="terms_text" name="terms_text" <?php if($_SESSION['site_terms_enable'] == 0){echo 'disabled';} ?> rows="8" ><?php if(!empty($_SESSION['site_terms_text'])) echo $_SESSION['site_terms_text']; ?></textarea>
+                        </div>
+                    </div>
 
-            <!-- Email Server Port -->
-            <div class="form-group row">
-                <div class="col"> 
-                    <label for="email_server_port" class="col-form-label"> Email Server Port </label>
-                    <input type="text" class="form-control" id="email_server_port" name="email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
-                </div>
-            </div>
+                </div><!-- END Terms Tab -->
 
-            <!-- Email Server Account -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="email_server_account" class="col-form-label"> Email Server Account </label>
-                    <input type="text" class="form-control" id="email_server_account" name="email_server_account" value="<?php echo $_SESSION["site_email_server_account"] ?>">
-                </div>
-            </div>
+                <div class="tab-pane" id="email">
+                    <div class="form-row">
+                        <!-- Invite Email Subject -->
+                        <div class="form-group">
+                            <div class="col"> 
+                                <label for="invite_email_subject" class="col-form-label"> Invite Email Subject </label>    
+                                <input type="text" class="form-control" id="invite_email_subject" name="invite_email_subject" value="<?php echo $_SESSION['site_invite_email_subject'] ?>">   
+                            </div>
+                        </div>
 
-            <!-- Email Server Password -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="email_server_password" class="col-form-label"> Email Server Password </label>
-                    <input type="text" class="form-control" id="email_server_password" name="email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
-                </div>
-            </div>
+                        <!-- Invite Email Body -->
+                        <div class="form-group">
+                            <div class="col">
+                                <label for="invite_email_body" class="col-form-label"> Invite Email Body </label>
+                                <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(!empty($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <!-- Email From Name -->
+                        <div class="form-group">
+                            <div class="col">
+                                <label for="email_from_name" class="col-form-label"> Invite Email From Name </label>
+                                <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
+                            </div>
+                        </div>
 
-            <!-- Email From Name -->
-            <div class="form-group row">
-                <div class="col">
-                    <label for="email_from_name" class="col-form-label"> Email From Name </label>
-                    <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
-                </div>
-            </div>
+                        <!-- Email From Address -->
+                        <div class="form-group">
+                            <div class="col"> 
+                                <label for="email_from_address" class="col-form-label"> Invite Email From Address </label>
+                                <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Email From Address -->
-            <div class="form-group row">
-                <div class="col"> 
-                    <label for="email_from_address" class="col-form-label"> Email From Address </label>
-                    <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
-                </div>
+                    <div class="form-row">
+                        <!-- Email Server -->
+                        <div class="form-group">
+                            <div class="col"> 
+                                <label for="email_server" class="col-form-label"> Email Server </label>
+                                <input type="text" class="form-control" id="email_server" name="email_server" value="<?php echo $_SESSION["site_email_server"] ?>">
+                            </div>
+                        </div>
+
+                        <!-- Email Server Port -->
+                        <div class="form-group">
+                            <div class="col"> 
+                                <label for="email_server_port" class="col-form-label"> Email Server Port </label>
+                                <input type="text" class="form-control" id="email_server_port" name="email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Email Server Account -->
+                        <div class="form-group">
+                            <div class="col">
+                                <label for="email_server_account" class="col-form-label"> Email Server Account </label>
+                                <input type="text" class="form-control" id="email_server_account" name="email_server_account" value="<?php echo $_SESSION["site_email_server_account"] ?>">
+                            </div>
+                        </div>
+
+                        <!-- Email Server Password -->
+                        <div class="form-group">
+                            <div class="col">
+                                <label for="email_server_password" class="col-form-label"> Email Server Password </label>
+                                <input type="text" class="form-control" id="email_server_password" name="email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- END Email Tab -->
             </div>
 
             <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
