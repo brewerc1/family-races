@@ -75,19 +75,25 @@ if (isset($_POST["change_pwd"])) {
 		<h1 class="mb-5 sticky-top">Change Password</h1>
     	<section>
 			<form class="mt-5" method="POST" action="<?php $_SERVER['PHP_SELF'];?>">
-				<small id="passwordHelpBlock" class="form-text text-muted mb-4">
-                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-                </small>
-	            <div class="form-group col-md-6">
-	                <label for="pwd" cclass="col-form-label">New Password</label>
-	                <input type="password" class="form-control" id="pwd" name="pwd">
+				<p class="form-text text-center text-muted mb-4">
+					<small>Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.</small>
+				</p>
+				<div class="form-row">
+		            <div class="form-group col-md-6">
+		                <label for="pwd" class="col-form-label">New Password</label>
+		                <input type="password" class="form-control" id="pwd" name="pwd">
+					</div>
+		            <div class="form-group col-md-6">
+		                <label for="confirm_pwd" class="col-form-label">Confirm Password</label>
+		                <input type="password" class="form-control" id="confirm_pwd" name="confirm_pwd">
+					</div>
 				</div>
-	            <div class="form-group col-md-6">
-	                <label for="confirm_pwd" class="col-form-label">Confirm Password</label>
-	                <input type="password" class="form-control" id="confirm_pwd" name="confirm_pwd">
-	            </div>
-				<button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>
-	            <a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
+				<div class="justify-content-center form-row">
+					<div class="col-md-4">
+						<button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>
+						<a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
+					</div>
+				</div>
 			</form>
 		</section>
     </main>
