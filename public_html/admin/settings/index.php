@@ -293,7 +293,7 @@ ENDOPTION;
                         <input class="custom-control-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
                         <label class="custom-control-label" for="memorial_race_enable"> Enable Memorial Race </label>
                     </div>
-
+                                    
                     <!-- Memorial race number -->
                     <div class="form-group row">
                         <div class="col">
@@ -345,73 +345,57 @@ ENDOPTION;
                 <div class="tab-pane" id="email">
                     <div class="form-row">
                         <!-- Invite Email Subject -->
-                        <div class="form-group">
-                            <div class="col"> 
-                                <label for="invite_email_subject" class="col-form-label"> Invite Email Subject </label>    
-                                <input type="text" class="form-control" id="invite_email_subject" name="invite_email_subject" value="<?php echo $_SESSION['site_invite_email_subject'] ?>">   
-                            </div>
+                        <div class="form-group col-md-6">                         
+                            <label for="invite_email_subject" class="col-form-label"> Invite Email Subject </label>    
+                            <input type="text" class="form-control" id="invite_email_subject" name="invite_email_subject" value="<?php echo $_SESSION['site_invite_email_subject'] ?>">                         
                         </div>
 
                         <!-- Invite Email Body -->
-                        <div class="form-group">
-                            <div class="col">
-                                <label for="invite_email_body" class="col-form-label"> Invite Email Body </label>
-                                <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(!empty($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
-                            </div>
+                        <div class="form-group col-md-6">
+                            <label for="invite_email_body" class="col-form-label"> Invite Email Body </label>
+                            <textarea class="form-control" id="invite_email_body" name="invite_email_body" rows="4"><?php if(!empty($_SESSION['site_invite_email_body'])) echo $_SESSION['site_invite_email_body']; ?></textarea>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <!-- Email From Name -->
-                        <div class="form-group">
-                            <div class="col">
-                                <label for="email_from_name" class="col-form-label"> Invite Email From Name </label>
-                                <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
-                            </div>
+                        <div class="form-group col-md-6">
+                            <label for="email_from_name" class="col-form-label"> Invite Email From Name </label>
+                            <input type="text" class="form-control" id="email_from_name" name="email_from_name" value="<?php echo $_SESSION["site_email_from_name"] ?>">
                         </div>
 
                         <!-- Email From Address -->
-                        <div class="form-group">
-                            <div class="col"> 
-                                <label for="email_from_address" class="col-form-label"> Invite Email From Address </label>
-                                <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
-                            </div>
+                        <div class="form-group col-md-6">
+                            <label for="email_from_address" class="col-form-label"> Invite Email From Address </label>
+                            <input type="text" class="form-control" id="email_from_address" name="email_from_address" value="<?php echo $_SESSION["site_email_from_address"] ?>">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <!-- Email Server -->
-                        <div class="form-group">
-                            <div class="col"> 
-                                <label for="email_server" class="col-form-label"> Email Server </label>
-                                <input type="text" class="form-control" id="email_server" name="email_server" value="<?php echo $_SESSION["site_email_server"] ?>">
-                            </div>
+                        <div class="form-group col-md-6"> 
+                            <label for="email_server" class="col-form-label"> Email Server </label>
+                            <input type="text" class="form-control" id="email_server" name="email_server" value="<?php echo $_SESSION["site_email_server"] ?>">
                         </div>
 
                         <!-- Email Server Port -->
-                        <div class="form-group">
-                            <div class="col"> 
-                                <label for="email_server_port" class="col-form-label"> Email Server Port </label>
-                                <input type="text" class="form-control" id="email_server_port" name="email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
-                            </div>
+                        <div class="form-group col-md-6">
+                            <label for="email_server_port" class="col-form-label"> Email Server Port </label>
+                            <input type="text" class="form-control" id="email_server_port" name="email_server_port" value="<?php echo $_SESSION["site_email_server_port"] ?>">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <!-- Email Server Account -->
-                        <div class="form-group">
-                            <div class="col">
+                        <div class="form-group col-md-6">
                                 <label for="email_server_account" class="col-form-label"> Email Server Account </label>
                                 <input type="text" class="form-control" id="email_server_account" name="email_server_account" value="<?php echo $_SESSION["site_email_server_account"] ?>">
-                            </div>
                         </div>
 
                         <!-- Email Server Password -->
-                        <div class="form-group">
-                            <div class="col">
+                        <div class="form-group col-md-6">
                                 <label for="email_server_password" class="col-form-label"> Email Server Password </label>
                                 <input type="text" class="form-control" id="email_server_password" name="email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
-                            </div>
                         </div>
                     </div>
 
