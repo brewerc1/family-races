@@ -7,9 +7,14 @@ ob_start('template');
 // start a session
 session_start();
 
+if (empty($_SESSION["id"])){
+    header("Location: /login/");
+    exit;
+}
+
 // Set the page title for the template
 $page_title = "Your Profile Photo";
-$update_time_stamp = strtotime($_SESSION['update_time']);
+
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 
@@ -71,9 +76,10 @@ $('.crop_image').click(function(event){
                 },
                 success:function(data)
                 {
-                    $('#uploadimageModal').modal('hide');
+                    $('#skip').text('Next');
+					$('#uploadimageModal').modal('hide');
                     $('#profile_photo').val('');
-                    $('#ajax_alert').html(data);
+					$('#ajax_alert').html(data);
                 }
             }
         );
@@ -83,66 +89,33 @@ $('.crop_image').click(function(event){
 JAVASCRIPT;
 
 if (isset($_POST['skip-btn'])) {
-    header('Location:/login/welcome/');
-    exit;
+	header('Location:/login/welcome/');
+	exit;
 }
-if (isset($_POST['next'])) {
-    header('Location:/login/welcome/');
-    exit;
-}
-if (isset($_POST['submit-btn'])) {
-    //User Photo Upload
-    
-if (!isset($_SESSION["id"])){
-    header("Location: /login/");
-    exit;
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    exit;
-} 
-
-
-$uploadsql = "UPDATE user SET photo = :photo_value WHERE id ={$_SESSION['id']}";
-$updatePhoto = $pdo->prepare($uploadsql);
-$updatePhoto->execute(['photo_value' => $photo_value]);
-if ($updatePhoto)  {
-    $getsessionsql ="SELECT * FROM user where id = {$_SESSION['id']}";
-    $updatesession = $pdo->prepare($getsessionsql);
-    $updatesession->execute();
-    $row= $updatesession->fetch();
-    $_SESSION ['photo'] = $row['photo'];
-    header('Location: /login/welcome/');
-    exit;
-
-}else{
-        header("Location: ".$_SERVER['PHP_SELF']."?m=6&s=warning");
-        exit;
-    }
-    }
     
 ?>
 {header}
 {main_nav}
 <main role="main" id="onboarding_page">
     <h1 class="mb-5 sticky-top">Profile Photo</h1>
-    <p class="text-center">Take a photo to complete your profile. This step is optional. You can add a photo later by editing your profile.</p>
+    <p class="text-center">Take a photo to complete your profile.<br><small class="text-muted">This step is optional. You can add a photo later by editing your profile.</small></p>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
         <section class="form-row text-center">
             <div class="form-group col">
-                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "{$_SESSION['photo']}?$update_time_stamp" ?>" alt="My Photo">
+                <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'];?>" alt="My Photo">
                 <div id="ajax_alert"></div>
             </div>
         </section>
-        <section class="form-row">    
-            <div class="form-group col">
-                <div id="photo_upload" class="form-group col-sm-8 d-flex">
-                    <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
+        <section class="form-row justify-content-center">    
+            <div class="form-group col-4">
+                <div id="photo_upload" class="form-group custom-file">
+					<input type="file" id="profile_photo" class="custom-file-input" name="Add Photo" accept="image/*">
+					<label class="custom-file-label" for="profile_photo">Take a selfie or choose a photo</label>
                 </div>
             </div>
         </section>
         <div class="text-center">
-            <input type="submit" id="skip" class="btn btn-primary" value="SKIP" name="skip-btn">
-            <input type="submit" id="next" class="btn btn-primary d-none" value="NEXT" name="next" > 
+            <a href="/login/welcome/" id="skip" class="btn btn-primary">Skip</a>
         </div>
     </form>
 
@@ -162,19 +135,12 @@ if ($updatePhoto)  {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" id="Save" class="btn btn-primary crop_image" onclick="next()">Save</button>
+            <button type="button" id="Save" class="btn btn-primary crop_image">Save</button>
           </div>
         </div>
       </div>
     </div>
     <!-- END: modal for photo cropping -->
-    <script>
-    function next() {
-        $('#skip').addClass('d-none');
-        $('#next').removeClass('d-none');
-        $('#profile_photo').remove();
-    }
-</script>
 </main> 
 {footer}
 <?php ob_end_flush(); ?>
