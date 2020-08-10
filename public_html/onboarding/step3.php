@@ -107,7 +107,7 @@ if (isset($_POST['skip-btn'])) {
             </div>
         </section>
         <section class="form-row justify-content-center">    
-            <div class="form-group col-4">
+            <div class="form-group col-md-4">
                 <div id="photo_upload" class="form-group custom-file">
 					<input type="file" id="profile_photo" class="custom-file-input" name="Add Photo" accept="image/*">
 					<label class="custom-file-label" for="profile_photo">Take a selfie or choose a photo</label>
