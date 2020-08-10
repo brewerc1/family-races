@@ -59,11 +59,12 @@ if($current_event_query->execute()) {
 
 // Check if the form has been submitted
 if(isset($_POST['create_account_button'])) {
+    $encode_email = urlencode($_POST['email']);
 	// Validate email exist and is valid
     if ((!empty($_POST['email'])) && (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))) {
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     }else{
-        header("Location: {$_SERVER['PHP_SELF']}?m=2&s=warning");
+        header("Location: {$_SERVER['PHP_SELF']}?m=2&s=warning&email=$encode_email&code={$_POST['code']}");
         exit;
     }
 	// Validate invite code
@@ -71,7 +72,7 @@ if(isset($_POST['create_account_button'])) {
         $code = filter_var(trim($_POST['code']), FILTER_SANITIZE_STRING);
         
     } else{
-        header("Location: {$_SERVER['PHP_SELF']}?m=21&s=warning");
+        header("Location: {$_SERVER['PHP_SELF']}?m=21&s=warning&email=$encode_email&code={$_POST['code']}");
         exit;
     }
 	// Validate password
@@ -80,11 +81,11 @@ if(isset($_POST['create_account_button'])) {
 		$password_confirm = filter_var($_POST['password_confirm'], FILTER_SANITIZE_STRING);
 		echo "$email : $code<br>";
         if($password != $password_confirm){
-            header("Location: {$_SERVER['PHP_SELF']}?m=5&s=warning");
+            header("Location: {$_SERVER['PHP_SELF']}?m=5&s=warning&email=$encode_email&code={$_POST['code']}");
             exit; 
         }
     }else{ 
-        header("Location: {$_SERVER['PHP_SELF']}?m=21&s=warning");
+        header("Location: {$_SERVER['PHP_SELF']}?m=21&s=warning&email=$encode_email&code={$_POST['code']}");
         exit;
     }
 
