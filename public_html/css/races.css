@@ -126,6 +126,15 @@ span.navbar-text {
 }
 
 
+/* Alerts */
+.floating-alert {
+    box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
+    max-width: 600px;
+    margin: 92px auto !important;
+}
+
+
+
 /* ============== Main Index Page: #index_page ============== */
 #index_page {
 	background-size: cover;
@@ -600,7 +609,11 @@ table#profile_records {
 
 
 /* ============== Onboarding Pages: #onboarding_page ============== */
-#onboarding_page {
+#onboarding_page .floating-alert{
+	box-shadow: none;
+	margin: 0 auto!important;
+	position: relative;
+	top: -40px;
 }
 
 
