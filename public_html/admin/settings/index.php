@@ -56,6 +56,13 @@ if(isset($_POST['save_button'])){
         $voiceovers_value = 0;
     }
 
+    // Site Name Text
+    if(!empty($_POST['site_name'])){
+        $site_name_value = trim($_POST['site_name']);
+    } else {
+        $site_name_value = $_SESSION['site_name'];
+    }
+
     // Terms and Conditions
     if(!empty($_POST['terms_enable']) && $_POST['terms_enable'] == 'on'){
         $terms_enable_value = 1;
@@ -97,6 +104,7 @@ if(isset($_POST['save_button'])){
     } else {
         $memorial_race_name_value = $_SESSION['site_memorial_race_name'];
     }
+
     // Welcome Video URL Text
     if(!empty($_POST['welcome_video_url'])){
         $welcome_video_url_value = trim($_POST['welcome_video_url']);
@@ -169,7 +177,7 @@ if(isset($_POST['save_button'])){
     memorial_race_number = :memorial_race_number_value, memorial_race_name = :memorial_race_name_value, welcome_video_url = :welcome_video_url_value,
     invite_email_subject = :invite_email_subject_value, invite_email_body = :invite_email_body_value, email_server = :email_server_value,
     email_server_port = :email_server_port_value, email_server_account = :email_server_account_value, email_server_password = :email_server_password_value,
-    email_from_name = :email_from_name_value, email_from_address = :email_from_address_value
+    email_from_name = :email_from_name_value, email_from_address = :email_from_address_value, name = :site_name_value
     WHERE id = 1";
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
@@ -178,41 +186,24 @@ if(isset($_POST['save_button'])){
         'memorial_race_number_value' => $memorial_race_number_value, 'memorial_race_name_value' => $memorial_race_name_value, 'welcome_video_url_value' => $welcome_video_url_value,
         'invite_email_subject_value' => $invite_email_subject_value, 'invite_email_body_value' => $invite_email_body_value, 'email_server_value' => $email_server_value,
         'email_server_port_value' => $email_server_port_value, 'email_server_account_value' => $email_server_account_value, 'email_server_password_value' => $email_server_password_value,
-        'email_from_name_value' => $email_from_name_value, 'email_from_address_value' => $email_from_address_value]);
+        'email_from_name_value' => $email_from_name_value, 'email_from_address_value' => $email_from_address_value, 'site_name_value' => $site_name_value]);
     
     //requery DB to update $_SESSION. Ensures current settings are always displayed
     if ($update_preferences_result){    
-    $update_session_sql = 
-    "SELECT sound_fx, voiceovers, terms_enable, terms_text, default_horse_count, memorial_race_enable, memorial_race_number, memorial_race_name,
-    welcome_video_url, invite_email_subject, invite_email_body, email_server, email_server_port, email_server_account, email_server_password,
-    email_from_name, email_from_address
-    FROM site_settings WHERE id = 1";
-    $update_session_result = $pdo->prepare($update_session_sql);
-    $update_session_result->execute();
-    $row = $update_session_result->fetch();
-    
-    $_SESSION['site_sound_fx'] = $row['sound_fx'];
-    $_SESSION['site_voiceovers'] = $row['voiceovers'];
-    $_SESSION['site_terms_enable'] = $row['terms_enable'];
-    $_SESSION['site_terms_text'] = $row['terms_text'];
-    $_SESSION['site_default_horse_count'] = $row['default_horse_count'];
-    $_SESSION['site_memorial_race_enable'] = $row['memorial_race_enable'];
-    $_SESSION['site_memorial_race_number'] = $row['memorial_race_number'];
-    $_SESSION['site_memorial_race_name'] = $row['memorial_race_name'];
-    $_SESSION['site_welcome_video_url'] = $row['welcome_video_url'];
-    $_SESSION['site_invite_email_subject'] = $row['invite_email_subject'];
-    $_SESSION['site_invite_email_body'] = $row['invite_email_body'];
-    $_SESSION['site_email_server'] = $row['email_server'];
-    $_SESSION['site_email_server_port'] = $row['email_server_port'];
-    $_SESSION['site_email_server_account'] = $row['email_server_account'];
-    $_SESSION['site_email_server_password'] = $row['email_server_password'];
-    $_SESSION['site_email_from_name'] = $row['email_from_name'];
-    $_SESSION['site_email_from_address'] = $row['email_from_address'];
+        $update_session_sql = "SELECT * FROM site_settings";
+        $update_session_result = $pdo->prepare($update_session_sql);
+        $update_session_result->execute();
 
-    // confirm update
-    header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
+        if ($update_session_result->rowCount() > 0){
+            $row = $update_session_result->fetch();
+            foreach ($row as $site_key => $site_value){
+                $_SESSION["site_" . $site_key] = $site_value;
+            }
+        }
+        // confirm update
+        header("Location: ".$_SERVER["PHP_SELF"]."?m=15&s=success");
     }
-}
+} // END POST variable check
 
 // HTML tag declarations
 $default_horse_selected_tag = '';
@@ -232,11 +223,21 @@ $memorial_race_selected_tag = '';
                 <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['site_sound_fx'] == 1){echo 'checked';} ?>>             
                 <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
             </div>
+
             <!-- Voiceovers enable -->
             <div class="form-group custom-control custom-switch custom-switch-lg">
                 <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
                 <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
             </div>
+
+            <!-- Site name text field -->
+            <div class="form-group row">
+                <div class="col">
+                    <label for="memorial_race_name" class="col-form-label"> Site Name </label>          
+                    <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo $_SESSION['site_name'] ?>">
+                </div>    
+            </div> 
+
             <!-- Terms and Conditions enable -->
             <div class="form-group custom-control custom-switch custom-switch-lg">
                 <input class="custom-control-input" type="checkbox" id="terms_enable" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
@@ -255,7 +256,7 @@ $memorial_race_selected_tag = '';
             <div class="form-group row">
                 <div class="col">
                     <label for="default_horse_count" class="col-form-label"> Default Horse Count </label>
-                    <select id="default_horse_count" class="form-control">
+                    <select id="default_horse_count" name="default_horse_count"class="form-control">
                         <?php 
                         for ($i=1; $i <= 21; $i++) { 
                             if($_SESSION['site_default_horse_count'] == $i){
