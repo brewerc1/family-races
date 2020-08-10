@@ -99,9 +99,9 @@ if (isset($_POST['next-btn'])) {
     } else {
         $motto = "";
     }
-    $sqlUpdate = "UPDATE user SET first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto WHERE id = {$_SESSION['id']}";
-    $update = $pdo->prepare($sqlUpdate);
-    $update->execute([
+    $sql_update_user = "UPDATE user SET first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto WHERE id = {$_SESSION['id']}";
+    $update_user = $pdo->prepare($sql_update_user);
+    $update_user->execute([
 		'first_name' => $first_name,
 		'last_name' => $last_name, 
 		'city' => $city, 
@@ -110,11 +110,11 @@ if (isset($_POST['next-btn'])) {
 	);
 	if ($update) {
 		//Update Session Variables
-		$updateSession ="SELECT * FROM user WHERE id = {$_SESSION['id']}";
-		$updateSessionResult = $pdo->prepare($updateSession);
-		$updateSessionResult->execute();
-		$row =$updateSessionResult->fetch();
-		$_SESSION ['first_name'] = $row['first_name'];
+		$sql_update_user_session ="SELECT * FROM user WHERE id = {$_SESSION['id']}";
+		$update_user_session_result = $pdo->prepare($sql_update_user_session);
+		$update_user_session_result->execute();
+		$row = $update_user_session_result->fetch();
+		$_SESSION['first_name'] = $row['first_name'];
 		$_SESSION['last_name'] = $row['last_name'];
 		$_SESSION['city'] = $row['city'];
 		$_SESSION['state'] = $row['state'];
@@ -153,6 +153,7 @@ if (isset($_POST['next-btn'])) {
                     <div class="form-group col-md-6">
                         <label for="state" class="col-form-label">State:</label>
                         <select class="form-control" id="state" name="state">
+                        <option disabled selected>Choose one</option>
                             <?php
                             foreach ($state_array as $key => $value) {
 echo <<<ENDOPTION
