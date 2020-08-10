@@ -13,27 +13,14 @@ $page_title = "Manage an Event";
 
 $javascript = <<< JAVASCRIPT
 JAVASCRIPT;
-// enterResultFormHTML();
 
-if (!isset($_SESSION["id"])) {
+if(empty($_SESSION["id"])) {
     header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
     exit;
-
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
-    // Make sure the rest of code is not gonna be executed
+} elseif($_SESSION["admin"] != 1) {
+    header("Location: /races/");
     exit;
 }
-
-// To be reviewed
-if (!$_SESSION["admin"]) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
-    exit;
-}
-
 
 $event_name = "Event Name";
 $event_date = "Event Date";
@@ -61,7 +48,7 @@ if ($event_id == 0) {
     if ($event->rowCount() > 0) {
         $row = $event->fetch();
         $event_name = $row["name"];
-        $event_date = $row["date"];
+        $event_date = date("F j, Y", strtotime($row["date"]));
         $event_status = $row["status"];
         $event_pot = $row["pot"];
         $disabled_add_race_button = "";
@@ -78,6 +65,7 @@ $debug = debug();
     const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
     const eventNumber = <?php echo $event_id; ?>;
+    const DELAY = 30000;
 
     let raceHorses = new Map();
     let racesResultsTrack = new Map();
@@ -163,7 +151,7 @@ $debug = debug();
                 success: function (data) {
                     $( ".close-btn" ).toggleClass( 'disabled', (isChecked === 1) );
                     $('main').prepend(data);
-                    $('#alert').delay( 3000 ).fadeOut( 400 );
+                    $('#alert').delay( DELAY ).fadeOut( 400 );
                 }
             });
         });
@@ -191,7 +179,7 @@ $debug = debug();
             id: inputId,
         }).removeAttr('readonly').addClass('new');
 
-        $('#' + parentDivId + ' div.input-group-append span').
+        $('#' + parentDivId + ' div.input-group-append button').
         attr({
             id: spanId,
             onclick: "deleteHorse('" + parentDivId + "', '" + spanId + "')"
@@ -213,14 +201,22 @@ $debug = debug();
             type: 'POST',
             url: './race.php?r=' + raceNumber + '&q=' + 3 + '&e=' + eventNumber,
             data: {horse_array: horses, delete_horse: horsesList},
-           dataType: 'json',
+            dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( 400 );
                 if (data['added'] === 1) {
                     horsesList = data['horses'];
                     raceHorses.set(raceNumber, horsesList);
                     dismiss(raceNumber);
+
+                    if ( $( '#wind' + raceNumber ).hasClass( 'disabled' ) ) {
+                        $( '#wind' + raceNumber ).removeClass( 'disabled' );
+                    }
+
+                    if ( $( '#race_link' + raceNumber ).hasClass( 'disabled' ) ) {
+                        $( '#race_link' + raceNumber ).removeClass( 'disabled' );
+                    }
                 }
                 horsesList = [];
             }
@@ -243,8 +239,10 @@ $debug = debug();
         }
 
         $(inputId).each(function (index) {
-            $(inputId + ':nth-child(' + (index + 1) + ') input').val(raceHorses.get(raceNumber)[index]);
-            $(inputId + ':nth-child(' + (index + 1) + ') input').removeClass('new').attr('readonly', true);
+            const horse = raceHorses.get(raceNumber)[index];
+            $(inputId + ':nth-child(' + (index + 1) + ') input').val(horse);
+            if (horse.length > 0)
+                $(inputId + ':nth-child(' + (index + 1) + ') input').removeClass('new').attr('readonly', true);
             $(inputId + ':nth-child(' + (index + 1) + ') div.input-group-append span').removeClass('d-none');
         });
 
@@ -303,12 +301,12 @@ $debug = debug();
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( 400 );
 
                 if (data['deleted'] === 1) {
                     $('#group' + raceNumber).remove();
                     raceHorses.delete(raceNumber);
-                    console.log(raceHorses)
+                    displayDeleteButtonOnlyForLastRace((raceNumber - 1));
                 }
 
             }
@@ -356,7 +354,7 @@ $debug = debug();
         $('#message table').remove();
     }
 
-    function enterResultForRace(eventNumber, raceNumber) {
+    function enterResultForRace(raceNumber) {
         $('#collapse' + raceNumber).addClass('show');
 
         let oldWin = null;
@@ -399,9 +397,9 @@ $debug = debug();
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( 400 );
                 if (data['saved'] === 1) {
-                    resultWereEnteredForRace(eventNumber, raceNumber);
+                    resultWereEnteredForRace(raceNumber);
                     racesResultsTrack.set((raceNumber + 'w'), win);
                     racesResultsTrack.set((raceNumber + 'p'), place);
                     racesResultsTrack.set((raceNumber + 's'), show);
@@ -426,12 +424,12 @@ $debug = debug();
                 url: './race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 6,
                 dataType: 'json',
                 success: function (data) {
-                    let win = [data['win']['horse_number'],
-                        data['win']['win_purse'], data['win']['place_purse'],
-                        data['win']['show_purse']];
-                    let place = [data['place']['horse_number'],
-                        data['place']['place_purse'], data['place']['show_purse']]
-                    let show = [data['show']['horse_number'], data['show']['show_purse']];
+                    let win = [data['win'][0],
+                        data['win'][1], data['win'][2],
+                        data['win'][3]];
+                    let place = [data['place'][0],
+                        data['place'][1], data['place'][2]];
+                    let show = [data['show'][0], data['show'][1]];
                     racesResultsTrack.set((raceNumber + 'w'), win);
                     racesResultsTrack.set((raceNumber + 'p'), place);
                     racesResultsTrack.set((raceNumber + 's'), show);
@@ -449,7 +447,7 @@ $debug = debug();
                 $('main').prepend(data);
                 $( firstId ).addClass('d-none');
                 $( secondId ).removeClass('d-none');
-                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( 400 );
 
                 if (del === 1) {
                     numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
@@ -471,12 +469,9 @@ $debug = debug();
 
     function addRace() {
         // Get the last race Number
-        // New race number is the last race number plus one
-        let keys = Array.from(raceHorses.keys());
-        const raceNumber = keys[keys.length - 1] + 1;
+        const raceNumber = getNewRaceNumber();
 
         raceHorses.set(raceNumber, ['']);
-        console.log(raceHorses)
 
         // UI
         const groupId = 'group' + raceNumber;
@@ -484,35 +479,36 @@ $debug = debug();
         $('#' + groupId + ' button#btn0').text('Race ' + raceNumber).
         attr('id', 'btn' + raceNumber).
         attr('data-target', '#collapse' + raceNumber);
-        $('#' + groupId + ' div.d-flex:first-of-type a:first-of-type').
-        attr('href', '/races/?e=' + eventNumber + '&r' + raceNumber);
+        $('#' + groupId + ' div.group-header:first-of-type a:first-of-type').
+        attr('id', 'race_link' + raceNumber).
+        attr('href', '/races/?e=' + eventNumber + '&r' + raceNumber).addClass('disabled');
 
         const collapseId = 'collapse' + raceNumber;
         $('#' + groupId + ' div#collapse0').attr('id', collapseId);
 
         const cId = 'c' + raceNumber;
         $('#' + collapseId + ' div#c0').attr('id', cId);
-        $('#' + cId + ' div.custom-checkbox input').attr('id', 'cancel' + raceNumber);
-        $('#' + cId + ' div.custom-checkbox label').text('Cancel Race ' + raceNumber)
+        $('#' + cId + ' div.group-cancel-race input').attr('id', 'cancel' + raceNumber);
+        $('#' + cId + ' div.group-cancel-race label').text('Cancel Race ' + raceNumber)
             .attr('for', 'cancel' + raceNumber);
-        $('#' + cId + ' div.card-body a#result0').text('Enter Results for Race ' + raceNumber).
+        $('#' + cId + ' div.group-body-d a#result0').text('Enter Results for Race ' + raceNumber).
         attr({
             id: 'result' + raceNumber,
             onclick: 'populateHorses(' + raceNumber + ')'
         }).attr('data-title', 'Race ' + raceNumber + ' Results').
-        attr('data-button-primary-action', 'enterresultForRace(' + raceNumber + ')');
-        $('#' + cId + ' div.card-body a#open0').attr({
+        attr('data-button-primary-action', 'enterResultForRace(' + raceNumber + ')');
+        $('#' + cId + ' div.group-body-d a#open0').attr({
             id: 'open' + raceNumber,
             onclick: 'openWindow(' + raceNumber + ')'
         });
 
         const cardId = 'card' + raceNumber;
         $('#' + collapseId + ' div#card0').attr('id', cardId);
-        $('#' + cardId + ' div.d-flex a#deleteRace0').text('Delete Race ' + raceNumber).attr({
+        $('#' + cardId + ' div a#deleteRace0').text('Delete Race ' + raceNumber).attr({
             id: 'deleteRace' + raceNumber,
             href: ''
         }).attr('data-title', 'Delete Race ' + raceNumber).
-        attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + ' ?').
+        attr('data-message', 'Are you sure you want to delete Race ' + raceNumber + " ? <strong>All bets will be removed</strong>.").
         attr('data-button-primary-action', 'deleteRace(' + raceNumber + ')');
 
         $('#' + cardId + ' div select#0').attr('id', raceNumber);
@@ -524,7 +520,7 @@ $debug = debug();
             id: 'id' + raceNumber,
             name: 'horses[' + raceNumber +'][0]'
         });
-        $('#horse' + raceNumber + ' span#00').attr({
+        $('#horse' + raceNumber + ' button#00').attr({
             id: raceNumber + '0',
             onclick: "deleteHorse('horse" +raceNumber + "', '" + raceNumber + "0')"
         });
@@ -544,13 +540,15 @@ $debug = debug();
         $('#' + cardId + ' div a#wind0').attr({
             id: 'wind' + raceNumber,
             onclick: "closeWindow(" + raceNumber + ")"
-        });
+        }).addClass('disabled');
 
         // Re-bind
         updateNumberOfHorsesInputValue();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
         binBlur();
+        displayDeleteButtonOnlyForLastRace(raceNumber);
+
     }
 
     function editPot() {
@@ -561,7 +559,7 @@ $debug = debug();
             dataType: 'json',
             success: function (data) {
                 $('main').prepend(data['alert']);
-                $('#alert').delay( 3000 ).fadeOut( 400 );
+                $('#alert').delay( DELAY ).fadeOut( 400 );
 
                 if (data['edited'] === 1) {
                     $('#pot').val(data['pot']);
@@ -571,7 +569,6 @@ $debug = debug();
         });
     }
 
-
     $( document ).ready( function () {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
@@ -579,7 +576,21 @@ $debug = debug();
         bindOnChangeOnSelectMenu();
         bindOnClickCancelRace();
         binBlur();
+
+        let keys = Array.from(raceHorses.keys());
+        const raceNumber = keys[keys.length - 1];
+        displayDeleteButtonOnlyForLastRace(raceNumber);
     });
+
+    function getNewRaceNumber() {
+        return ($('.group').length);
+    }
+
+
+    function displayDeleteButtonOnlyForLastRace(raceNumber) {
+        $('#deleteRace' + (parseInt(raceNumber) - 1)).addClass('d-none');
+        $('#deleteRace' + raceNumber).removeClass('d-none');
+    }
 
 
 
@@ -589,55 +600,58 @@ $debug = debug();
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-        $('#message').html("<table class='table table-borderless'>\n" +
-            "    <!-- Row A -->\n" +
-            "    <thead>\n" +
+        $('#message').html("<table class='table table-borderless' id='scoreboard'>\n" +
+			"    <!-- Row A -->\n" +
+			"    <thead>\n" +
+			"        <tr id='title_row'>\n" +
+            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
+			"        </tr>\n" +
             "        <tr>\n" +
             "          <th scope='col'>Horse#</th>\n" +
-            "          <th scope='col'>_Win__</th>\n" +
+            "          <th scope='col'>Win</th>\n" +
             "          <th scope='col'>Place</th>\n" +
             "          <th scope='col'>Show</th>\n" +
             "        </tr>\n" +
             "    </thead>\n" +
             "    <!-- Row B -->\n" +
-            "    <tr>\n" +
+            "    <tr id='first'>\n" +
             "        <td>\n" +
-            "            <select  id='win-result' class=' race-result w-100' required>\n" +
+            "            <select id='win-result' class='race-result w-100' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td class='position-relative'>\n" +
             "                <input type='text' id='win1' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='place1' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='show1' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
             "    <!-- Row C -->\n" +
-            "    <tr>\n" +
+            "    <tr id='second'>\n" +
             "        <td>\n" +
             "            <select  id='place-result' class=' race-result' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "                <input type='text' id='place2' class='w-100' required>\n" +
             "        </td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "            <input type='text' id='show2' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
             "    <!-- Row D -->\n" +
-            "    <tr>\n" +
+            "    <tr id='third'>\n" +
             "        <td>\n" +
             "            <select  id='show-result' class=' race-result' required>\n" +
             "            </select>\n" +
             "        </td>\n" +
             "        <td></td>\n" +
             "        <td></td>\n" +
-            "        <td class='position-relative'>\n" +
+            "        <td class=''>\n" +
             "            <input type='text' id='show3' class='w-100' required>\n" +
             "        </td>\n" +
             "    </tr>\n" +
@@ -648,15 +662,13 @@ $debug = debug();
 
 
 </script>
-<main role="main">
+<main role="main" id="admin_manage_event_page">
+    <h1 class="mb-5 sticky-top"><?php echo $event_name ?></h1>
     <section>
-        <h1>Manage an Event</h1>
-
         <div class="text-center">
-            <h2><?php echo $event_name ?></h2>
             <span><?php echo $event_date ?></span>
         </div>
-        <form method="POST" class="mt-3">
+        <form class="mt-3">
             <div class="form-row">
                 <div class="input-group mb-3">
                     <label class="col-sm-2 col-form-label"  for="pot">Jackpot</label>
@@ -681,37 +693,32 @@ $debug = debug();
                            data-button-secondary-text="Cancel"
                            data-button-secondary-action=""
                         >
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                            </svg>
+                            <i class="fa fa-edit"></i>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <fieldset class="accordion border border-dark" id="accordion01">
-                <legend class="text-center w-auto">Races</legend>
+            <div class="accordion" id="accordion01">
+                <h2 class="text-center mt-5 mb-4">Races</h2>
 
                 <!--- Race HTML To clone-->
-                <div class="group border-bottom border-dark d-none" id="group0">
-                    <div class="d-flex flex-row">
-                        <button id="btn0" class="btn btn-block dropdown-toggle dt" type="button"
+                <div class="card d-none group" id="group0">
+                    <div class="card-header group-header">
+                        <button id="btn0" class="btn dropdown-toggle dt" type="button"
                                 data-toggle="collapse" data-target="#collapse0" aria-expanded="true"
                                 aria-controls="collapseOne">
                             Race 0
                         </button>
-                        <a href="" class="btn btn-outline-primary mb-1"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M8.146 11.354a.5.5 0 0 1 0-.708L10.793 8 8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/>
-                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 1 8z"/>
-                                <path fill-rule="evenodd" d="M13.5 14.5A1.5 1.5 0 0 0 15 13V3a1.5 1.5 0 0 0-1.5-1.5h-8A1.5 1.5 0 0 0 4 3v1.5a.5.5 0 0 0 1 0V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-8A.5.5 0 0 1 5 13v-1.5a.5.5 0 0 0-1 0V13a1.5 1.5 0 0 0 1.5 1.5h8z"/>
-                            </svg></a>
+                        <a href="" class="btn btn-outline-secondary btn-small mb-1 go_to_races_button" id='race_link0'>
+                            <i class="fa fa-horse"></i>
+                        </a>
                     </div>
                     <div id="collapse0" class="collapse race" data-parent="#accordion01">
-                        <div class="text-center card-body  d-none" id="c0">
+                        <div class="text-center card-body d-none group-body-d" id="c0">
                             <h4>The betting window has closed.</h4>
                             <span></span>
-                            <div class="custom-control custom-checkbox mt-4">
+                            <div class="custom-control custom-checkbox mt-4 group-cancel-race">
                                 <input type="checkbox" class="custom-control-input cancel-race" id="cancel0" >
                                 <label class="custom-control-label" for="cancel0">Cancel Race 0</label>
                             </div>
@@ -721,7 +728,7 @@ $debug = debug();
                                    data-target="#mainModal"
                                    data-title="Race 0 Results"
                                    data-button-primary-text="Save"
-                                   data-button-primary-action="enterResultForRace(0, 0)"
+                                   data-button-primary-action="enterResultForRace(0)"
                                    data-button-secondary-text="Exit"
                                    data-button-secondary-action="depopulateHorses()"
                                    onclick="populateHorses(0)"
@@ -730,13 +737,13 @@ $debug = debug();
                                    onclick="openWindow(0)">Reopen Betting Window</a>
                             </div>
                         </div>
-                        <div class="card-body" id="card0">
+                        <div class="card-body group-body" id="card0">
                             <div class="d-flex flex-row-reverse mb-2">
                                 <a href="#" id="deleteRace0" class="btn btn-outline-danger del-group d-none"
                                    data-toggle="modal"
                                    data-target="#mainModal"
                                    data-title="Delete Race 0"
-                                   data-message="Are you sure you want to delete Race 0?"
+                                   data-message="Are you sure you want to delete Race 0? <strong>All bets will be removed</strong>."
                                    data-button-primary-text="Confirm"
                                    data-button-primary-action="deleteRace('0')"
                                    data-button-secondary-text="Cancel"
@@ -744,33 +751,34 @@ $debug = debug();
                                 >Delete Race 0</a>
                             </div>
                             <div class="form-row">
-                                <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                <select id="0" class="custom-select form-control col-sm-10 group-select" required>
+                                <label class="col-sm-2 col-form-label" for="horse_num">Number of horses:</label>
+                                <select id="0" class="form-control col-sm-10 group-select" required>
                                     <?php
-                                        // Horse count
-                                        $horse_count = isset($_SESSION["site_default_horse_count"]) ?
-                                            $_SESSION["site_default_horse_count"] : 1;
+                                    // Horse count
+                                    $horse_count = isset($_SESSION["site_default_horse_count"]) ?
+                                        $_SESSION["site_default_horse_count"] : 1;
 
-                                        for ($i = 1; $i < $horse_count + 1; $i++) {
-                                            echo "<option value='$i'>$i</option>";
-                                        }
+                                    for ($i = 1; $i < $horse_count + 1; $i++) {
+                                        echo "<option value='$i'>$i</option>";
+                                    }
                                     ?>
                                 </select>
                             </div>
                             <div id="addInput0" class="form-row mt-4 addSelect">
                                 <div class="input-group mb-1 group-horse" id="horse0">
                                     <input type="text" id="id0" name="horses[0][0]"
-                                           class="custom-select my-1 mr-sm-2 group-input"
+                                           class="my-1 mr-sm-2 group-input new"
                                            value="">
                                     <div class="input-group-append">
-                                        <span class="btn btn-danger " id="00" onclick="deleteHorse('horse0', '00')"
-                                         style="border-radius: 100px">-</span>
+                                        <button class="btn btn-danger" id="00" onclick="deleteHorse('horse0', '00')">
+                                            <i class="fa fa-minus-circle"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <span class="btn btn-success " id="addHorse0" style="border-radius: 100px"
-                                onclick="addHorse('addHorse0')">+</span>
+                                <span class="btn btn-success add_horse_button" id="addHorse0"
+                                      onclick="addHorse('addHorse0')"><i class="fa fa-plus-circle"></i></span>
                                 <a href="#" class="btn btn-primary" id="update0"
                                    data-toggle="modal"
                                    data-target="#mainModal"
@@ -811,26 +819,24 @@ $debug = debug();
                                 $addHorse = "disabled";
                             }
 
-$race_HTML = <<< HTML
+                            $race_HTML = <<< HTML
                 <!--- Race HTML -->
-                <div class="group border-bottom border-dark" id="group$race_num">
-                   <div class="d-flex flex-row">
-                       <button id="btn$race_num" class="btn btn-block dropdown-toggle dt" type="button" 
+                <div class="card group" id="group$race_num">
+                   <div class="card-header group-header">
+                       <button id="btn$race_num" class="btn dropdown-toggle dt" type="button" 
                        data-toggle="collapse" data-target="#collapse$race_num" aria-expanded="true" 
                        aria-controls="collapseOne">
                             Race $race_num
                         </button>
-                        <a href="/races/?e=$event_id&r=$race_num" class="btn btn-outline-primary mb-1"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd" d="M8.146 11.354a.5.5 0 0 1 0-.708L10.793 8 8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/>
-                          <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 1 8z"/>
-                          <path fill-rule="evenodd" d="M13.5 14.5A1.5 1.5 0 0 0 15 13V3a1.5 1.5 0 0 0-1.5-1.5h-8A1.5 1.5 0 0 0 4 3v1.5a.5.5 0 0 0 1 0V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-8A.5.5 0 0 1 5 13v-1.5a.5.5 0 0 0-1 0V13a1.5 1.5 0 0 0 1.5 1.5h8z"/>
-                        </svg></a>
+						<a href="/races/?e=$event_id&r=$race_num" class="btn btn-outline-secondary btn-small mb-1 go_to_races_button" id='race_link$race_num'>
+							<i class="fa fa-horse"></i>
+						</a>
                     </div>
                     <div id="collapse$race_num" class="collapse race" data-parent="#accordion01">
-                        <div class="text-center card-body $closed" id="c$race_num">
+                        <div class="text-center card-body $closed group-body-d" id="c$race_num">
                                 <h4>The betting window has closed.</h4>
                                 <span></span>
-                                <div class="custom-control custom-checkbox mt-4">
+                                <div class="custom-control custom-checkbox mt-4 group-cancel-race">
                                     <input type="checkbox" class="custom-control-input cancel-race" id="cancel$race_num" $checked>
                                     <label class="custom-control-label" for="cancel$race_num">Cancel Race $race_num</label>
                                 </div>
@@ -841,7 +847,7 @@ $race_HTML = <<< HTML
                                             data-title="Race $race_num Results"
                                             data-button-primary-text="Save" 
                                             data-button-primary-action="enterResultForRace($race_num)" 
-                                            data-button-secondary-text="Exit" 
+                                            data-button-secondary-text="Cancel" 
                                             data-button-secondary-action="depopulateHorses()"
                                              onclick="populateHorses($race_num)"
                                     >Enter Results for Race $race_num</a>
@@ -849,13 +855,13 @@ $race_HTML = <<< HTML
                                      onclick="openWindow($race_num)">Reopen Betting Window</a>
                                 </div>
                         </div>
-                        <div class="card-body $display_none" id="card$race_num">
+                        <div class="card-body $display_none group-body" id="card$race_num">
                                 <div class="d-flex flex-row-reverse mb-2">
                                     <a href="#" id="deleteRace$race_num" class="btn btn-outline-danger del-group d-none"
                                         data-toggle="modal" 
                                         data-target="#mainModal" 
                                         data-title="Delete Race $race_num" 
-                                        data-message="Are you sure you want to delete Race $race_num?"
+                                        data-message="Are you sure you want to delete Race $race_num? <strong>All bets will be removed</strong>."
                                         data-button-primary-text="Confirm" 
                                         data-button-primary-action="deleteRace('$race_num')" 
                                         data-button-secondary-text="Cancel" 
@@ -864,7 +870,7 @@ $race_HTML = <<< HTML
                                 </div>
                                 <div class="form-row">
                                     <label class="col-sm-2 col-form-label"  for="horse_num">Number of horses:</label>
-                                    <select id="$race_num" class="custom-select form-control col-sm-10 group-select" required>
+                                    <select id="$race_num" class="form-control col-sm-10 group-select" required>
                                     
 HTML;
 
@@ -873,9 +879,9 @@ HTML;
                                 $_SESSION["site_default_horse_count"] : 1;
 
                             for ($i = 1; $i < $horse_count + 1; $i++) {
-                                 $race_HTML .= "<option value='$i'>$i</option>";
+                                $race_HTML .= "<option value='$i'>$i</option>";
                             }
-$race_HTML .= <<< HTML
+                            $race_HTML .= <<< HTML
                                     </select>
                                 </div>
                                     <div id="addInput$race_num" class="form-row mt-4 addSelect">
@@ -901,15 +907,16 @@ HTML;
                                     $input_id = "id" . $race_num.$i . substr(microtime() . "", 2, 5);
                                     $delete_id = $race_num.$i . substr(microtime() . "", 2, 5);
 
-$race_HTML .= <<< HTML
+                                    $race_HTML .= <<< HTML
      
                                             <div class="input-group mb-1 group-horse" id="$parent_div">
                                                 <input type="text" id="$input_id" name="horses[$race_num][$i]" 
-                                                class="custom-select my-1 mr-sm-2 group-input" 
+                                                class="my-1 mr-sm-2 group-input" 
                                                 value="$horse_val" readonly>
                                               <div class="input-group-append">
-                                                <span class="btn btn-danger $span_d_none" id="$delete_id" onclick="deleteHorse('$parent_div', '$delete_id')" 
-                                                style="border-radius: 100px">-</span>
+												<span class="btn btn-danger $span_d_none" id="$delete_id" onclick="deleteHorse('$parent_div', '$delete_id')">
+													<i class="fa fa-minus-circle"></i>
+												</span>
                                               </div>
                                             </div>
 HTML;
@@ -921,23 +928,25 @@ HTML;
                                 $parent_div = $race_num.$i . substr(microtime() . "", 2, 5);
                                 $input_id = "id" . $race_num.$i . substr(microtime() . "", 2, 5);
                                 $delete_id = $race_num.$i . substr(microtime() . "", 2, 5);
-$race_HTML .= <<< HTML
+                                $race_HTML .= <<< HTML
                                 
                                <div class="input-group mb-1 group-horse" id="horse$parent_div">
                                     <input type="text" id="$input_id" name="horses[$race_num][]" 
-                                    class="custom-select my-1 mr-sm-2 group-input">
+                                    class="my-1 mr-sm-2 group-input">
                                     <div class="input-group-append">
-                                        <span class="btn btn-danger" id="$delete_id" style="border-radius: 100px"
-                                        onclick="deleteHorse('horse$parent_div', '$delete_id')">-</span>
+                                        <span class="btn btn-danger" id="$delete_id" 
+                                        onclick="deleteHorse('horse$parent_div', '$delete_id')"><i class="fa fa-minus-circle"></i></span>
                                     </div>
                                </div>
 HTML;
                             }
-$race_HTML .= <<< HTML
+                            $race_HTML .= <<< HTML
                                                 </div>
                                                     <div class="d-flex justify-content-between mt-4">
-                                                        <span class="btn btn-success $addHorse" id="addHorse$race_num" style="border-radius: 100px"
-                                                        onclick="addHorse('addHorse$race_num')">+</span>
+                                                        <span class="btn btn-success $addHorse" id="addHorse$race_num" r
+														onclick="addHorse('addHorse$race_num')">
+															<i class="fa fa-plus-circle"></i>
+														</span>
                                                         <a href="#" class="btn btn-primary" id="update$race_num"
                                                             data-toggle="modal" 
                                                             data-target="#mainModal" 
@@ -956,7 +965,7 @@ $race_HTML .= <<< HTML
                                         </div> <!---END Race HTML -->
 HTML;
 
-                                // Check if result exist in the DB
+                            // Check if result exist in the DB
                             if (key_exists(($race_num - 1), $finish)) {
                                 for ($k = 0; $k < count($finish[$race_num - 1]); $k++) {
 
@@ -980,18 +989,18 @@ HTML;
                 }
                 ?>
 
-            </fieldset>
+            </div> <!-- END .accordion -->
             <div class="text-center mt-4">
                 <a href="#" id="addRace" class="btn btn-primary <?php echo $disabled_add_race_button ?>" onclick="addRace()"> Add a Race </a>
             </div>
-<!--            <div class="text-center mt-3">-->
-<!--                <input type="submit" id="event" name="update_event" value="Update Event" class="btn btn-primary d-none">-->
-<!--            </div>-->
+            <!--            <div class="text-center mt-3">-->
+            <!--                <input type="submit" id="event" name="update_event" value="Update Event" class="btn btn-primary d-none">-->
+            <!--            </div>-->
         </form>
     </section>
 </main>
 
 {footer}
 <?php
-    ob_end_flush();
+ob_end_flush();
 ?>

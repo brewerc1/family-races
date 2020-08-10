@@ -42,122 +42,122 @@ if (!$_SESSION["admin"]) {
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
 
-    // If the sound_fx variable was not sent, or is not what is expected, set to 0
-    if(empty($_POST['sound_fx']) || $_POST['sound_fx'] != 'on'){
-        $sound_fx_value = 0;
-    } else {
+    // Sound Effects Enable
+    if(!empty($_POST['sound_fx']) && $_POST['sound_fx'] == 'on'){
         $sound_fx_value = 1;
+    } else {
+        $sound_fx_value = 0;
     }
 
-    // Same process for voiceovers. Any future 'boolean' settings follow this logic
-    if(empty($_POST['voiceovers']) || $_POST['voiceovers'] != 'on'){
-        $voiceovers_value = 0;
-    } else {
+    // Voiceovers Enable
+    if(!empty($_POST['voiceovers']) && $_POST['voiceovers'] == 'on'){
         $voiceovers_value = 1;
+    } else {
+        $voiceovers_value = 0;
     }
 
     // Terms and Conditions
-    if(empty($_POST['terms_enable']) || $_POST['terms_enable'] != 'on'){
-        $terms_enable_value = 0;
-    } else {
+    if(!empty($_POST['terms_enable']) && $_POST['terms_enable'] == 'on'){
         $terms_enable_value = 1;
+    } else {
+        $terms_enable_value = 0;
     }
 
     // Terms and Conditions Text
-    if(empty($_POST['terms_text'])){
-        $terms_text_value = $_SESSION['site_terms_text'];
+    if(!empty($_POST['terms_text'])){
+        $terms_text_value = trim($_POST['terms_text']);
     } else {
-        $terms_text_value = htmlentities($_POST['terms_text']);
+        $terms_text_value = $_SESSION['site_terms_text'];
     }
     
     // Default Horse Count
-    if(empty($_POST['default_horse_count']) || !is_int($_POST['default_horse_count'])){
-        $default_horse_count_value = $_SESSION['site_default_horse_count'];
-    } else {
+    if(!empty($_POST['default_horse_count']) && (int)$_POST['default_horse_count'] == $_POST['default_horse_count']){
         $default_horse_count_value = $_POST['default_horse_count'];
+    } else {
+        $default_horse_count_value = $_SESSION['site_default_horse_count'];
     }
 
     // Memorial Race Enable
-    if(empty($_POST['memorial_race_enable']) || $_POST['memorial_race_enable'] != 'on'){
-        $memorial_race_enable_value = 0;
-    } else {
+    if(!empty($_POST['memorial_race_enable']) && $_POST['memorial_race_enable'] == 'on'){
         $memorial_race_enable_value = 1;
+    } else {
+        $memorial_race_enable_value = 0;
     }
         
     // Memorial Race Number
-    if(empty($_POST['memorial_race_number']) || !is_int($_POST['memorial_race_number'])){
-        $memorial_race_number_value = $_SESSION['site_memorial_race_number'];
-    } else {
+    if(!empty($_POST['memorial_race_number']) && (int)$_POST['memorial_race_number'] == $_POST['memorial_race_number']){
         $memorial_race_number_value = $_POST['memorial_race_number'];
+    } else {
+        $memorial_race_number_value = $_SESSION['site_memorial_race_number'];
     }
 
     // Memorial Race Name Text
-    if(empty($_POST['memorial_race_name'])){
-        $memorial_race_name_value = $_SESSION['site_memorial_race_name'];
+    if(!empty($_POST['memorial_race_name'])){
+        $memorial_race_name_value = trim($_POST['memorial_race_name']);
     } else {
-        $memorial_race_name_value = htmlentities($_POST['memorial_race_name']);
+        $memorial_race_name_value = $_SESSION['site_memorial_race_name'];
     }
     // Welcome Video URL Text
-    if(empty($_POST['welcome_video_url'])){
-        $welcome_video_url_value = $_SESSION['site_welcome_video_url'];
+    if(!empty($_POST['welcome_video_url'])){
+        $welcome_video_url_value = trim($_POST['welcome_video_url']);
     } else {
-        $welcome_video_url_value = htmlentities($_POST['welcome_video_url']);
+        $welcome_video_url_value = $_SESSION['site_welcome_video_url'];
     }
 
     // Invite Email Subject Text
-    if(empty($_POST['invite_email_subject'])){
-        $invite_email_subject_value = $_SESSION['site_invite_email_subject'];
+    if(!empty($_POST['invite_email_subject'])){
+        $invite_email_subject_value = trim($_POST['invite_email_subject']);
     } else {
-        $invite_email_subject_value = htmlentities($_POST['invite_email_subject']);
+        $invite_email_subject_value = $_SESSION['site_invite_email_subject'];
     }
 
     // Invite Email Body Text
-    if(empty($_POST['invite_email_body'])){
-        $invite_email_body_value = $_SESSION['site_invite_email_body'];
+    if(!empty($_POST['invite_email_body'])){
+        $invite_email_body_value = trim($_POST['invite_email_body']);
     } else {
-        $invite_email_body_value = htmlentities($_POST['invite_email_body']);
+        $invite_email_body_value = $_SESSION['site_invite_email_body'];
     }
 
     // Invite Email Server Text
-    if(empty($_POST['email_server'])){
-        $email_server_value = $_SESSION['site_email_server'];
+    if(!empty($_POST['email_server'])){
+        $email_server_value = trim($_POST['email_server']);
     } else {
-        $email_server_value = htmlentities($_POST['email_server']);
+        $email_server_value = $_SESSION['site_email_server'];
     }
 
     // Invite Email Server Port Text
-    if(empty($_POST['email_server_port'])){
-        $email_server_port_value = $_SESSION['site_email_server_port'];
+    if(!empty($_POST['email_server_port'])){
+        $email_server_port_value = trim($_POST['email_server_port']);
     } else {
-        $email_server_port_value = htmlentities($_POST['email_server_port']);
+        $email_server_port_value = $_SESSION['site_email_server_port'];
     }
 
     // Invite Email Server Account Text
-    if(empty($_POST['email_server_account'])){
-        $email_server_account_value = $_SESSION['site_email_server_account'];
+    if(!empty($_POST['email_server_account'])){
+        $email_server_account_value = filter_var(trim($_POST['email_server_account']), FILTER_VALIDATE_EMAIL);
     } else {
-        $email_server_account_value = htmlentities($_POST['email_server_account']);
+        $email_server_account_value = $_SESSION['site_email_server_account'];
     }
 
     // Invite Email Server Password Text
-    if(empty($_POST['email_server_password'])){
-        $email_server_password_value = $_SESSION['site_email_server_password'];
+    if(!empty($_POST['email_server_password'])){
+        $email_server_password_value = trim($_POST['email_server_password']);
     } else {
-        $email_server_password_value = htmlentities($_POST['email_server_password']);
+        $email_server_password_value = $_SESSION['site_email_server_password'];
     }
 
     // Invite Email From Name Text
-    if(empty($_POST['email_from_name'])){
-        $email_from_name_value = $_SESSION['site_email_from_name'];
+    if(!empty($_POST['email_from_name'])){
+        $email_from_name_value = trim($_POST['email_from_name']);
     } else {
-        $email_from_name_value = htmlentities($_POST['email_from_name']);
+        $email_from_name_value = $_SESSION['site_email_from_name'];
     }
    
     // Invite Email From Address Text
-    if(empty($_POST['email_from_address'])){
-        $email_from_address_value = $_SESSION['site_email_from_address'];
+    if(!empty($_POST['email_from_address'])){
+        $email_from_address_value = trim($_POST['email_from_address']);
     } else {
-        $email_from_address_value = htmlentities($_POST['email_from_address']);
+        $email_from_address_value = $_SESSION['site_email_from_address'];
     }
 
     // PDO to update the DB 
@@ -257,7 +257,7 @@ $memorial_race_selected_tag = '';
                     <label for="default_horse_count" class="col-form-label"> Default Horse Count </label>
                     <select id="default_horse_count" class="form-control">
                         <?php 
-                        for ($i=1; $i <= 16; $i++) { 
+                        for ($i=1; $i <= 21; $i++) { 
                             if($_SESSION['site_default_horse_count'] == $i){
                                 $default_horse_selected_tag = "selected";
                             } else {
@@ -282,7 +282,7 @@ ENDOPTION;
             <div class="form-group row">
                 <div class="col">
                     <label for="memorial_race_number" class="col-form-label"> Race Number </label>
-                    <select id="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
+                    <select id="memorial_race_number" name="memorial_race_number" class="form-control" <?php if($_SESSION['site_memorial_race_enable'] == 0){echo 'disabled';} ?>>
                         <?php 
                         for ($i=1; $i <= 16; $i++) { 
                             if($_SESSION['site_memorial_race_number'] == $i){

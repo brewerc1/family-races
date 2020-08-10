@@ -87,7 +87,7 @@ if(!isset($_POST['event_id'])){
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     } else {
         echo <<< ALERT
     <div id="photo_ajax_message_wrapper" class="floating-alert alert alert-warning alert-dismissible fade show" role="alert">
@@ -96,7 +96,7 @@ if(!isset($_POST['event_id'])){
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     }
 } else {
 
@@ -172,7 +172,7 @@ if(!isset($_POST['event_id'])){
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     } else {
         echo <<< ALERT
     <div id="photo_ajax_message_wrapper" class="floating-alert alert alert-warning alert-dismissible fade show" role="alert">
@@ -181,7 +181,7 @@ if(!isset($_POST['event_id'])){
         <span aria-hidden="true">&times;</span>
     </button>
     </div>
-    ALERT;
+ALERT;
     }
 }
 ?>

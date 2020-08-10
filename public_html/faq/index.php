@@ -65,14 +65,14 @@ $javascript = '';
                 <p>All non-placing players still get to have a great day at the races!</p>
             </div>
 
-            <h2 id="h5" aria-controls="c5" data-target="#c5" data-toggle="collapse" aria-expanded="false">What are the three types of bets at the horse track?</h2>
+            <h2 id="h5" aria-controls="c5" data-target="#c5" data-toggle="collapse" aria-expanded="false">What are the three types of horse track bets?</h2>
             <ul id="c5" aria-labelledby="h5" class="collapse" data-parent="#faq_overview">
                 <li>Win: Choose a horse to finish in first place.</li>
                 <li>Place: Choose a horse to finish in first OR second place.</li>
                 <li>Show: Choose a horse to finish in first, second OR third place.</li>
             </ul>
 
-            <h2 id="h6" aria-controls="c6" data-target="#c6" data-toggle="collapse" aria-expanded="false">What are odds and how are they used to calculate the payout?</h2>
+            <h2 id="h6" aria-controls="c6" data-target="#c6" data-toggle="collapse" aria-expanded="false">What are odds and how is payout calculated?</h2>
             <ul id="c6" aria-labelledby="h6" class="collapse" data-parent="#faq_overview">
                 <li>The more bets on a HORSE, the lower its ODDS...</li>
                 <li>The lower the ODDS, the better the ODDS...</li>
