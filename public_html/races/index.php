@@ -539,6 +539,17 @@ CLOSE;
                             </table>
 HERE;
                     }
+                    else {
+                        if ($_SESSION['admin']) {
+                            echo <<< OPEN
+                                <form action="open-race.php" method="POST" id="open_race_form">
+                                    <button type="submit" class="btn btn-primary" id="open_race_button">Re-open race</button>
+                                    <input type="hidden" value=$event name="currentEventNumber">
+                                    <input type="hidden" value=$race name="currentRaceNumber">
+                                </form>
+                            OPEN;
+                        }
+                    }
                     // To cancel a race
                     if ($_SESSION['admin'] && !($pick) && !($win_horse)) {
                         echo <<< CANCEL
