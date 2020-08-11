@@ -79,7 +79,6 @@ if(isset($_POST['create_account_button'])) {
     if(!empty($_POST['password']) && !empty($_POST['password_confirm'])) {
         $password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);
 		$password_confirm = filter_var($_POST['password_confirm'], FILTER_SANITIZE_STRING);
-		echo "$email : $code<br>";
         if($password != $password_confirm){
             header("Location: {$_SERVER['PHP_SELF']}?m=5&s=warning&email=$encode_email&code={$_POST['code']}");
             exit; 
