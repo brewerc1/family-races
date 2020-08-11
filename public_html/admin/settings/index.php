@@ -233,7 +233,7 @@ $memorial_race_selected_tag = '';
                 </li>
             </ul>
 
-            <div class="tab-content">
+            <div class="tab-content mt-3">
                 <div class="tab-pane show active" id="general">
                     <!-- Site name text field -->
                     <div class="form-group row">
