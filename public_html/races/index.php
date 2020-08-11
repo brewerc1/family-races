@@ -105,6 +105,9 @@ else {
 if($_SESSION['site_memorial_race_enable'] == '1'){
     $memorial_race_number = $_SESSION['site_memorial_race_number'];
 }
+else {
+    $memorial_race_number = -1;
+}
 
 ///// DEBUG
 //$debug = debug();
