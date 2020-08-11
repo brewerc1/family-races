@@ -44,6 +44,18 @@ elseif (!$_POST["placeSelection"]) {
     exit;
 }
 
+// SQL to check if the race window is still open
+$race_info_sql = "SELECT * FROM `race` WHERE race.event_id = :event AND race.race_number = :race LIMIT 1";
+$race_info_result = $pdo->prepare($race_info_sql);
+$race_info_result->execute(['event' => $event, 'race' => $race]);
+$race_info = $race_info_result->fetch();
+
+if ($race_info['window_closed'] == '1') {
+    echo "<script>alert('here');</script>";
+    header("Location: /races/?e={$event}&r={$race}&m=25&s=danger");
+    exit;
+}
+
 // SQL to determine this user's pick for this race
 $pick_sql = "SELECT * FROM `pick` WHERE pick.user_id = :user_id AND pick.race_event_id = :event AND pick.race_race_number = :race LIMIT 1";
 $pick_result = $pdo->prepare($pick_sql);
