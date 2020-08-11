@@ -51,7 +51,8 @@ $('#photo_upload_button').on(
                 console.log('jQuery bind complete');
             });
         }
-        reader.readAsDataURL(this.files[0]);
+		reader.readAsDataURL(this.files[0]);
+		$('.alert').alert('close');
         $('#upload_image_modal').modal('show');
     }
 );
@@ -82,7 +83,11 @@ $('.crop_image').click(function(event){
                 {
                     $('#upload_image_modal').modal('hide');
                     $('#photo_upload_button').val('');
-                    $('#ajax_alert').html(data).delay(3000).fadeTo(1000, 0);
+					$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
+					$('.alert').on('closed.bs.alert', function () {
+						$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
+						$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
+					});
                 }
             }
         );
@@ -246,8 +251,8 @@ if(isset($_POST['save_button'])){
   {main_nav}
     <main role="main" id="user_profile_edit_page">
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
-            <section class="form-row">
-                <div class="form-group col-sm-4">
+            <section class="form-row sticky-top" id="user_head">
+                <div class="form-group col-sm-4 text-center">
                     <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'] . '?' . $update_time_stamp;?>" alt="My Photo">
                     <div id="ajax_alert"></div>
 				</div>
@@ -310,7 +315,7 @@ ENDOPTION;
                 </div>
 
             </section><!-- END user_meta -->
-            <div class="form-row mt-5">
+            <div class="form-row my-5">
                 <div class="col text-center">
                     <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
                     <a class="text-secondary d-block mt-2 text-center" href="/user/">Cancel</a>

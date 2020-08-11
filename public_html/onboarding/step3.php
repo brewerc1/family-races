@@ -35,7 +35,7 @@ $javascript =<<< JAVASCRIPT
     }
 );
 
-$('#profile_photo').on(
+$('#photo_upload_button').on(
     'change', function(){
         var reader = new FileReader();
         reader.onload = function (event) {
@@ -48,8 +48,9 @@ $('#profile_photo').on(
                 console.log('jQuery bind complete');
             });
         }
-        reader.readAsDataURL(this.files[0]);
-        $('#uploadimageModal').modal('show');
+		reader.readAsDataURL(this.files[0]);
+		$('.alert').alert('close');
+		$('#upload_image_modal').modal('show');
     }
 );
 
@@ -71,15 +72,20 @@ $('.crop_image').click(function(event){
                 type: "POST",
                 data:
                 {
-                    "id": {$_SESSION['id']},
+					"id": {$_SESSION['id']},
+					"type": "profile",
                     "cropped_image": response
                 },
                 success:function(data)
                 {
-                    $('#skip').text('Next');
-					$('#uploadimageModal').modal('hide');
-                    $('#profile_photo').val('');
-					$('#ajax_alert').html(data);
+					$('#upload_image_modal').modal('hide');
+                    $('#photo_upload_button').val('');
+					$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
+					$('#skip').text('Next').addClass('animate__animated animate__delay-4s animate__tada');
+					$('.alert').on('closed.bs.alert', function () {
+						$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
+						$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
+					});
                 }
             }
         );
@@ -98,43 +104,43 @@ if (isset($_POST['skip-btn'])) {
 {main_nav}
 <main role="main" id="onboarding_page">
     <h1 class="mb-5 sticky-top">Profile Photo</h1>
-    <p class="text-center">Take a photo to complete your profile.<br><small class="text-muted">This step is optional. You can add a photo later by editing your profile.</small></p>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
-        <section class="form-row text-center">
-            <div class="form-group col">
-                <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'];?>" alt="My Photo">
-                <div id="ajax_alert"></div>
-            </div>
-        </section>
-        <section class="form-row justify-content-center">    
-            <div class="form-group col-md-4">
-                <div id="photo_upload" class="form-group custom-file">
-					<input type="file" id="profile_photo" class="custom-file-input" name="Add Photo" accept="image/*">
-					<label class="custom-file-label" for="profile_photo">Take a selfie or choose a photo</label>
-                </div>
-            </div>
-        </section>
-        <div class="text-center">
-            <a href="/login/welcome/" id="skip" class="btn btn-primary">Skip</a>
+	<p class="text-center">
+		Take a photo to complete your profile.<br>
+		<small class="text-muted">This step is optional. You can add a photo later by editing your profile.</small>
+	</p>
+
+    <section class="form-row text-center">
+		<div class="form-group col">
+			<div class="form-row justify-content-center">
+				<div id="photo_upload" class="custom-file col-lg-4 col-md-6 col-sm-7 ">
+					<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
+					<label class="custom-file-label" for="photo_upload_button">Take a selfie or choose from your library</label>
+				</div>
+			</div>
+			<div id="ajax_alert"></div>
+            <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'];?>" alt="My Photo">
         </div>
-    </form>
+	</section>
+    <div class="text-center mt-4">
+        <a href="/login/welcome/" id="skip" class="btn btn-primary">Skip</a>
+    </div>
 
     <!-- modal for photo cropping -->
-    <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
+    <div class="modal" id="upload_image_modal" tabindex="-1" role="dialog" aria-labelledby="croppie_modal_label" data-backdrop="static" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
+            <h5 class="modal-title" id="croppie_modal_label">Adjust Your Photo</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
+            <p>Drag the image to center your face in the circle. Zoom in to fill the circle. Save the image when you're satisfied.</p>
             <div id="croppie_element"></div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#photo_upload_button').val('');">Cancel</button>
             <button type="button" id="Save" class="btn btn-primary crop_image">Save</button>
           </div>
         </div>

@@ -56,7 +56,7 @@ label,
 }
 
 main {
-	padding: 0px 20px 92px 20px;
+	padding: 0px 20px 86px 20px;
 	background-color: rgba(255, 255, 255, 1);
 	min-height: 100%;
 	margin: 0 auto;
@@ -223,6 +223,10 @@ form#login {
 
 
 /* ============== Profile Page: #user_profile_page ============== */
+#user_profile_page #user_head {
+	-webkit-backdrop-filter: blur(7px);
+	backdrop-filter: blur(7px);
+}
 #photo_upload {
 	align-items: center;
 	justify-content: center;
@@ -279,6 +283,10 @@ table#profile_records {
 	margin: 0 auto!important;
 	position: relative;
 	top: -40px;
+}
+#user_profile_edit_page #user_head {
+	-webkit-backdrop-filter: blur(7px);
+	backdrop-filter: blur(7px);
 }
 
 
@@ -654,7 +662,8 @@ table#profile_records {
 }
 #ajax_alert {
 	position: absolute;
-    top: 30%;
+	top: 30%;
+	left: 0;
     width: 100%
 }
 #photo_ajax_message_wrapper{

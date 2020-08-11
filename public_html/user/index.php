@@ -102,7 +102,7 @@ if ($num_records_result > 0 ){
 {main_nav}
     <main role="main" id="user_profile_page">
 
-        <section class="row" id="user_head">
+        <section class="row sticky-top" id="user_head">
             <div class="group col-sm-5" id="photo_container">
                 <img class="rounded-circle" id="user_profile_photo" src="<?php echo "$photo?$update_time_stamp" ?>" alt="My Photo">
             </div>

@@ -212,7 +212,8 @@ ENDNORESULT;
 	                    console.log('jQuery bind complete');
 	                });
 	            }
-	            reader.readAsDataURL(this.files[0]);
+				reader.readAsDataURL(this.files[0]);
+				$('.alert').alert('close');
 	            $('#upload_image_modal').modal('show');
 	        }
 	    );
@@ -243,7 +244,11 @@ ENDNORESULT;
 	                    {
 	                        $('#upload_image_modal').modal('hide');
 	                        $('#photo_upload_button').val('');
-	                        $('#ajax_alert').html(data).delay(3000).fadeTo(1000, 0);
+							$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
+							$('.alert').on('closed.bs.alert', function () {
+								$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
+								$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
+							});
 	                    }
 	                }
 	            );
