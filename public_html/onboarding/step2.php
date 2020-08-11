@@ -99,27 +99,27 @@ if (isset($_POST['next-btn'])) {
     } else {
         $motto = "";
     }
-    $sql_update_user = "UPDATE user SET first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto WHERE id = {$_SESSION['id']}";
-    $update_user = $pdo->prepare($sql_update_user);
-    $update_user->execute([
+    $update_user_sql = "UPDATE user SET first_name = :first_name, last_name = :last_name, city =:city, state = :state, motto= :motto WHERE id = {$_SESSION['id']}";
+    $update_user_query = $pdo->prepare($update_user_sql);
+    $update_user_query->execute([
 		'first_name' => $first_name,
 		'last_name' => $last_name, 
 		'city' => $city, 
 		'state' => $state, 
 		'motto'=> $motto]
 	);
-	if ($update) {
+	if ($update_user_query) {
 		//Update Session Variables
-		$sql_update_user_session ="SELECT * FROM user WHERE id = {$_SESSION['id']}";
-		$update_user_session_result = $pdo->prepare($sql_update_user_session);
-		$update_user_session_result->execute();
-		$row = $update_user_session_result->fetch();
-		$_SESSION['first_name'] = $row['first_name'];
-		$_SESSION['last_name'] = $row['last_name'];
-		$_SESSION['city'] = $row['city'];
-		$_SESSION['state'] = $row['state'];
-		$_SESSION['motto'] = $row['motto'];
-		$_SESSION['photo'] = $row['photo'];
+		$update_user_session_sql = "SELECT * FROM user WHERE id = {$_SESSION['id']}";
+		$update_user_session_query = $pdo->prepare($update_user_session_sql);
+		$update_user_session_query->execute();
+		$update_user_session_results = $update_user_session_query->fetch();
+		$_SESSION['first_name'] = $update_user_session_results['first_name'];
+		$_SESSION['last_name'] = $update_user_session_results['last_name'];
+		$_SESSION['city'] = $update_user_session_results['city'];
+		$_SESSION['state'] = $update_user_session_results['state'];
+		$_SESSION['motto'] = $update_user_session_results['motto'];
+		$_SESSION['photo'] = $update_user_session_results['photo'];
 		header('Location:/onboarding/step3.php');
 			exit;
 	} else {
