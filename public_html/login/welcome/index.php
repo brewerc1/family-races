@@ -20,8 +20,11 @@ session_start();
 if (empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;
-} elseif ($_SESSION["id"] == 0) {
-    header("Location: /login/");
+}
+
+// Test if video URL is present; if not, forward onward to races
+if (empty($_SESSION["site_welcome_video_url"])) {
+    header("Location: /races/");
     exit;
 }
 
