@@ -19,8 +19,6 @@ if (!isset($_SESSION["id"])) {
 $event = $_POST['currentEventNumber'];
 $race = $_POST['currentRaceNumber'];
 
-// echo "<script>console.log('here!');</script>";
-// echo "<h1>Welcome! You are cancelling event " . $event . " race ". $race . "!</h1>";
 $close_race_sql = "UPDATE `race` SET `cancelled` = 1 WHERE `race`.`event_id` = :event AND `race`.`race_number` = :race";
 $close_race = $pdo->prepare($close_race_sql);
 $close_race->execute(['event' => $event, 'race' => $race]);
