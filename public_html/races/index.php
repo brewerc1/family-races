@@ -80,7 +80,12 @@ else {
     $current_race_result->execute(['event' => $event]);
     $current_race = $current_race_result->fetch();
 
-    $race = $current_race['race_number'];
+    if ($current_race) {
+        $race = $current_race['race_number'];
+    }
+    else {
+        $race = 0;
+    }
 }
 
 // Handle if user only selected one thing and clicked submit
