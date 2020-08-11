@@ -52,7 +52,7 @@ $race_info = $race_info_result->fetch();
 
 if ($race_info['window_closed'] == '1') {
     echo "<script>alert('here');</script>";
-    header("Location: /races/?e={$event}&r={$race}&m=25&s=danger");
+    header("Location: /races/?e={$event}&r={$race}&m=26&s=danger");
     exit;
 }
 

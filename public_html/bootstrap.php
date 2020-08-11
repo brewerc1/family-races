@@ -169,7 +169,8 @@ $messages = array(
     22 => "Race closed.",
     23 => "Race cancelled.",
     24 => "Your account is inactive.",
-    25 => "Error when placing bet."
+    25 => "Race opened!",
+    26 => "Error when placing bet."
 );
 
 $notification = '';

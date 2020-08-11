@@ -105,6 +105,9 @@ else {
 if($_SESSION['site_memorial_race_enable'] == '1'){
     $memorial_race_number = $_SESSION['site_memorial_race_number'];
 }
+else {
+    $memorial_race_number = -1;
+}
 
 ///// DEBUG
 //$debug = debug();
@@ -538,6 +541,17 @@ CLOSE;
                                 </tr>
                             </table>
 HERE;
+                    }
+                    else {
+                        if ($_SESSION['admin']) {
+                            echo <<< OPEN
+                                <form action="open-race.php" method="POST" id="open_race_form">
+                                    <button type="submit" class="btn btn-primary" id="open_race_button">Re-open race</button>
+                                    <input type="hidden" value=$event name="currentEventNumber">
+                                    <input type="hidden" value=$race name="currentRaceNumber">
+                                </form>
+                            OPEN;
+                        }
                     }
                     // To cancel a race
                     if ($_SESSION['admin'] && !($pick) && !($win_horse)) {
