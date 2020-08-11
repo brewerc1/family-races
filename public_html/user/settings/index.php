@@ -81,9 +81,9 @@ if(isset($_POST['save_button'])){
     {header}
     {main_nav}
     <main role="main" id="admin_site_settings">
-		<h1 class="mb-5 sticky-top">Settings</h1>
+		<h1 class="my-5 sticky-top">Settings</h1>
 		<section>
-            <form class="mt-5" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+            <form class="my-5" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                 <!-- Sound Effects enable -->
                 <div class="form-group custom-control custom-switch custom-switch-lg">
                     <input class="custom-control-input" type="checkbox" id="sound_fx" name="sound_fx" <?php if($_SESSION['sound_fx'] == 1){echo 'checked';}?><?php if ($_SESSION['site_sound_fx'] == 0){echo ' disabled';} ?>>
@@ -96,8 +96,10 @@ if(isset($_POST['save_button'])){
                     <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
-                <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
+                    <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+                </div>
             </form>
         </section> <!-- END id user_settings -->
     </main>
