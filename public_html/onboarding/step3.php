@@ -122,7 +122,7 @@ if (isset($_POST['skip-btn'])) {
         </div>
 	</section>
     <div class="text-center mt-4">
-        <a href="/login/welcome/" id="skip" class="btn btn-primary">Skip</a>
+        <a href="/login/welcome/" id="skip" class="btn btn-primary mb-4">Skip</a>
     </div>
 
     <!-- modal for photo cropping -->
