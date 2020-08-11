@@ -273,6 +273,16 @@ table#profile_records {
 
 
 
+/* ============== Edit Profile Page: #user_profile_edit_page ============== */
+#user_profile_edit_page #photo_ajax_message_wrapper{
+	box-shadow: none;
+	margin: 0 auto!important;
+	position: relative;
+	top: -40px;
+}
+
+
+
 /* ============== User Lists: ============== */
 .user-list.list-group .media {
 	align-items: center;
@@ -505,6 +515,28 @@ table#profile_records {
 #prior_champions .card .card:last-of-type {
 	margin: 2.5rem;
 }
+#hof_page #current_champion {
+	display: relative;
+}
+#hof_page #photo_upload {
+	position: absolute;
+    top: 50%;
+}
+#hof_page #photo_upload label{
+	box-shadow: 0 0 2px 1px rgba(0,0,0,.2);
+}
+#hof_page #ajax_alert {
+	position: absolute;
+    top: 30%;
+    width: 100%
+}
+#hof_page #photo_ajax_message_wrapper{
+	box-shadow: none;
+	margin: 0 auto!important;
+}
+
+
+
 
 
 /* ============== FAQ Page: #faq_page ============== */
@@ -601,19 +633,39 @@ table#profile_records {
 
 
 
-/* ============== Onboarding Pages: #onboarding_page ============== */
+/* ============== Admin Site Settings: #admin_site_settings ============== */
 #admin_site_settings #terms_text {
 	height: 20rem;
 }
 
 
 
+
 /* ============== Onboarding Pages: #onboarding_page ============== */
-#onboarding_page .floating-alert{
+#photo_upload {
+	position: absolute;
+    top: 50%;
+}
+#photo_upload label{
+	box-shadow: 0 0 2px 1px rgba(0,0,0,.2);
+	padding-right: 92px;
+	text-align: center;
+	padding-left: 2px;
+}
+#ajax_alert {
+	position: absolute;
+    top: 30%;
+    width: 100%
+}
+#photo_ajax_message_wrapper{
 	box-shadow: none;
 	margin: 0 auto!important;
-	position: relative;
-	top: -40px;
+}
+@media (min-width: 576px) {
+	#photo_upload label{
+		text-align: center;
+		padding-
+	}
 }
 
 
@@ -739,14 +791,7 @@ table#profile_records {
 		opacity: 0;
 	}
 }
-    
 
-/* Alerts */
-.floating-alert {
-	box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
-	max-width: 600px;
-	margin: 92px auto !important;
-}
 
 
 /* Bootstrap navbar overrides */

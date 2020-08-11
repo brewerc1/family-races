@@ -38,7 +38,7 @@ $javascript =<<< JAVASCRIPT
     }
 );
 
-$('#profile_photo').on(
+$('#photo_upload_button').on(
     'change', function(){
         var reader = new FileReader();
         reader.onload = function (event) {
@@ -52,7 +52,7 @@ $('#profile_photo').on(
             });
         }
         reader.readAsDataURL(this.files[0]);
-        $('#uploadimageModal').modal('show');
+        $('#upload_image_modal').modal('show');
     }
 );
 
@@ -74,14 +74,15 @@ $('.crop_image').click(function(event){
                 type: "POST",
                 data:
                 {
-                    "id": {$_SESSION['id']},
+					"id": {$_SESSION['id']},
+					"type": "profile",
                     "cropped_image": response
                 },
                 success:function(data)
                 {
-                    $('#uploadimageModal').modal('hide');
-                    $('#profile_photo').val('');
-                    $('#ajax_alert').html(data);
+                    $('#upload_image_modal').modal('hide');
+                    $('#photo_upload_button').val('');
+                    $('#ajax_alert').html(data).delay(3000).fadeTo(1000, 0);
                 }
             }
         );
@@ -99,7 +100,7 @@ if (!isset($_SESSION["id"])){
 }
 
 // logged in user
-$user_id = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);
+$user_id = $_SESSION['id'];
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
 // State Select Array
@@ -161,37 +162,37 @@ $state_array = array(
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){
 
-    if(!empty($_POST['first_name'])){
-        $first_name_value = trim($_POST['first_name']); 
+    if(empty($_POST['first_name'])){
+        $first_name_value = $_SESSION['first_name']; 
     } else {
-        $first_name_value = $_SESSION['first_name'];
+        $first_name_value = trim($_POST['first_name']);
     }
 
-    if(!empty($_POST['last_name'])){
+    if(empty($_POST['last_name'])){
+       $last_name_value = $_SESSION['last_name'];
+    } else {
         $last_name_value = trim($_POST['last_name']);
-    } else {
-        $last_name_value = $_SESSION['last_name'];
     }
 
-    if(!empty($_POST['motto'])){
-        $motto_value = trim($_POST['motto']);
-    } else {
+    if(empty($_POST['motto'])){
         $motto_value = $_SESSION['motto'];
+    } else {
+        $motto_value = trim($_POST['motto']);
     }
 
-    if(!empty($_POST['email'])){
-        $email_value = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
-    } else {
+    if(empty($_POST['email'])){
         $email_value = $_SESSION['email'];
-    }
-
-    if(!empty($_POST['city'])){
-        $city_value = trim($_POST['city']);
     } else {
-        $city_value = $_SESSION['city'];
+        $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
     }
 
-    if(!empty($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
+    if(empty($_POST['city'])){
+        $city_value = $_SESSION['city'];
+    } else {
+        $city_value = trim($_POST['city']);
+    }
+
+    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
         $state_value = trim($_POST['state']);
     } else {
         $state_value = $_SESSION['state'];
@@ -199,23 +200,23 @@ if(isset($_POST['save_button'])){
 
     // PDO to update the DB 
     $update_preferences_sql = 'UPDATE user SET 
-      first_name = :first_name_value,
-      last_name = :last_name_value,
-      motto = :motto_value,
-      email = :email_value,
-      city = :city_value,
-      state = :state_value 
+		first_name = :first_name_value,
+		last_name = :last_name_value,
+		motto = :motto_value,
+		email = :email_value,
+		city = :city_value,
+		state = :state_value 
     WHERE id = :user_id';
 
     $update_preferences_result = $pdo->prepare($update_preferences_sql);
     $update_preferences_result->execute([
-      'first_name_value' => $first_name_value,
-      'last_name_value' => $last_name_value,
-      'motto_value' => $motto_value,
-      'email_value' => $email_value,
-      'city_value' => $city_value,
-      'state_value' => $state_value,
-      'user_id' => $user_id
+		'first_name_value' => $first_name_value,
+		'last_name_value' => $last_name_value,
+		'motto_value' => $motto_value,
+		'email_value' => $email_value,
+		'city_value' => $city_value,
+		'state_value' => $state_value,
+		'user_id' => $user_id
     ]);
     
     //requery DB to update $_SESSION. Ensures $_SESSION is always in sync with DB.
@@ -232,7 +233,7 @@ if(isset($_POST['save_button'])){
         }
 
         $update_time_stamp = strtotime($row["update_time"]);
-        header("Location: /user/?m=15&s=success");
+        header("Location: /user/");
         exit;
     }
 }
@@ -244,15 +245,18 @@ if(isset($_POST['save_button'])){
   {header}
   {main_nav}
     <main role="main" id="user_profile_edit_page">
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
             <section class="form-row">
-                <div class="form-group col">
+                <div class="form-group col-sm-4">
                     <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'] . '?' . $update_time_stamp;?>" alt="My Photo">
                     <div id="ajax_alert"></div>
-                </div>
-                <div id="photo_upload" class="form-group col-sm-8 d-flex">
-                    <input type="file" id="profile_photo" class="d-inline form-control-file" accept="image/*">
-                </div>
+				</div>
+				<div class="form-row col-sm-8 justify-content-center">
+					<div id="photo_upload" class="custom-file d-flex vertical-center col-sm-7">
+						<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
+						<label class="custom-file-label" for="photo_upload_button">Take a selfie or upload a photo</label>
+					</div>
+				</div>
             </section>
 
             <section id="user_meta">
@@ -315,11 +319,11 @@ ENDOPTION;
         </form>
 
         <!-- modal for photo cropping -->
-        <div class="modal" id="uploadimageModal" tabindex="-1" role="dialog" aria-labelledby="croppieModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal" id="upload_image_modal" tabindex="-1" role="dialog" aria-labelledby="croppie_modal_label" data-backdrop="static" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="croppieModalLabel">Adjust Your Photo</h5>
+                <h5 class="modal-title" id="croppie_modal_label">Adjust Your Photo</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
