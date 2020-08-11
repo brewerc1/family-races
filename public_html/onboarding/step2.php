@@ -172,7 +172,7 @@ ENDOPTION;
                 </div>
             </section>
             <div class="text-center">
-                <input type="submit" class="btn btn-primary" name="next-btn" value="Next">
+                <input type="submit" class="btn btn-primary mb-4" name="next-btn" value="Next">
             </div>
         </form>
 </main>
