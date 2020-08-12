@@ -522,7 +522,7 @@ $debug = debug();
         attr('data-target', '#collapse' + raceNumber);
         $('#' + groupId + ' div.group-header:first-of-type a:first-of-type').
         attr('id', 'race_link' + raceNumber).
-        attr('href', '/races/?e=' + EVENT_ID + '&r' + raceNumber).addClass('disabled');
+        attr('href', '/races/?e=' + EVENT_ID + '&r=' + raceNumber).addClass('disabled');
 
         const collapseId = 'collapse' + raceNumber;
         $('#' + groupId + ' div#collapse0').attr('id', collapseId);
