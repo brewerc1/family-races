@@ -14,77 +14,49 @@ if(empty($_SESSION["id"])) {
     exit;
 }
 
-$debug = debug();
+//$debug = debug();
 
-$current = '';
-$prior = '';
-$status = '';
+$output = '';
 
 try {
-
-    $query = "SELECT id, name, status FROM event ORDER BY id DESC";
-    $events = $pdo->prepare($query);
-    if ($events->execute()) {
-        if ($events->rowCount() > 0) {
-            $row = $events->fetchAll();
-            $index = 0;
-            while ($index < count($row)) {
-                $event_id = $row[$index]["id"];
-                $event_name = $row[$index]["name"];
-                $event_status = $row[$index]["status"];
-
-                if ($event_status != 1) {
-                    $current = "<a class='btn btn-primary mb-3' href='./manage.php?e=$event_id'>Manage $event_name</a>";
-                } else {
-                    $prior .= "<li class='list-group-item'>$event_name <span class='badge badge-success badge-pill float-right px-2 completed_badge'>completed</span></li>";
-                }
-                $index++;
-            }
-        } else {
-            $current = '<p class="alert alert-info" role="alert">No events have been created.</p>';
-        }
-    } else {
-        $current = '<p class="alert alert-danger" role="alert">Something went wrong. <span>Please log out and log back in.</span></p>';
-    }
+	$events_sql = "SELECT id, name, status FROM event ORDER BY id DESC";
+	$events_query = $pdo->prepare($events_sql);
+	if($events_query->execute()){
+		$has_current_event = 0; // defaults to no current event
+		if ($events_query->rowCount() > 0){
+			$events_result = $events_query->fetchAll();
+			foreach ($events_result as $id => $event_data){
+				$has_current_event = $events_result[$id]['status'] == 0 ? 0 : 1;
+				$output .=  "\t\t\t\t<li class='list-group-item'>
+					<a href='./manage.php?e={$events_result[$id]['id']}'>{$events_result[$id]['name']} <span class='px-2 status_badge badge badge-pill float-right badge-" . ( $events_result[$id]['status'] == 1 ? "info'>completed" : "success'>active" ) . "</span></a>
+				</li>\n";
+			}
+		} else {
+			$output = '<p class="alert alert-info" role="alert">No events have been created.</p>';
+		}
+	} else {
+		$output = '<p class="alert alert-danger" role="alert">Something went wrong. <span>Please log out and log back in.</span></p>';
+	}
 
 } catch (Exception $e) {
-    header("Location: ./?m=6&s=warning");
-    exit;
+	header("Location: ./?m=6&s=warning");
+	exit;
 }
-
 ?>
-
 {header}
 {main_nav}
 
     <main role="main" id="admin_events_page">
         <h1 class="mb-5 sticky-top">Events</h1>
-		<section id="current_event" class="mt-5">
-			<h2>Current Event</h2>
-			<div class="text-center mt-3">
-				<?php
-				echo $current;
-				if(!empty($current)){
-					echo <<< BUTTON
-					<a class="btn btn-primary mb-4 text-center" href="./create.php">Create New Event</a>
-					<p><small><mark><b>Developer note:</b> After QA, we need to change the conditional for this block to be empty() instead of !empty(). I've left this button shown for QA purposes. We need to consider what action sets event.status in the DB.</mark></small></p>
-BUTTON;
-				}
-				?>
+		<section id="events" class="mt-5">
+			<div class="text-center mb-1 mt-3">
+				<a class="btn btn-primary text-center <?php echo $has_current_event == 1 ? 'disabled' : '' ?>" href="./create.php">Create New Event</a>
+				<?php echo $has_current_event == 1 ? '<div><small>To create a new event, you must close the current event.</small></div>' : '';?>
 			</div>
+			<ul class="list-group list-group-flush mt-3">
+<?php echo $output;?>
+            </ul>
 		</section>
-<?php
-		if(!empty($prior)) { // we have prior events
-echo <<< PRIOR
-		<section id="previous_events" class="mt-5">
-            <h2>Previous Events</h2>
-                <ul class="list-group list-group-flush mt-3">
-                    $prior
-                </ul>
-		</section>
-PRIOR;
-		}
-?>
     </main>
 
 {footer}

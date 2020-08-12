@@ -673,16 +673,19 @@ table#profile_records {
 @media (min-width: 576px) {
 	#photo_upload label{
 		text-align: center;
-		padding-
 	}
 }
 
 
 
 /* ============== Admin Events Page: #admin_events_page ============== */
-#admin_events_page .completed_badge {
+#admin_events_page .status_badge {
     font-weight: 400;
     padding: .28rem;
+}
+#admin_events_page #events li a{
+	display: block;
+	text-decoration: underline;
 }
 
 
