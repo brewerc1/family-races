@@ -12,11 +12,8 @@ if(empty($_SESSION["id"])) {
     exit;
 }
 
-//!isset($_GET["r"]) &&
 if (!isset($_GET["r"]) && !isset($_GET["q"]) && !isset($_GET["e"])) {
     header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
     exit;
 }
 
@@ -69,7 +66,6 @@ function validateInt($int) {
     return filter_var($in, FILTER_VALIDATE_INT, $int_options);
 }
 
-
 /**
  * @param $message
  * @param string $alert_style
@@ -92,12 +88,8 @@ $q = validateInt($_GET["q"]);
 $race_number = validateInt($_GET["r"]);
 $event_id = validateInt($_GET["e"]);
 
-
-
-
 // Update window_closed/cancelled
 if (key_exists($q, $request_array)) {
-
 
     /**
      * @param $pdo
@@ -136,9 +128,6 @@ if (key_exists($q, $request_array)) {
         }
     }
 
-
-
-
     // Cancel A Race
     if (isset($_POST["is_checked"])) {
         raceUpdate($pdo, $request_array[$q], $race_number, $event_id,
@@ -146,9 +135,6 @@ if (key_exists($q, $request_array)) {
             "Race $race_number is uncancelled",
             "Can't cancel Race $race_number at the moment, please try again");
     }
-
-
-
 
     // Close/Reopen betting window
     if (isset($_POST["open"])) {
@@ -158,18 +144,7 @@ if (key_exists($q, $request_array)) {
             "Can't reopen Race $race_number window at the moment, please try again");
     }
 
-
-
-
 }
-
-
-
-
-
-
-
-
 
 /**
  *  Actions
@@ -179,8 +154,6 @@ if (key_exists($q, $request_array)) {
  *  Create race if not exist
  */
 if (key_exists($q, $update)) {
-
-
 
     /**
      * @param $pdo
@@ -209,8 +182,6 @@ if (key_exists($q, $update)) {
         }
     }
 
-
-
     /**
      * @param $pdo
      * @param $event_id
@@ -232,10 +203,6 @@ if (key_exists($q, $update)) {
             return 0;
         }
     }
-
-
-
-
 
     // Check if the race exists
     $race_query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
@@ -262,12 +229,6 @@ if (key_exists($q, $update)) {
         }
     }
 
-
-
-
-
-
-
     // Horses that cannot be deleted
     $horses_in_pick_table = array();
 
@@ -283,8 +244,6 @@ if (key_exists($q, $update)) {
     if (!empty($_POST["delete_horse"])) {
 
         try {
-
-
             $success = 0;
             $pick_query = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
             $pick = $pdo->prepare($pick_query);
@@ -333,12 +292,6 @@ if (key_exists($q, $update)) {
         }
 
     }
-
-
-
-
-
-
 
     /**
      * Insert horses in DB
@@ -411,12 +364,6 @@ if (key_exists($q, $update)) {
 
 }
 
-
-
-
-
-
-
 /**
  *  Actions
  *
@@ -461,11 +408,6 @@ if (key_exists($q, $delete)) {
     }
 
 }
-
-
-
-
-
 
 /**
  *  Actions
@@ -530,8 +472,6 @@ if (key_exists($q, $result)) {
                 array($win_horse, $win_purse, $place_purse, $show_purse),
                 array($place_horse, $place_purse2, $show_purse2), array($show_horse, $show_purse3));
 
-
-
         } catch (Exception $e) {
             $success = 0;
         }
@@ -539,20 +479,6 @@ if (key_exists($q, $result)) {
         return $success;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * @param $pdo
@@ -588,7 +514,6 @@ if (key_exists($q, $result)) {
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[3]]);
             }
 
-
             elseif ($pick['horse_number'] === $place[0]) {
 
                 if ($pick['finish'] === 'place')
@@ -602,8 +527,6 @@ if (key_exists($q, $result)) {
 
             }
 
-
-
             elseif ($pick['horse_number'] === $show[0]) {
 
                 if ($pick['finish'] === 'show')
@@ -614,21 +537,12 @@ if (key_exists($q, $result)) {
 
             }
 
-
             else {
                 $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
             }
 
-
         }
     }
-
-
-
-
-
-
-
 
     /**
      * @param $pdo
@@ -642,15 +556,6 @@ if (key_exists($q, $result)) {
         $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
 
     }
-
-
-
-
-
-
-
-
-
 
     /**
      * @param $post_win
@@ -666,14 +571,7 @@ if (key_exists($q, $result)) {
         );
     }
 
-
-
-
-
-
-
     try {
-
 
         if (isset($_POST["old_win"])) {
 
@@ -727,14 +625,7 @@ if (key_exists($q, $result)) {
             "warning")));
     }
 
-
-
 }
-
-
-
-
-
 
 /**
  *  Actions
@@ -775,13 +666,6 @@ if (key_exists($q, $get_result)) {
         echo json_encode($data);
 
 }
-
-
-
-
-
-
-
 
 /**
  *  Actions

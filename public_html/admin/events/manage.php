@@ -78,7 +78,6 @@ $debug = debug();
     let resultList = new Map();
     let numberOfHorses;
     let horsesList = [];
-    // let horseToBeDeleted = new Map();
 
     function updateNumberOfHorsesSelectValue() {
         $('.group').each( function () {
@@ -92,8 +91,6 @@ $debug = debug();
             raceHorses.set(parseInt(this.id.charAt(5)), horses);
         });
     }
-
-
 
     function bindOnChangeOnSelectMenu() {
         $('.group-select').bind('change', function () {
@@ -119,8 +116,6 @@ $debug = debug();
         });
     }
 
-
-
     function bindOnClickCancelRace() {
         $('.cancel-race').bind( 'click', function () {
 
@@ -139,11 +134,6 @@ $debug = debug();
         });
     }
 
-
-
-
-
-
     /**
      * Removes Horse input on the UI (delete)
      *
@@ -157,10 +147,6 @@ $debug = debug();
             $('#addInput' + raceNumber + ' div.group-horse:last-of-type').remove();
         }
     }
-
-
-
-
 
     /**
      * Adds horse input by cloning div#addInput0 of the Race HTML To clone.
@@ -190,10 +176,6 @@ $debug = debug();
             onclick: "deleteHorse('" + parentDivId + "', '" + spanId + "')"
         });
     }
-
-
-
-
 
     /**
      * Communicate with PHP scripts to save and update race inside the DB and
@@ -239,11 +221,6 @@ $debug = debug();
         });
     }
 
-
-
-
-
-
     /**
      * Undoes the unsaved changes
      *
@@ -281,10 +258,6 @@ $debug = debug();
         horsesList = [];
     }
 
-
-
-
-
     /**
      * Deletes horse input from the UI.
      *
@@ -316,12 +289,6 @@ $debug = debug();
 
     }
 
-
-
-
-
-
-
     /**
      * Adds horse input to the UI.
      *
@@ -342,10 +309,6 @@ $debug = debug();
             $('#' + btnId).addClass('disabled');
         }
     }
-
-
-
-
 
     /**
      * Communicates with PHP script to delete race and all data associated to it.
@@ -373,9 +336,6 @@ $debug = debug();
             }
         });
     }
-
-
-
 
     /**
      * Populates horses inside the selection options fo the scoreboard
@@ -420,9 +380,6 @@ $debug = debug();
 
     }
 
-
-
-
     /**
      * Does the opposite of populateHorses() function
      *
@@ -434,12 +391,6 @@ $debug = debug();
 
         $('#message table').remove();
     }
-
-
-
-
-
-
 
     /**
      *
@@ -678,7 +629,6 @@ $debug = debug();
         $('#deleteRace' + (parseInt(raceNumber) - 1)).addClass('d-none');
         $('#deleteRace' + raceNumber).removeClass('d-none');
     }
-
 
 
     function enterResultFormHTML() {
