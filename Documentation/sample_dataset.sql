@@ -99,7 +99,7 @@ CREATE TABLE `horse` (
   `id` int(11) NOT NULL,
   `race_event_id` smallint(6) NOT NULL,
   `race_race_number` tinyint(4) NOT NULL,
-  `horse_number` char(3) DEFAULT NULL,
+  `horse_number` varchar(64) DEFAULT NULL,
   `finish` enum('win','place','show') DEFAULT NULL,
   `win_purse` decimal(6,2) DEFAULT NULL,
   `place_purse` decimal(6,2) DEFAULT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE `pick` (
   `user_id` smallint(6) NOT NULL,
   `race_event_id` smallint(6) NOT NULL,
   `race_race_number` tinyint(4) NOT NULL,
-  `horse_number` char(3) NOT NULL,
+  `horse_number` varchar(64) NOT NULL,
   `finish` enum('win','place','show') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
