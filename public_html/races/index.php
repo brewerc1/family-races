@@ -550,7 +550,7 @@ HERE;
                                     <input type="hidden" value=$event name="currentEventNumber">
                                     <input type="hidden" value=$race name="currentRaceNumber">
                                 </form>
-                            OPEN;
+OPEN;
                         }
                     }
                     // To cancel a race
