@@ -24,6 +24,7 @@ $event_date = "Event Date";
 $event_pot = 0;
 $disabled_add_race_button = "disabled";
 $jackpot_btn_none = "d-none";
+$event_status = 0;
 
 
 $e = isset($_GET["e"]) ? $_GET["e"] : 0;
@@ -69,7 +70,9 @@ $debug = debug();
 <script>
     const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
+    const SITE_NAME = '<?php echo empty($_SESSION['site_name']) ? 'Races' : $_SESSION['site_name'] ?>';
     const EVENT_ID = <?php echo $event_id; ?>;
+    let EVENT_STATUS = <?php echo ($event_status === 1) ? 1 : 0; ?>;
     const DELAY = 5000;
     const FADEOUT = 400;
 
@@ -618,7 +621,38 @@ $debug = debug();
         let keys = Array.from(raceHorses.keys());
         const raceNumber = keys[keys.length - 1];
         displayDeleteButtonOnlyForLastRace(raceNumber);
+
+
+        // EVENT
+        closeEventUI();
+        closeEventBackend('close_event', 1);
+        closeEventBackend('recalculate', 0);
     });
+
+    function closeEventBackend(id, action) {
+        $('#' + id).click( function () {
+
+            $.ajax({
+                type: 'POST',
+                url: './race.php?e='+ EVENT_ID +'&r=' + 1 + '&q=' + 9,
+                data: {action: action },
+                dataType: 'json',
+                success: function (data) {
+                    $('main').prepend(data['alert']);
+                    $('#alert').delay( DELAY ).fadeOut( FADEOUT );
+                    EVENT_STATUS = parseInt(data['e']);
+                    closeEventUI();
+                }
+            });
+
+        });
+    }
+
+    function closeEventUI() {
+        $('#recalculate').toggleClass('d-none', (EVENT_STATUS === 0));
+        $('#close_event').toggleClass('d-none', (EVENT_STATUS === 1));
+        $('#addRace').toggleClass('d-none', (EVENT_STATUS === 1));
+    }
 
     function getNewRaceNumber() {
         return ($('.group').length);
@@ -638,7 +672,7 @@ $debug = debug();
 			"    <!-- Row A -->\n" +
 			"    <thead>\n" +
 			"        <tr id='title_row'>\n" +
-            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
+            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='" + SITE_NAME + " logo'>" + SITE_NAME + "</td>\n" +
 			"        </tr>\n" +
             "        <tr>\n" +
             "          <th scope='col'>Horse#</th>\n" +
@@ -735,7 +769,10 @@ $debug = debug();
 </script>
 <main role="main" id="admin_manage_event_page">
     <h1 class="mb-5 sticky-top"><?php echo $event_name ?></h1>
+
     <section>
+        <button type="button" id="close_event" class="btn btn-secondary btn-sm float-right">Close Event</button>
+        <button type="button" id="recalculate" class="btn btn-secondary btn-sm float-right d-none">Recalculate Event Results</button>
         <div class="text-center">
             <span><?php echo $event_date ?></span>
         </div>

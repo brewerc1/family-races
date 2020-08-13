@@ -51,6 +51,10 @@ $edit_pot = array(
     8 => "pot"
 );
 
+$event = array(
+    9 => "Event"
+);
+
 
 /**
  * @param $int
@@ -699,4 +703,55 @@ if (key_exists($q, $edit_pot)) {
         }
 
     }
+}
+
+if (key_exists($q, $event)) {
+    $action = validateInt($_POST['action']);
+
+    function populateEventStandingsTable($pdo, $event_id, $recalculate=false) {
+        try {
+            $message = "Event is closed.";
+
+            if ($recalculate) {
+                $query = "DELETE FROM event_standings WHERE event_id = :event_id";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['event_id' => $event_id]);
+                $message = "Results are recalculated.";
+            }
+
+            $query = "SELECT *, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['race_event_id' => $event_id]);
+            $race_standings = $stmt->fetchAll();
+
+            $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
+            $stmt = $pdo->prepare($query);
+
+            $winner = array('total' => 0);
+            foreach ($race_standings as $standing) {
+                $uid = $standing['user_id'];
+                $earnings = floatval($standing['total']);
+                $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
+
+                if ($earnings > floatval($winner['total']))
+                    $winner = $standing;
+            }
+
+            $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'],'champion_photo' => '/images/no-user-image.jpg', 'id' => $event_id]);
+
+            return json_encode(array('e' => 1, 'alert' => alert($message)));
+        } catch (Exception $e) {
+            return json_encode(array('e' => 1, 'alert' => alert("Something went wrong. Please, try again", "warning")));
+        }
+    }
+
+    if ($action === 1) {
+        echo populateEventStandingsTable($pdo, $event_id);
+    }
+    else {
+        echo populateEventStandingsTable($pdo, $event_id, true);
+    }
+
 }
