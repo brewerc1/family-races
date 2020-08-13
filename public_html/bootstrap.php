@@ -23,6 +23,24 @@ if(PHP_VERSION_ID < 70300) {
     ]);
 }
 
+// Start a session
+session_start();
+
+// get site settings and set session vars
+if(empty($_SESSION['site_name'])){
+    // SITE SETTINGS: Session variables
+	$site_settings_sql = "SELECT * FROM site_settings";
+	$site_settings_query = $pdo->prepare($site_settings_sql);
+	$site_settings_query->execute();
+
+	if ($site_settings_query->rowCount() > 0) {
+
+		$site_settings_result = $site_settings_query->fetch();
+		foreach ($site_settings_result as $site_session_key => $site_session_val)
+			$_SESSION["site_" . $site_session_key] = $site_session_val;
+	}
+}
+
 // Code for page templating
 function template($buffer)
 {

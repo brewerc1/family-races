@@ -14,7 +14,7 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 ob_start('template');
 
 // start a session
-session_start();
+//session_start();
 
 // Test for authorized user
 if (!isset($_SESSION["id"])) {
@@ -185,7 +185,7 @@ $background_image = random_photo();
 $memorial_race_content = '';
 if ($memorial_race_number == $race) {
     $memorial_race_content =<<< MEMORIAL
-	<div id="memorial_race_content" class="mt-2"><img src="/uploads/memorial-race.jpg" alt="Memorial photo"></div>
+	<div id="memorial_race_content" class="mt-2"><img src="/uploads/memorial-race.jpg" alt="Memorial photo" class="animate__animated animate__fadeIn"></div>
 	<div class='card-blur'></div>
 MEMORIAL;
 }
@@ -263,7 +263,7 @@ function set_horse_val(finish) {
 function enterResultFormHTML() {
     $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-    $('#message').html("<table class='table table-borderless' id='scoreboard'>\n" +
+    $('#message').html("<table class='scoreboard table table-borderless''>\n" +
         "    <!-- Row A -->\n" +
         "    <thead>\n" +
         "        <tr id='title_row'>\n" +
@@ -502,7 +502,7 @@ CLOSE;
 				<div class="card-text" id="no_pick">
                 <?php 
                     if($pick){ ?>
-                        <h1>You picked horse #<?php echo "<span class='horse-number animate__animated animate__bounceIn'>{$pick['horse_number']}</span> to <span class='horse-finish animate__animated animate__bounceIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
+                        <h1>You picked horse #<?php echo "<span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>{$pick['horse_number']}</span> to <span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
                         <?php if ($race_standings_info) {
                             echo "<h3>Your purse: $" . $race_standings_info['earnings'] . "</h3>";
 						}
@@ -519,7 +519,7 @@ CLOSE;
 				<?php
                     if ($win_horse) {
                         echo <<< HERE
-                            <table id="scoreboard">
+                            <table class="scoreboard animate__animated animate__delay-1s animate__zoomIn">
                                 <tr id="title_row">
                                     <td colspan="5"><img src="/images/kc-logo-white.svg" alt="{$_SESSION['site_name']} logo"> {$_SESSION['site_name']}</td>
                                 </tr>
@@ -599,10 +599,7 @@ CANCEL;
         else { // Comes here when showing 'All Races'
             echo "<div class='card-body' id='window_closed'><h1 class='card-title'>Current Event Leaderboard</h1></div>";
         }?>
-        </div>
-    </div>
-    
-	<ul class="user-list list-group list-group-flush" id="race_leaderboard">
+				<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
 if ($race == 0) { // Case when we are displaying the entire leaderboard
     while($row = $event_standings_result->fetch()) {
@@ -665,6 +662,8 @@ NORESULTS;
 }
 ?>
     </ul> <!-- END id race_leaderboard -->
+    </div><!-- END #pick_block -->
+    
 </main>
 {footer}
 <?php ob_end_flush(); ?>

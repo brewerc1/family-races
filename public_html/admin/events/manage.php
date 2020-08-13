@@ -2,7 +2,6 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 ob_start('template');
-session_start();
 
 $page_title = "Manage an Event";
 

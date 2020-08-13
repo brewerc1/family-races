@@ -9,8 +9,6 @@
  */
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-session_start();
-
 // unset session variables
 unset($_SESSION["id"]);
 unset($_SESSION["first_name"]);

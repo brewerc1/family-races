@@ -4,9 +4,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
 ob_start('template');
- 
-// start a session
-session_start();
 
 // if there is a session id, then this user should not be on this page.
 if (isset($_SESSION ['id'])) {
@@ -133,7 +130,7 @@ if(isset($_POST['create_account_button'])) {
 ?>
 
 {header}
-	<main id="onboarding_page">
+	<main role="main" id="onboarding_page">
 		<h1 class="mb-5 sticky-top"><?php echo $page_title;?></h1>
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 			<div class="form-group">

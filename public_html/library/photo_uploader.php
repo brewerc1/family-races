@@ -10,9 +10,6 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// start a session
-session_start();
-
 if( isset($_SESSION['id']) && isset($_POST['id']) && isset($_POST['cropped_image']) && isset($_POST['type'])) {
 
 	$entity_id = $_POST['id'];

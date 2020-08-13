@@ -1,8 +1,5 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-//ob_start();
-//// start a session
-//session_start();
 
 if (isset($_POST["reset_password"])) {
     $email = trim($_POST["email"]);

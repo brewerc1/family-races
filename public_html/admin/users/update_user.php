@@ -10,9 +10,6 @@
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-// start a session
-session_start();
-
 // turn on output buffering
 ob_start('template');
 

@@ -1,7 +1,7 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
-ob_start('template');
 
+ob_start('template');
 
 if (!isset($_GET["email"]) && !isset($_GET["code"])) {
     header("HTTP/1.1 401 Unauthorized");

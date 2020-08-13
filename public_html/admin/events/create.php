@@ -3,7 +3,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
 ob_start('template');
-session_start();
 
 $page_title = "Create Event";
 

@@ -12,9 +12,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 // turn on output buffering
 ob_start('template');
 
-// start a session
-session_start();
-
 // set the page title for the template
 $page_title = "Edit User Profile";
 

@@ -1,8 +1,6 @@
 <?php
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
-session_start();
-
 
 if(empty($_SESSION["id"])) {
     header("Location: /login/");

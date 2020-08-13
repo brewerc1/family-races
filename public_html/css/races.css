@@ -333,8 +333,11 @@ table#profile_records {
 	color: #fff;
 	text-shadow: 0px 16px 10px rgba(0,0,0,0.3), 
 		0px 2px 6px rgba(0,0,0,0.8);
+	z-index: 800;
 }
-#races_page #pick_block .input-group {
+#races_page #pick_block .input-group, 
+#race_results_button, 
+#confirm_cancel_button {
 	z-index: 800;
 }
 #races_page #pick_block .card-blur{
@@ -402,11 +405,10 @@ table#profile_records {
 }
 .scoreboard {
 	font-family: 'Score Board';
+	font-family: 'Lato', Sans-Serif;
 	font-weight: normal;
 	font-style: normal;
 	color: orange;
-}
-#scoreboard {
 	border-collapse: separate;
 	text-align: right;
 	background-color: rgba(82, 86, 83, .95);
@@ -416,10 +418,10 @@ table#profile_records {
 	width: auto;
 	padding: 5px;
 }
-#races_page #scoreboard {
+#races_page .scoreboard {
 	box-shadow: 0 0 23px 1px rgba(0,0,0,0.5);
 }
-#scoreboard #title_row td {
+.scoreboard #title_row td {
 	background-color: initial;
 	font-Family: 'Arvo', Serif;
 	color: #fff;
@@ -432,21 +434,21 @@ table#profile_records {
 	font-weight: 700;
 	text-align: center;
 }
-#scoreboard #title_row td img {
+.scoreboard #title_row td img {
 	width: 60px;
 	margin-right: 5px;
 }
-#scoreboard tr {
+.scoreboard tr {
 	border-spacing: 10px;
 	border-radius: 3px;
 }
-#scoreboard th {
+.scoreboard th {
 	text-align: right;
 	border-radius: 3px;
 	color: #989898;
 	width: auto;
 }
-#scoreboard td {
+.scoreboard td {
 	background-color: #000;
 	padding: .2rem .5rem;
 	color: orange;
@@ -457,19 +459,19 @@ table#profile_records {
 	width: auto;
 	border-radius: 3px;
 }
-#scoreboard #second>td:nth-of-type(2), 
-#scoreboard #third>td:nth-of-type(2), 
-#scoreboard #third>td:nth-of-type(3){
+.scoreboard #second>td:nth-of-type(2), 
+.scoreboard #third>td:nth-of-type(2), 
+.scoreboard #third>td:nth-of-type(3){
 	background-color: transparent;
 }
-#scoreboard input, #scoreboard select {
+.scoreboard input, .scoreboard select {
 	background-color: #000;
 	border: none;
 	color: orange;
 	text-align: right;
 	font-size: 1.2rem;
 }
-#scoreboard thead th {
+.scoreboard thead th {
 	padding: 0;
 	text-align: center;
 }
@@ -484,7 +486,7 @@ table#profile_records {
 	box-shadow: 0px 1px 13px 5px rgba(0,0,0,.4);
 }
 @media (min-width: 576px) {
-	#scoreboard {
+	.scoreboard {
 		border-collapse: separate;
 		border-spacing: 10px 5px;
 		text-align: right;
@@ -493,7 +495,7 @@ table#profile_records {
 		margin: 0rem auto 2rem auto;
 		width: auto;
 	}
-	#scoreboard td {
+	.scoreboard td {
 		width: auto;
 		font-size: 1.5rem;
 	}

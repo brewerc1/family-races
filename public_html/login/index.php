@@ -4,9 +4,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 // Turn on output buffering
 ob_start('template');
 
-// Start a session
-session_start();
-
 // Set the page title for the template
 $page_title = "Login";
 
@@ -77,7 +74,6 @@ if (isset($_POST["login"])) {
             $site_row = $site_setts->fetch();
             foreach ($site_row as $site_session_key => $site_session_val)
                 $_SESSION["site_" . $site_session_key] = $site_session_val;
-
         }
 
 
@@ -118,10 +114,10 @@ $random_image = array_rand($background_images);
 ?>
 {header}
     <main role="main" id="login_page" style="background-image: url('/images/photos/splash/<?php echo $random_image;?>');background-position:<?php echo $background_images[$random_image][1];?>">
-        <form class="vertical-center animate__animated animate__fadeIn" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
+        <form class="vertical-center animate__animated animate__fadeIn col-8 col-sm-4" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
             <div id="logo_wrapper">
                 <img id="logo" class="" src="/images/kc-logo.svg">
-                <h1 id="logo_text">Keene Challenge</h1>
+                <h1 id="logo_text"><?php echo $_SESSION['site_name'];?></h1>
             </div>
             <div class="form-group">
                 <label for="email" class="sr-only">Email address</label>

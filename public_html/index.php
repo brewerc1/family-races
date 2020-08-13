@@ -11,9 +11,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 // turn on output buffering
 ob_start('template');
 
-// start a session
-session_start();
-
 // Set the page title for the template
 $page_title = "Welcome!";
 
@@ -53,7 +50,7 @@ $random_image = array_rand($background_images);
             <path filter="url(#svg_dropshadow)" id="neck" class="cls-1" d="M450.07,21.32c.22,2.75-2,2.94-3.75,3.3-27.52,5.69-54,14.79-80.14,24.89-59,22.83-116.26,49.3-167.16,87.54A815,815,0,0,0,85.44,240c-7,7.71-13.15,16.21-19.35,24.61-2.83,3.82-5.45,5.22-9.7,2.31-3.81-2.63-7.83-4.95-11.76-7.41-3.33-2.09-1.41-4.18.09-6.13,17.42-22.63,35.17-44.84,56.72-64,21.77-19.32,41.24-41.28,65.3-58,32.06-22.26,65.17-42.82,100-60.67A880.26,880.26,0,0,1,378,22.55c17.26-6,34.31-12.68,52.19-16.8l1.27-.31C446,2.25,450.5,6.1,450.07,21.32Z" transform="translate(-4.13 -4.4)"/>
             <path filter="url(#svg_dropshadow)" id="nose" class="cls-1" d="M533.94,179.21c-1-1.11-1.71-2.14-2.62-3L449.08,95.29c-11.16-11-22.22-22.09-33.46-33-2.8-2.72-2.65-4.61.3-7,14.59-11.9,10.33-12.06,23.33.61q61.26,59.68,122.3,119.61c2.54,2.49,2.78,4.69.36,7.48q-21,24.17-41.74,48.49c-1.88,2.19-3.29,2.5-5.78.72-16.08-11.47-16.14-11.43-3.53-26.14,7.09-8.26,14.26-16.44,21.38-24.66C532.79,180.75,533.27,180.07,533.94,179.21Z" transform="translate(-4.13 -4.4)"/>
         </svg>
-        <h1 class="fade-in animate__animated animate__tada" id="logo_text">Keene Challenge</h1>
+        <h1 class="fade-in animate__animated animate__tada" id="logo_text"><?php echo $_SESSION['site_name'];?></h1>
     </div>
 	<span id="photo_credit">Photo by <?php echo $background_images[$random_image][0];?></span>
 	</a>

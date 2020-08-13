@@ -3,8 +3,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
 ob_start();
-// start a session
-session_start();
 
 if (isset($_POST["invite"])) {
     $email = trim($_POST["email"]);
