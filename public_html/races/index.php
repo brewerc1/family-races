@@ -262,59 +262,62 @@ function set_horse_val(finish) {
 function enterResultFormHTML() {
     $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-    $('#message').html("<table class='table table-borderless' id='edit-results'>\n" +
+    $('#message').html("<table class='table table-borderless' id='scoreboard'>\n" +
         "    <!-- Row A -->\n" +
         "    <thead>\n" +
+        "        <tr id='title_row'>\n" +
+        "           <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
+        "        </tr>\n" +
         "        <tr>\n" +
-        "          <th scope='col'>Horse #</th>\n" +
+        "          <th scope='col'>Horse#</th>\n" +
         "          <th scope='col'>Win</th>\n" +
         "          <th scope='col'>Place</th>\n" +
         "          <th scope='col'>Show</th>\n" +
         "        </tr>\n" +
         "    </thead>\n" +
         "    <!-- Row B -->\n" +
-        "    <tr>\n" +
+        "    <tr id='first'>\n" +
         "        <td>\n" +
-        "            <select  id='win-result' class='race-result' onchange='set_horse_val(`win`)'>\n" +
+        "            <select  id='win-result' class='race-result' onchange='set_horse_val(`win`)' required>\n" +
         "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='win1' class='w-100''>\n" +
+        "                <input type='text' id='win1' class='w-100'' required>\n" +
         "        </td>\n" +
-        "        <td class='position-relative'>\n" +
-        "                <input type='text' id='place1' class='w-100'>\n" +
+        "        <td class=''>\n" +
+        "                <input type='text' id='place1' class='w-100' required>\n" +
         "        </td>\n" +
-        "        <td class='position-relative'>\n" +
-        "                <input type='text' id='show1' class='w-100'>\n" +
+        "        <td class=''>\n" +
+        "                <input type='text' id='show1' class='w-100' required>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    <!-- Row C -->\n" +
-        "    <tr>\n" +
+        "    <tr id='second'>\n" +
         "        <td>\n" +
-        "            <select  id='place-result' class='race-result' onchange='set_horse_val(`place`)'>\n" +
+        "            <select  id='place-result' class='race-result' onchange='set_horse_val(`place`)' required>\n" +
         "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td></td>\n" +
         "        <td class='position-relative'>\n" +
-        "                <input type='text' id='place2' class='w-100'>\n" +
+        "                <input type='text' id='place2' class='w-100' required>\n" +
         "        </td>\n" +
         "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show2' class='w-100'>\n" +
+        "            <input type='text' id='show2' class='w-100' required>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    <!-- Row D -->\n" +
-        "    <tr>\n" +
+        "    <tr id='third'>\n" +
         "        <td>\n" +
-        "            <select  id='show-result' class='race-result' onchange='set_horse_val(`show`)'>\n" +
+        "            <select  id='show-result' class='race-result' onchange='set_horse_val(`show`)' required>\n" +
         "                <option value='0' selected disabled>Horse #</option>\n" +
         "            </select>\n" +
         "        </td>\n" +
         "        <td></td>\n" +
         "        <td></td>\n" +
         "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show3' class='w-100'>\n" +
+        "            <input type='text' id='show3' class='w-100' required>\n" +
         "        </td>\n" +
         "    </tr>\n" +
         "    </table>");
@@ -336,6 +339,7 @@ function populateHorses(raceNumber, eventNumber) {
         $('#show-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
     }
 };
+
 function enterResultForRace(eventNumber, raceNumber) {
     $('#collapse' + raceNumber).addClass('show');
     let oldWin = null;
@@ -367,6 +371,7 @@ function enterResultForRace(eventNumber, raceNumber) {
             $('#alert').delay( 3000 ).fadeOut( 400 );
         }
     });
+    location.reload();
 }
 function cancelRace(eventNumber, raceNumber) {
     console.log('Cancelling event ' + eventNumber + ' race ' + raceNumber);
@@ -554,7 +559,7 @@ OPEN;
                         }
                     }
                     // To cancel a race
-                    if ($_SESSION['admin'] && !($pick) && !($win_horse)) {
+                    if ($_SESSION['admin'] && !($win_horse)) {
                         echo <<< CANCEL
                             <form action="cancel-race.php" method="POST" id="cancel_race_form">
                                 <div class="form-check">
