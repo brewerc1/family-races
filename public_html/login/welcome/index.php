@@ -50,7 +50,7 @@ $uid = $_SESSION['id'];
         <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     <div class="text-center">
-        <a href="/races/" class="btn btn-primary mt-2">Skip</a>
+        <a href="/races/" class="btn btn-primary mt-3 mb-3">Skip</a>
     </div>
 </main>
 {footer}
