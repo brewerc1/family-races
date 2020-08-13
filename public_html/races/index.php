@@ -489,7 +489,7 @@ CANCEL;
                     if ($_SESSION['admin']) {
                         echo <<< CLOSE
                             <form action="close-race.php" method="POST" class="text-center">
-                                <input type="hidden" value=$race name="currentRace" id="currentRace">
+                                <input type="hidden" value=$race name="closeCurrentRace" id="closeCurrentRace">
                                 <input class="btn btn-danger" type="submit" value="Close Betting Window">
                             </form>
 CLOSE;
