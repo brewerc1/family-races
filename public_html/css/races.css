@@ -61,12 +61,13 @@ main {
 	min-height: 100%;
 	margin: 0 auto;
 	box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
-	border-left: 1px solid rgba(120,120,120,0.9);
-	border-right: 1px solid rgba(120,120,120,0.9);
+	border: none;
 }
 @media (min-width: 1024px) {
 	main {
 		max-width: 1024px;
+		border-left: 1px solid rgba(120,120,120,0.9);
+		border-right: 1px solid rgba(120,120,120,0.9);
 	}
 	#main_navigation {
 		max-width: 1024px;
@@ -102,7 +103,8 @@ span.navbar-text {
 #welcome_page > h1,
 #admin_events_page > h1,
 #admin_event_create_page > h1,
-#admin_manage_event_page > h1
+#admin_manage_event_page > h1,
+#password_reset_page > h1
 {
 	border-bottom: 1px solid #ccc;
 	margin-left: -20px;
