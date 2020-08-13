@@ -185,7 +185,8 @@ $background_image = random_photo();
 $memorial_race_content = '';
 if ($memorial_race_number == $race) {
     $memorial_race_content =<<< MEMORIAL
-    <div id="memorial_race_content" class="mt-2"><img src="/uploads/memorial-race.jpg" alt="Memorial photo"></div>
+	<div id="memorial_race_content" class="mt-2"><img src="/uploads/memorial-race.jpg" alt="Memorial photo"></div>
+	<div class='card-blur'></div>
 MEMORIAL;
 }
 
@@ -383,7 +384,6 @@ function cancelRace(eventNumber, raceNumber) {
 {main_nav}
 <main role="main" id="races_page" style="background-image: url(<?php echo $background_image['filename'];?>);">
 	<div class="card" id="pick_block" style="">
-		<div class='card-blur'></div>
         <div class="input-group input-group-lg mb-2 pt-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
@@ -521,7 +521,7 @@ CLOSE;
                         echo <<< HERE
                             <table id="scoreboard">
                                 <tr id="title_row">
-                                    <td colspan="4"><img src="/images/kc-logo-white.svg" alt="{$_SESSION['site_name']} logo"> {$_SESSION['site_name']}</td>
+                                    <td colspan="5"><img src="/images/kc-logo-white.svg" alt="{$_SESSION['site_name']} logo"> {$_SESSION['site_name']}</td>
                                 </tr>
                                 <tr id="first">
                                     <th>1st</th>
