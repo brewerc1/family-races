@@ -17,7 +17,7 @@ if (!isset($_SESSION["id"])) {
 }
 
 $event = $_SESSION['current_event'];
-$race = $_POST['currentRace'];
+$race = $_POST['closeCurrentRace'];
 
 $close_race_sql = "UPDATE `race` SET `window_closed` = 1 WHERE `race`.`event_id` = :event AND `race`.`race_number` = :race";
 $close_race = $pdo->prepare($close_race_sql);
