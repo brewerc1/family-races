@@ -13,20 +13,19 @@ $javascript = "";
 {header}
 <main role="main" id="password_reset_page">
 	<h1 class="mb-5 sticky-top">Reset Your Password</h1>
-    <section>
-        <p>
-            To reset your password. enter your account email address. An email will be sent with a reset code.
-        </p>
-    </section>
-
-    <section>
+    <section id="reset_password"> 
         <form action="./pw_reset.php" method="POST">
-            <input type="email" name="email" placeholder="Email">
-            <input type="submit" name="reset_password" value="Reset Password">
+            <div class="form-group col-md-6">
+                <label class="sr-only" for="email">Email Address</label>
+                <input type="email" class="form-control" aria-describedby="email_help" name="email" id="email" placeholder="example@email.com">
+                <small class="form-text text-muted" id="email_help" name="email_help">
+                    To reset your password, please enter your account email address. An email will be sent with a reset code.
+                </small>
+            
+                <input type="submit" class="btn btn-primary" name="reset_password" value="Reset Password">
+                <a href="/login" class="text-secondary d-block mt-2">Return to Log In</a>
+            </div>
         </form>
-        <p>
-            <a href="/login">Return to Log In</a>
-        </p>
     </section>
 </main>
 {footer}
