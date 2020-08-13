@@ -9,15 +9,11 @@ if (isset($_POST["reset_password"])) {
 
     if (empty($email)) {
         header("Location: /password/?m=2&s=warning");
-
-        // Make sure the rest of code is not gonna be executed
         exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         header("Location: /password/?m=6&s=warning");
-
-        // Make sure the rest of code is not gonna be executed
         exit;
     } else {
 
@@ -27,8 +23,6 @@ if (isset($_POST["reset_password"])) {
 
         if ($user->rowCount() != 1) {
             header("Location: /password/?m=0&s=success&email=" . $email);
-
-            // Make sure the rest of code is not gonna be executed
             exit;
         } else {
 
@@ -40,8 +34,6 @@ if (isset($_POST["reset_password"])) {
 
             if ($email_arguments->rowCount() == 0) {
                 header("Location: /password/?m=6&s=warning");
-
-                // Make sure the rest of code is not gonna be executed
                 exit;
             } else {
                 // reset code: throws an exception
@@ -49,8 +41,6 @@ if (isset($_POST["reset_password"])) {
                     $reset_pw_code = generateCode();
                 } catch (Exception $e) {
                     header("Location: /password/?m=6&s=warning");
-
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 }
 
@@ -58,8 +48,6 @@ if (isset($_POST["reset_password"])) {
                 $sql = "UPDATE user SET pw_reset_code=:pw_reset_code WHERE email=:email";
                 if (!$pdo->prepare($sql)->execute(['pw_reset_code' => $reset_pw_code, 'email' => $email])) {
                     header("Location: /password/?m=6&s=warning");
-
-                    // Make sure the rest of code is not gonna be executed
                     exit;
                 } else {
 
@@ -75,22 +63,14 @@ if (isset($_POST["reset_password"])) {
 
                     if (!$is_sent) {
                         header("Location: /password/?m=6&s=warning");
-
-                        // Make sure the rest of code is not gonna be executed
                         exit;
                     } else {
                         header("Location: /password/?m=0&s=success&email=" . $email);
-
-                        // Make sure the rest of code is not gonna be executed
                         exit;
                     }
                 }
 
             }
-
-
         }
-
     }
-
 }

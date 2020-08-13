@@ -51,7 +51,7 @@ try {
 		<section id="events" class="mt-5">
 			<div class="text-center mb-1 mt-3">
 				<a class="btn btn-primary text-center <?php echo $has_current_event == 1 ? 'disabled' : '' ?>" href="./create.php">Create New Event</a>
-				<?php echo $has_current_event == 1 ? '<div><small>To create a new event, you must close the current event.</small></div>' : '';?>
+				<?php echo $has_current_event == 1 ? '<div><small class="text-muted">To create a new event, you must close the current event.</small></div>' : '';?>
 			</div>
 			<div class="justify-content-center row mt-5">
 				<ul class="list-group list-group-flush col-md-6">
