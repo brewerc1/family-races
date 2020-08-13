@@ -24,6 +24,7 @@ $event_date = "Event Date";
 $event_pot = 0;
 $disabled_add_race_button = "disabled";
 $jackpot_btn_none = "d-none";
+$event_status = 0;
 
 
 $e = isset($_GET["e"]) ? $_GET["e"] : 0;
@@ -69,7 +70,9 @@ $debug = debug();
 <script>
     const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
         $_SESSION["site_default_horse_count"] : 1; ?>;
+    const SITE_NAME = '<?php echo empty($_SESSION['site_name']) ? 'Races' : $_SESSION['site_name'] ?>';
     const EVENT_ID = <?php echo $event_id; ?>;
+    let EVENT_STATUS = <?php echo ($event_status === 1) ? 1 : 0; ?>;
     const DELAY = 5000;
     const FADEOUT = 400;
 
@@ -78,7 +81,6 @@ $debug = debug();
     let resultList = new Map();
     let numberOfHorses;
     let horsesList = [];
-    // let horseToBeDeleted = new Map();
 
     function updateNumberOfHorsesSelectValue() {
         $('.group').each( function () {
@@ -92,8 +94,6 @@ $debug = debug();
             raceHorses.set(parseInt(this.id.charAt(5)), horses);
         });
     }
-
-
 
     function bindOnChangeOnSelectMenu() {
         $('.group-select').bind('change', function () {
@@ -119,8 +119,6 @@ $debug = debug();
         });
     }
 
-
-
     function bindOnClickCancelRace() {
         $('.cancel-race').bind( 'click', function () {
 
@@ -139,11 +137,6 @@ $debug = debug();
         });
     }
 
-
-
-
-
-
     /**
      * Removes Horse input on the UI (delete)
      *
@@ -157,10 +150,6 @@ $debug = debug();
             $('#addInput' + raceNumber + ' div.group-horse:last-of-type').remove();
         }
     }
-
-
-
-
 
     /**
      * Adds horse input by cloning div#addInput0 of the Race HTML To clone.
@@ -190,10 +179,6 @@ $debug = debug();
             onclick: "deleteHorse('" + parentDivId + "', '" + spanId + "')"
         });
     }
-
-
-
-
 
     /**
      * Communicate with PHP scripts to save and update race inside the DB and
@@ -239,11 +224,6 @@ $debug = debug();
         });
     }
 
-
-
-
-
-
     /**
      * Undoes the unsaved changes
      *
@@ -281,10 +261,6 @@ $debug = debug();
         horsesList = [];
     }
 
-
-
-
-
     /**
      * Deletes horse input from the UI.
      *
@@ -316,12 +292,6 @@ $debug = debug();
 
     }
 
-
-
-
-
-
-
     /**
      * Adds horse input to the UI.
      *
@@ -342,10 +312,6 @@ $debug = debug();
             $('#' + btnId).addClass('disabled');
         }
     }
-
-
-
-
 
     /**
      * Communicates with PHP script to delete race and all data associated to it.
@@ -373,9 +339,6 @@ $debug = debug();
             }
         });
     }
-
-
-
 
     /**
      * Populates horses inside the selection options fo the scoreboard
@@ -420,9 +383,6 @@ $debug = debug();
 
     }
 
-
-
-
     /**
      * Does the opposite of populateHorses() function
      *
@@ -434,12 +394,6 @@ $debug = debug();
 
         $('#message table').remove();
     }
-
-
-
-
-
-
 
     /**
      *
@@ -571,7 +525,7 @@ $debug = debug();
         attr('data-target', '#collapse' + raceNumber);
         $('#' + groupId + ' div.group-header:first-of-type a:first-of-type').
         attr('id', 'race_link' + raceNumber).
-        attr('href', '/races/?e=' + EVENT_ID + '&r' + raceNumber).addClass('disabled');
+        attr('href', '/races/?e=' + EVENT_ID + '&r=' + raceNumber).addClass('disabled');
 
         const collapseId = 'collapse' + raceNumber;
         $('#' + groupId + ' div#collapse0').attr('id', collapseId);
@@ -667,7 +621,38 @@ $debug = debug();
         let keys = Array.from(raceHorses.keys());
         const raceNumber = keys[keys.length - 1];
         displayDeleteButtonOnlyForLastRace(raceNumber);
+
+
+        // EVENT
+        closeEventUI();
+        closeEventBackend('close_event', 1);
+        closeEventBackend('recalculate', 0);
     });
+
+    function closeEventBackend(id, action) {
+        $('#' + id).click( function () {
+
+            $.ajax({
+                type: 'POST',
+                url: './race.php?e='+ EVENT_ID +'&r=' + 1 + '&q=' + 9,
+                data: {action: action },
+                dataType: 'json',
+                success: function (data) {
+                    $('main').prepend(data['alert']);
+                    $('#alert').delay( DELAY ).fadeOut( FADEOUT );
+                    EVENT_STATUS = parseInt(data['e']);
+                    closeEventUI();
+                }
+            });
+
+        });
+    }
+
+    function closeEventUI() {
+        $('#recalculate').toggleClass('d-none', (EVENT_STATUS === 0));
+        $('#close_event').toggleClass('d-none', (EVENT_STATUS === 1));
+        $('#addRace').toggleClass('d-none', (EVENT_STATUS === 1));
+    }
 
     function getNewRaceNumber() {
         return ($('.group').length);
@@ -680,7 +665,6 @@ $debug = debug();
     }
 
 
-
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
@@ -688,7 +672,7 @@ $debug = debug();
 			"    <!-- Row A -->\n" +
 			"    <thead>\n" +
 			"        <tr id='title_row'>\n" +
-            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
+            "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='" + SITE_NAME + " logo'>" + SITE_NAME + "</td>\n" +
 			"        </tr>\n" +
             "        <tr>\n" +
             "          <th scope='col'>Horse#</th>\n" +
@@ -785,7 +769,10 @@ $debug = debug();
 </script>
 <main role="main" id="admin_manage_event_page">
     <h1 class="mb-5 sticky-top"><?php echo $event_name ?></h1>
+
     <section>
+        <button type="button" id="close_event" class="btn btn-secondary btn-sm float-right">Close Event</button>
+        <button type="button" id="recalculate" class="btn btn-secondary btn-sm float-right d-none">Recalculate Event Results</button>
         <div class="text-center">
             <span><?php echo $event_date ?></span>
         </div>

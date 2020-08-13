@@ -12,11 +12,8 @@ if(empty($_SESSION["id"])) {
     exit;
 }
 
-//!isset($_GET["r"]) &&
 if (!isset($_GET["r"]) && !isset($_GET["q"]) && !isset($_GET["e"])) {
     header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
     exit;
 }
 
@@ -54,6 +51,10 @@ $edit_pot = array(
     8 => "pot"
 );
 
+$event = array(
+    9 => "Event"
+);
+
 
 /**
  * @param $int
@@ -68,7 +69,6 @@ function validateInt($int) {
     $in = filter_var(trim($int), FILTER_SANITIZE_NUMBER_INT);
     return filter_var($in, FILTER_VALIDATE_INT, $int_options);
 }
-
 
 /**
  * @param $message
@@ -92,12 +92,8 @@ $q = validateInt($_GET["q"]);
 $race_number = validateInt($_GET["r"]);
 $event_id = validateInt($_GET["e"]);
 
-
-
-
 // Update window_closed/cancelled
 if (key_exists($q, $request_array)) {
-
 
     /**
      * @param $pdo
@@ -136,9 +132,6 @@ if (key_exists($q, $request_array)) {
         }
     }
 
-
-
-
     // Cancel A Race
     if (isset($_POST["is_checked"])) {
         raceUpdate($pdo, $request_array[$q], $race_number, $event_id,
@@ -146,9 +139,6 @@ if (key_exists($q, $request_array)) {
             "Race $race_number is uncancelled",
             "Can't cancel Race $race_number at the moment, please try again");
     }
-
-
-
 
     // Close/Reopen betting window
     if (isset($_POST["open"])) {
@@ -158,18 +148,7 @@ if (key_exists($q, $request_array)) {
             "Can't reopen Race $race_number window at the moment, please try again");
     }
 
-
-
-
 }
-
-
-
-
-
-
-
-
 
 /**
  *  Actions
@@ -179,8 +158,6 @@ if (key_exists($q, $request_array)) {
  *  Create race if not exist
  */
 if (key_exists($q, $update)) {
-
-
 
     /**
      * @param $pdo
@@ -209,8 +186,6 @@ if (key_exists($q, $update)) {
         }
     }
 
-
-
     /**
      * @param $pdo
      * @param $event_id
@@ -232,10 +207,6 @@ if (key_exists($q, $update)) {
             return 0;
         }
     }
-
-
-
-
 
     // Check if the race exists
     $race_query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
@@ -262,12 +233,6 @@ if (key_exists($q, $update)) {
         }
     }
 
-
-
-
-
-
-
     // Horses that cannot be deleted
     $horses_in_pick_table = array();
 
@@ -283,8 +248,6 @@ if (key_exists($q, $update)) {
     if (!empty($_POST["delete_horse"])) {
 
         try {
-
-
             $success = 0;
             $pick_query = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
             $pick = $pdo->prepare($pick_query);
@@ -333,12 +296,6 @@ if (key_exists($q, $update)) {
         }
 
     }
-
-
-
-
-
-
 
     /**
      * Insert horses in DB
@@ -411,12 +368,6 @@ if (key_exists($q, $update)) {
 
 }
 
-
-
-
-
-
-
 /**
  *  Actions
  *
@@ -461,11 +412,6 @@ if (key_exists($q, $delete)) {
     }
 
 }
-
-
-
-
-
 
 /**
  *  Actions
@@ -530,8 +476,6 @@ if (key_exists($q, $result)) {
                 array($win_horse, $win_purse, $place_purse, $show_purse),
                 array($place_horse, $place_purse2, $show_purse2), array($show_horse, $show_purse3));
 
-
-
         } catch (Exception $e) {
             $success = 0;
         }
@@ -539,20 +483,6 @@ if (key_exists($q, $result)) {
         return $success;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * @param $pdo
@@ -588,7 +518,6 @@ if (key_exists($q, $result)) {
                     $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[3]]);
             }
 
-
             elseif ($pick['horse_number'] === $place[0]) {
 
                 if ($pick['finish'] === 'place')
@@ -602,8 +531,6 @@ if (key_exists($q, $result)) {
 
             }
 
-
-
             elseif ($pick['horse_number'] === $show[0]) {
 
                 if ($pick['finish'] === 'show')
@@ -614,21 +541,12 @@ if (key_exists($q, $result)) {
 
             }
 
-
             else {
                 $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
             }
 
-
         }
     }
-
-
-
-
-
-
-
 
     /**
      * @param $pdo
@@ -642,15 +560,6 @@ if (key_exists($q, $result)) {
         $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
 
     }
-
-
-
-
-
-
-
-
-
 
     /**
      * @param $post_win
@@ -666,14 +575,7 @@ if (key_exists($q, $result)) {
         );
     }
 
-
-
-
-
-
-
     try {
-
 
         if (isset($_POST["old_win"])) {
 
@@ -727,14 +629,7 @@ if (key_exists($q, $result)) {
             "warning")));
     }
 
-
-
 }
-
-
-
-
-
 
 /**
  *  Actions
@@ -776,13 +671,6 @@ if (key_exists($q, $get_result)) {
 
 }
 
-
-
-
-
-
-
-
 /**
  *  Actions
  *
@@ -815,4 +703,55 @@ if (key_exists($q, $edit_pot)) {
         }
 
     }
+}
+
+if (key_exists($q, $event)) {
+    $action = validateInt($_POST['action']);
+
+    function populateEventStandingsTable($pdo, $event_id, $recalculate=false) {
+        try {
+            $message = "Event is closed.";
+
+            if ($recalculate) {
+                $query = "DELETE FROM event_standings WHERE event_id = :event_id";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['event_id' => $event_id]);
+                $message = "Results are recalculated.";
+            }
+
+            $query = "SELECT *, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['race_event_id' => $event_id]);
+            $race_standings = $stmt->fetchAll();
+
+            $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
+            $stmt = $pdo->prepare($query);
+
+            $winner = array('total' => 0);
+            foreach ($race_standings as $standing) {
+                $uid = $standing['user_id'];
+                $earnings = floatval($standing['total']);
+                $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
+
+                if ($earnings > floatval($winner['total']))
+                    $winner = $standing;
+            }
+
+            $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'],'champion_photo' => '/images/no-user-image.jpg', 'id' => $event_id]);
+
+            return json_encode(array('e' => 1, 'alert' => alert($message)));
+        } catch (Exception $e) {
+            return json_encode(array('e' => 1, 'alert' => alert("Something went wrong. Please, try again", "warning")));
+        }
+    }
+
+    if ($action === 1) {
+        echo populateEventStandingsTable($pdo, $event_id);
+    }
+    else {
+        echo populateEventStandingsTable($pdo, $event_id, true);
+    }
+
 }
