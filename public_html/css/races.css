@@ -241,7 +241,7 @@ form#login {
 }
 #user_profile_photo {
 	width: 100%;
-	max-width: 300px;
+	max-width: 200px;
 }
 #user_name h1 {
 	margin: 1.5rem 0;

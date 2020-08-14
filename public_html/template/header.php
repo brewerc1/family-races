@@ -38,12 +38,16 @@ return <<< HTML
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
 
 	<script>
-		$( document ).ready(function() {
+		$( window ).on( "load", function() {
 
+			// Injected javascript from PHP
 	        $javascript
-	      
+			
+			// Main Nav: Highlight element based on page path
 	        var path_id = $(location).attr('pathname').split('/')[1];
 	        $("#" + path_id).addClass("active");
+
+			// Main modal
 	        $('#mainModal').on('show.bs.modal', function (event) {
 	            // Link or Button that triggered the modal
 	            var button = $(event.relatedTarget);
@@ -64,7 +68,7 @@ return <<< HTML
 	            modal.find('.btn.btn-secondary').html(button_secondary_text);
 	            modal.find('.btn.btn-secondary').attr("onclick",button_secondary_action);
 
-	            // Close main_nav when modal is active
+				// Close main_nav when modal is active (on mobile devices)
 	            var trigger_id =	$('#main-navigation').attr('data-target');
 	            $(trigger_id).toggleClass("collapsed");
 	        });
