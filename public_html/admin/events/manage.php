@@ -667,7 +667,7 @@ $debug = debug();
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-        $('#message').html("<table class='table table-borderless' id='scoreboard'>\n" +
+        $('#message').html("<table class='scoreboard table table-borderless' id='scoreboard'>\n" +
 			"    <!-- Row A -->\n" +
 			"    <thead>\n" +
 			"        <tr id='title_row'>\n" +
