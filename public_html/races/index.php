@@ -190,21 +190,15 @@ if ($memorial_race_number == $race) {
 MEMORIAL;
 }
 
+$horses = $horses_result->fetchAll();
+$horse_list_js = '';
+foreach($horses as $key => $value){
+	$horse_list_js .= "{$horses[$key]['horse_number']},";
+}
+$horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
 ?>
 <script>
-let horseList = [];
-<?php 
-// SQL Queries to populate the 'enter race results' modal
-$modal_horses_result = $pdo->prepare($horses_sql);
-$modal_horses_result->execute(['event' => $event, 'race' => $race]);
-$modal_horse = $modal_horses_result->fetch();
-
-for ($i = 0; $i < $horses_count; $i++) {
-    
-    echo "horseList.push({$modal_horse['horse_number']});";
-    $modal_horse = $modal_horses_result->fetch();
-}
- ?>
+let horseList = [<?php echo $horse_list_js;?>];
 function set_horse_val(finish) {
     let win_horse_number, place_horse_number, show_horse_number;
     if (finish == "win") {
@@ -502,7 +496,7 @@ CLOSE;
 				<div class="card-text" id="no_pick">
                 <?php 
                     if($pick){ ?>
-                        <h1>You picked horse #<?php echo "<span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>{$pick['horse_number']}</span> to <span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
+                        <h1>You picked <?php echo "<span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>{$pick['horse_number']}</span>&nbsp;to&nbsp;<span class='horse-picks animate__animated animate__delay-1s animate__zoomIn'>" . ucfirst($pick['finish']) . "</span>";?></h1>
                         <?php if ($race_standings_info) {
                             echo "<h3>Your purse: $" . $race_standings_info['earnings'] . "</h3>";
 						}
@@ -519,7 +513,7 @@ CLOSE;
 				<?php
                     if ($win_horse) {
                         echo <<< HERE
-                            <table class="scoreboard animate__animated animate__delay-1s animate__zoomIn">
+                            <table class="scoreboard animate__animated animate__zoomIn">
                                 <tr id="title_row">
                                     <td colspan="5"><img src="/images/kc-logo-white.svg" alt="{$_SESSION['site_name']} logo"> {$_SESSION['site_name']}</td>
                                 </tr>
