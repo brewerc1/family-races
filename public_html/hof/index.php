@@ -72,9 +72,9 @@ HERE;
 $photo_upload_div =<<< ENDDIV
 
 						<div class="form-row justify-content-center">
-							<div id="photo_upload" class="custom-file col-sm-5">
+							<div id="photo_upload" class="custom-file col-sm-6">
 								<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
-								<label class="custom-file-label" for="customFile">Take a photo or choose from your library</label>
+								<label class="custom-file-label" for="customFile">Camera or Library</label>
 							</div>
 						</div>
 ENDDIV;

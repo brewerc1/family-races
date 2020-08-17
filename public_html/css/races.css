@@ -60,7 +60,6 @@ main {
 	background-color: rgba(255, 255, 255, 1);
 	min-height: 100%;
 	margin: 0 auto;
-	box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
 	border: none;
 }
 @media (min-width: 1024px) {
@@ -68,6 +67,7 @@ main {
 		max-width: 1024px;
 		border-left: 1px solid rgba(120,120,120,0.9);
 		border-right: 1px solid rgba(120,120,120,0.9);
+		box-shadow: 0 0 40px 30px rgba(0,0,0,0.6);
 	}
 	#main_navigation {
 		max-width: 1024px;
@@ -316,18 +316,22 @@ table#profile_records {
 	background-size: cover;
 	background-position: center center;
 }
+#races_page main {
+	overflow-x: hidden;
+}
 #races_page #pick_block {
 	background-size: cover; 
 	background-repeat: no-repeat;
 	background-position: bottom center;
 	margin: 0px -21px 0px -21px;
-	padding: 20px 20px 10px 20px;
+	padding: 20px 20px 0px 20px;
 	background-color: transparent;
-	border-width: 0 1px 0 1px;
+	border-width: 0;
 }
 #races_page #pick_block .horse-picks {
 	font-size: 1.3rem;
 	padding: 0 0.4rem;
+	color: #f0ad4e;
 }
 #races_page #window_closed {
 	color: #fff;
@@ -411,7 +415,7 @@ table#profile_records {
 	color: orange;
 	border-collapse: separate;
 	text-align: right;
-	background-color: rgba(82, 86, 83, .95);
+	background-color: rgba(82, 86, 83, 1);
 	border-radius: 3px;
 	margin: 1rem auto;
 	box-shadow: none;
@@ -490,7 +494,7 @@ table#profile_records {
 		border-collapse: separate;
 		border-spacing: 10px 5px;
 		text-align: right;
-		background-color: rgba(82, 86, 83, .9);
+		background-color: rgba(82, 86, 83, 1);
 		border-radius: 3px;
 		margin: 0rem auto 2rem auto;
 		width: auto;
@@ -498,6 +502,9 @@ table#profile_records {
 	.scoreboard td {
 		width: auto;
 		font-size: 1.5rem;
+	}
+	#races_page #pick_block {
+		border-width: 0 1px 0 1px;
 	}
 	#races_page #pick_block .card-body {
 		margin: 1rem;
@@ -508,6 +515,9 @@ table#profile_records {
 /* ============== HOF Index Page: #hof_page ============== */
 #hof_page img{
 	max-width: 500px;
+}
+#hof_page .card-body a {
+	display: block;
 }
 #hof_page .champion{
 	font-family: 'Lato', Sans-Serif;
@@ -536,8 +546,8 @@ table#profile_records {
 	display: relative;
 }
 #hof_page #photo_upload {
-	position: absolute;
-    top: 50%;
+	position: relative;
+    top: initial;
 }
 #hof_page #photo_upload label{
 	box-shadow: 0 0 2px 1px rgba(0,0,0,.2);
