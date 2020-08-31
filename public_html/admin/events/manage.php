@@ -138,7 +138,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
     }
 
     /**
-     * Removes Horse input on the UI (delete)
+     * Removes Horse input from the UI (delete)
      *
      * @param raceNumber
      * @param amountToDecrement Total number of input to be removed
@@ -225,7 +225,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
     }
 
     /**
-     * Undoes the unsaved changes
+     * Reverts the unsaved changes
      *
      * @param raceNumber
      *
@@ -341,7 +341,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
     }
 
     /**
-     * Populates horses inside the selection options fo the scoreboard
+     * Populates horses inside the selection options for the scoreboard
      *
      * @param raceNumber
      *

@@ -42,7 +42,7 @@ $uid = $_SESSION['id'];
 {header}
 {main_nav}
 <main role="main" id="welcome_page">
-    <h1 class="sticky-top">Welcome to <?php echo $_SESSION['site_name'];?></h1>
+    <h1 class="sticky-top">Welcome<span class="d-none d-sm-block"> to <?php echo $_SESSION['site_name'];?></span></h1>
     <div class="embed-responsive embed-responsive-16by9">
         <iframe class="embed-responsive-item" src="<?php echo $_SESSION['site_welcome_video_url'];?>" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>

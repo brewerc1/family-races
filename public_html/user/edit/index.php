@@ -256,7 +256,7 @@ if(isset($_POST['save_button'])){
 				<div class="form-row col-sm-8 justify-content-center">
 					<div id="photo_upload" class="custom-file d-flex vertical-center col-sm-7">
 						<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
-						<label class="custom-file-label" for="photo_upload_button">Take a selfie or upload a photo</label>
+						<label class="custom-file-label" for="photo_upload_button">Camera or Library</label>
 					</div>
 				</div>
             </section>
