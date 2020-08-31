@@ -1111,7 +1111,7 @@ HTML;
 
             </div> <!-- END .accordion -->
             <div class="text-center mt-4">
-                <a href="#" id="addRace" class="btn btn-primary <?php echo $disabled_add_race_button ?>" onclick="addRace()"> Add a Race </a>
+                <a href="#" id="addRace" class="btn btn-primary mb-4 <?php echo $disabled_add_race_button;?>" onclick="addRace()">Add a Race</a>
             </div>
         </form>
     </section>
