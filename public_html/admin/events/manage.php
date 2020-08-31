@@ -61,14 +61,15 @@ if ($event_id == 0) {
     }
 }
 
-$debug = debug();
+$MAX_HORSES_NUMBER = 21;
+$MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSION["site_default_horse_count"];
 
 ?>
 {header}
 {main_nav}
 <script>
-    const defaultHorseCount = <?php echo !empty($_SESSION["site_default_horse_count"]) ?
-        $_SESSION["site_default_horse_count"] : 1; ?>;
+    const MAX_HORSES_NUMBER = <?php echo $MAX_HORSES_NUMBER; ?>;
+    const DEFAULT_MIN_HORSE_NUMBER = <?php echo $MIN_HORSES_NUMBER; ?>;
     const SITE_NAME = '<?php echo empty($_SESSION['site_name']) ? 'Races' : $_SESSION['site_name'] ?>';
     const EVENT_ID = <?php echo $event_id; ?>;
     let EVENT_STATUS = <?php echo ($event_status === 1) ? 1 : 0; ?>;
@@ -110,7 +111,7 @@ $debug = debug();
                     removeClass('d-none');
                     duplicateHorseInput(this.id, numberOfHorses);
                 }
-                if (numberOfHorses === defaultHorseCount) {
+                if (numberOfHorses === MAX_HORSES_NUMBER) {
                     $('#addHorse' + this.id ).addClass('disabled');
                 }
             }
@@ -137,7 +138,7 @@ $debug = debug();
     }
 
     /**
-     * Removes Horse input on the UI (delete)
+     * Removes Horse input from the UI (delete)
      *
      * @param raceNumber
      * @param amountToDecrement Total number of input to be removed
@@ -224,7 +225,7 @@ $debug = debug();
     }
 
     /**
-     * Undoes the unsaved changes
+     * Reverts the unsaved changes
      *
      * @param raceNumber
      *
@@ -254,7 +255,7 @@ $debug = debug();
 
         $('#' + raceNumber).val(length);
         numberOfHorses = $(inputId).length;
-        if (numberOfHorses < defaultHorseCount)
+        if (numberOfHorses < MAX_HORSES_NUMBER)
             $('#addHorse' + raceNumber).removeClass('disabled');
 
         horsesList = [];
@@ -299,7 +300,7 @@ $debug = debug();
      * */
     function addHorse(btnId) {
         numberOfHorses = $('#addInput' + btnId.charAt(8) + ' div.group-horse').length;
-        if (numberOfHorses < defaultHorseCount && !$('#' + btnId).hasClass('disabled') ) {
+        if (numberOfHorses < MAX_HORSES_NUMBER && !$('#' + btnId).hasClass('disabled') ) {
             if ( $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').hasClass('d-none') ) {
                 $('#addInput' + btnId.charAt(8) + ' div.group-horse div.input-group-append span').removeClass('d-none')
             }
@@ -307,7 +308,7 @@ $debug = debug();
             numberOfHorses = numberOfHorses + 1;
             $('#' + btnId.charAt(8) ).val(numberOfHorses);
         }
-        if (numberOfHorses === defaultHorseCount) {
+        if (numberOfHorses === MAX_HORSES_NUMBER) {
             $('#' + btnId).addClass('disabled');
         }
     }
@@ -340,7 +341,7 @@ $debug = debug();
     }
 
     /**
-     * Populates horses inside the selection options fo the scoreboard
+     * Populates horses inside the selection options for the scoreboard
      *
      * @param raceNumber
      *
@@ -495,7 +496,7 @@ $debug = debug();
 
                 if (del === 1) {
                     numberOfHorses = $('#addInput' + raceNumber + ' div.group-horse').length;
-                    if (numberOfHorses < defaultHorseCount)
+                    if (numberOfHorses < MAX_HORSES_NUMBER)
                         $('#addHorse' + raceNumber).removeClass('disabled');
                     else $('#addHorse' + raceNumber).addClass('disabled');
                 }
@@ -590,6 +591,10 @@ $debug = debug();
         bindOnClickCancelRace();
         displayDeleteButtonOnlyForLastRace(raceNumber);
 
+        for (let i = 1; i < DEFAULT_MIN_HORSE_NUMBER; i++) {
+            duplicateHorseInput(raceNumber, i);
+            updateNumberOfHorsesSelectValue();
+        }
     }
 
     function editPot() {
@@ -667,7 +672,7 @@ $debug = debug();
     function enterResultFormHTML() {
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
-        $('#message').html("<table class='scoreboard table table-borderless' id='scoreboard'>\n" +
+        $('#message').html("<table class='table table-borderless scoreboard'>\n" +
 			"    <!-- Row A -->\n" +
 			"    <thead>\n" +
 			"        <tr id='title_row'>\n" +
@@ -861,11 +866,7 @@ $debug = debug();
                                 <label class="col-sm-2 col-form-label" for="horse_num">Number of horses:</label>
                                 <select id="0" class="form-control col-sm-10 group-select" required>
                                     <?php
-                                    // Horse count
-                                    $horse_count = isset($_SESSION["site_default_horse_count"]) ?
-                                        $_SESSION["site_default_horse_count"] : 1;
-
-                                    for ($i = 1; $i < $horse_count + 1; $i++) {
+                                    for ($i = 1; $i < $MAX_HORSES_NUMBER + 1; $i++) {
                                         echo "<option value='$i'>$i</option>";
                                     }
                                     ?>
@@ -987,11 +988,7 @@ $debug = debug();
                                     
 HTML;
 
-
-                                    $horse_count = isset($_SESSION["site_default_horse_count"]) ?
-                                        $_SESSION["site_default_horse_count"] : 1;
-
-                                    for ($i = 1; $i < $horse_count + 1; $i++) {
+                                    for ($i = 1; $i < $MAX_HORSES_NUMBER + 1; $i++) {
                                         $race_HTML .= "<option value='$i'>$i</option>";
                                     }
                                     $race_HTML .= <<< HTML
@@ -1004,7 +1001,7 @@ HTML;
                                     $horses = $pdo->prepare($query);
                                     $horses->execute(['event_id' => $event_id, 'race_num' => $race_num]);
                                     $span_d_none = ($horses->rowCount() == 1) ? "d-none" : "";
-                                    if ($horses->rowCount() == $horse_count) {
+                                    if ($horses->rowCount() == $MAX_HORSES_NUMBER) {
                                         $addHorse = "";
                                     }
                                     if ($horses->rowCount() > 0) {
@@ -1036,12 +1033,12 @@ HTML;
                                             $i++;
                                         }
                                     } else {
-                                        $count_horse = 1;
-                                        // ids
-                                        $parent_div = $race_num . $i . substr(microtime() . "", 2, 5);
-                                        $input_id = "id" . $race_num . $i . substr(microtime() . "", 2, 5);
-                                        $delete_id = $race_num . $i . substr(microtime() . "", 2, 5);
-                                        $race_HTML .= <<< HTML
+                                        for ($l = 0; $l < $MIN_HORSES_NUMBER; $l++) {
+                                            // ids
+                                            $parent_div = $race_num . $l . substr(microtime() . "", 2, 5);
+                                            $input_id = "id" . $race_num . $l . substr(microtime() . "", 2, 5);
+                                            $delete_id = $race_num . $l . substr(microtime() . "", 2, 5);
+                                            $race_HTML .= <<< HTML
                                 
                                <div class="input-group mb-1 group-horse" id="horse$parent_div">
                                     <input type="text" id="$input_id" name="horses[$race_num][]" 
@@ -1052,6 +1049,7 @@ HTML;
                                     </div>
                                </div>
 HTML;
+                                        }
                                     }
                                     $race_HTML .= <<< HTML
                                                 </div>
