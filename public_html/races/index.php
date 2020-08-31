@@ -197,184 +197,183 @@ foreach($horses as $key => $value){
 }
 $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
 ?>
-<script>
-let horseList = [<?php echo $horse_list_js;?>];
-function set_horse_val(finish) {
-    let win_horse_number, place_horse_number, show_horse_number;
-    if (finish == "win") {
-        win_horse_number = $('#win-result').val();
-        place_horse_number = $('#place-result').val();
-        show_horse_number = $('#show-result').val();
-        $('#place-result option').removeAttr("disabled")
-        $('#place-result option[value=0]').attr("disabled", "disabled");
-        $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
-        $('#show-result option').removeAttr("disabled")
-        $('#show-result option[value=0]').attr("disabled", "disabled");
-        $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
-        if (place_horse_number != null) {
-            $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
-        }
-        if (show_horse_number != null) {
-            $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
-        }
-    }
-    if (finish == "place") {
-        win_horse_number = $('#win-result').val();
-        place_horse_number = $('#place-result').val();
-        show_horse_number = $('#show-result').val();
-        $('#win-result option').removeAttr("disabled")
-        $('#win-result option[value=0]').attr("disabled", "disabled");
-        $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
-        $('#show-result option').removeAttr("disabled")
-        $('#show-result option[value=0]').attr("disabled", "disabled");
-        $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
-        if (win_horse_number != null) {
-            $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
-        }
-        if (show_horse_number != null) {
-            $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
-        }
-    }
-    if (finish == "show") {
-        win_horse_number = $('#win-result').val();
-        place_horse_number = $('#place-result').val();
-        show_horse_number = $('#show-result').val();
-        $('#win-result option').removeAttr("disabled")
-        $('#win-result option[value=0]').attr("disabled", "disabled");
-        $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
-        $('#place-result option').removeAttr("disabled")
-        $('#place-result option[value=0]').attr("disabled", "disabled");
-        $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
-        if (win_horse_number != null) {
-            $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
-        }
-        if (place_horse_number != null) {
-            $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
-        }
-    }
-}
-
-function enterResultFormHTML() {
-    $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
-
-    $('#message').html("<table class='scoreboard table table-borderless''>\n" +
-        "    <!-- Row A -->\n" +
-        "    <thead>\n" +
-        "        <tr id='title_row'>\n" +
-        "           <td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'> <?php echo $_SESSION['site_name'];?></td>\n" +
-        "        </tr>\n" +
-        "        <tr>\n" +
-        "          <th scope='col'>Horse#</th>\n" +
-        "          <th scope='col'>Win</th>\n" +
-        "          <th scope='col'>Place</th>\n" +
-        "          <th scope='col'>Show</th>\n" +
-        "        </tr>\n" +
-        "    </thead>\n" +
-        "    <!-- Row B -->\n" +
-        "    <tr id='first'>\n" +
-        "        <td>\n" +
-        "            <select  id='win-result' class='race-result' onchange='set_horse_val(`win`)' required>\n" +
-        "                <option value='0' selected disabled>Horse #</option>\n" +
-        "            </select>\n" +
-        "        </td>\n" +
-        "        <td class='position-relative'>\n" +
-        "                <input type='text' id='win1' class='w-100'' required>\n" +
-        "        </td>\n" +
-        "        <td class=''>\n" +
-        "                <input type='text' id='place1' class='w-100' required>\n" +
-        "        </td>\n" +
-        "        <td class=''>\n" +
-        "                <input type='text' id='show1' class='w-100' required>\n" +
-        "        </td>\n" +
-        "    </tr>\n" +
-        "    <!-- Row C -->\n" +
-        "    <tr id='second'>\n" +
-        "        <td>\n" +
-        "            <select  id='place-result' class='race-result' onchange='set_horse_val(`place`)' required>\n" +
-        "                <option value='0' selected disabled>Horse #</option>\n" +
-        "            </select>\n" +
-        "        </td>\n" +
-        "        <td></td>\n" +
-        "        <td class='position-relative'>\n" +
-        "                <input type='text' id='place2' class='w-100' required>\n" +
-        "        </td>\n" +
-        "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show2' class='w-100' required>\n" +
-        "        </td>\n" +
-        "    </tr>\n" +
-        "    <!-- Row D -->\n" +
-        "    <tr id='third'>\n" +
-        "        <td>\n" +
-        "            <select  id='show-result' class='race-result' onchange='set_horse_val(`show`)' required>\n" +
-        "                <option value='0' selected disabled>Horse #</option>\n" +
-        "            </select>\n" +
-        "        </td>\n" +
-        "        <td></td>\n" +
-        "        <td></td>\n" +
-        "        <td class='position-relative'>\n" +
-        "            <input type='text' id='show3' class='w-100' required>\n" +
-        "        </td>\n" +
-        "    </tr>\n" +
-        "    </table>");
-};
-
-function depopulateHorses() {
-    $( ".race-result" ).each( function () {
-        $(".race-result option").remove();
-    });
-    $('#message table').remove();
-};
-
-
-function populateHorses(raceNumber, eventNumber) {
-    enterResultFormHTML();
-    for (let i = 0; i < horseList.length; i++) {
-        $('#win-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
-        $('#place-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
-        $('#show-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
-    }
-};
-
-function enterResultForRace(eventNumber, raceNumber) {
-    $('#collapse' + raceNumber).addClass('show');
-    let oldWin = null;
-    let oldPlace = null;
-    let oldShow = null;
-    let win = [];
-    win.push($('#win-result').val());
-    win.push($('#win1').val());
-    win.push($('#place1').val());
-    win.push($('#show1').val());
-    let place = [];
-    place.push($('#place-result').val());
-    place.push($('#place2').val());
-    place.push($('#show2').val());
-    let show = [];
-    show.push($('#show-result').val());
-    show.push($('#show3').val());
-    depopulateHorses();
-    let data = {win: win, place: place, show: show}
-    if (oldWin != null && oldPlace != null && oldShow != null)
-        data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
-    $.ajax({
-        method: 'POST',
-        url: '/admin/events/race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
-        data: data,
-        dataType: 'json',
-        success: function (data) {
-            $('main').prepend(data['alert']);
-            $('#alert').delay( 3000 ).fadeOut( 400 );
-        }
-    });
-    location.reload();
-}
-function cancelRace(eventNumber, raceNumber) {
-    console.log('Cancelling event ' + eventNumber + ' race ' + raceNumber);
-    document.getElementById('cancel_race_form').submit();
-    console.log('done');
-}
-</script>
 {header}
+<script>
+	let horseList = [<?php echo $horse_list_js;?>];
+	function set_horse_val(finish) {
+	    let win_horse_number, place_horse_number, show_horse_number;
+	    if (finish == "win") {
+	        win_horse_number = $('#win-result').val();
+	        place_horse_number = $('#place-result').val();
+	        show_horse_number = $('#show-result').val();
+	        $('#place-result option').removeAttr("disabled")
+	        $('#place-result option[value=0]').attr("disabled", "disabled");
+	        $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+	        $('#show-result option').removeAttr("disabled")
+	        $('#show-result option[value=0]').attr("disabled", "disabled");
+	        $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+	        if (place_horse_number != null) {
+	            $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+	        }
+	        if (show_horse_number != null) {
+	            $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+	        }
+	    }
+	    if (finish == "place") {
+	        win_horse_number = $('#win-result').val();
+	        place_horse_number = $('#place-result').val();
+	        show_horse_number = $('#show-result').val();
+	        $('#win-result option').removeAttr("disabled")
+	        $('#win-result option[value=0]').attr("disabled", "disabled");
+	        $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+	        $('#show-result option').removeAttr("disabled")
+	        $('#show-result option[value=0]').attr("disabled", "disabled");
+	        $('#show-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+	        if (win_horse_number != null) {
+	            $('#show-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+	        }
+	        if (show_horse_number != null) {
+	            $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+	        }
+	    }
+	    if (finish == "show") {
+	        win_horse_number = $('#win-result').val();
+	        place_horse_number = $('#place-result').val();
+	        show_horse_number = $('#show-result').val();
+	        $('#win-result option').removeAttr("disabled")
+	        $('#win-result option[value=0]').attr("disabled", "disabled");
+	        $('#win-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+	        $('#place-result option').removeAttr("disabled")
+	        $('#place-result option[value=0]').attr("disabled", "disabled");
+	        $('#place-result option[value='+show_horse_number+']').attr("disabled", "disabled");
+	        if (win_horse_number != null) {
+	            $('#place-result option[value='+win_horse_number+']').attr("disabled", "disabled");
+	        }
+	        if (place_horse_number != null) {
+	            $('#win-result option[value='+place_horse_number+']').attr("disabled", "disabled");
+	        }
+	    }
+	}
+	function enterResultFormHTML() {
+	    $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
+
+		$('#message').html("<table class='scoreboard table table-borderless'>" + 
+		"	<!-- Row A -->" +
+		"	<thead>" +
+		"		<tr id='title_row'>" +
+		"			<td colspan='4'><img src='/images/kc-logo-white.svg' alt='<?php echo $_SESSION['site_name'];?> logo'><?php echo $_SESSION['site_name'];?></td>" +
+		"		</tr>" +
+		"		<tr>" +
+		"			<th scope='col'>Horse#</th>" +
+		"			<th scope='col'>Win</th>" +
+		"			<th scope='col'>Place</th>" +
+		"			<th scope='col'>Show</th>" +
+		"		</tr>" +
+		"	</thead>" +
+		"	<!-- Row B -->" +
+		"	<tr id='first'>" +
+		"		<td>" +
+		"			<select  id='win-result' class='race-result' onchange='set_horse_val(`win`)' required>" +
+		"				<option value='0' selected disabled>Horse #</option>" +
+		"			</select>" +
+		"		</td>" +
+		"		<td class='position-relative'>" +
+		"			<input type='text' id='win1' class='w-100' required>" +
+		"		</td>" +
+		"		<td>" +
+		"			<input type='text' id='place1' class='w-100' required>" +
+		"		</td>" +
+		"		<td>" +
+		"			<input type='text' id='show1' class='w-100' required>" +
+		"		</td>" +
+		"	</tr>" +
+		"	<!-- Row C -->" +
+		"	<tr id='second'>" +
+		"		<td>" +
+		"			<select  id='place-result' class='race-result' onchange='set_horse_val(`place`)' required>" +
+		"				<option value='0' selected disabled>Horse #</option>" +
+		"			</select>" +
+		"		</td>" +
+		"		<td></td>" +
+		"		<td class='position-relative'>" +
+		"			<input type='text' id='place2' class='w-100' required>" +
+		"		</td>" +
+		"		<td class='position-relative'>" +
+		"			<input type='text' id='show2' class='w-100' required>" +
+		"		</td>" +
+		"	</tr>" +
+		"	<!-- Row D -->" +
+		"	<tr id='third'>" +
+		"		<td>" +
+		"			<select id='show-result' class='race-result' onchange='set_horse_val(`show`)' required>" +
+		"				<option value='0' selected disabled>Horse #</option>" +
+		"			</select>" +
+		"		</td>" +
+		"		<td></td>" +
+		"		<td></td>" +
+		"		<td class='position-relative'>" +
+		"			<input type='text' id='show3' class='w-100' required>" +
+		"		</td>" +
+		"	</tr>" +
+		"</table>");
+	}
+
+	function depopulateHorses() {
+	    $( ".race-result" ).each( function () {
+	        $(".race-result option").remove();
+	    });
+	    $('#message table').remove();
+	};
+
+
+	function populateHorses(raceNumber, eventNumber) {
+	    enterResultFormHTML();
+	    for (let i = 0; i < horseList.length; i++) {
+	        $('#win-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
+	        $('#place-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
+	        $('#show-result').append('<option value=' + horseList[i] + '>' + horseList[i] + '</option>');
+	    }
+	};
+
+	function enterResultForRace(eventNumber, raceNumber) {
+	    $('#collapse' + raceNumber).addClass('show');
+	    let oldWin = null;
+	    let oldPlace = null;
+	    let oldShow = null;
+	    let win = [];
+	    win.push($('#win-result').val());
+	    win.push($('#win1').val());
+	    win.push($('#place1').val());
+	    win.push($('#show1').val());
+	    let place = [];
+	    place.push($('#place-result').val());
+	    place.push($('#place2').val());
+	    place.push($('#show2').val());
+	    let show = [];
+	    show.push($('#show-result').val());
+	    show.push($('#show3').val());
+	    depopulateHorses();
+	    let data = {win: win, place: place, show: show}
+	    if (oldWin != null && oldPlace != null && oldShow != null)
+	        data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
+	    $.ajax({
+	        method: 'POST',
+	        url: '/admin/events/race.php?e=' + eventNumber + '&r=' + raceNumber + '&q=' + 5,
+	        data: data,
+	        dataType: 'json',
+	        success: function (data) {
+	            $('main').prepend(data['alert']);
+	            $('#alert').delay( 3000 ).fadeOut( 400 );
+	        }
+	    });
+	    location.reload();
+	}
+	function cancelRace(eventNumber, raceNumber) {
+	    console.log('Cancelling event ' + eventNumber + ' race ' + raceNumber);
+	    document.getElementById('cancel_race_form').submit();
+	    console.log('done');
+	}
+</script>
 {main_nav}
 <main role="main" id="races_page" style="background-image: url(<?php echo $background_image['filename'];?>);">
 	<div class="card" id="pick_block" style="">
