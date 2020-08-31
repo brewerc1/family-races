@@ -513,7 +513,7 @@ table#profile_records {
 
 
 /* ============== HOF Index Page: #hof_page ============== */
-#hof_page img{
+#hof_page .card-body a img{
 	max-width: 500px;
 }
 #hof_page .card-body a {
@@ -536,12 +536,6 @@ table#profile_records {
 	position: relative;
 	top: -4px;
 }
-#prior_champions .card .card {
-	margin: 2.5rem 2.5rem 0 2.5rem;
-}
-#prior_champions .card .card:last-of-type {
-	margin: 2.5rem;
-}
 #hof_page #current_champion {
 	display: relative;
 }
@@ -555,12 +549,20 @@ table#profile_records {
 #hof_page #ajax_alert {
 	position: absolute;
     top: 30%;
-    width: 100%
+	width: 100%;
+	z-index: 3;
 }
 #hof_page #photo_ajax_message_wrapper{
 	box-shadow: none;
 	margin: 0 auto!important;
 }
+#prior_champions .card .card {
+	margin: 1.5rem 1.5rem 0 1.5rem;
+}
+#prior_champions .card .card:last-of-type {
+	margin: 1.5rem;
+}
+
 
 
 
@@ -844,6 +846,10 @@ table#profile_records {
 .navbar-collapse.collapse.show li.nav-item {
 	margin-left: 10px;
 	border-top: 1px solid rgba(50, 50, 50, .1);
+}
+
+.nav.nav-tabs .nav-item {
+	margin-right: 0;
 }
 
 

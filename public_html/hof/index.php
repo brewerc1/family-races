@@ -20,11 +20,6 @@ if (empty($_SESSION["id"])) {
 // Set the page title for the template
 $page_title = "Hall of Fame";
 
-// include the menu javascript for the template
-$javascript = '';
-
-//$debug = debug("");
-
 // Gather data for this page
 // SQL to retrieve Hall of Fame related data
 $hof_sql = 'SELECT event.*, user.first_name, user.last_name, user.photo, user.update_time as user_update_time
@@ -33,25 +28,100 @@ WHERE event.champion_id = user.id AND event.status = 1 ORDER BY event.id DESC';
 $hof_result = $pdo->prepare($hof_sql);
 $hof_result->execute();
 $num_hof_results = $hof_result->rowCount();
-
+if($num_hof_results > 0){
+	$current_champ_row = $hof_result->fetch();
+	// $current_champ_row['champion_photo'] = ""; // test for no champ_photo
+	$event_id = $current_champ_row['id'];
+}
 $user_id = $_SESSION['id'];
+
+// include the menu javascript for the template
+$javascript = <<< JAVASCRIPT
+
+// Photo upload and cropping
+\$image_crop = $('#croppie_element').croppie(
+	{
+		enableExif: true,
+		viewport: 
+		{
+			width:200,
+			height:300,
+			type:'square'
+		},
+		boundary:
+		{
+			width:250,
+			height:350
+		}
+	}
+);
+
+$('#photo_upload_button').on(
+	'change', function(){
+		var reader = new FileReader();
+		reader.onload = function (event) {
+			\$image_crop.croppie(
+				'bind', 
+				{
+					url: event.target.result
+				}
+			).then(function(){
+				console.log('jQuery bind complete');
+			});
+		}
+		reader.readAsDataURL(this.files[0]);
+		$('.alert').alert('close');
+		$('#upload_image_modal').modal('show');
+	}
+);
+
+$('.crop_image').click(function(event){
+	\$image_crop.croppie(
+		'result', 
+		{
+			type: 'base64',
+			size: {width: 1000},
+			format: 'jpeg',
+			quality: 0.8,
+			circle: false,
+		}
+	).then(function(response){
+		$('#current_champion_photo').attr("src", response);
+		$.ajax(
+			{
+				url:"/library/photo_uploader.php",
+				type: "POST",
+				data:
+				{
+					"id": $event_id,
+					"type": "hof",
+					"cropped_image": response
+				},
+				success:function(data)
+				{
+					$('#upload_image_modal').modal('hide');
+					$('#photo_upload_button').val('');
+					$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
+					$('.alert').on('closed.bs.alert', function () {
+						$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
+						$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
+					});
+				}
+			}
+		);
+	})
+});
+JAVASCRIPT;
+
 ?>
 {header}
 {main_nav}
     <main role="main" id="hof_page">
         <h1 class="mb-5 sticky-top">Hall of Fame</h1>
 		<section id="current_champion">
-
-        <?php if($_SESSION['admin']) {
-echo <<< HERE
-	<form action="{$_SERVER['PHP_SELF']}" method="post" enctype="multipart/form-data">
-
-HERE;
-        }
+		<?php
             if($num_hof_results > 0){
-
-                $current_champ_row = $hof_result->fetch();
-                    // $current_champ_row['champion_photo'] = ""; // test for no champ_photo
+                // $current_champ_row['champion_photo'] = ""; // test for no champ_photo
                 $num_hof_results -= 1;
 
                 $event_id = $current_champ_row['id'];
@@ -74,7 +144,7 @@ $photo_upload_div =<<< ENDDIV
 						<div class="form-row justify-content-center">
 							<div id="photo_upload" class="custom-file col-sm-6">
 								<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
-								<label class="custom-file-label" for="customFile">Camera or Library</label>
+								<label class="custom-file-label" for="photo_upload_button">Camera or Library</label>
 							</div>
 						</div>
 ENDDIV;
@@ -95,7 +165,7 @@ echo <<< ENDCURRENT
                     </div>
                 </div>
 ENDCURRENT;
-                } else {
+				} else {
 echo <<< ENDNORESULT
 	<li class="list-group-item">
         <h2 class="card-header">Current Champion</h2>
@@ -104,8 +174,7 @@ echo <<< ENDNORESULT
         </div>
     </li>
 ENDNORESULT;
-                    }
-			if($_SESSION['admin']) echo "\n\t\t\t</form>";
+				}
 ?>
 
         </section> <!-- END current_champion -->
@@ -155,13 +224,13 @@ ENDNORESULT;
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h3 class="modal-title" id="croppie_modal_label">Adjust the Photo</h3>
+						<h5 class="modal-title" id="croppie_modal_label">Adjust the Photo</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
-					</div>r
+					</div>
 					<div class="modal-body">
-						<p>Drag the image to center it in the square. Zoom in to fill the square and crop the image. Save the image when you're satisfied.</p>
+						<p><small>Drag and zoom the image to center it in the cropping square. Save when you're satisfied.</small></p>
 						<div id="croppie_element"></div>
 					</div>
 					<div class="modal-footer">
@@ -174,85 +243,5 @@ ENDNORESULT;
 		<!-- END: modal for photo cropping -->
 
 	</main>
-	
-<script>
-	$( document ).ready(function() {
-		
-	    // Include the photo upload javascript
-	    $image_crop = $('#croppie_element').croppie(
-	        {
-	            enableExif: true,
-	            viewport: 
-	            {
-	                width:200,
-	                height:200,
-	                type:'circle'
-	            },
-	            boundary:
-	            {
-	                width:300,
-	                height:300
-	            }
-	        }
-	    );
-
-	    $('#photo_upload_button').on(
-	        'change', function(){
-	            var reader = new FileReader();
-	            reader.onload = function (event) {
-	                $image_crop.croppie(
-	                    'bind', 
-	                    {
-	                        url: event.target.result
-	                    }
-	                ).then(function(){
-	                    console.log('jQuery bind complete');
-	                });
-	            }
-				reader.readAsDataURL(this.files[0]);
-				$('.alert').alert('close');
-	            $('#upload_image_modal').modal('show');
-	        }
-	    );
-
-	    $('.crop_image').click(function(event){
-	        $image_crop.croppie(
-	            'result', 
-	            {
-	                type: 'base64',
-	                size: {width: 300},
-	                format: 'jpeg',
-	                quality: 0.8,
-	                circle: false,
-	            }
-	        ).then(function(response){
-	            $('#current_champion_photo').attr("src", response);
-	            $.ajax(
-	                {
-	                    url:"/library/photo_uploader.php",
-	                    type: "POST",
-	                    data:
-	                    {
-	                        "id": <?php echo $event_id; ?>,
-	                        "type": "hof",
-	                        "cropped_image": response
-	                    },
-	                    success:function(data)
-	                    {
-	                        $('#upload_image_modal').modal('hide');
-	                        $('#photo_upload_button').val('');
-							$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
-							$('.alert').on('closed.bs.alert', function () {
-								$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
-								$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
-							});
-	                    }
-	                }
-	            );
-	        })
-		});
-	});
-	/* END AJAX Photo Uploader */ 
-	</script>
 {footer}
 <?php ob_end_flush(); ?>

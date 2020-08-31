@@ -244,8 +244,8 @@ if(isset($_POST['save_button'])){
 //$debug = debug($_POST);
 ///// end DEBUG
 ?>
-  {header}
-  {main_nav}
+{header}
+{main_nav}
     <main role="main" id="user_profile_edit_page">
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
             <section class="form-row sticky-top" id="user_head">
@@ -331,7 +331,7 @@ ENDOPTION;
                 </button>
               </div>
               <div class="modal-body">
-                <p>Drag the image to center your face in the circle. Zoom in to fill the circle with your face. Save the image when you're satisfied.</p>
+                <p><small>Drag and zoom the image to center and fill the circle with your face.</small></p>
                 <div id="croppie_element"></div>
               </div>
               <div class="modal-footer">
