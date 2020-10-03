@@ -172,20 +172,20 @@ $num_display_user_results = $display_user_result->rowCount();
     {main_nav}
     <main role="main" id="admin_users_page">
         <h1 class="mb-5 sticky-top">User Management</h1>
-        <section id="User_invite" class="mt-3 mb-4">
+        <section id="user_invite" class="mt-3 mb-4">
             <form method="post" action="./invite_user.php" id="invite_form">
                 <div class="form-row align-items-center justify-content-center">
                     <div class="col-auto">
                         <label class="sr-only" for="email">Email address</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <div class="input-group-text">@</div>
+                                <span class="input-group-text">@</span>
                             </div>
-                            <input type="email" class="form-control custom-input" name="email" id="email" placeholder="Email address to invite" required>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Email address to invite" required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary" form="invite_form" name="invite">Invite</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary font-weight-bold" form="invite_form" name="invite" >Invite</button>
                     </div>
                 </div>
             </form>
@@ -272,7 +272,7 @@ ENDUSER;
 
                         if ($row['id'] != 1) { // display "deactivate/reactive" link if not an admin user 1
                             $output .= <<< ENDUSER
-                                    <a class="ml-4" href="#" 
+                                    <a class="ml-4 btn btn-text btn-sm" href="#" 
                                         data-toggle="modal" 
                                         data-target="#mainModal" 
                                         data-title="$title" 
