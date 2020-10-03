@@ -10,7 +10,7 @@ if (isset($_POST["reset_password"])) {
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header("Location: /password/?m=6&s=warning");
+        header("Location: /password/?m=10&s=warning");
         exit;
     } else {
 
@@ -33,6 +33,7 @@ if (isset($_POST["reset_password"])) {
                 header("Location: /password/?m=6&s=warning");
                 exit;
             } else {
+
                 // reset code: throws an exception
                 try {
                     $reset_pw_code = generateCode();
@@ -57,6 +58,7 @@ if (isset($_POST["reset_password"])) {
                     $is_sent = sendEmail($row["email_server"], $row["email_server_account"],
                         $row["email_server_password"], $row["email_server_port"], $row["email_from_name"],
                         $row["email_from_address"], $pw_reset_email_subject, $pw_reset_email_body, $email);
+
 
                     if (!$is_sent) {
                         header("Location: /password/?m=6&s=warning");
