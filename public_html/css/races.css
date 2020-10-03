@@ -3,17 +3,17 @@ html,body{
 }
 body {
 	font-family: 'Lato', Sans-Serif;
-	background-color: rgba(0, 0, 0, .05);
-	background-image: linear-gradient(black, black), 
-					url('/images/photos/background/horse-racing-2714854_1280.jpg'), 
-					linear-gradient(270deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%);
-	background-blend-mode: saturation;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: bottom;
-	background-attachment: fixed;
 	letter-spacing: 0px;
 	font-size: 1.1rem;
+	background-repeat: no-repeat;
+	background-position: bottom center;
+	background-attachment: fixed;
+	background-color: initial;
+	background-image: linear-gradient(black, black),
+	url('/images/photos/background/horse-racing-2714854_1280.jpg'),
+	linear-gradient(270deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%);
+	background-size: cover;
+	background-blend-mode: saturation;
 }
 
 b,
@@ -44,7 +44,7 @@ label,
 
 .bg-dark {
 	background-color: #373837 !important;
-  }
+}
 
 .vertical-center {
 	margin: 0;
@@ -83,7 +83,7 @@ main {
 }
 .btn-primary.disabled, .btn-primary:disabled {
 	background-color: #5d5d5d;
-    border-color: #5d5d5d;
+	border-color: #5d5d5d;
 }
 
 span.navbar-text {
@@ -134,9 +134,9 @@ span.navbar-text {
 
 /* Alerts */
 .floating-alert {
-    box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
-    max-width: 600px;
-    margin: 92px auto !important;
+	box-shadow: 0px 3px 16px -4px rgba(0, 0, 0, .3);
+	max-width: 600px;
+	margin: 92px auto !important;
 }
 
 
@@ -320,7 +320,7 @@ table#profile_records {
 	overflow-x: hidden;
 }
 #races_page #pick_block {
-	background-size: cover; 
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: bottom center;
 	margin: 0px -21px 0px -21px;
@@ -335,12 +335,12 @@ table#profile_records {
 }
 #races_page #window_closed {
 	color: #fff;
-	text-shadow: 0px 16px 10px rgba(0,0,0,0.3), 
-		0px 2px 6px rgba(0,0,0,0.8);
+	text-shadow: 0px 16px 10px rgba(0,0,0,0.3),
+	0px 2px 6px rgba(0,0,0,0.8);
 	z-index: 800;
 }
-#races_page #pick_block .input-group, 
-#race_results_button, 
+#races_page #pick_block .input-group,
+#race_results_button,
 #confirm_cancel_button {
 	z-index: 800;
 }
@@ -380,16 +380,16 @@ table#profile_records {
 	margin-top: 100px;
 	text-align: center;
 }
-#races_page .input-group-lg>.custom-select, 
-#races_page .input-group-lg>.form-control, 
-#races_page .input-group-lg>.input-group-append>.btn, 
-#races_page .input-group-lg>.input-group-append>.input-group-text, 
-#races_page .input-group-lg>.input-group-prepend>.btn, 
-#races_page .input-group-lg>.input-group-prepend>.input-group-text.input-group-lg>.custom-select, 
-#races_page .input-group-lg>.form-control, 
-#races_page .input-group-lg>.input-group-append>.btn, 
-#races_page .input-group-lg>.input-group-append>.input-group-text, 
-#races_page .input-group-lg>.input-group-prepend>.btn, 
+#races_page .input-group-lg>.custom-select,
+#races_page .input-group-lg>.form-control,
+#races_page .input-group-lg>.input-group-append>.btn,
+#races_page .input-group-lg>.input-group-append>.input-group-text,
+#races_page .input-group-lg>.input-group-prepend>.btn,
+#races_page .input-group-lg>.input-group-prepend>.input-group-text.input-group-lg>.custom-select,
+#races_page .input-group-lg>.form-control,
+#races_page .input-group-lg>.input-group-append>.btn,
+#races_page .input-group-lg>.input-group-append>.input-group-text,
+#races_page .input-group-lg>.input-group-prepend>.btn,
 #races_page .input-group-lg>.input-group-prepend>.input-group-text {
 	opacity: 0.9;
 	padding: .5rem 1rem;
@@ -402,7 +402,7 @@ table#profile_records {
 @font-face {
 	font-family: 'Score Board';
 	src: url('/css/ScoreBoard.woff2') format('woff2'),
-		url('/css/ScoreBoard.woff') format('woff');
+	url('/css/ScoreBoard.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;
@@ -463,8 +463,8 @@ table#profile_records {
 	width: auto;
 	border-radius: 3px;
 }
-.scoreboard #second>td:nth-of-type(2), 
-.scoreboard #third>td:nth-of-type(2), 
+.scoreboard #second>td:nth-of-type(2),
+.scoreboard #third>td:nth-of-type(2),
 .scoreboard #third>td:nth-of-type(3){
 	background-color: transparent;
 }
@@ -541,14 +541,14 @@ table#profile_records {
 }
 #hof_page #photo_upload {
 	position: relative;
-    top: initial;
+	top: initial;
 }
 #hof_page #photo_upload label{
 	box-shadow: 0 0 2px 1px rgba(0,0,0,.2);
 }
 #hof_page #ajax_alert {
 	position: absolute;
-    top: 30%;
+	top: 30%;
 	width: 100%;
 	z-index: 3;
 }
@@ -623,6 +623,9 @@ table#profile_records {
 	border-width: 0;
 	background-color: transparent;
 }
+#admin_users_page #user_invite .btn {
+	padding: 0 1rem;
+}
 #admin_users_page .custom-switch {
 	margin-bottom: 0;
 }
@@ -634,11 +637,11 @@ table#profile_records {
 	padding-bottom: 1rem;
 }
 #admin_users_page .pending_badge {
-    font-weight: 400;
-    padding: .28rem;
-    position: absolute;
-    top: 34px;
-    right: 3rem;
+	font-weight: 400;
+	padding: .28rem;
+	position: absolute;
+	top: 34px;
+	right: 3rem;
 }
 #admin_users_page [data-toggle="collapse"] .chevron {
 	display: inline-block;
@@ -656,7 +659,7 @@ table#profile_records {
 	transform: rotate(-630deg);
 }
 @media (min-width: 576px) {
-    #admin_users_page #display_current_users .card {
+	#admin_users_page #display_current_users .card {
 	}
 }
 
@@ -673,7 +676,7 @@ table#profile_records {
 /* ============== Onboarding Pages: #onboarding_page ============== */
 #photo_upload {
 	position: absolute;
-    top: 50%;
+	top: 50%;
 }
 #photo_upload label{
 	box-shadow: 0 0 2px 1px rgba(0,0,0,.2);
@@ -685,7 +688,7 @@ table#profile_records {
 	position: absolute;
 	top: 30%;
 	left: 0;
-    width: 100%
+	width: 100%
 }
 #photo_ajax_message_wrapper{
 	box-shadow: none;
@@ -701,8 +704,8 @@ table#profile_records {
 
 /* ============== Admin Events Page: #admin_events_page ============== */
 #admin_events_page .status_badge {
-    font-weight: 400;
-    padding: .28rem;
+	font-weight: 400;
+	padding: .28rem;
 }
 #admin_events_page #events li a{
 	display: block;
@@ -713,11 +716,19 @@ table#profile_records {
 
 /* ============== Admin Manage Event Page: #admin_manage_event_page ============== */
 #admin_manage_event_page .go_to_races_button {
-	font-size: 1.2rem;
-	float:right;
+	font-size: 1rem;
+	float: right;
+	padding: 0 .8rem;
+	margin-top: 0.6rem;
+}
+#admin_manage_event_page .group-horse .btn, #admin_manage_event_page .add-horse .btn i {
+	font-size: 1rem;
+	padding: 0.5rem;
 }
 
-
+#admin_manage_event_page .add-horse .btn {
+	padding: 0.5rem;
+}
 
 /* Custom Switch Overrides: Provides sizes for Bootstrap 4's built in switches */
 /* for sm */
@@ -762,9 +773,9 @@ table#profile_records {
 	padding-bottom: 2rem;
 }
 .custom-switch.custom-switch-lg .custom-control-label::before {
-    height: 2rem;
-    width: calc(3rem + 0.75rem);
-    border-radius: 4rem;
+	height: 2rem;
+	width: calc(3rem + 0.75rem);
+	border-radius: 4rem;
 }
 .custom-switch.custom-switch-lg .custom-control-label::after {
 	width: calc(2rem - 4px);
@@ -834,7 +845,7 @@ table#profile_records {
 	margin: 0 auto;
 }
 .navbar-nav .active>.nav-link {
-    font-weight: 700;
+	font-weight: 700;
 }
 .navbar-collapse.collapse.show li.nav-item:first-of-type {
 	margin-top: 10px;
@@ -905,7 +916,7 @@ table#profile_records {
 	transform: rotate(-45deg);
 	-webkit-transform: rotate(-45deg);
 }
-  /* Ribbon Colors */
+/* Ribbon Colors */
 .corner-ribbon.white{
 	background: #f0f0f0;
 	color: #555;
