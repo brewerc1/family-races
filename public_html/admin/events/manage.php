@@ -673,11 +673,11 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         $('.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         $('#message').html("<table class='table table-borderless scoreboard'>\n" +
-			"    <!-- Row A -->\n" +
-			"    <thead>\n" +
-			"        <tr id='title_row'>\n" +
+            "    <!-- Row A -->\n" +
+            "    <thead>\n" +
+            "        <tr id='title_row'>\n" +
             "          <td colspan='4'><img src='/images/kc-logo-white.svg' alt='" + SITE_NAME + " logo'>" + SITE_NAME + "</td>\n" +
-			"        </tr>\n" +
+            "        </tr>\n" +
             "        <tr>\n" +
             "          <th scope='col'>Horse#</th>\n" +
             "          <th scope='col'>Win</th>\n" +
@@ -822,7 +822,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                                 aria-controls="collapseOne">
                             Race 0
                         </button>
-                        <a href="" class="btn btn-outline-secondary btn-small mb-1 go_to_races_button" id='race_link0'>
+                        <a href="" class="btn btn-outline-success btn-sm mb-1 go_to_races_button" id='race_link0'>
                             <i class="fa fa-horse"></i>
                         </a>
                     </div>
@@ -845,13 +845,13 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                                    data-button-secondary-action="depopulateHorses()"
                                    onclick="populateHorses(0)"
                                 >Enter Results for Race 0</a>
-                                <a href="#" class="btn btn-secondary  close-btn" id="open0"
+                                <a href="#" class="btn btn-secondary mt-2 close-btn" id="open0"
                                    onclick="openWindow(0)">Reopen Betting Window</a>
                             </div>
                         </div>
                         <div class="card-body group-body" id="card0">
                             <div class="d-flex flex-row-reverse mb-2">
-                                <a href="#" id="deleteRace0" class="btn btn-outline-danger del-group d-none"
+                                <a href="#" id="deleteRace0" class="btn btn-outline-danger btn-sm del-group d-none"
                                    data-toggle="modal"
                                    data-target="#mainModal"
                                    data-title="Delete Race 0"
@@ -878,15 +878,17 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                                            class="my-1 mr-sm-2 group-input new"
                                            value="">
                                     <div class="input-group-append">
-                                        <button class="btn btn-danger" id="00" onclick="deleteHorse('horse0', '00')">
+                                        <button class="btn text-danger" id="00" onclick="deleteHorse('horse0', '00')">
                                             <i class="fa fa-minus-circle"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
+                            <div class="add-horse">
+                                <span class="btn text-success add_horse_button" id="addHorse0"
+                                      onclick="addHorse('addHorse0')"><i class="fa fa-plus-circle"></i> Add a Horse</span>
+                            </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <span class="btn btn-success add_horse_button" id="addHorse0"
-                                      onclick="addHorse('addHorse0')"><i class="fa fa-plus-circle"></i></span>
                                 <a href="#" class="btn btn-primary" id="update0"
                                    data-toggle="modal"
                                    data-target="#mainModal"
@@ -942,7 +944,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                        aria-controls="collapseOne">
                             Race $race_num
                         </button>
-						<a href="/races/?e=$event_id&r=$race_num" class="btn btn-outline-secondary btn-small mb-1 go_to_races_button" id='race_link$race_num'>
+						<a href="/races/?e=$event_id&r=$race_num" class="btn btn-outline-success btn-sm mb-1 go_to_races_button" id='race_link$race_num'>
 							<i class="fa fa-horse"></i>
 						</a>
                     </div>
@@ -965,13 +967,13 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                                             data-button-secondary-action="depopulateHorses()"
                                              onclick="populateHorses($race_num)"
                                     >Enter Results for Race $race_num</a>
-                                    <a href="#" class="btn btn-secondary $disabled close-btn" id="open$race_num" 
+                                    <a href="#" class="btn btn-secondary mt-2 $disabled close-btn" id="open$race_num" 
                                      onclick="openWindow($race_num)">Reopen Betting Window</a>
                                 </div>
                         </div>
                         <div class="card-body $display_none group-body" id="card$race_num">
                                 <div class="d-flex flex-row-reverse mb-2">
-                                    <a href="#" id="deleteRace$race_num" class="btn btn-outline-danger del-group d-none"
+                                    <a href="#" id="deleteRace$race_num" class="btn btn-outline-danger btn-sm del-group d-none"
                                         data-toggle="modal" 
                                         data-target="#mainModal" 
                                         data-title="Delete Race $race_num" 
@@ -1024,7 +1026,7 @@ HTML;
                                                 class="my-1 mr-sm-2 group-input" 
                                                 value="$horse_val" readonly>
                                               <div class="input-group-append">
-												<span class="btn btn-danger $span_d_none" id="$delete_id" onclick="deleteHorse('$parent_div', '$delete_id')">
+												<span class="btn text-danger $span_d_none" id="$delete_id" onclick="deleteHorse('$parent_div', '$delete_id')">
 													<i class="fa fa-minus-circle"></i>
 												</span>
                                               </div>
@@ -1044,7 +1046,7 @@ HTML;
                                     <input type="text" id="$input_id" name="horses[$race_num][]" 
                                     class="my-1 mr-sm-2 group-input new">
                                     <div class="input-group-append">
-                                        <span class="btn btn-danger" id="$delete_id" 
+                                        <span class="btn text-danger" id="$delete_id" 
                                         onclick="deleteHorse('horse$parent_div', '$delete_id')"><i class="fa fa-minus-circle"></i></span>
                                     </div>
                                </div>
@@ -1053,11 +1055,14 @@ HTML;
                                     }
                                     $race_HTML .= <<< HTML
                                                 </div>
-                                                    <div class="d-flex justify-content-between mt-4">
-                                                        <span class="btn btn-success $addHorse" id="addHorse$race_num" r
+                                                    <div class="add-horse">
+                                                        <span class="btn text-success $addHorse" id="addHorse$race_num"
 														onclick="addHorse('addHorse$race_num')">
 															<i class="fa fa-plus-circle"></i>
+															Add a Horse
 														</span>
+													</div>
+													<div class="d-flex justify-content-between mt-4">
                                                         <a href="#" class="btn btn-primary" id="update$race_num"
                                                             data-toggle="modal" 
                                                             data-target="#mainModal" 
