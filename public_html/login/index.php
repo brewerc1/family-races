@@ -112,7 +112,7 @@ $background_images = array(
 $random_image = array_rand($background_images);
 
 ?>
-{header}
+    {header}
     <main role="main" id="login_page" style="background-image: url('/images/photos/splash/<?php echo $random_image;?>');background-position:<?php echo $background_images[$random_image][1];?>">
         <form class="vertical-center animate__animated animate__fadeIn col-8 col-sm-4" id="login" method="POST" action="<?php echo $_SERVER["PHP_SELF"];?>">
             <div id="logo_wrapper">
@@ -129,10 +129,10 @@ $random_image = array_rand($background_images);
             </div>
             <input type="submit" value="Login" name="login" class="btn btn-primary btn-block">
             <div id="forgot_pwd" class="text-secondary d-block mt-2 text-center">
-                <a href="/password/">Forgot Password?</a>
+                <a class="btn btn-text" href="/password/">Forgot Password?</a>
             </div>
         </form>
         <span id="photo_credit">Photo by <?php echo $background_images[$random_image][0];?></span>
     </main>
-{footer}
+    {footer}
 <?php ob_end_flush(); ?>
