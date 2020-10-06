@@ -63,7 +63,7 @@ $random_image = array_rand($background_images);
 	</div>
 	<div class="py-3">
 		<p>This web application was developed by <a href="https://informatics.nku.edu">College of Informatics</a> students from <a href="https://nku.edu">Northern Kentucky University</a>, in a special topics experiential learning course taught during the Summer 2020 term.</p>
-		<div class="row justify-content-center animate__animated animate__fadeIn animate__delay-1s">
+		<div class="justify-content-center animate__animated animate__fadeIn animate__delay-1s">
 			<img src="/images/iphone-2-up-on-white.jpg" alt="Photo of this site displayed on two iPhones" class="w-100">
 		</div>
 		<p>Experiential learning courses place students in real-world scenarios using industry-standard tools &mdash; working with clients to scope and deliver an end-to-end solution &mdash; in order to be better prepared for entry into the workplace.</p>
