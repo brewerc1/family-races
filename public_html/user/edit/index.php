@@ -315,7 +315,7 @@ ENDOPTION;
             <div class="form-row my-5">
                 <div class="col text-center">
                     <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
-                    <a class="text-secondary d-block mt-2 text-center" href="/user/">Cancel</a>
+                    <a class="btn btn-text d-block mt-2 text-center" href="/user/">Cancel</a>
                 </div>
             </div>
         </form>
