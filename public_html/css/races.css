@@ -765,6 +765,11 @@ table#profile_records {
 #credits_page .linkedin a{
 	font-weight: 400;
 }
+#credits_page .full-width{
+	position: relative;
+	left: -20px;
+	width: calc( 100% + 40px );
+}
 
 
 /* Custom Switch Overrides: Provides sizes for Bootstrap 4's built in switches */
