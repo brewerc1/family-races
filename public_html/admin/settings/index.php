@@ -252,7 +252,7 @@ $memorial_race_selected_tag = '';
                         <div class="form-group row">
                             <div class="col">
                                 <label for="default_horse_count" class="col-form-label"> Default Horse Count </label>
-                                <select id="default_horse_count" name="default_horse_count"class="form-control">
+                                <select id="default_horse_count" name="default_horse_count" class="form-control">
                                     <?php
                                     for ($i=1; $i <= 21; $i++) {
                                         if($_SESSION['site_default_horse_count'] == $i){
@@ -270,7 +270,7 @@ ENDOPTION;
                         </div>
 
                         <!-- Voiceovers enable -->
-                        <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <div class="form-group custom-control custom-switch custom-switch-lg mt-5">
                             <input class="custom-control-input" type="checkbox" id="voiceovers" name="voiceovers" <?php if($_SESSION['site_voiceovers'] == 1){echo 'checked';} ?>>
                             <label class="custom-control-label" for="voiceovers"> Voiceovers </label>
                         </div>
@@ -281,12 +281,11 @@ ENDOPTION;
                             <label class="custom-control-label" for="sound_fx"> Sound Effects </label>
                         </div>
 
-
-                    </div> <!-- END General Tab -->
+                    </div><!-- END General Tab -->
 
                     <div class="tab-pane" id="memorial">
                         <!-- Memorial race enable -->
-                        <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <div class="form-group custom-control custom-switch custom-switch-lg mt-4 mb-0">
                             <input class="custom-control-input" type="checkbox" id="memorial_race_enable" name="memorial_race_enable" <?php if($_SESSION['site_memorial_race_enable'] == 1){echo 'checked';} ?>>
                             <label class="custom-control-label" for="memorial_race_enable"> Enable Memorial Race </label>
                         </div>
@@ -324,7 +323,7 @@ ENDOPTION;
                     <div class="tab-pane" id="terms">
 
                         <!-- Terms and Conditions enable -->
-                        <div class="form-group custom-control custom-switch custom-switch-lg">
+                        <div class="form-group custom-control custom-switch custom-switch-lg mt-4 mb-0">
                             <input class="custom-control-input" type="checkbox" id="terms_enable" name="terms_enable" <?php if($_SESSION['site_terms_enable'] == 1){echo 'checked';} ?>>
                             <label class="custom-control-label" for="terms_enable"> Enable Terms & Conditions </label>
                         </div>
@@ -395,14 +394,16 @@ ENDOPTION;
                                 <input type="text" class="form-control" id="email_server_password" name="email_server_password" value="<?php echo $_SESSION["site_email_server_password"] ?>">
                             </div>
                         </div>
-
                     </div><!-- END Email Tab -->
+
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block" name="save_button">Save</button>
+			<div class="col text-center mt-5">
+				<button type="submit" class="btn btn-primary col-sm-5" name="save_button">Save</button>
                 <a href="../index.php" class="btn btn-text d-block mt-2 text-center">Cancel</a>
-            </form>
-        </section> <!-- END id user_settings -->
-    </main>
-    {footer}
+            </div>
+        </form>
+    </section> <!-- END id user_settings -->
+</main>
+{footer}
 <?php ob_end_flush(); ?>

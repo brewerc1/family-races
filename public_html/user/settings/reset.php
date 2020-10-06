@@ -88,7 +88,7 @@ if (isset($_POST["change_pwd"])) {
 				<div class="justify-content-center form-row">
 					<div class="col-md-4">
 						<button type="submit" class="btn btn-primary btn-block" name="change_pwd">Change Password</button>
-						<a href="/user/" class="text-secondary d-block mt-2 text-center">Cancel</a>
+						<a href="/user/" class="btn btn-text d-block mt-2 text-center">Cancel</a>
 					</div>
 				</div>
 			</form>

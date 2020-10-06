@@ -1,11 +1,10 @@
 <?php
 /**
- * Page to display User Profile
+ * Page to Edit User Profile
  * 
- * This page is used to display any user profile.
- * Logged in users have access to "edit" and "settings" links.
- * User data for logged in user is stored in $_SESSION.email
- * Page checks for $_GET
+ * This page allows the user to edit their profile data. 
+ * DB is updated when the 'save' button is clicked.
+ * Photo uploads are handled via AJAX independent of this form's SAVE.
  */
 
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
@@ -14,12 +13,87 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 ob_start('template');
 
 // set the page title for the template
-$page_title = "Profile";
+$page_title = "Edit User Profile";
 
 // include the menu javascript for the template
-$javascript = '';
+$javascript =<<< JAVASCRIPT
 
-if (!isset($_SESSION["id"])) {
+\$image_crop = $('#croppie_element').croppie(
+    {
+        enableExif: true,
+        viewport: 
+        {
+            width:200,
+            height:200,
+            type:'circle'
+        },
+        boundary:
+        {
+            width:300,
+            height:300
+        }
+    }
+);
+
+$('#photo_upload_button').on(
+    'change', function(){
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            \$image_crop.croppie(
+                'bind', 
+                {
+                    url: event.target.result
+                }
+            ).then(function(){
+                console.log('jQuery bind complete');
+            });
+        }
+		reader.readAsDataURL(this.files[0]);
+		$('.alert').alert('close');
+        $('#upload_image_modal').modal('show');
+    }
+);
+
+$('.crop_image').click(function(event){
+    \$image_crop.croppie(
+        'result', 
+        {
+            type: 'base64',
+            size: {width: 300},
+            format: 'jpeg',
+            quality: 0.8,
+            circle: false,
+        }
+    ).then(function(response){
+        $('#user_profile_photo').attr("src", response);
+        $.ajax(
+            {
+                url:"/library/photo_uploader.php",
+                type: "POST",
+                data:
+                {
+					"id": {$_SESSION['id']},
+					"type": "profile",
+                    "cropped_image": response
+                },
+                success:function(data)
+                {
+                    $('#upload_image_modal').modal('hide');
+                    $('#photo_upload_button').val('');
+					$('#ajax_alert').addClass('animate__animated animate__delay-1s animate__bounceIn').html(data);
+					$('.alert').on('closed.bs.alert', function () {
+						$('#ajax_alert').removeClass('animate__animated animate__delay-1s animate__bounceIn');
+						$('#skip').removeClass('animate__animated animate__delay-1s animate__tada');
+					});
+                }
+            }
+        );
+    })
+});
+/* END AJAX Photo Uploader */
+JAVASCRIPT;
+
+if (!isset($_SESSION["id"])){
     header("Location: /login/");
     exit;
 } elseif ($_SESSION["id"] == 0) {
@@ -27,155 +101,248 @@ if (!isset($_SESSION["id"])) {
     exit;
 }
 
-///// DEBUG
-//$debug = debug();
-///// end DEBUG
-
 // logged in user
-$full_name = trim($_SESSION['first_name']).' '.trim($_SESSION['last_name']);
-$user_id = trim($_SESSION['id']);
-$photo = $_SESSION['photo'];
-$motto = trim($_SESSION['motto']);
-$email = trim($_SESSION['email']);
-$city = trim($_SESSION['city']);
-$state = trim($_SESSION['state']);
+$user_id = $_SESSION['id'];
 $update_time_stamp = strtotime($_SESSION['update_time']); // cache busting
 
-// get selected UID: Don't run if the GET["u"] is SESSION["id"]
-if (isset($_GET["u"]) && ($_GET["u"] != $_SESSION["id"])) {
-    $user_id = filter_var(trim($_GET["u"]), FILTER_SANITIZE_NUMBER_INT);
-    $display_user_sql = "SELECT * FROM user WHERE id = :user_id";
-    $display_user_result = $pdo->prepare($display_user_sql);
-    $display_user_result->execute(['user_id' => $user_id]);
-    $num_display_user_results = $display_user_result->rowCount();
+// State Select Array
+$state_array = array(	
+	"AK" => "Alaska",
+	"AL" => "Alabama",
+	"AR" => "Arkansas",
+	"AZ" => "Arizona",
+	"CA" => "California",
+	"CO" => "Colorado",
+	"CT" => "Connecticut",
+	"DC" => "District of Columbia",
+	"DE" => "Delaware",
+	"FL" => "Florida",
+	"GA" => "Georgia",
+	"HI" => "Hawaii",
+	"IA" => "Iowa",
+	"ID" => "Idaho",
+	"IL" => "Illinois",
+	"IN" => "Indiana",
+	"KS" => "Kansas",
+	"KY" => "Kentucky",
+	"LA" => "Louisiana",
+	"MA" => "Massachusetts",
+	"MD" => "Maryland",
+	"ME" => "Maine",
+	"MI" => "Michigan",
+	"MN" => "Minnesota",
+	"MO" => "Missouri",
+	"MS" => "Mississippi",
+	"MT" => "Montana",
+	"NC" => "North Carolina",
+	"ND" => "North Dakota",
+	"NE" => "Nebraska",
+	"NH" => "New Hampshire",
+	"NJ" => "New Jersey",
+	"NM" => "New Mexico",
+	"NV" => "Nevada",
+	"NY" => "New York",
+	"OH" => "Ohio",
+	"OK" => "Oklahoma",
+	"OR" => "Oregon",
+	"PA" => "Pennsylvania",
+	"PR" => "Puerto Rico",
+	"RI" => "Rhode Island",
+	"SC" => "South Carolina",
+	"SD" => "South Dakota",
+	"TN" => "Tennessee",
+	"TX" => "Texas",
+	"UT" => "Utah",	
+	"VA" => "Virginia",
+	"VT" => "Vermont",
+	"WA" => "Washington",
+	"WI" => "Wisconsin",
+	"WV" => "West Virginia",
+	"WY" => "Wyoming"
+);
+
+// Check if "save" button was clicked
+if(isset($_POST['save_button'])){
+
+    if(empty($_POST['first_name'])){
+        $first_name_value = $_SESSION['first_name']; 
+    } else {
+        $first_name_value = trim($_POST['first_name']);
+    }
+
+    if(empty($_POST['last_name'])){
+       $last_name_value = $_SESSION['last_name'];
+    } else {
+        $last_name_value = trim($_POST['last_name']);
+    }
+
+    if(empty($_POST['motto'])){
+        $motto_value = $_SESSION['motto'];
+    } else {
+        $motto_value = trim($_POST['motto']);
+    }
+
+    if(empty($_POST['email'])){
+        $email_value = $_SESSION['email'];
+    } else {
+        $email_value = filter_var(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
+    }
+
+    if(empty($_POST['city'])){
+        $city_value = $_SESSION['city'];
+    } else {
+        $city_value = trim($_POST['city']);
+    }
+
+    if(isset($_POST['state']) && array_key_exists($_POST['state'], $state_array)){
+        $state_value = trim($_POST['state']);
+    } else {
+        $state_value = $_SESSION['state'];
+    }
+
+    // PDO to update the DB 
+    $update_preferences_sql = 'UPDATE user SET 
+		first_name = :first_name_value,
+		last_name = :last_name_value,
+		motto = :motto_value,
+		email = :email_value,
+		city = :city_value,
+		state = :state_value 
+    WHERE id = :user_id';
+
+    $update_preferences_result = $pdo->prepare($update_preferences_sql);
+    $update_preferences_result->execute([
+		'first_name_value' => $first_name_value,
+		'last_name_value' => $last_name_value,
+		'motto_value' => $motto_value,
+		'email_value' => $email_value,
+		'city_value' => $city_value,
+		'state_value' => $state_value,
+		'user_id' => $user_id
+    ]);
     
-    if($num_display_user_results > 0){
-        $row = $display_user_result->fetch();
+    //requery DB to update $_SESSION. Ensures $_SESSION is always in sync with DB.
+    if ($update_preferences_result){    
+        $update_session_sql = 
+        "SELECT first_name, last_name, motto, email, city, state, update_time FROM user WHERE id = :user_id";
+        $update_session_result = $pdo->prepare($update_session_sql);
+        $update_session_result->execute(['user_id' => $user_id]);
+        $row = $update_session_result->fetch();
 
-        $full_name = $row['first_name'].' '.$row['last_name'];
-        $user_id = $row['id'];
-        $photo = $row['photo'];
-        $motto = $row['motto'];
-        $email = $row['email'];
-        $city = $row['city'];
-        $state = $row['state'];
-        $update_time_stamp = strtotime($row['update_time']); // convert to timestamp for cache-busting
-    }
-}
-
-// populate array of user placements
-$records_sql = <<< ENDSQL
-SELECT event_standings.*, event.name
-FROM event_standings, event
-WHERE event_standings.event_id = event.id
-ORDER BY event_standings.event_id DESC, event_standings.earnings DESC
-ENDSQL;
-$records_result = $pdo->prepare($records_sql);
-$records_result->execute();
-$num_records_result = $records_result->rowCount();
-$user_records_array = array();
-
-
-if ($num_records_result > 0 ){
-    // Grab the entire array to sort and process
-    $records_array = $records_result->fetchall(PDO::FETCH_GROUP);
-    // Determine how the user placed in each event
-    foreach ($records_array as $event_id => $grouped_array) {
-        $placement = 1;
-        foreach ($grouped_array as $key => $user_row) {
-            if ($user_row['user_id'] == $user_id){
-                // Add a record to the tracking array
-                $user_records_array += [$event_id => array('event_name' => $user_row['name'],'placement' => $placement, 'earnings' => $user_row['earnings'])];   
-            } else {
-                $placement += 1 ;
-            }
+        // Set the session variable for each column returned
+        foreach( $row as $key => $value ){
+          $_SESSION[$key] = $value;
         }
+
+        $update_time_stamp = strtotime($row["update_time"]);
+        header("Location: /user/");
+        exit;
     }
-} else {
-    // array is empty
 }
+
+///// DEBUG
+//$debug = debug($_POST);
+///// end DEBUG
 ?>
 {header}
 {main_nav}
-    <main role="main" id="user_profile_page">
-
-        <section class="row sticky-top" id="user_head">
-            <div class="group col-sm-5" id="photo_container">
-                <img class="rounded-circle" id="user_profile_photo" src="<?php echo "$photo?$update_time_stamp" ?>" alt="My Photo">
-            </div>
-            <div id="user_name" class="group col-sm-7">
-                <h1 class="sticky-top">
-                    <?php echo $full_name ?>
-                </h1>
-            </div>
-<?php
-if (!isset($_GET["u"]) || $_GET["u"] == $_SESSION["id"]){
-    echo <<< LINKS
-                <div id="edit_buttons" class="btn-group col-sm-7 ml-sm-auto text-center" role="group" aria-label="Profile Controls">
-                    <a href="/user/edit/" class="btn btn-primary btn-sm" id="edit_profile">Edit Profile</a> 
-                    <a href="/user/settings/" class="btn btn-primary btn-sm" id="user_settings">Settings</a>
-                    <a href="/user/settings/reset.php" class="btn btn-primary btn-sm" id="change_password">Change Password</a>
-                </div>
-LINKS;
-}
- ?>           
-        </section> <!-- END user_head -->
+    <main role="main" id="user_profile_edit_page">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
+            <section class="form-row sticky-top" id="user_head">
+                <div class="form-group col-sm-4 text-center">
+                    <img class="rounded-circle" id="user_profile_photo" src="<?php echo $_SESSION['photo'] . '?' . $update_time_stamp;?>" alt="My Photo">
+                    <div id="ajax_alert"></div>
+				</div>
+				<div class="form-row col-sm-8 justify-content-center">
+					<div id="photo_upload" class="custom-file d-flex vertical-center col-sm-7">
+						<input type="file" id="photo_upload_button" class="d-inline custom-file-input" accept="image/*">
+						<label class="custom-file-label" for="photo_upload_button">Camera or Library</label>
+					</div>
+				</div>
+            </section>
 
             <section id="user_meta">
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <th>Motto:</th>
-                            <td><?php echo $motto ?></td>
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td><?php echo $email ?></td>
-                        </tr>
-                        <tr>
-                            <th>City:</th>
-                            <td><?php echo $city ?></td>
-                        </tr>
-                        <tr>
-                            <th>State:</th>
-                            <td><?php echo $state ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section><!-- END user_meta -->
-                
-            <section id="user_records" class="mt-4">
-                <h2>Event Records</h2>
-                <table class="table" id="profile_records">
-                    <tbody>
-                        <?php 
-// takes the array generated from the event table to determine historical event placement
-                        
-                        if (empty($user_records_array)){
-                            echo <<< ENDRECORD
-                            <tr>
-                                <td>No Completed Events</td>
-                            </tr>
-ENDRECORD;
-                        } else {
-							$locale = 'en_US';
-							$nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
-                            foreach ($user_records_array as $record) {
-                                foreach ($record as $key => $value) {
-									$placement = $nf->format($record['placement']);
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="motto" class="col-form-label" >First Name:</label> 
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="motto" class="col-form-label" >Last Name:</label> 
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="email" class="col-form-label" >Email:</label> 
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="city" class="col-form-label" >City:</label> 
+                        <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="state" class="col-form-label" >State:</label> 
+                        <select class="form-control" id="state" name="state">
+                            <?php
+                            foreach ($state_array as $key => $value) {
+                                if($_SESSION['state'] == $key){
+                                    $state_selected_tag = 'selected';
+                                } else {
+                                    $state_selected_tag = '';
                                 }
-echo <<< ENDRECORD
-                            <tr>
-								<th>{$record['event_name']}</th>
-								<td><strong class="text-muted">{$placement} place</strong> with <strong class="text-muted">\${$record['earnings']}</strong></td>
-                            </tr>
-ENDRECORD;
+echo <<<ENDOPTION
+                                <option value="$key" $state_selected_tag>$value</option>\n
+ENDOPTION;
                             }
-                        }
-                        ?>         
-                    </tbody>
-                </table>
-            </section> <!-- END user_records -->
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label for="motto" class="col-form-label" >Motto:</label> 
+                        <textarea class="form-control" id="motto" name="motto" rows="2"><?php echo $_SESSION['motto'] ?></textarea>
+                    </div>
+                </div>
+
+            </section><!-- END user_meta -->
+            <div class="form-row my-5">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
+                    <a class="btn btn-text d-block mt-2 text-center" href="/user/">Cancel</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- modal for photo cropping -->
+        <div class="modal" id="upload_image_modal" tabindex="-1" role="dialog" aria-labelledby="croppie_modal_label" data-backdrop="static" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="croppie_modal_label">Adjust Your Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p><small>Drag and zoom the image to center and fill the circle with your face.</small></p>
+                <div id="croppie_element"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary crop_image">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END: modal for photo cropping -->
+
     </main>
 {footer}
 <?php ob_end_flush(); ?>
