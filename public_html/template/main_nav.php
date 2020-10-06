@@ -21,7 +21,7 @@ $nav = <<< HTML
  
 HTML;
 
-if($_SESSION["admin"]){
+if(isset($_SESSION['admin'])){
 $nav .= <<< HTML
                 <li class="nav-item" id="admin">
                     <a class="nav-link" href="/admin/">Admin</a>
@@ -44,8 +44,8 @@ $nav .= <<< HTML
                 </li>
             </ul>
             <span class="navbar-text">
-                <span class="d-none d-md-block fade-in">Created by <a href="credits/">College of Informatics students</a> at Northern Kentucky University</span>
-                <span class="d-md-none fade-in">Created by NKU <a href="credits/">College of Informatics students</a></span>
+                <span class="d-none d-md-block fade-in">Created by <a href="/credits/">College of Informatics students</a> at Northern Kentucky University</span>
+                <span class="d-md-none fade-in">Created by NKU <a href="/credits/">College of Informatics students</a></span>
             </span>
         </div>
     </nav>

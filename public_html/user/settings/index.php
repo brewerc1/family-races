@@ -95,7 +95,7 @@ if(isset($_POST['save_button'])){
 
                 <div class="col text-center">
                     <button type="submit" class="btn btn-primary btn col-sm-5" name="save_button">Save</button>
-                    <a href="/user/index.php" class="text-secondary d-block mt-2 text-center">Cancel</a>
+                    <a href="/user/index.php" class="btn btn-text d-block mt-2 text-center">Cancel</a>
                 </div>
             </form>
         </section> <!-- END id user_settings -->
