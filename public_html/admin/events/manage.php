@@ -407,7 +407,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
         if (racesResultsTrack.has((raceNumber + 'w')) &&
             racesResultsTrack.has((raceNumber + 'p')) &&
-            racesResultsTrack.has((raceNumber + 'w'))) {
+            racesResultsTrack.has((raceNumber + 's'))) {
             oldWin = racesResultsTrack.get((raceNumber + 'w'));
             oldPlace = racesResultsTrack.get((raceNumber + 'p'));
             oldShow = racesResultsTrack.get((raceNumber + 's'));
@@ -420,12 +420,12 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         win.push($('#show1').val());
 
         let place = [];
-        place.push($('#place-result').val());
+        place.push($('#place-result').val().toString());
         place.push($('#place2').val());
         place.push($('#show2').val());
 
         let show = [];
-        show.push($('#show-result').val());
+        show.push($('#show-result').val().toString());
         show.push($('#show3').val());
 
         depopulateHorses();
@@ -741,31 +741,31 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         const horse = (h === null) ? $('#' + id).val() : h;
 
         if (id === 'win-result') {
-            $('#place-result option[value=' + horse + ']').attr("disabled", "disabled");
-            $('#show-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#place-result option[value="' + horse + '"]').attr("disabled", "disabled");
+            $('#show-result option[value="' + horse + '"]').attr("disabled", "disabled");
             if (h === null) {
-                $('#place-result option[value=' + previousWinHorse + ']').removeAttr("disabled");
-                $('#show-result option[value=' + previousWinHorse + ']').removeAttr("disabled");
+                $('#place-result option[value="' + previousWinHorse + '"]').removeAttr("disabled");
+                $('#show-result option[value="' + previousWinHorse + '"]').removeAttr("disabled");
             }
             previousWinHorse = horse;
         }
 
         else if (id === 'place-result') {
-            $('#win-result option[value=' + horse + ']').attr("disabled", "disabled");
-            $('#show-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#win-result option[value="' + horse + '"]').attr("disabled", "disabled");
+            $('#show-result option[value="' + horse + '"]').attr("disabled", "disabled");
             if (h === null) {
-                $('#win-result option[value=' + previousPlaceHorse + ']').removeAttr("disabled");
-                $('#show-result option[value=' + previousPlaceHorse + ']').removeAttr("disabled");
+                $('#win-result option[value="' + previousPlaceHorse + '"]').removeAttr("disabled");
+                $('#show-result option[value="' + previousPlaceHorse + '"]').removeAttr("disabled");
             }
             previousPlaceHorse = horse;
         }
 
         else if (id === 'show-result') {
-            $('#win-result option[value=' + horse + ']').attr("disabled", "disabled");
-            $('#place-result option[value=' + horse + ']').attr("disabled", "disabled");
+            $('#win-result option[value="' + horse + '"]').attr("disabled", "disabled");
+            $('#place-result option[value="' + horse + '"]').attr("disabled", "disabled");
             if (h === null) {
-                $('#win-result option[value=' + previousShowHorse + ']').removeAttr("disabled");
-                $('#place-result option[value=' + previousShowHorse + ']').removeAttr("disabled");
+                $('#win-result option[value="' + previousShowHorse + '"]').removeAttr("disabled");
+                $('#place-result option[value="' + previousShowHorse + '"]').removeAttr("disabled");
             }
             previousShowHorse = horse;
         }

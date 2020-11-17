@@ -761,7 +761,7 @@ if (key_exists($q, $event)) {
 
             $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
             $stmt = $pdo->prepare($query);
-            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'],'champion_photo' => '/images/no-user-image.jpg', 'id' => $event_id]);
+            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'],'champion_photo' => '', 'id' => $event_id]);
 
             return json_encode(array('e' => 1, 'alert' => alert($message)));
         } catch (Exception $e) {

@@ -387,8 +387,28 @@ table#profile_records {
 #races_page form{
 	z-index: 800;
 }
+#races_page #cancel_race_wrapper {
+	text-align: center;
+	border: 1px solid rgba(200,0,0,.4);
+	background-color: rgba(252, 98, 98, 0.8);
+	padding: 0px 0px 5px 0px;
+	margin: 10px auto;
+	color: white;
+	width: 140px;
+}
+#races_page #cancel_race_wrapper input {
+	margin-right: 7px;
+}
+#races_page #cancel_race_wrapper label {
+	text-shadow: 2px 2px 4px rgba(0,0,0,.62);
+	text-align: center;
+	text-transform: uppercase;
+}
 #race_leaderboard .no-results {
 	margin-top: 100px;
+	text-align: center;
+}
+#races_page #open_race_form {
 	text-align: center;
 }
 #races_page .input-group-lg>.custom-select, 
@@ -1009,6 +1029,7 @@ table#profile_records {
 	width: 100%;
 	max-width: 600px;
 	color: #fff;
+	z-index: 2001;
 }
 #debug pre {
 	color: #fff;

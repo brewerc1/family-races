@@ -34,8 +34,9 @@ if (isset($_POST["invite"])) {
             } else {
                 // send invite
                 $host = $_SERVER['SERVER_NAME'];
-                $invite_email_body = "<p>{$_SESSION["site_invite_email_body"]} <a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Click</a> to sign up.</p>\n<p>The invite link and the unique invite code ($unique_code) is specifically tied to the email address entered by the admin ($email). It cannot be used with any other email address. If you want to use a different email address, contact your admin and request a new invite be sent to your different email address.</p>";
-
+                $email_body = nl2br($_SESSION["site_invite_email_body"]);
+				$invite_email_body = "<p>$email_body</p>\n<p><a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Click</a> to sign up.</p>\n<p>The invite link and the unique invite code ($unique_code) is specifically tied to the email address entered by the admin ($email). It cannot be used with any other email address. If you want to use a different email address, contact your admin and request a new invite be sent to your different email address.</p>";
+				
                 if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
                     $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
                     $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
