@@ -16,12 +16,13 @@ if(empty($_SESSION["id"])) {
 //$debug = debug();
 
 $output = '';
+$has_current_event = 0; // defaults to no current event
 
 try {
 	$events_sql = "SELECT id, name, status FROM event ORDER BY id DESC";
 	$events_query = $pdo->prepare($events_sql);
 	if($events_query->execute()){
-		$has_current_event = 0; // defaults to no current event
+
 		if ($events_query->rowCount() > 0){
 			$events_result = $events_query->fetchAll();
 			foreach ($events_result as $id => $event_data){
