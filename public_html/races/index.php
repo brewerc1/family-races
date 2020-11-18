@@ -13,9 +13,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 // turn on output buffering
 ob_start('template');
 
-// start a session
-//session_start();
-
 // Test for authorized user
 if (!isset($_SESSION["id"])) {
     header("Location: /login/");
@@ -109,10 +106,6 @@ else {
     $memorial_race_number = -1;
 }
 
-///// DEBUG
-//$debug = debug();
-///// end DEBUG
-
 // Gather data for this page
 // SQL to retrieve race results
 $race_sql = 'SELECT user.first_name, user.last_name, user.photo, user.update_time, race_standings.race_event_id, race_standings.race_race_number, race_standings.user_id, race_standings.earnings, event.name, event.date 
@@ -141,7 +134,6 @@ $num_races = $num_races_result->rowCount();
 $horses_sql = "SELECT * FROM `horse` WHERE horse.race_event_id = :event AND horse.race_race_number = :race";
 $horses_result = $pdo->prepare($horses_sql);
 $horses_result->execute(['event' => $event, 'race' => $race]);
-$horse = $horses_result->fetch();
 $horses_count = $horses_result->rowCount();
 
 // SQL to get information about each race
@@ -193,9 +185,14 @@ MEMORIAL;
 $horses = $horses_result->fetchAll();
 $horse_list_js = '';
 foreach($horses as $key => $value){
-	$horse_list_js .= "{$horses[$key]['horse_number']},";
+	$horse_list_js .= "'{$horses[$key]['horse_number']}',";
 }
 $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
+
+///// DEBUG
+//$debug = debug($horses);
+///// end DEBUG
+
 ?>
 {header}
 <script>
@@ -386,7 +383,7 @@ $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
                     for($i = 1; $i <= $num_races; $i++) {
                         if ($i == $race) {
                             if ($memorial_race_number == $i) {
-                                echo "<option value='e=$event&r=$i&u=$uid' selected disabled>" . $_SESSION['site_memorial_race_name'] . "</option>";
+                                echo "<option value='e=$event&r=$i&u=$uid' selected disabled>{$_SESSION['site_memorial_race_name']}</option>";
                             }
                             else {
                                 echo "<option value='e=$event&r=$i&u=$uid' selected disabled>Race $i</option>";
@@ -394,7 +391,7 @@ $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
                         }
                         else {
                             if ($memorial_race_number == $i) {
-                                echo "<option value='e=$event&r=$i&u=$uid'>" . $_SESSION['site_memorial_race_name'] . "</option>";
+                                echo "<option value='e=$event&r=$i&u=$uid'>{$_SESSION['site_memorial_race_name']}</option>";
                             }
                             else {
                                 echo "<option value='e=$event&r=$i&u=$uid'>Race $i</option>";
@@ -431,17 +428,19 @@ CANCEL;
                             </div>
                             <select class="custom-select" id="horseSelection" name="horseSelection" required>
                                 <?php
-                                    // If no horse has been selected, default to 'Horse'
-                                    echo "<option value='default' selected disabled>Horse...</option>";
-                                    for($i = 0; $i < $horses_count; $i++){
-                                        if (($pick && ($horse['horse_number'] == $pick['horse_number'])) || (($old_pick != -1) && ($horse['horse_number'] == $old_pick))) {
-                                            echo "<option selected>" . $horse['horse_number']. "</option>";
-                                        }
-                                        else {
-                                            echo "<option>" . $horse['horse_number'] . "</option>";
-                                        }
-                                        $horse = $horses_result->fetch();
-                                    }
+                                    $options = '';
+									foreach($horses as $key => $value){
+										if (($pick && ($value['horse_number'] == $pick['horse_number'])) || (($old_pick != -1) && ($value['horse_number'] == $old_pick))) {
+											$pick_selected = 'selected';
+											$no_pick_selected = '';
+										} else {
+											$pick_selected = '';
+											$no_pick_selected = 'selected';
+										}
+										$options .= "<option $pick_selected>{$value['horse_number']}</option>";
+									}
+									echo "<option value='default' disabled $no_pick_selected>Horse...</option>";
+									echo $options;
                                 ?>
                             </select>
                         </div>
@@ -474,7 +473,7 @@ CANCEL;
                                 ?>
                             </select>
                         </div>
-                        <input type="hidden" value=<?php echo "$race"; ?> name="currentRace" id="currentRace">
+                        <input type="hidden" value="<?php echo $race; ?>" name="currentRace" id="currentRace">
                         <input class="btn btn-primary" type="submit" value="Submit">
                     </div>
                 </form>
@@ -544,7 +543,7 @@ HERE;
                         if ($_SESSION['admin']) {
                             echo <<< OPEN
                                 <form action="open-race.php" method="POST" id="open_race_form">
-                                    <button type="submit" class="btn btn-primary" id="open_race_button">Re-open race</button>
+                                    <button type="submit" class="btn btn-warning" id="open_race_button">Re-open race</button>
                                     <input type="hidden" value=$event name="currentEventNumber">
                                     <input type="hidden" value=$race name="currentRaceNumber">
                                 </form>
@@ -555,8 +554,8 @@ OPEN;
                     if ($_SESSION['admin'] && !($win_horse)) {
                         echo <<< CANCEL
                             <form action="cancel-race.php" method="POST" id="cancel_race_form">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="cancel_race">
+								<div class="form-check" id="cancel_race_wrapper">
+									<input type="checkbox" id="cancel_race">
                                     <label class="form-check-label" for="cancel_race">Cancel Race</label>
                                 </div>
                                 <input type="hidden" value=$event name="currentEventNumber" id="currentEventNumber">

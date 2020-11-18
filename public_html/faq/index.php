@@ -35,7 +35,7 @@ $javascript = '';
             <h2 id="h2" aria-controls="c2" data-target="#c2" data-toggle="collapse" aria-expanded="false">How does it all work?</h2>
             <ul id="c2" aria-labelledby="h2" class="collapse" data-parent="#faq_overview">
                 <li>Each participant chooses one horse per race and whether they want to bet on that horse to WIN, PLACE or SHOW.</li>
-                <li>The amount of winnings earned by the participant each reace is determined by the outcome of each race as displayed on the "tote board" located in the infield of the racetrack.</li>
+                <li>The amount of winnings earned by the participant is determined by the outcome of each race as displayed on the "tote board" located in the infield of the racetrack.</li>
                 <li>The winnings from all races for the day are added together for each participant to determine the winners.</li>
             </ul>
             
