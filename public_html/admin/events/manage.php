@@ -628,7 +628,6 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
 
         // EVENT
-        closeEventUI();
         closeEventBackend('close_event', 1);
         closeEventBackend('recalculate', 0);
     });
@@ -656,6 +655,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         $('#recalculate').toggleClass('d-none', (EVENT_STATUS === 0));
         $('#close_event').toggleClass('d-none', (EVENT_STATUS === 1));
         $('#addRace').toggleClass('d-none', (EVENT_STATUS === 1));
+        $('#event_is_close').toggleClass('d-none', ((EVENT_STATUS === 0)))
     }
 
     function getNewRaceNumber() {
@@ -772,11 +772,14 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
     }
 </script>
 <main role="main" id="admin_manage_event_page">
-    <h1 class="mb-5 sticky-top"><?php echo $event_name ?></h1>
+    <h1 class="mb-5 sticky-top">
+        <?php echo $event_name ?>
+        <div><small id="event_is_close" class="text-muted <?php echo $event_status == 1 ? '' : 'd-none' ?>">This event is closed.</small></div>
+    </h1>
 
     <section>
-        <button type="button" id="close_event" class="btn btn-secondary btn-sm float-right">Close Event</button>
-        <button type="button" id="recalculate" class="btn btn-secondary btn-sm float-right d-none">Recalculate Event Results</button>
+        <button type="button" id="close_event" class="btn btn-secondary btn-sm float-right <?php echo $event_status == 1 ? 'd-none' : '' ?>">Close Event</button>
+        <button type="button" id="recalculate" class="btn btn-secondary btn-sm float-right <?php echo $event_status == 1 ? '' : 'd-none' ?>">Recalculate Event Results</button>
         <div class="text-center">
             <span><?php echo $event_date ?></span>
         </div>
@@ -1116,7 +1119,7 @@ HTML;
 
             </div> <!-- END .accordion -->
             <div class="text-center mt-4">
-                <a href="#" id="addRace" class="btn btn-primary mb-4 <?php echo $disabled_add_race_button;?>" onclick="addRace()">Add a Race</a>
+                <a href="#" id="addRace" class="btn btn-primary mb-4 <?php echo $event_status == 0 ? '' : 'd-none' ?>" onclick="addRace()">Add a Race</a>
             </div>
         </form>
     </section>
