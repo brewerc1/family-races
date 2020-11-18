@@ -765,7 +765,7 @@ if (key_exists($q, $event)) {
 
             return json_encode(array('e' => 1, 'alert' => alert($message)));
         } catch (Exception $e) {
-            return json_encode(array('e' => 1, 'alert' => alert("Something went wrong. Please, Reload the page and try again.", "warning")));
+            return json_encode(array('e' => 0, 'alert' => alert("Something went wrong. Please, Reload the page and try again.", "warning")));
         }
     }
 
