@@ -710,14 +710,19 @@ if (key_exists($q, $event)) {
         try {
             $message = "Event is closed.";
 
+            $pdo->beginTransaction(); // Start transaction
+
+
             if ($recalculate) {
+
                 $query = "DELETE FROM event_standings WHERE event_id = :event_id";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute(['event_id' => $event_id]);
                 $message = "Results are recalculated.";
             }
 
-            $query = "SELECT *, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
+
+            $query = "SELECT user_id, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
             $stmt = $pdo->prepare($query);
             $stmt->execute(['race_event_id' => $event_id]);
             $race_standings = $stmt->fetchAll();
@@ -725,48 +730,31 @@ if (key_exists($q, $event)) {
             $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
             $stmt = $pdo->prepare($query);
 
-            $try_times = 0;
-            while (true) {
+            $winner = array('total' => 0);
+            foreach ($race_standings as $standing) {
+                $uid = $standing['user_id'];
+                $earnings = floatval($standing['total']);
+                $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
 
-                try {  // try to execute this
-
-                    $winner = array('total' => 0);
-                    foreach ($race_standings as $standing) {
-                        $uid = $standing['user_id'];
-                        $earnings = floatval($standing['total']);
-                        $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
-
-                        if ($earnings > floatval($winner['total']))
-                            $winner = $standing;
-                    }
-
-                    break;
-
-                } catch (Exception $e) {
-                    // Integrity constraint violation: 1062 Duplicate entry '3-1' for key 'PRIMARY'
-                    // Retry the above code again
-
-                    $query = "DELETE FROM event_standings WHERE event_id = :event_id";
-                    $stmt = $pdo->prepare($query);
-                    $stmt->execute(['event_id' => $event_id]);
-
-                }
-
-                if ($try_times == 10) // Integrity constraint violation: 1062 Duplicate
-                    throw new Exception("Internal error: Reload the page and try again.");
-
-                $try_times += 1;
-
+                if ($earnings > floatval($winner['total']))
+                    $winner = $standing;
             }
 
             $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
             $stmt = $pdo->prepare($query);
-            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'],'champion_photo' => '', 'id' => $event_id]);
+            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'], 'champion_photo' => '', 'id' => $event_id]);
+
+            $pdo->commit(); // Write all changes into DB
 
             return json_encode(array('e' => 1, 'alert' => alert($message)));
-        } catch (Exception $e) {
-            return json_encode(array('e' => 1, 'alert' => alert("Something went wrong. Please, Reload the page and try again.", "warning")));
+
+        }catch (PDOException $ex) {
+
+            $pdo->rollBack(); // RollBack all changes to DB
+
+            return json_encode(array('e' => 0, 'alert' => alert("Something went wrong, please try again.", "warning")));
         }
+
     }
 
     if ($action === 1) {
