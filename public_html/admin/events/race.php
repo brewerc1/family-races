@@ -746,13 +746,13 @@ if (key_exists($q, $event)) {
 
             $pdo->commit(); // Write all changes into DB
 
-            return json_encode(array('e' => 1, 'alert' => alert($message)));
+            return json_encode(array('event_status' => 1, 'alert' => alert($message)));
 
         }catch (PDOException $ex) {
 
             $pdo->rollBack(); // RollBack all changes to DB
 
-            return json_encode(array('e' => 0, 'alert' => alert("Something went wrong, please try again.", "warning")));
+            return json_encode(array('event_status' => 0, 'alert' => alert("Something went wrong, please try again.", "warning")));
         }
 
     }

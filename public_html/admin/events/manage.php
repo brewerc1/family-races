@@ -643,7 +643,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                 success: function (data) {
                     $('main').prepend(data['alert']);
                     $('#alert').delay( DELAY ).fadeOut( FADEOUT );
-                    EVENT_STATUS = parseInt(data['e']);
+                    EVENT_STATUS = parseInt(data['event_status']);
                     closeEventUI();
                 }
             });
