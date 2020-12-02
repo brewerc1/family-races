@@ -474,21 +474,22 @@ CANCEL;
                             </select>
                         </div>
                         <input type="hidden" value="<?php echo $race; ?>" name="currentRace" id="currentRace">
-                        <input class="btn btn-primary" type="submit" value="Submit">
+                        <div>
+                            <input class="btn btn-primary" type="submit" value="Submit">
+                            <?php
+                                if ($_SESSION['admin']) {
+                                    echo <<< ADMINPORTAL
+                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary">Admin Manage Race Portal</a>
+ADMINPORTAL;
+
+                                }
+                            ?>
+                        </div>
                     </div>
                 </form>
-                <?php
-                    if ($_SESSION['admin']) {
-                        echo <<< CLOSE
-                            <form action="close-race.php" method="POST" class="text-center">
-                                <input type="hidden" value=$race name="closeCurrentRace" id="closeCurrentRace">
-                                <input class="btn btn-danger" type="submit" value="Close Betting Window">
-                            </form>
-CLOSE;
-                    }
-                ?>
+
         <?php } 
-        elseif ($race_info['window_closed'] == '1') {
+        if ($race_info['window_closed'] == '1') {
 			?>
             <div class="card-body" id="window_closed">
 				<div class="card-text" id="no_pick">
@@ -538,49 +539,6 @@ CLOSE;
                                 </tr>
                             </table>
 HERE;
-                    }
-                    else {
-                        if ($_SESSION['admin']) {
-                            echo <<< OPEN
-                                <form action="open-race.php" method="POST" id="open_race_form">
-                                    <button type="submit" class="btn btn-warning" id="open_race_button">Re-open race</button>
-                                    <input type="hidden" value=$event name="currentEventNumber">
-                                    <input type="hidden" value=$race name="currentRaceNumber">
-                                </form>
-OPEN;
-                        }
-                    }
-                    // To cancel a race
-                    if ($_SESSION['admin'] && !($win_horse)) {
-                        echo <<< CANCEL
-                            <form action="cancel-race.php" method="POST" id="cancel_race_form">
-								<div class="form-check" id="cancel_race_wrapper">
-									<input type="checkbox" id="cancel_race">
-                                    <label class="form-check-label" for="cancel_race">Cancel Race</label>
-                                </div>
-                                <input type="hidden" value=$event name="currentEventNumber" id="currentEventNumber">
-                                <input type="hidden" value=$race name="currentRaceNumber" id="currentRaceNumber">
-                            </form>
-                            
-                            <button type="submit" class="btn btn-primary" id="race_results_button"
-                                    data-toggle="modal" 
-                                    data-target="#mainModal" 
-                                    data-title="Race $race Results"
-                                    data-button-primary-text="Save" 
-                                    data-button-primary-action="enterResultForRace($event, $race);" 
-                                    data-button-secondary-text="Cancel" 
-                                    data-button-secondary-action=""
-                                    onClick="populateHorses($race, $event);">Enter Race Results</button>
-                            <button type="" class="btn btn-primary" id="confirm_cancel_button"
-                                    data-toggle="modal" 
-                                    data-target="#mainModal" 
-                                    data-title="Are you sure you want to cancel this race?" 
-                                    data-message="Cancelling race $race will result in no payouts for all bets."
-                                    data-button-primary-text="Yes, Cancel" 
-                                    data-button-primary-action="cancelRace($event, $race);" 
-                                    data-button-secondary-text="Go Back" 
-                                    data-button-secondary-action="">Confirm</button>
-CANCEL;
                     }
                 } 
                 else { // SHOULD NEVER REACH HERE!!!
