@@ -479,7 +479,7 @@ CANCEL;
                             <?php
                                 if ($_SESSION['admin']) {
                                     echo <<< ADMINPORTAL
-                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary">Admin Manage Race Portal</a>
+                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary">Administer this race</a>
 ADMINPORTAL;
 
                                 }
