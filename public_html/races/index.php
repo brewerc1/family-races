@@ -558,6 +558,7 @@ ADMINPORTAL;
 				<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
 if ($race == 0) { // Case when we are displaying the entire leaderboard
+	$entries = 0;
     while($row = $event_standings_result->fetch()) {
         $name = $row["first_name"] . ' ' . $row["last_name"];
         $update_time_stamp = strtotime($row["update_time"]); // convert to timestamp for cache-busting
@@ -577,8 +578,9 @@ if ($race == 0) { // Case when we are displaying the entire leaderboard
         </div>
 	</li>
 HERE;
+		$entries += 1;
 	} // end while()
-	if ($num_race_results == '0' ){ // Show there is no results entered in yet
+	if ($entries == 0){ // Show when there are no results entered in yet
 		echo <<< NORESULTS
 		<div class="row justify-content-md-center">
 			<div class="text-center col-sm-auto col-md-8">
@@ -600,7 +602,6 @@ NORESULTS;
 }
 else { // Other cases when individual race results are being shown
     if ($num_race_results > 0) {
-
         // Output data of each row
         while($row = $race_result->fetch()) {
             $name = $row["first_name"] . ' ' . $row["last_name"];
@@ -622,7 +623,7 @@ else { // Other cases when individual race results are being shown
         </li>
 HERE;
         }
-    }
+	}
 }
 ?>
     </ul> <!-- END id race_leaderboard -->

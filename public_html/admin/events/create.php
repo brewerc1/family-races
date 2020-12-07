@@ -15,16 +15,17 @@ if(empty($_SESSION["id"])) {
     exit;
 }
 
-$debug = debug();
+//$debug = debug();
 
 if (isset($_POST["submit"])) {
+	// convert the date string provided by bootstrap-datepicker into a timestamp, then to YYYY-MM-DD format for MySQL
+	$date = date("Y-m-d", strtotime($_POST["event_date"]));
     try {
 
         $sql = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
         $stmt= $pdo->prepare($sql);
         $stmt->execute(['name' => $_POST["event_name"],
-            'date' => $_POST["event_date"], 'pot' => $_POST["event_pot"]]);
-
+            'date' => $date, 'pot' => $_POST["event_pot"]]);
 
         $sql = "SELECT id FROM event WHERE name=:name";
         $stmt = $pdo->prepare($sql);
@@ -55,37 +56,55 @@ if (isset($_POST["submit"])) {
 
     <main role="main" id="admin_event_create_page">
 		<h1 class="mb-5 sticky-top">Create an Event</h1>
-		<section>
 
-            <form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
-                <!-- Event Name -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="name" class="col-form-label"> Event Name </label>
-                        <input type="text" class="form-control" id="name" name="event_name">
-                    </div>
-                </div>
-                <!-- Event Date -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="date" class="col-form-label"> Date </label>
-                        <input type="date" class="form-control" id="date" name="event_date">
-                    </div>
-                </div>
+			<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
+				<section>
+	                <!-- Event Name -->
+	                <div class="form-row">
+	                    <div class="form-group col-md-6">
+							<label for="name" class="col-form-label">Event Name:</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									 <span class="input-group-text"><i class="far fa-horse-head"></i></span>
+  								</div>
+								  <input type="text" class="form-control" id="name" name="event_name">
+							</div>
+	                    </div>
+	                	<!-- Event Date -->
+						<div class="form-group col-md-6">
+							<label for="date" class="col-form-label">Event Date:</label>
+							<div class="input-group date" data-provide="datepicker" data-date-format="DD, MM d, yyyy" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+								</div>
+								<input type="text" class="form-control" id="date" name="event_date">
+							</div>
+						</div>
+					</div>
+	                <!-- Event POT -->
+	                <div class="form-row">
+	                    <div class="form-group col-md-6">
+							<label for="pot" class="col-form-label">Pot:</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									 <span class="input-group-text"><i class="far fa-donate"></i></span>
+  								</div>
+								<input type="text" class="form-control" id="pot" name="event_pot">
+							</div>
+	                    </div>
+	                </div>
+				</section>
 
-                <!-- Event POT -->
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="pot" class="col-form-label"> POT </label>
-                        <input type="text" class="form-control" id="pot" name="event_pot">
-                    </div>
-                </div>
-
-                <!-- submit -->
-                <input type="submit" name="submit" class="btn btn-primary btn-block" value="Next">
+				<div class="form-row my-5">
+					<div class="col text-center">
+						<!--<input type="submit" name="submit" class="btn btn-primary btn-block" value="Next">-->
+	                    <button type="submit" class="btn btn-primary btn col-sm-5" name="submit">Next</button>
+	                    <a class="btn btn-text d-block mt-2 text-center" href="/admin/events/">Cancel</a>
+	                </div>
+				</div>
 
             </form>
-        </section>
+
     </main>
 
 {footer}
