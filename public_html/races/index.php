@@ -428,11 +428,11 @@ CANCEL;
                             </div>
                             <select class="custom-select" id="horseSelection" name="horseSelection" required>
                                 <?php
-                                    $options = '';
+									$options = '';
+									$no_pick_selected = '';
 									foreach($horses as $key => $value){
 										if (($pick && ($value['horse_number'] == $pick['horse_number'])) || (($old_pick != -1) && ($value['horse_number'] == $old_pick))) {
 											$pick_selected = 'selected';
-											$no_pick_selected = '';
 										} else {
 											$pick_selected = '';
 											$no_pick_selected = 'selected';
@@ -474,14 +474,15 @@ CANCEL;
                             </select>
                         </div>
                         <input type="hidden" value="<?php echo $race; ?>" name="currentRace" id="currentRace">
-                        <div>
+                        <div class="col-12 text-center">
                             <input class="btn btn-primary" type="submit" value="Submit">
+						</div>
+						<div class="col-12 text-center mt-3">
                             <?php
                                 if ($_SESSION['admin']) {
                                     echo <<< ADMINPORTAL
-                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary">Administer this race</a>
+                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary border">Administer this race</a>
 ADMINPORTAL;
-
                                 }
                             ?>
                         </div>
@@ -539,10 +540,15 @@ ADMINPORTAL;
                                 </tr>
                             </table>
 HERE;
-                    }
-                } 
-                else { // SHOULD NEVER REACH HERE!!!
-                echo "<h1> ERROR! </h1>";
+                    } else {
+						if ($_SESSION['admin']) {
+							echo <<< ADMINPORTAL
+							<div class="col-12 text-center">
+					<a href="/admin/events/manage.php?e=$event" class="btn btn-secondary border">Administer this race</a>
+					</div>
+ADMINPORTAL;
+						}
+					}
                 }
             }
         }
@@ -569,13 +575,31 @@ if ($race == 0) { // Case when we are displaying the entire leaderboard
             </a>
             <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> <span class="earnings badge badge-success float-right px-2">\${$row["total"]}</span></div>
         </div>
-    </li>
+	</li>
 HERE;
-    }
+	} // end while()
+	if ($num_race_results == '0' ){ // Show there is no results entered in yet
+		echo <<< NORESULTS
+		<div class="row justify-content-md-center">
+			<div class="text-center col-sm-auto col-md-8">
+				<div class="alert alert-info" role="alert">
+					<div class="row">
+						<div class="col-auto align-self-start">
+							<i class="fa fa-lg fa-info-circle"></i>
+						</div>
+						<div class="col">
+						No race results have been entered yet, so this leaderboard is empty. 
+						Check back after race results have been entered.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+NORESULTS;
+	}
 }
 else { // Other cases when individual race results are being shown
     if ($num_race_results > 0) {
-        $invited = "";
 
         // Output data of each row
         while($row = $race_result->fetch()) {
@@ -598,17 +622,7 @@ else { // Other cases when individual race results are being shown
         </li>
 HERE;
         }
-    } else {
-        if ($race_info['window_closed'] == '0') { // Don't show any text when the window is still open
-
     }
-    else { // Show there is no results entered in yet
-        echo <<< NORESULTS
-            <div class="no-results">
-            </div>
-NORESULTS;
-        }
-}
 }
 ?>
     </ul> <!-- END id race_leaderboard -->
