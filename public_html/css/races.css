@@ -119,6 +119,17 @@ span.navbar-text {
 	padding-top: 1.5rem;
 }
 
+#instructions_button {
+	text-align: right;
+	padding: .25em;
+	text-shadow: -1px 1px 3px rgba(0,0,0,.4);
+}
+#instructions_button a {
+
+}
+#instructions .card.card-body{
+	padding: .15rem .35rem !important;
+}
 
 /* Forms */
 .cancel {
@@ -329,6 +340,9 @@ table#profile_records {
 }
 #races_page main {
 	overflow-x: hidden;
+}
+#races_page .card .card-title{
+	text-shadow: 0 1px 3px black;
 }
 #races_page #pick_block {
 	background-size: cover;

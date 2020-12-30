@@ -60,8 +60,13 @@ if (!empty($_GET['e']) && is_numeric($_GET['e'])) {
     $event = $_GET['e'];
 }
 else {
-    $event = $_SESSION['current_event'];
+	$event = $_SESSION['current_event'];
 }
+// Get event details
+$current_event_sql = "SELECT * FROM `event` WHERE event.id = :event LIMIT 1";
+$current_event_result = $pdo->prepare($current_event_sql);
+$current_event_result->execute(['event' => $event]);
+$current_event = $current_event_result->fetch();
 
 // Handle Race TODO: impliment $_SESSION['current_race']
 
@@ -373,7 +378,21 @@ $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
 </script>
 {main_nav}
 <main role="main" id="races_page" style="background-image: url(<?php echo $background_image['filename'];?>);">
+	<div class="fixed-top" id="instructions_button">
+		<a class="" data-toggle="collapse" href="#instructions" role="button" aria-expanded="false" aria-controls="instructions">
+			<i class="fas fa-question-circle text-light"></i>
+		</a>
+	</div>
 	<div class="card" id="pick_block" style="">
+		<h4 class="card-title text-center text-light">
+			<?php echo $current_event['name'];?>
+		</h4>
+		<div class="collapse" id="instructions">
+			<div class="card card-body">
+				<p><strong>Instructions:</strong> Use the Race dropdown menu to choose a race. Then, use the Pick dropdown menu to choose the horse for that race, and finally, use the Finish dropdown menu to guess how the horse will place. You can change your picks at any time until the betting window is closed by the admin.</p>
+				<p>To see the standings for all races, use the Race dropdown menu and choose 'All'.</p> 
+			</div>
+		</div>
         <div class="input-group input-group-lg mb-2 pt-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
