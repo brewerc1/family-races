@@ -195,7 +195,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         let horses = [];
         const input = '#addInput' + raceNumber + ' div.group-horse input';
         $( input + '.new' ).each( function () {
-            horses.push(this.value);
+            horses.push(this.value.trim());
         })
 
         $.ajax({
@@ -414,7 +414,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         }
 
         let win = [];
-        win.push($('#win-result').val());
+        win.push($('#win-result').val().toString());
         win.push($('#win1').val());
         win.push($('#place1').val());
         win.push($('#show1').val());
@@ -433,7 +433,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
         if (oldWin != null && oldPlace != null && oldShow != null)
             data = {win: win, place: place, show: show, old_win: oldWin, old_place: oldPlace, old_show: oldShow}
-
+		//alert(JSON.stringify(data));
         $.ajax({
             method: 'POST',
             url: './race.php?e=' + EVENT_ID + '&r=' + raceNumber + '&q=' + 5,
