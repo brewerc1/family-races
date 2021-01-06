@@ -172,7 +172,7 @@ $messages = array(
     7 => "Password cannot be empty.",
     8 => "Invite not sent.",
     9 => "Invite sent.",
-    10 => "Invalid email.",
+    10 => "Invalid email address.",
     11 => "User already invited.",
     12 => "You must select both horse and place.",
     13 => "Your pick is submitted.",
@@ -188,7 +188,15 @@ $messages = array(
     23 => "Race cancelled.",
     24 => "Your account is inactive.",
     25 => "Race opened!",
-    26 => "Error when placing bet."
+	26 => "Error when placing bet.",
+	27 => "Email wasn't sent.",
+	28 => "Server error: Can't retrieve email server settings.",
+	29 => "Server error: Can't generate random password reset code.",
+	30 => "Server error: Can't save random password reset code to database.",
+	31 => "Server error: Password reset email wasn't sent.",
+	32 => "Server error: Can't save new password to database.",
+	33 => "Email address and reset code mismatch during query.",
+	34 => "An email has been sent with a password reset link and code.<br>Check your email now."
 );
 
 $notification = '';

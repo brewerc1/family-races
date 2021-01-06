@@ -3,10 +3,9 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 ob_start('template');
 
-if (!isset($_GET["email"]) && !isset($_GET["code"])) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
+if (!isset($_GET['email']) || !isset($_GET['code'])) {
+	echo "here";
+	header("Location: /login/index.php");
     exit;
 }
 
@@ -15,29 +14,24 @@ $code = trim($_GET["code"]);
 
 // If the email passed in GET["email"] is not a valid email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header("HTTP/1.1 401 Unauthorized");
-    // An error page
-    //header("Location: error401.php");
+	header("Location: /password/reset.php?m=10&s=warning");
     exit;
 }
-
 
 if (isset($_POST["change_pwd"])) {
 
     $query = "SELECT password FROM user WHERE email = :email AND pw_reset_code = :pw_reset_code";
-
-    $user = $pdo->prepare($query);
+	$user = $pdo->prepare($query);
+	
     if (!$user->execute(['email' => $email, 'pw_reset_code' => $code])) {
-        header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
+        header("Location: /password/reset.php?m=27&s=warning&email=" . $email ."&code=" . $code);
         exit;
     } else {
-
         if ($user->rowCount() != 1) {
-            header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
+            header("Location: /password/reset.php?m=33&s=warning&email=" . $email ."&code=" . $code);
             exit;
         } else {
             $row = $user->fetch();
-            //var_dump($row);
             $pwd = trim($_POST["pwd"]);
             $confirm_pwd = trim($_POST["confirm_pwd"]);
 
@@ -45,9 +39,8 @@ if (isset($_POST["change_pwd"])) {
             if (empty($pwd) || empty($confirm_pwd)) {
                 header("Location: /password/reset.php?m=7&s=warning&email=" . $email ."&code=" . $code);
                 exit;
-
             } else {
-
+				// Password and Confirm Password must match
                 if ($pwd != $confirm_pwd) {
                     header("Location: /password/reset.php?m=5&s=warning&email=" . $email ."&code=" . $code);
                     exit;
@@ -64,58 +57,51 @@ if (isset($_POST["change_pwd"])) {
                         $sql = "UPDATE user SET password=:password, pw_reset_code= :pw_reset_code WHERE email=:email";
                         if (!$pdo->prepare($sql)->execute(['password' => $hashed_pwd, 'pw_reset_code' => NULL, 'email' => $email])) {
                             // server error: hopefully this edge case will never happen
-                            header("Location: /password/reset.php?m=6&s=warning&email=" . $email ."&code=" . $code);
+                            header("Location: /password/reset.php?m=32&s=warning&email=" . $email ."&code=" . $code);
                             exit;
                         } else {
-                            // Redirect back to login with a success message and email inside the email input
+                            // Redirect back to login with a success message and email address inside the email input
                             header("Location: /login/?m=3&s=success&email=" . $email);
                             exit;
                         }
                     }
-
                 }
 
             }
 
         }
-
-
     }
-
 }
 
-
-//header("Location: ./?message=3&alt=2");
 // set the page title for the template
 $page_title = "Create New Password";
 
 // include the menu javascript for the template
 $javascript = "";
 
-// Notification System
-$messages = array(
-    1 => "Something went wrong",
-    2 => "Server Error: Try again",
-    3 => "Password cannot be empty",
-    4 => "Passwords did not match",
-    5 => "Can't use old password"
-);
-
-$alerts = array(
-    1 => "success",
-    2 => "warning"
-);
-
 ?>
 {header}
-<main role="main">
-
-        <form method="POST" action=<?php $_SERVER["PHP_SELF"] ?>>
-            <input type="password" name="pwd" placeholder="New Password">
-            <input type="password" name="confirm_pwd" placeholder="Confirm Password">
-            <input type="submit" name="change_pwd" value="Change Password" >
+<main role="main" id="password_reset_page">
+    <h1 class="mb-5 sticky-top">Password Reset: <br class="d-md-none">Step 2 of 2</h1>
+	<section id="reset_password">
+        <form action="<?php $_SERVER["PHP_SELF"];?>" method="POST" class="d-flex justify-content-center align-items-center">
+            <div class="form-group col-md-4">
+                <small class="form-text text-muted mb-3" id="pwd_help" name="pwd_help">
+                    Enter your new password twice, making sure they match.
+                </small>
+				<div class="form-group">
+                	<label class="sr-only" for="pwd">New Password</label>
+                	<input type="password" name="pwd" id="pwd" placeholder="New Password" class="form-control" aria-describedby="pwd_help">
+				</div>
+				<div class="form-group">
+					<label class="sr-only" for="confirm_pwd">Confirm Password</label>
+					<input type="password" name="confirm_pwd" id="confirm_pwd" placeholder="Confirm Password" class="form-control" aria-describedby="pwd_help">
+                </div>
+				<input type="submit" class="btn btn-primary btn-block mt-5" name="change_pwd" value="Change Password">
+                <a href="/login" class="btn btn-text d-block mt-2 text-center">Return to Log In</a>
+            </div>
         </form>
-
+    </section>
 </main>
 {footer}
 <?php ob_end_flush(); ?>
