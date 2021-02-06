@@ -193,7 +193,6 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
      *
      * */
     function updateRace(raceNumber) {
-        console.log(raceNumber);
         $('#mainModal div.modal-footer button:last-of-type').attr('data-dismiss', 'modal');
 
         let horses = [];
