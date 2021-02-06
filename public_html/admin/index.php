@@ -29,13 +29,6 @@ $page_title = "Admin";
 
 $javascript = '';
 
-if(!empty($_SESSION['current_event'])){
-	$current_event_html = <<< HERE
-	<li><a class="btn btn-primary mb-4" href="/races/?e={$_SESSION['current_event']}">Current Event</a></li>
-HERE;
-} else {
-	$current_event_html = '';
-}
 ?>
 {header}
 {main_nav}
@@ -43,7 +36,6 @@ HERE;
 		<h1 class="mb-5 sticky-top">Admin</h1>
 		<section>
 			<ul class="list-unstyled text-center mt-5">
-			<?php echo $current_event_html; ?>
 				<li><a class="btn btn-primary mb-4" href="./events/">Event &amp; Race Managment</a></li>
 				<li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
 				<li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>

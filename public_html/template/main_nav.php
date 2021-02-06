@@ -21,7 +21,7 @@ $nav = <<< HTML
  
 HTML;
 
-if(isset($_SESSION['admin'])){
+if(isset($_SESSION['admin']) && $_SESSION['admin'] == 1){
 $nav .= <<< HTML
                 <li class="nav-item" id="admin">
                     <a class="nav-link" href="/admin/">Admin</a>

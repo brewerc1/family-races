@@ -30,7 +30,7 @@ if (isset($_POST["reset_password"])) {
             $email_arguments->execute();
 
             if ($email_arguments->rowCount() == 0) {
-                header("Location: /password/?m=6&s=warning");
+                header("Location: /password/?m=28&s=warning");
                 exit;
             } else {
 
@@ -38,14 +38,14 @@ if (isset($_POST["reset_password"])) {
                 try {
                     $reset_pw_code = generateCode();
                 } catch (Exception $e) {
-                    header("Location: /password/?m=6&s=warning");
+                    header("Location: /password/?m=29&s=warning");
                     exit;
                 }
 
                 // Write to DB: update pw_reset_code
                 $sql = "UPDATE user SET pw_reset_code=:pw_reset_code WHERE email=:email";
                 if (!$pdo->prepare($sql)->execute(['pw_reset_code' => $reset_pw_code, 'email' => $email])) {
-                    header("Location: /password/?m=6&s=warning");
+                    header("Location: /password/?m=30&s=warning");
                     exit;
                 } else {
 
@@ -53,7 +53,7 @@ if (isset($_POST["reset_password"])) {
                     // send reset pw code
                     $pw_reset_email_subject = "Reset Your Password";
                     $host = $_SERVER["SERVER_NAME"];
-                    $pw_reset_email_body = "<h3>Hi " . $first_name . ",</h3> <p>We've received a request to reset your password. If you did not make this request, please ignore this. Otherwise, click this link to reset your password</p> <p><a href=\"http://$host/password/reset.php?email=$email&code=$reset_pw_code\">Click here to reset your password</a></p> <p>Thanks, <br /> The Family Race!</p>";
+                    $pw_reset_email_body = "<h3>Hi " . $first_name . ",</h3> <p>We've received a request to reset your password. If you did not make this request, please ignore this. Otherwise, click this link to reset your password:</p> <p><a href=\"http://$host/password/reset.php?email=$email&code=$reset_pw_code\">Click here to reset your password</a></p> <p>Thanks, <br /> {$_SESSION['site_name']}</p>";
 
                     $is_sent = sendEmail($row["email_server"], $row["email_server_account"],
                         $row["email_server_password"], $row["email_server_port"], $row["email_from_name"],
@@ -61,10 +61,10 @@ if (isset($_POST["reset_password"])) {
 
 
                     if (!$is_sent) {
-                        header("Location: /password/?m=6&s=warning");
+                        header("Location: /password/?m=31&s=warning");
                         exit;
                     } else {
-                        header("Location: /password/?m=0&s=success&email=" . $email);
+                        header("Location: /password/?m=34&s=success&email=" . $email);
                         exit;
                     }
                 }

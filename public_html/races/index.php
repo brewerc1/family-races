@@ -60,8 +60,13 @@ if (!empty($_GET['e']) && is_numeric($_GET['e'])) {
     $event = $_GET['e'];
 }
 else {
-    $event = $_SESSION['current_event'];
+	$event = $_SESSION['current_event'];
 }
+// Get event details
+$current_event_sql = "SELECT * FROM `event` WHERE event.id = :event LIMIT 1";
+$current_event_result = $pdo->prepare($current_event_sql);
+$current_event_result->execute(['event' => $event]);
+$current_event = $current_event_result->fetch();
 
 // Handle Race TODO: impliment $_SESSION['current_race']
 
@@ -373,7 +378,21 @@ $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
 </script>
 {main_nav}
 <main role="main" id="races_page" style="background-image: url(<?php echo $background_image['filename'];?>);">
+	<div class="fixed-top" id="instructions_button">
+		<a class="" data-toggle="collapse" href="#instructions" role="button" aria-expanded="false" aria-controls="instructions">
+			<i class="fas fa-question-circle text-light"></i>
+		</a>
+	</div>
 	<div class="card" id="pick_block" style="">
+		<h4 class="card-title text-center text-light">
+			<?php echo $current_event['name'];?>
+		</h4>
+		<div class="collapse" id="instructions">
+			<div class="card card-body">
+				<p><strong>Instructions:</strong> Use the Race dropdown menu to choose a race. Then, use the Pick dropdown menu to choose the horse for that race, and finally, use the Finish dropdown menu to guess how the horse will place. You can change your picks at any time until the betting window is closed by the admin.</p>
+				<p>To see the standings for all races, use the Race dropdown menu and choose 'All'.</p> 
+			</div>
+		</div>
         <div class="input-group input-group-lg mb-2 pt-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="race_picker">Race</label>
@@ -428,11 +447,11 @@ CANCEL;
                             </div>
                             <select class="custom-select" id="horseSelection" name="horseSelection" required>
                                 <?php
-                                    $options = '';
+									$options = '';
+									$no_pick_selected = '';
 									foreach($horses as $key => $value){
 										if (($pick && ($value['horse_number'] == $pick['horse_number'])) || (($old_pick != -1) && ($value['horse_number'] == $old_pick))) {
 											$pick_selected = 'selected';
-											$no_pick_selected = '';
 										} else {
 											$pick_selected = '';
 											$no_pick_selected = 'selected';
@@ -474,21 +493,23 @@ CANCEL;
                             </select>
                         </div>
                         <input type="hidden" value="<?php echo $race; ?>" name="currentRace" id="currentRace">
-                        <input class="btn btn-primary" type="submit" value="Submit">
+                        <div class="col-12 text-center">
+                            <input class="btn btn-primary" type="submit" value="Submit">
+						</div>
+						<div class="col-12 text-center mt-3">
+                            <?php
+                                if ($_SESSION['admin']) {
+                                    echo <<< ADMINPORTAL
+                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary border">Administer this race</a>
+ADMINPORTAL;
+                                }
+                            ?>
+                        </div>
                     </div>
                 </form>
-                <?php
-                    if ($_SESSION['admin']) {
-                        echo <<< CLOSE
-                            <form action="close-race.php" method="POST" class="text-center">
-                                <input type="hidden" value=$race name="closeCurrentRace" id="closeCurrentRace">
-                                <input class="btn btn-danger" type="submit" value="Close Betting Window">
-                            </form>
-CLOSE;
-                    }
-                ?>
+
         <?php } 
-        elseif ($race_info['window_closed'] == '1') {
+        if ($race_info['window_closed'] == '1') {
 			?>
             <div class="card-body" id="window_closed">
 				<div class="card-text" id="no_pick">
@@ -538,53 +559,15 @@ CLOSE;
                                 </tr>
                             </table>
 HERE;
-                    }
-                    else {
-                        if ($_SESSION['admin']) {
-                            echo <<< OPEN
-                                <form action="open-race.php" method="POST" id="open_race_form">
-                                    <button type="submit" class="btn btn-warning" id="open_race_button">Re-open race</button>
-                                    <input type="hidden" value=$event name="currentEventNumber">
-                                    <input type="hidden" value=$race name="currentRaceNumber">
-                                </form>
-OPEN;
-                        }
-                    }
-                    // To cancel a race
-                    if ($_SESSION['admin'] && !($win_horse)) {
-                        echo <<< CANCEL
-                            <form action="cancel-race.php" method="POST" id="cancel_race_form">
-								<div class="form-check" id="cancel_race_wrapper">
-									<input type="checkbox" id="cancel_race">
-                                    <label class="form-check-label" for="cancel_race">Cancel Race</label>
-                                </div>
-                                <input type="hidden" value=$event name="currentEventNumber" id="currentEventNumber">
-                                <input type="hidden" value=$race name="currentRaceNumber" id="currentRaceNumber">
-                            </form>
-                            
-                            <button type="submit" class="btn btn-primary" id="race_results_button"
-                                    data-toggle="modal" 
-                                    data-target="#mainModal" 
-                                    data-title="Race $race Results"
-                                    data-button-primary-text="Save" 
-                                    data-button-primary-action="enterResultForRace($event, $race);" 
-                                    data-button-secondary-text="Cancel" 
-                                    data-button-secondary-action=""
-                                    onClick="populateHorses($race, $event);">Enter Race Results</button>
-                            <button type="" class="btn btn-primary" id="confirm_cancel_button"
-                                    data-toggle="modal" 
-                                    data-target="#mainModal" 
-                                    data-title="Are you sure you want to cancel this race?" 
-                                    data-message="Cancelling race $race will result in no payouts for all bets."
-                                    data-button-primary-text="Yes, Cancel" 
-                                    data-button-primary-action="cancelRace($event, $race);" 
-                                    data-button-secondary-text="Go Back" 
-                                    data-button-secondary-action="">Confirm</button>
-CANCEL;
-                    }
-                } 
-                else { // SHOULD NEVER REACH HERE!!!
-                echo "<h1> ERROR! </h1>";
+                    } else {
+						if ($_SESSION['admin']) {
+							echo <<< ADMINPORTAL
+							<div class="col-12 text-center">
+					<a href="/admin/events/manage.php?e=$event" class="btn btn-secondary border">Administer this race</a>
+					</div>
+ADMINPORTAL;
+						}
+					}
                 }
             }
         }
@@ -594,6 +577,7 @@ CANCEL;
 				<ul class="user-list list-group list-group-flush" id="race_leaderboard">
 <?php
 if ($race == 0) { // Case when we are displaying the entire leaderboard
+	$entries = 0;
     while($row = $event_standings_result->fetch()) {
         $name = $row["first_name"] . ' ' . $row["last_name"];
         $update_time_stamp = strtotime($row["update_time"]); // convert to timestamp for cache-busting
@@ -611,14 +595,32 @@ if ($race == 0) { // Case when we are displaying the entire leaderboard
             </a>
             <div class="media-body"><span class="user_name d-inline-block px-3">$name</span> <span class="earnings badge badge-success float-right px-2">\${$row["total"]}</span></div>
         </div>
-    </li>
+	</li>
 HERE;
-    }
+		$entries += 1;
+	} // end while()
+	if ($entries == 0){ // Show when there are no results entered in yet
+		echo <<< NORESULTS
+		<div class="row justify-content-md-center">
+			<div class="text-center col-sm-auto col-md-8">
+				<div class="alert alert-info" role="alert">
+					<div class="row">
+						<div class="col-auto align-self-start">
+							<i class="fa fa-lg fa-info-circle"></i>
+						</div>
+						<div class="col">
+						No race results have been entered yet, so this leaderboard is empty. 
+						Check back after race results have been entered.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+NORESULTS;
+	}
 }
 else { // Other cases when individual race results are being shown
     if ($num_race_results > 0) {
-        $invited = "";
-
         // Output data of each row
         while($row = $race_result->fetch()) {
             $name = $row["first_name"] . ' ' . $row["last_name"];
@@ -640,17 +642,7 @@ else { // Other cases when individual race results are being shown
         </li>
 HERE;
         }
-    } else {
-        if ($race_info['window_closed'] == '0') { // Don't show any text when the window is still open
-
-    }
-    else { // Show there is no results entered in yet
-        echo <<< NORESULTS
-            <div class="no-results">
-            </div>
-NORESULTS;
-        }
-}
+	}
 }
 ?>
     </ul> <!-- END id race_leaderboard -->
