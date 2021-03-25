@@ -84,14 +84,17 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
     function updateNumberOfHorsesSelectValue() {
         $('.group').each( function () {
-            const id = '#addInput' + this.id.charAt(5) + ' div.group-horse';
-            $('#' + this.id.charAt(5)).val($( id ).length);
+            const raceNo = this.id.substring(5);
+            const id = '#addInput' + raceNo + ' div.group-horse';
+            // Update the select input (number of horses)
+            $('#' + raceNo).val($( id ).length);
+
             let horses = [];
             $(  id + ' input' ).each( function () {
-                horses.push( this.value );
+                horses.push( this.value.trim() );
             });
 
-            raceHorses.set(parseInt(this.id.charAt(5)), horses);
+            raceHorses.set(parseInt(raceNo), horses);
         });
     }
 
@@ -146,7 +149,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
      * */
     function removeInput(raceNumber, amountToDecrement) {
         for (let k = 0; k < amountToDecrement; k++) {
-            horsesList.push($('#addInput' + raceNumber + ' div.group-horse:last-of-type input').val());
+            horsesList.push($('#addInput' + raceNumber + ' div.group-horse:last-of-type input').val().trim());
             $('#addInput' + raceNumber + ' div.group-horse:last-of-type').remove();
         }
     }
@@ -643,7 +646,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                 success: function (data) {
                     $('main').prepend(data['alert']);
                     $('#alert').delay( DELAY ).fadeOut( FADEOUT );
-                    EVENT_STATUS = parseInt(data['e']);
+                    EVENT_STATUS = parseInt(data['event_status']);
                     closeEventUI();
                 }
             });
