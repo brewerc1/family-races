@@ -65,7 +65,7 @@ if (isset($_POST["submit"])) {
 							<label for="name" class="col-form-label">Event Name:</label>
 							<div class="input-group">
 								<div class="input-group-prepend">
-									 <span class="input-group-text"><i class="far fa-horse-head"></i></span>
+									 <span class="input-group-text"><i class="fas fa-horse-head"></i></span>
   								</div>
 								  <input type="text" class="form-control" id="name" name="event_name">
 							</div>
@@ -75,7 +75,7 @@ if (isset($_POST["submit"])) {
 							<label for="date" class="col-form-label">Event Date:</label>
 							<div class="input-group date" data-provide="datepicker" data-date-format="DD, MM d, yyyy" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
 								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+									<span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
 								</div>
 								<input type="text" class="form-control" id="date" name="event_date">
 							</div>
@@ -87,7 +87,7 @@ if (isset($_POST["submit"])) {
 							<label for="pot" class="col-form-label">Pot:</label>
 							<div class="input-group">
 								<div class="input-group-prepend">
-									 <span class="input-group-text"><i class="far fa-donate"></i></span>
+									 <span class="input-group-text"><i class="fas fa-donate"></i></span>
   								</div>
 								<input type="text" class="form-control" id="pot" name="event_pot">
 							</div>
