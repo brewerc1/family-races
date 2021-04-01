@@ -67,7 +67,7 @@ if (isset($_POST["submit"])) {
 								<div class="input-group-prepend">
 									 <span class="input-group-text"><i class="far fa-horse-head"></i></span>
   								</div>
-								  <input type="text" class="form-control" id="name" name="event_name">
+								  <input type="text" class="form-control" id="name" name="event_name" maxlength="25">
 							</div>
 	                    </div>
 	                	<!-- Event Date -->
