@@ -637,12 +637,12 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
     function closeEventBackend(id, action) {
         $('#' + id).click( function () {
-
+            
             $.ajax({
                 type: 'POST',
                 url: './race.php?e='+ EVENT_ID +'&r=' + 1 + '&q=' + 9,
                 data: {action: action },
-                dataType: 'json',
+                dataType: 'text',
                 success: function (data) {
                     $('main').prepend(data['alert']);
                     $('#alert').delay( DELAY ).fadeOut( FADEOUT );
@@ -658,7 +658,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
         $('#recalculate').toggleClass('d-none', (EVENT_STATUS === 0));
         $('#close_event').toggleClass('d-none', (EVENT_STATUS === 1));
         $('#addRace').toggleClass('d-none', (EVENT_STATUS === 1));
-        $('#event_is_close').toggleClass('d-none', ((EVENT_STATUS === 0)))
+        $('#event_is_close').toggleClass('d-none', ((EVENT_STATUS === 0))); 
     }
 
     function getNewRaceNumber() {
