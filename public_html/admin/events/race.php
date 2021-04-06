@@ -725,24 +725,34 @@ if (key_exists($q, $event)) {
             $query = "SELECT user_id, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
             $stmt = $pdo->prepare($query);
             $stmt->execute(['race_event_id' => $event_id]);
-            $race_standings = $stmt->fetchAll();
 
-            $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
-            $stmt = $pdo->prepare($query);
+            if ($stmt->rowCount() > 0) { // If event has records
 
-            $winner = array('total' => 0);
-            foreach ($race_standings as $standing) {
-                $uid = $standing['user_id'];
-                $earnings = floatval($standing['total']);
-                $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
+                $race_standings = $stmt->fetchAll();
 
-                if ($earnings > floatval($winner['total']))
-                    $winner = $standing;
+                $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
+                $stmt = $pdo->prepare($query);
+
+                $winner = array('total' => 0);
+                foreach ($race_standings as $standing) {
+                    $uid = $standing['user_id'];
+                    $earnings = floatval($standing['total']);
+                    $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
+
+                    if ($earnings > floatval($winner['total']))
+                        $winner = $standing;
+                }
+
+                $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'], 'champion_photo' => '', 'id' => $event_id]);
+
             }
-
-            $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
-            $stmt = $pdo->prepare($query);
-            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'], 'champion_photo' => '', 'id' => $event_id]);
+            else { // If event has no record
+                $query = "UPDATE event SET status = :status WHERE id = :id";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['status' => 1, 'id' => $event_id]);
+            }
 
             $pdo->commit(); // Write all changes into DB
 
