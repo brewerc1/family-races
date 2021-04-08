@@ -89,7 +89,7 @@ if (isset($_POST["submit"])) {
 								<div class="input-group-prepend">
 									 <span class="input-group-text"><i class="fas fa-donate"></i></span>
   								</div>
-								<input type="text" class="form-control" id="pot" name="event_pot">
+								<input type="number" class="form-control" id="pot" name="event_pot" min="1" max="99999">
 							</div>
 	                    </div>
 	                </div>
