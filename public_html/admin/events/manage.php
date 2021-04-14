@@ -612,7 +612,15 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
                 if (data['edited'] === 1) {
                     $('#pot').val(data['pot']);
-                    $('#jackpotEdit').val(data['pot']);
+                    let message = `
+                    <div class='input-group input-group-sm mb-3'>
+                        <div class='input-group-prepend'>
+                            <span class='input-group-text'>$</span>
+                        </div>
+                        <input type='text' id='jackpotEdit' class='form-control' aria-describedby='inputGroup-sizing-sm' value='${data['pot']}'>
+                    </div>
+                    `;
+                    $("#jackpotEditButton").data('message', message);
                 }
             }
         });
@@ -796,6 +804,7 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
                     <input type="text" class="form-control" name="pot" id="pot" aria-label="Amount (to the nearest dollar)" value="<?php echo $event_pot ?>" readonly>
                     <div class="input-group-append">
                         <a href="#" class="btn input-group-text <?php echo $jackpot_btn_none?>"
+                           id="jackpotEditButton"
                            data-toggle="modal"
                            data-target="#mainModal"
                            data-title="Edit Jackpot"
