@@ -104,7 +104,7 @@ if (key_exists($q, $request_array)) {
      * @param $message3
      *
      * Encapsulates logic on cancelling or opening or closing a Race
-     */
+    */
     function raceUpdate($pdo, $field_name, $race_number, $event_id, $value, $message1, $message2, $message3) {
 
         try {
@@ -749,9 +749,25 @@ if (key_exists($q, $event)) {
 
             }
             else { // If event has no record
+
+                // Change event Status
                 $query = "UPDATE event SET status = :status WHERE id = :id";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute(['status' => 1, 'id' => $event_id]);
+
+                // Close all races that belong to this event
+                $query = "SELECT race_number FROM race WHERE event_id = :event_id";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['event_id' => $event_id]); 
+                $races = $stmt->fetchAll(); 
+
+                foreach($races as $race) {
+                    $race_number = $race["race_number"];
+                    $query = "UPDATE race SET window_closed = 1 WHERE event_id = :event_id AND race_number = :race_number";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute(['event_id' => $event_id, 'race_number' => $race_number]); 
+                }
+
             }
 
             $pdo->commit(); // Write all changes into DB
