@@ -135,11 +135,11 @@ if (isset($_POST['next-btn'])) {
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="first_name" class="col-form-label">First Name:</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required maxlength="45">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="last_name" class="col-form-label">Last Name:</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required maxlength="45">
                     </div>
                 </div>
                 <div class="form-row">
@@ -164,7 +164,7 @@ ENDOPTION;
                 <div class="form-row">
                     <div class="form-group col">
                         <label for="motto" class="col-form-label" >Motto:</label>
-                        <textarea class="form-control" id="motto" name="motto"></textarea>
+                        <textarea class="form-control" id="motto" name="motto" maxlength="255"></textarea>
                     </div>
                 </div>
             </section>
