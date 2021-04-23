@@ -145,7 +145,7 @@ if (isset($_POST['next-btn'])) {
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="city" class="col-form-label">City:</label>
-                        <input type="text" class="form-control" id="city" name="city">
+                        <input type="text" class="form-control" id="city" name="city" maxlength="45">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="state" class="col-form-label">State:</label>
