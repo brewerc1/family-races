@@ -78,11 +78,11 @@ if (isset($_POST["change_pwd"])) {
 				<div class="form-row">
 		            <div class="form-group col-md-6">
 		                <label for="pwd" class="col-form-label">New Password</label>
-		                <input type="password" class="form-control" id="pwd" name="pwd">
+		                <input type="password" class="form-control" id="pwd" name="pwd" maxlength="255">
 					</div>
 		            <div class="form-group col-md-6">
 		                <label for="confirm_pwd" class="col-form-label">Confirm Password</label>
-		                <input type="password" class="form-control" id="confirm_pwd" name="confirm_pwd">
+		                <input type="password" class="form-control" id="confirm_pwd" name="confirm_pwd" maxlength="255">
 					</div>
 				</div>
 				<div class="justify-content-center form-row">
