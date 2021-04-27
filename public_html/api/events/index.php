@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
 
     // Admin only
     if ($_SESSION['admin'] !== 1) {
