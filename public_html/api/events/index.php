@@ -138,7 +138,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response->send();
     exit;
 }
-elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' && (isset($_GET['e']) && is_numeric($_GET['e']))) {
     // Admin only
     if ($_SESSION['admin'] !== 1) {
         $response = new Response();
@@ -151,7 +151,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 
     // More logic
 }
-elseif ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+elseif ($_SERVER['REQUEST_METHOD'] === 'PATCH' && (isset($_GET['e']) && is_numeric($_GET['e']))) {
     // Admin only
     if ($_SESSION['admin'] !== 1) {
         $response = new Response();
