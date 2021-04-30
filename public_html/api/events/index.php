@@ -2,7 +2,7 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-$_SESSION['id'] = '1';
+$_SESSION['id'] = 1;
 $_SESSION['admin'] = 1;
 
 use api\Response;
@@ -27,38 +27,50 @@ $_eventId = 0;
 if (array_key_exists('e', $_GET) && is_numeric($_GET['e']))
     $_eventId = $_GET['e'];
 
-$page = 1;
-if (array_key_exists('pg', $_GET) && is_numeric($_GET['pg']))
-    $page = $_GET['pg'];
 
+function validGetRequestURLParams() {
+    return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
     try {
+        // Page number
+        $page = array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? $_GET['pg'] : 1;
 
-        $pageLimit = 5; // Number of events per page
+        // Number of events per page
+        $pageLimit = 5;
+
+        // Validate the page
+        $query = "SELECT COUNT(*) AS totalEvent FROM event";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+        $totalEvent = intval($stmt->fetch()["totalEvent"]);
+        $numberOfPage = ceil($totalEvent / $pageLimit);
+        $numberOfPage = $numberOfPage == 0 ? 1 : $numberOfPage;
+        if ($page > $numberOfPage) {
+            $response = new Response();
+            $response->setHttpStatusCode(404);
+            $response->setSuccess(false);
+            $response->AddMessages("Page not found.");
+            $response->send();
+            exit;
+        }
+
         $offset = $page == 1 ? 0 : ($pageLimit * ($page - 1));
 
         // Pagination urls
         $nextUrl = $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page + 1);
         $previousUrl = $page > 1 ? $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page - 1) : null;
 
-
-        if ($_eventId == 0) { // All events
-            $query = "SELECT * FROM event LIMIT :_limit OFFSET :off_set";
-            $options = ['_limit' => $pageLimit, 'off_set' => $offset];
-        }
-        else { // Single event
-            $query = "SELECT * FROM event WHERE id = :id";
-            $options = ['id'=> $_eventId];
-        }
-
+        // Get all event
+        $query = "SELECT * FROM event LIMIT :_limit OFFSET :off_set";
+        $options = ['_limit' => $pageLimit, 'off_set' => $offset];
         $stmt = $pdo->prepare($query);
         $stmt->execute($options);
 
         // Fetching
-        if ($stmt->rowCount() == 1) $data = $stmt->fetch();
-        else $data = $stmt->fetchAll();
+        $data = $stmt->fetchAll();
 
         $rowReturned = count($data);
         if ($rowReturned < $pageLimit || isset($_GET['e'])) $nextUrl = null;
