@@ -32,6 +32,10 @@ function validGetRequestURLParams() {
     return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
 }
 
+function validPostRequestURLParams() {
+    return ((count($_GET) == 1) && !empty($_GET['e']) && is_numeric($_GET['e']));
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
     try {
@@ -100,55 +104,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 }
 
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
+    try {
+        // Admin only
+        if ($_SESSION['admin'] !== 1) {
+            $response = new Response();
+            $response->setHttpStatusCode(403);
+            $response->setSuccess(false);
+            $response->AddMessages("Forbidden");
+            $response->send();
+            exit;
+        }
 
-    // Admin only
-    if ($_SESSION['admin'] !== 1) {
+        if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+            $response = new Response();
+            $response->setHttpStatusCode(400);
+            $response->setSuccess(false);
+            $response->AddMessages("Content type must be set to application/json");
+            $response->send();
+            exit;
+        }
+
+        $postData = file_get_contents('php://input');
+        if (!$jsonData = json_decode($postData)) {
+            $response = new Response();
+            $response->setHttpStatusCode(400);
+            $response->setSuccess(false);
+            $response->AddMessages("Request body is not valid JSON.");
+            $response->send();
+            exit;
+        }
+
+        if (empty($jsonData->name) || empty($jsonData->date) || empty($jsonData->pot)) {
+            $response = new Response();
+            $response->setHttpStatusCode(400);
+            $response->setSuccess(false);
+            (empty($jsonData->name) ? $response->AddMessages("Name field is required") : false);
+            (empty($jsonData->date) ? $response->AddMessages("Date field is required") : false);
+            (empty($jsonData->pot) ? $response->AddMessages("Pot field is required") : false);
+            $response->send();
+            exit;
+        }
+
+        // Validate input type
+        $eventName = $jsonData->name;
+        $eventNameErr = (strlen($eventName) > 25) ? "Event name field length must be no more than 25 chars" : "";
+        $date = $jsonData->date;
+        $dateErr = (date('Y-m-d', strtotime($date)) == $date) ? "" : "Date field must be a valid date (YYYY-MM-DD)";
+        $pot = $jsonData->pot;
+        $potErr = (!is_numeric($pot) || strlen($pot) > 6) ? "Pot field must be int with no more than 6 digits" : "";
+
+        if (!empty($eventNameErr) || !empty($potErr) || !empty($dateErr)) {
+            $response = new Response();
+            $response->setHttpStatusCode(400);
+            $response->setSuccess(false);
+            (!empty($eventNameErr) ? $response->AddMessages($eventNameErr) : false);
+            (!empty($dateErr) ? $response->AddMessages($dateErr) : false);
+            (!empty($potErr) ? $response->AddMessages($potErr) : false);
+            $response->send();
+            exit;
+        }
+
+        // Create the new event
+        $pdo->beginTransaction();
+        $query = "INSERT INTO event (name, date, pot) VALUES (:name, :date, :pot)";
+        $options = ['name' => $eventName, 'date' => $date, 'pot' => $pot];
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($options);
+        $createdEventId = $pdo->lastInsertId();
+        $pdo->commit();
+
+        $query = "SELECT * FROM event WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['id' => $createdEventId]);
+
         $response = new Response();
-        $response->setHttpStatusCode(403);
+        $response->setHttpStatusCode(201);
+        $response->setSuccess(true);
+        $response->AddMessages("Event created.");
+        $response->setData($stmt->fetchAll());
+        $response->send();
+        exit;
+    } catch (PDOException $ex) {
+        $response = new Response();
+        $response->setHttpStatusCode(500);
         $response->setSuccess(false);
-        $response->AddMessages("Forbidden");
+        $response->AddMessages("Server error: ");
         $response->send();
         exit;
     }
 
-    if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
-        $response = new Response();
-        $response->setHttpStatusCode(400);
-        $response->setSuccess(false);
-        $response->AddMessages("Content type must be set to application/json");
-        $response->send();
-        exit;
-    }
-
-    $postData = file_get_contents('php://input');
-    if (!$jsonData = json_decode($postData)) {
-        $response = new Response();
-        $response->setHttpStatusCode(400);
-        $response->setSuccess(false);
-        $response->AddMessages("Request body is not valid JSON.");
-        $response->send();
-        exit;
-    }
-
-    if (empty($jsonData->name) || empty($jsonData->date) || empty($jsonData->pot)) {
-        $response = new Response();
-        $response->setHttpStatusCode(400);
-        $response->setSuccess(false);
-        (empty($jsonData->name) ? $response->AddMessages("Name field is required") : false);
-        (empty($jsonData->date) ? $response->AddMessages("Date field is required") : false);
-        (empty($jsonData->pot) ? $response->AddMessages("Pot field is required") : false);
-        $response->send();
-        exit;
-    }
-
-    // Validate input type
-
-    $response = new Response();
-    $response->setHttpStatusCode(201);
-    $response->setSuccess(true);
-    $response->AddMessages("Event created.");
-    $response->send();
-    exit;
 }
 elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' && (isset($_GET['e']) && is_numeric($_GET['e']))) {
     // Admin only
