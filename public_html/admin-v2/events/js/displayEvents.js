@@ -22,6 +22,8 @@ function fetchEvents(requestURL) {
 
 function addEventsToDOM(events) {
   const eventsList = $("#events-list");
+  const currentEventlist = $("#current-event-list");
+  const createEventContainer = $("#create-event-container");
   eventsList.empty();
 
   toggleButtonVisibility();
@@ -36,34 +38,31 @@ function addEventsToDOM(events) {
   if (events.id) events = [events];
 
   events.forEach((event) => {
-    const eventStatusMessage = event.status == 1 ? "closed" : "current";
-    const eventStatusClass = event.status == 1 ? "info" : "success";
-
-    if (event.status === 0) state.hasCurrentEvent = true;
-
     const template = `
-			<li class='list-group-item'>
-				<a href='./manage.php?e=${event.id}'>
-					${event.name}
-					<span class="px-2 status_badge badge badge-pill float-right badge-${eventStatusClass}">
-						${eventStatusMessage}
-					</span>
-				</a>
-			</li>
-			`;
+    <li class="list-group-item" id=${event.id}>
+      <div class="flex-container">
+        <p class="event-title">
+          ${event.name}
+        </p>
+        <a class="view-event-btn" href="./manage.php?e=${event.id}">
+          View
+        </a>
+      </div>
+    </li>
+    `;
+
+    if (event.status === 0) {
+      state.hasCurrentEvent = true;
+      $("#current-event-container").css("display", "block");
+      currentEventlist.append(template);
+      return;
+    }
 
     eventsList.append(template);
   });
 
-  if (!state.hasCurrentEvent) {
-    $("#create-event").removeClass("disabled");
-    $("#has-current-event-warning").css("display", "none");
-    return;
-  } else {
-    // This else clause should be unneccesary once the API is fixed to send events in order
-    $("#create-event").addClass("disabled");
-    $("#has-current-event-warning").css("display", "block");
-  }
+  // This currently always shows because the API pagination is broken, should resolve when the API is fixed
+  if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
 }
 
 function toggleButtonVisibility() {

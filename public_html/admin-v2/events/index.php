@@ -20,17 +20,27 @@ if ($_SESSION["admin"] != 1) {
 {header}
 {main_nav}
 <main role="main" id="admin_events_page">
-	<h1 class="mb-5 sticky-top">Events</h1>
+	<h1 class="sticky-top" id="manage-events-page-header">Events</h1>
 	<section id="events" class="mt-5">
-		<div class="text-center mb-1 mt-3" id="create-event-container">
-			<a id="create-event" class="btn btn-primary text-center disabled" href="./create.php">Create New Event</a>
-			<div id="has-current-event-warning"><small class="text-muted">To create a new event, you must close the current event.</small></div>
+
+		<div id="current-event-container">
+			<h3 class="mb-3">Current Event</h3>
+			<ul id="current-event-list" class="list-group list-group-flush col-md-12">
+				<li id="has-current-event-warning" class="list-group-item"><small class="text-muted">To create a new event, you must close the current event.</small></li>
+			</ul>
 		</div>
-		<div class="justify-content-center row mt-5">
-			<ul id="events-list" class="list-group list-group-flush col-md-6"></ul>
+
+		<div class="text-center mb-5 mt-3" id="create-event-container">
+			<a id="create-event" class="btn btn-primary text-center" href="./create.php">Create New Event</a>
+			<div><small class="text-muted">There is no current event.</small></div>
 		</div>
-		<div class="justify-content-center row mt-5">
-			<!-- Hidden by default -->
+
+		<div class="justify-content-center row mt-5" id="events-list-container">
+			<h3 class="mb-3">Past Events</h3>
+			<ul id="events-list" class="list-group list-group-flush col-md-12"></ul>
+		</div>
+		
+		<div id="page-btns-container">
 			<button id="prev-btn" class="btn btn-sm mr-1 shadow-none page-control-btn" style="display: none;">Previous</button>
 			<button id="next-btn" class="btn btn-sm ml-1 shadow-none page-control-btn" style="display: none;">Next</button>
 		</div>
