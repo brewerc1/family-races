@@ -22,56 +22,19 @@ if(!Utils::isLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
     try {
-        // Page number
-        $page = array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? $_GET['pg'] : 1;
+        $page = Utils::getPageNumber();
+        $eventData = Utils::getWithPagination($pdo, "event", $page, "/api/events/", "events");
 
-        // Number of events per page
-        $pageLimit = 5;
-
-        // Validate the page
-        $query = "SELECT COUNT(*) AS totalEvent FROM event";
-        $stmt = $pdo->prepare($query);
-        $stmt->execute();
-        $totalEvent = intval($stmt->fetch()["totalEvent"]);
-        $numberOfPage = ceil($totalEvent / $pageLimit);
-        $numberOfPage = $numberOfPage == 0 ? 1 : $numberOfPage;
-
-        // Page not found.
-        if ($page > $numberOfPage) {
-            Utils::sendResponse(404, $success=false, $msg=["Page not found."], $data=null);
-            exit;
+        if (key_exists("pageNotFound", $eventData)) {
+            Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
         }
-
-        $offset = $page == 1 ? 0 : ($pageLimit * ($page - 1));
-
-        // Pagination urls
-        $nextUrl = ($page < $numberOfPage) ? $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page + 1) : null;
-        $previousUrl = $page > 1 ? $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page - 1) : null;
-
-        // Get all event
-        $query = "SELECT * FROM event LIMIT :_limit OFFSET :off_set";
-        $options = ['_limit' => $pageLimit, 'off_set' => $offset];
-        $stmt = $pdo->prepare($query);
-        $stmt->execute($options);
-
-        // Fetching
-        $data = $stmt->fetchAll();
-
-        $rowReturned = count($data);
-        if ($rowReturned < $pageLimit || isset($_GET['e'])) $nextUrl = null;
-
-        $eventData = [
-            'rowReturned' => $rowReturned,
-            'numberOfPages' => $numberOfPage,
-            'next' => $nextUrl,
-            'previous' => $previousUrl,
-            'events' => $data
-        ];
-        Utils::sendResponse(200, $success=true, $msg=null, $data=$eventData);
+        else {
+            Utils::sendResponse(200, $success=true, $msg=null, $data=$eventData);
+        }
         exit;
     }
     catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
         exit;
     }
 }
