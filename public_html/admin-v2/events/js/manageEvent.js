@@ -54,7 +54,7 @@ function handleOnChange() {
 
   const data = {
     name: nameField.val(),
-    date: dateField.data("datepicker").getFormattedDate("yyyy-mm-dd"), // Need to figure this out
+    date: dateField.val(), // Need to figure this out
     pot: potField.val(),
   };
 
