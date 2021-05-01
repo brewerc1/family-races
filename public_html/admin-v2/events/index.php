@@ -24,14 +24,15 @@ if ($_SESSION["admin"] != 1) {
 	<section id="events" class="mt-5">
 		<div class="text-center mb-1 mt-3" id="create-event-container">
 			<a id="create-event" class="btn btn-primary text-center disabled" href="./create.php">Create New Event</a>
+			<div id="has-current-event-warning"><small class="text-muted">To create a new event, you must close the current event.</small></div>
 		</div>
 		<div class="justify-content-center row mt-5">
 			<ul id="events-list" class="list-group list-group-flush col-md-6"></ul>
 		</div>
 		<div class="justify-content-center row mt-5">
 			<!-- Hidden by default -->
-			<button id="prev-btn" class="btn btn-sm btn-outline-primary mr-1" style="display: none;">Previous</button>
-			<button id="next-btn" class="btn btn-sm btn-outline-primary ml-1" style="display: none;">Next</button>
+			<button id="prev-btn" class="btn btn-sm mr-1 shadow-none page-control-btn" style="display: none;">Previous</button>
+			<button id="next-btn" class="btn btn-sm ml-1 shadow-none page-control-btn" style="display: none;">Next</button>
 		</div>
 	</section>
 </main>

@@ -1,12 +1,22 @@
-const firstPage = "http://localhost/api/events?e=0";
-const state = { nextPage: null, previousPage: null, hasCurrentEvent: false };
+const state = {
+  firstPage: "http://localhost/api/events/?pg=1",
+  nextPage: null,
+  previousPage: null,
+  hasCurrentEvent: false,
+};
 
 function fetchEvents(requestURL) {
   $.get(requestURL, (data) => {
     const events = data.data.events;
-    state.nextPage = data.data.next;
-    state.previousPage = data.data.previous;
+
+    if (data.data.next) state.nextPage = `http://${data.data.next}`;
+    else state.nextPage = null;
+
+    if (data.data.previous) state.previousPage = `http://${data.data.previous}`;
+    else state.previousPage = null;
+
     addEventsToDOM(events);
+    console.log(state);
   });
 }
 
@@ -29,12 +39,7 @@ function addEventsToDOM(events) {
     const eventStatusMessage = event.status == 1 ? "closed" : "current";
     const eventStatusClass = event.status == 1 ? "info" : "success";
 
-    if (event.status === 0) {
-      state.hasCurrentEvent = true;
-      const hasCurrentEventMessage =
-        '<div><small class="text-muted">To create a new event, you must close the current event.</small></div>';
-      $("#create-event-container").append(hasCurrentEventMessage);
-    }
+    if (event.status === 0) state.hasCurrentEvent = true;
 
     const template = `
 			<li class='list-group-item'>
@@ -50,7 +55,15 @@ function addEventsToDOM(events) {
     eventsList.append(template);
   });
 
-  if (!state.hasCurrentEvent) $("#create-event").removeClass("disabled");
+  if (!state.hasCurrentEvent) {
+    $("#create-event").removeClass("disabled");
+    $("#has-current-event-warning").css("display", "none");
+    return;
+  } else {
+    // This else clause should be unneccesary once the API is fixed to send events in order
+    $("#create-event").addClass("disabled");
+    $("#has-current-event-warning").css("display", "block");
+  }
 }
 
 function toggleButtonVisibility() {
@@ -63,6 +76,7 @@ function toggleButtonVisibility() {
 
 function nextPage() {
   if (state.nextPage === null) return;
+  console.log("here with nextpage " + state.nextPage);
   fetchEvents(state.nextPage);
 }
 
@@ -71,7 +85,7 @@ function previousPage() {
   fetchEvents(state.previousPage);
 }
 
-$(document).ready(fetchEvents(firstPage));
+$(document).ready(fetchEvents(state.firstPage));
 
 $("#next-btn").on("click", nextPage);
 $("#prev-btn").on("click", previousPage);

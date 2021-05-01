@@ -1,8 +1,13 @@
 .admin-header {
-    margin-top: 1rem;
-    padding: 0.7rem 0;
-    background-color: #eee;
-    text-align: center;
-    font-weight: bold;
-    color: #555;
+  margin-top: 1rem;
+  padding: 0.7rem 0;
+  background-color: #eee;
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+}
+
+.page-control-btn {
+  font-size: 0.9rem;
+  text-decoration: underline;
 }
