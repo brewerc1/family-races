@@ -22,7 +22,7 @@ if($_SESSION["admin"] != 1) {
 {main_nav}
 
     <main role="main" id="admin_event_create_page">
-		<h1 class="mb-5 sticky-top">Create an Event</h1>
+		<h1 class="mb-5 sticky-top">Create New Event</h1>
 
 			<form id="create-event" method="POST">
 				<section>
@@ -64,7 +64,7 @@ if($_SESSION["admin"] != 1) {
 
 				<div class="form-row my-5">
 					<div class="col text-center">
-	                    <button type="submit" class="btn btn-primary btn col-sm-5" name="submit">Next</button>
+	                    <button class="btn btn-primary btn col-sm-5" id="save-event">Save This Event</button>
 	                    <a class="btn btn-text d-block mt-2 text-center" href="/admin-v2/events/">Cancel</a>
 	                </div>
 				</div>
@@ -76,23 +76,4 @@ if($_SESSION["admin"] != 1) {
 {footer}
 <?php ob_end_flush(); ?>
 
-<script>
-
-    const createEvent = () => {
-
-        const event = {
-            event_name: $("#name").val(),
-            date: $("#date").val(),
-            pot: $("#pot").val()
-        }
-
-        console.log(event);
-
-    }
-
-    $("#create-event").on("submit", e => {
-        e.preventDefault();
-        createEvent()
-    });
-
-</script>
+<script type="text/javascript" src="js/createEvent.js"></script>
