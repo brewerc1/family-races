@@ -39,7 +39,7 @@ if ($_SESSION["admin"] != 1) {
 			<h3 class="mb-3">Past Events</h3>
 			<ul id="events-list" class="list-group list-group-flush col-md-12"></ul>
 		</div>
-		
+
 		<div id="page-btns-container">
 			<button id="prev-btn" class="btn btn-sm mr-1 shadow-none page-control-btn" style="display: none;">Previous</button>
 			<button id="next-btn" class="btn btn-sm ml-1 shadow-none page-control-btn" style="display: none;">Next</button>

@@ -3,6 +3,7 @@ const state = {
   nextPage: null,
   previousPage: null,
   hasCurrentEvent: false,
+  currentEventID: null,
 };
 
 function fetchEvents(requestURL) {
@@ -38,6 +39,8 @@ function addEventsToDOM(events) {
   if (events.id) events = [events];
 
   events.forEach((event) => {
+    if (event.id === state.currentEventID) return;
+
     const template = `
     <li class="list-group-item" id=${event.id}>
       <div class="flex-container">
@@ -51,8 +54,9 @@ function addEventsToDOM(events) {
     </li>
     `;
 
-    if (event.status === 0) {
+    if (event.status === 0 && !state.hasCurrentEvent) {
       state.hasCurrentEvent = true;
+      state.currentEventID = event.id;
       $("#current-event-container").css("display", "block");
       currentEventlist.append(template);
       return;
