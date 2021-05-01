@@ -1,7 +1,5 @@
 const state = { currentEvent: null };
 
-// $("#manage-events-page-header").text(`Events > ${currentEvent.name}`);
-
 function getUrlVars() {
   const queries = {};
   $.each(document.location.search.substr(1).split("&"), function (c, q) {
@@ -15,10 +13,10 @@ function getUrlVars() {
 function fetchEvent() {
   // Get query string
   const queryStringParams = getUrlVars();
-  const id = queryStringParams.e;
+  state.currentEvent = queryStringParams;
 
-  // Fetch this event
-  const requestURL = `http://localhost/api/events?e=${id}`;
+  // Fetch this events races
+  const requestURL = `http://localhost/api/races?e=${state.currentEvent.e}`;
   $.get(requestURL, (data) => {
     console.log(data);
   });

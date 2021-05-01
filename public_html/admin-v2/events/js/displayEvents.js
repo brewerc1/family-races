@@ -40,6 +40,7 @@ function addEventsToDOM(events) {
 
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
+    console.log(event);
 
     const template = `
     <li class="list-group-item" id=${event.id}>
@@ -47,7 +48,7 @@ function addEventsToDOM(events) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="view-event-btn" href="./manage.php?e=${event.id}">
+        <a class="view-event-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}">
           View
         </a>
       </div>
