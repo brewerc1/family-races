@@ -26,7 +26,7 @@
 #events-list-container,
 #current-event-container,
 #page-btns-container,
-#manage-events-page-header {
+#view-all-events-header {
   margin: 0 auto !important;
   width: 90% !important;
 }
@@ -76,11 +76,14 @@
   padding-top: 1rem;
 }
 
+.font-lighter {
+  font-weight: 300;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
-  #page-btns-container,
-  #manage-events-page-header {
+  #page-btns-container {
     width: 100% !important;
   }
 

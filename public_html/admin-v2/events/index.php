@@ -20,7 +20,7 @@ if ($_SESSION["admin"] != 1) {
 {header}
 {main_nav}
 <main role="main" id="admin_events_page">
-	<h1 class="sticky-top" id="manage-events-page-header">Events</h1>
+	<h1 class="sticky-top" id="view-all-events-header">Events</h1>
 	<section id="events" class="mt-5">
 
 		<div id="current-event-container">

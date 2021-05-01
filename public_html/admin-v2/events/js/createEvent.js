@@ -7,7 +7,7 @@ function createEvent() {
   console.log("creating event");
 
   const event = {
-    event_name: nameField.val(),
+    name: nameField.val(),
     date: dateField.val(),
     pot: potField.val(),
   };
