@@ -12,23 +12,27 @@ function createEvent() {
     pot: potField.val(),
   };
 
-  console.log(event);
+  const requestURL = `http://localhost/api/events`;
+
+  $.post(requestURL, JSON.stringify(event), (data) => {
+    console.log(data);
+  });
 }
 
-// Checks for errors
-function handleOnChange() {
-  console.log("handling change");
+// Checks for errors, will need put method if it is done this way
+// function handleOnChange() {
+//   console.log("handling change");
 
-  let allFieldsComplete = nameField.val() && dateField.val() && potField.val();
+//   let allFieldsComplete = nameField.val() && dateField.val() && potField.val();
 
-  if (!allFieldsComplete) return;
+//   if (!allFieldsComplete) return;
 
-  createEvent();
-}
+//   createEvent();
+// }
 
-nameField.on("change", handleOnChange);
-dateField.on("change", handleOnChange);
-potField.on("change", handleOnChange);
+// nameField.on("change", handleOnChange);
+// dateField.on("change", handleOnChange);
+// potField.on("change", handleOnChange);
 
 saveEventBtn.on("click", (e) => {
   e.preventDefault();

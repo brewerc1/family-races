@@ -17,7 +17,6 @@ function fetchEvents(requestURL) {
     else state.previousPage = null;
 
     addEventsToDOM(events);
-    console.log(state);
   });
 }
 
@@ -40,7 +39,6 @@ function addEventsToDOM(events) {
 
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
-    console.log(event);
 
     const template = `
     <li class="list-group-item" id=${event.id}>
