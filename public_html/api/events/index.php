@@ -2,14 +2,15 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-$_SESSION['id'] = '1';
-$_SESSION['admin'] = 1;
+//$_SESSION['id'] = '1';
+//$_SESSION['admin'] = 1;
 
 use api\Response;
 include_once '../Response.php';
 
 // Helper Functions
 
+// Send the response to the client
 function sendResponse($statusCode, $success=false, $msg=null, $data=null) {
     $response = new Response();
     $response->setHttpStatusCode($statusCode);
@@ -25,33 +26,41 @@ function sendResponse($statusCode, $success=false, $msg=null, $data=null) {
     $response->send();
 }
 
+// Returns True if the current logged in user is admin
+// Otherwise, false is returned
 function isAdmin() {
     return $_SESSION['admin'] === 1;
 }
 
+// Returns true if the request header['content-type'] is application/json
+// Otherwise, false is returned
 function isValidContentType() {
-    return $_SERVER['CONTENT_TYPE'] === 'application/json';
+    return isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json';
 }
 
-// Check: if Logged in.
-if(empty($_SESSION["id"])) {
-    sendResponse(401, $success=false, $msg=["Authentication is required."]);
-    exit;
+// Returns True if the current user is logged in
+// Otherwise, false is returned
+function isLoggedIn() {
+    return !empty($_SESSION["id"]);
 }
 
-$_eventId = 0;
-if (array_key_exists('e', $_GET) && is_numeric($_GET['e']))
-    $_eventId = $_GET['e'];
-
+// Returns the event id if exists in the url params
+// Otherwise, null is returned.
+function getEventId() {
+    return isset($_GET['e']) && is_numeric($_GET['e']) ? $_GET['e'] : null;
+}
 
 function validGetRequestURLParams() {
     return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
 }
 
-function validPostRequestURLParams() {
-    return ((count($_GET) == 1) && !empty($_GET['e']) && is_numeric($_GET['e']));
+
+if(!isLoggedIn()) {
+    sendResponse(401, $success=false, $msg=["Authentication is required."]);
+    exit;
 }
 
+// GET ALL EVENTS
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
     try {
@@ -108,6 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         exit;
     }
 }
+
+// CREATE AN EVENT
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     try {
         // Admin only View
@@ -174,38 +185,130 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     }
 
 }
-elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' && (isset($_GET['e']) && is_numeric($_GET['e']))) {
-    // Admin only
-    if ($_SESSION['admin'] !== 1) {
-        $response = new Response();
-        $response->setHttpStatusCode(403);
-        $response->setSuccess(false);
-        $response->AddMessages("Forbidden");
-        $response->send();
+
+// UPDATE AN EVENT
+elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') && (getEventId() !== null)) {
+    // Admin only View
+    if (!isAdmin()) {
+        sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
         exit;
     }
 
-    // More logic
-}
-elseif ($_SERVER['REQUEST_METHOD'] === 'PATCH' && (isset($_GET['e']) && is_numeric($_GET['e']))) {
-    // Admin only
-    if ($_SESSION['admin'] !== 1) {
-        $response = new Response();
-        $response->setHttpStatusCode(403);
-        $response->setSuccess(false);
-        $response->AddMessages("Forbidden");
-        $response->send();
+    if (!isValidContentType()) {
+        sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
         exit;
     }
 
-    // More logic
+    $postData = file_get_contents('php://input');
+    if (!$jsonData = json_decode($postData)) {
+        sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+        exit;
+    }
+
+    $eventId = getEventId();
+
+    // Validate inputs
+    $errMessages = array();
+    $name = isset($jsonData->name) ? $jsonData->name : null;
+    (($name !== null && (strlen($name) <= 0 || strlen($name) > 25)) ?
+        $errMessages[] = "Event name field length must be no more than 25 chars" : false);
+
+    $date = isset($jsonData->date) ? $jsonData->date : null;
+    (($date !== null && (date('Y-m-d', strtotime($date)) !== $date)) ?
+        $errMessages[] = "Date field must be a valid date (YYYY-MM-DD)" : false);
+
+    $pot = isset($jsonData->pot) ? $jsonData->pot : null;
+    ($pot !== null && !is_numeric($pot) || (strlen($pot) > 6) ?
+        $errMessages[] = "Pot field must be int with no more than 6 digits" : false);
+
+    $status = isset($jsonData->status) ? $jsonData->status : null;
+    ($status !== null && !($status === 1 || $status === 0) ?
+        $errMessages[] = "Status must be either 0 (open) or 1 (close)." : false);
+
+    $championId = isset($jsonData->champion_id) ? $jsonData->champion_id : null;
+    (($championId !== null && !is_numeric($championId) || (strlen($championId) > 6)) ?
+        $errMessages[] = "Champion ID must be int no more than 6 digits." : false);
+
+    $championPurse = !empty($jsonData->champion_purse) ? $jsonData->champion_purse : null;
+    (($championPurse !== null && !is_double($championPurse) && strlen($championId) > 6) ?
+        $errMessages[] = "Champion PURSE must be int/double/float no more than 6 digits." : false);
+
+    // MUST REVIEW the validation for this one
+    $championPhoto = isset($jsonData->champion_photo) ? $jsonData->champion_photo : null;
+    (($championPhoto !== null && (strlen($championPhoto) < 1 || strlen($championPhoto) > 128)) ?
+        $errMessages[] = "Champion PHOTO must be string no more than 128 chars." : false);
+
+    // Send any error messages
+    if (count($errMessages) > 0) {
+        sendResponse(400, $success=false, $msg=$errMessages, $data=null);
+        exit;
+    }
+
+    try {
+        $subQuery = "";
+        $options = array();
+
+        if ($name !== null) {
+            $subQuery .= " name = :name,";
+            $options["name"] = $name;
+        }
+
+        if ($date !== null) {
+            $subQuery .= " date = :date,";
+            $options["date"] = $date;
+        }
+
+        if ($pot !== null) {
+            $subQuery .= " pot = :pot,";
+            $options["pot"] = $pot;
+        }
+
+        if ($status !== null) {
+            $subQuery .= " status = :status,";
+            $options["status"] = $status;
+        }
+
+        if ($championId !== null) {
+            $subQuery .= " champion_id = :champion_id,";
+            $options["champion_id"] = $championId;
+        }
+
+        if ($championPurse !== null) {
+            $subQuery .= " champion_purse = :champion_purse,";
+            $options["champion_purse"] = $championPurse;
+        }
+
+        if ($championPhoto !== null) {
+            $subQuery .= " champion_photo = :champion_photo,";
+            $options["champion_photo"] = $championPhoto;
+        }
+
+        if (count($options) > 0) {
+            $options["id"] = $eventId;
+            $pdo->beginTransaction();
+            $query = "UPDATE event SET " . substr($subQuery, 0, -1) . " WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute($options);
+            $pdo->commit();
+
+            $query = "SELECT * FROM event WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(["id" => $eventId]);
+
+            sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
+            exit;
+        }
+
+    } catch (PDOException $ex) {
+        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        exit;
+    }
+
 }
 //elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE' && canManipulateEvent()) {}
+
+// ANY UNSUPPORTED OPERATION
 else {
-    $response = new Response();
-    $response->setHttpStatusCode(405);
-    $response->setSuccess(false);
-    $response->AddMessages("Method not allowed.");
-    $response->send();
+    sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
     exit;
 }
