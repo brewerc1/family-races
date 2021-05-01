@@ -2,61 +2,19 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-//$_SESSION['id'] = '1';
-//$_SESSION['admin'] = 1;
+$_SESSION['id'] = '1';
+$_SESSION['admin'] = 1;
 
-use api\Response;
-include_once '../Response.php';
-
-// Helper Functions
-
-// Send the response to the client
-function sendResponse($statusCode, $success=false, $msg=null, $data=null) {
-    $response = new Response();
-    $response->setHttpStatusCode($statusCode);
-    $response->setSuccess($success);
-
-    if ($msg !== null)
-        foreach ($msg as $m)
-            $response->AddMessages($m);
-
-    if ($data !== null)
-        $response->setData($data);
-
-    $response->send();
-}
-
-// Returns True if the current logged in user is admin
-// Otherwise, false is returned
-function isAdmin() {
-    return $_SESSION['admin'] === 1;
-}
-
-// Returns true if the request header['content-type'] is application/json
-// Otherwise, false is returned
-function isValidContentType() {
-    return isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json';
-}
-
-// Returns True if the current user is logged in
-// Otherwise, false is returned
-function isLoggedIn() {
-    return !empty($_SESSION["id"]);
-}
-
-// Returns the event id if exists in the url params
-// Otherwise, null is returned.
-function getEventId() {
-    return isset($_GET['e']) && is_numeric($_GET['e']) ? $_GET['e'] : null;
-}
+use api\Utils;
+include_once '../Utils.php';
 
 function validGetRequestURLParams() {
     return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
 }
 
 
-if(!isLoggedIn()) {
-    sendResponse(401, $success=false, $msg=["Authentication is required."]);
+if(!Utils::isLoggedIn()) {
+    Utils::sendResponse(401, $success=false, $msg=["Authentication is required."]);
     exit;
 }
 
@@ -80,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
         // Page not found.
         if ($page > $numberOfPage) {
-            sendResponse(404, $success=false, $msg=["Page not found."], $data=null);
+            Utils::sendResponse(404, $success=false, $msg=["Page not found."], $data=null);
             exit;
         }
 
@@ -109,11 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
             'previous' => $previousUrl,
             'events' => $data
         ];
-        sendResponse(200, $success=true, $msg=null, $data=$eventData);
+        Utils::sendResponse(200, $success=true, $msg=null, $data=$eventData);
         exit;
     }
     catch (PDOException $ex) {
-        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 }
@@ -122,19 +80,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     try {
         // Admin only View
-        if (!isAdmin()) {
-            sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+        if (!Utils::isAdmin()) {
+            Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
             exit;
         }
 
-        if (!isValidContentType()) {
-            sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+        if (!Utils::isValidContentType()) {
+            Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
             exit;
         }
 
         $postData = file_get_contents('php://input');
         if (!$jsonData = json_decode($postData)) {
-            sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+            Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
             exit;
         }
 
@@ -143,7 +101,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (empty($jsonData->name) ? $messages[] = "Name field is required and can't be blank" : false);
             (empty($jsonData->date) ? $messages[] = "Date field is required and can't be blank" : false);
             (empty($jsonData->pot) ? $messages[] = "Pot field is required and can't be blank" : false);
-            sendResponse(400, $success=false, $msg=$messages, $data=null);
+            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
             exit;
         }
 
@@ -160,7 +118,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (!empty($eventNameErr) ? $messages[] = $eventNameErr : false);
             (!empty($dateErr) ? $messages[] = $dateErr : false);
             (!empty($potErr) ? $messages[] = $potErr : false);
-            sendResponse(400, $success=false, $msg=$messages, $data=null);
+            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
             exit;
         }
 
@@ -177,35 +135,35 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $stmt = $pdo->prepare($query);
         $stmt->execute(['id' => $createdEventId]);
 
-        sendResponse(201, $success=true, $msg=["Event created"], $data=$stmt->fetchAll());
+        Utils::sendResponse(201, $success=true, $msg=["Event created"], $data=$stmt->fetchAll());
         exit;
     } catch (PDOException $ex) {
-        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 
 }
 
 // UPDATE AN EVENT
-elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') && (getEventId() !== null)) {
+elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') && (Utils::getEventId() !== null)) {
     // Admin only View
-    if (!isAdmin()) {
-        sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+    if (!Utils::isAdmin()) {
+        Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
         exit;
     }
 
-    if (!isValidContentType()) {
-        sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+    if (!Utils::isValidContentType()) {
+        Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
         exit;
     }
 
     $postData = file_get_contents('php://input');
     if (!$jsonData = json_decode($postData)) {
-        sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+        Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
         exit;
     }
 
-    $eventId = getEventId();
+    $eventId = Utils::getEventId();
 
     // Validate inputs
     $errMessages = array();
@@ -240,7 +198,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
 
     // Send any error messages
     if (count($errMessages) > 0) {
-        sendResponse(400, $success=false, $msg=$errMessages, $data=null);
+        Utils::sendResponse(400, $success=false, $msg=$errMessages, $data=null);
         exit;
     }
 
@@ -295,20 +253,20 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
             $stmt = $pdo->prepare($query);
             $stmt->execute(["id" => $eventId]);
 
-            sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
+            Utils::sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
             exit;
         }
 
     } catch (PDOException $ex) {
-        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 
 }
-//elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE' && canManipulateEvent()) {}
+//elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {}
 
 // ANY UNSUPPORTED OPERATION
 else {
-    sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
+    Utils::sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
     exit;
 }
