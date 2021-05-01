@@ -2,24 +2,40 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-$_SESSION['id'] = 1;
+$_SESSION['id'] = '1';
 $_SESSION['admin'] = 1;
 
 use api\Response;
 include_once '../Response.php';
 
-// unused code
-function canManipulateEvent() {
-    return $_SESSION["admin"] == 1 && (isset($_GET['e']) && is_numeric($_GET['e']));
+// Helper Functions
+
+function sendResponse($statusCode, $success=false, $msg=null, $data=null) {
+    $response = new Response();
+    $response->setHttpStatusCode($statusCode);
+    $response->setSuccess($success);
+
+    if ($msg !== null)
+        foreach ($msg as $m)
+            $response->AddMessages($m);
+
+    if ($data !== null)
+        $response->setData($data);
+
+    $response->send();
+}
+
+function isAdmin() {
+    return $_SESSION['admin'] === 1;
+}
+
+function isValidContentType() {
+    return $_SERVER['CONTENT_TYPE'] === 'application/json';
 }
 
 // Check: if Logged in.
 if(empty($_SESSION["id"])) {
-    $response = new Response();
-    $response->setHttpStatusCode(401);
-    $response->setSuccess(false);
-    $response->AddMessages("Authentication is required.");
-    $response->send();
+    sendResponse(401, $success=false, $msg=["Authentication is required."]);
     exit;
 }
 
@@ -52,19 +68,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         $totalEvent = intval($stmt->fetch()["totalEvent"]);
         $numberOfPage = ceil($totalEvent / $pageLimit);
         $numberOfPage = $numberOfPage == 0 ? 1 : $numberOfPage;
+
+        // Page not found.
         if ($page > $numberOfPage) {
-            $response = new Response();
-            $response->setHttpStatusCode(404);
-            $response->setSuccess(false);
-            $response->AddMessages("Page not found.");
-            $response->send();
+            sendResponse(404, $success=false, $msg=["Page not found."], $data=null);
             exit;
         }
 
         $offset = $page == 1 ? 0 : ($pageLimit * ($page - 1));
 
         // Pagination urls
-        $nextUrl = $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page + 1);
+        $nextUrl = ($page < $numberOfPage) ? $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page + 1) : null;
         $previousUrl = $page > 1 ? $_SERVER["SERVER_NAME"] . '/api/events/?pg=' . ($page - 1) : null;
 
         // Get all event
@@ -79,69 +93,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         $rowReturned = count($data);
         if ($rowReturned < $pageLimit || isset($_GET['e'])) $nextUrl = null;
 
-        // Success response
-        $response = new Response();
-        $response->setHttpStatusCode(200);
-        $response->setSuccess(true);
         $eventData = [
             'rowReturned' => $rowReturned,
+            'numberOfPages' => $numberOfPage,
             'next' => $nextUrl,
             'previous' => $previousUrl,
             'events' => $data
         ];
-        $response->setData($eventData);
-        $response->send();
+        sendResponse(200, $success=true, $msg=null, $data=$eventData);
         exit;
     }
     catch (PDOException $ex) {
-        $response = new Response();
-        $response->setHttpStatusCode(500);
-        $response->setSuccess(false);
-        $response->AddMessages("Server error: ");
-        $response->send();
+        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 }
-
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     try {
-        // Admin only
-        if ($_SESSION['admin'] !== 1) {
-            $response = new Response();
-            $response->setHttpStatusCode(403);
-            $response->setSuccess(false);
-            $response->AddMessages("Forbidden");
-            $response->send();
+        // Admin only View
+        if (!isAdmin()) {
+            sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
             exit;
         }
 
-        if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
-            $response = new Response();
-            $response->setHttpStatusCode(400);
-            $response->setSuccess(false);
-            $response->AddMessages("Content type must be set to application/json");
-            $response->send();
+        if (!isValidContentType()) {
+            sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
             exit;
         }
 
         $postData = file_get_contents('php://input');
         if (!$jsonData = json_decode($postData)) {
-            $response = new Response();
-            $response->setHttpStatusCode(400);
-            $response->setSuccess(false);
-            $response->AddMessages("Request body is not valid JSON.");
-            $response->send();
+            sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
             exit;
         }
 
         if (empty($jsonData->name) || empty($jsonData->date) || empty($jsonData->pot)) {
-            $response = new Response();
-            $response->setHttpStatusCode(400);
-            $response->setSuccess(false);
-            (empty($jsonData->name) ? $response->AddMessages("Name field is required") : false);
-            (empty($jsonData->date) ? $response->AddMessages("Date field is required") : false);
-            (empty($jsonData->pot) ? $response->AddMessages("Pot field is required") : false);
-            $response->send();
+            $messages = array();
+            (empty($jsonData->name) ? $messages[] = "Name field is required and can't be blank" : false);
+            (empty($jsonData->date) ? $messages[] = "Date field is required and can't be blank" : false);
+            (empty($jsonData->pot) ? $messages[] = "Pot field is required and can't be blank" : false);
+            sendResponse(400, $success=false, $msg=$messages, $data=null);
             exit;
         }
 
@@ -154,13 +145,11 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $potErr = (!is_numeric($pot) || strlen($pot) > 6) ? "Pot field must be int with no more than 6 digits" : "";
 
         if (!empty($eventNameErr) || !empty($potErr) || !empty($dateErr)) {
-            $response = new Response();
-            $response->setHttpStatusCode(400);
-            $response->setSuccess(false);
-            (!empty($eventNameErr) ? $response->AddMessages($eventNameErr) : false);
-            (!empty($dateErr) ? $response->AddMessages($dateErr) : false);
-            (!empty($potErr) ? $response->AddMessages($potErr) : false);
-            $response->send();
+            $messages = array();
+            (!empty($eventNameErr) ? $messages[] = $eventNameErr : false);
+            (!empty($dateErr) ? $messages[] = $dateErr : false);
+            (!empty($potErr) ? $messages[] = $potErr : false);
+            sendResponse(400, $success=false, $msg=$messages, $data=null);
             exit;
         }
 
@@ -177,19 +166,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $stmt = $pdo->prepare($query);
         $stmt->execute(['id' => $createdEventId]);
 
-        $response = new Response();
-        $response->setHttpStatusCode(201);
-        $response->setSuccess(true);
-        $response->AddMessages("Event created.");
-        $response->setData($stmt->fetchAll());
-        $response->send();
+        sendResponse(201, $success=true, $msg=["Event created"], $data=$stmt->fetchAll());
         exit;
     } catch (PDOException $ex) {
-        $response = new Response();
-        $response->setHttpStatusCode(500);
-        $response->setSuccess(false);
-        $response->AddMessages("Server error: ");
-        $response->send();
+        sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 
