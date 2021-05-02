@@ -2,8 +2,8 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-$_SESSION['id'] = '1';
-$_SESSION['admin'] = 1;
+//$_SESSION['id'] = '1';
+//$_SESSION['admin'] = 1;
 
 use api\Utils;
 include_once '../Utils.php';
@@ -150,7 +150,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         $errMessages[] = "Pot field must be int with no more than 6 digits" : false);
 
     $status = isset($jsonData->status) ? $jsonData->status : null;
-    ($status !== null && !($status === 1 || $status === 0) ?
+    ($status !== null && !(intval($status) === 1 || intval($status) === 0) ?
         $errMessages[] = "Status must be either 0 (open) or 1 (close)." : false);
 
     $championId = isset($jsonData->champion_id) ? $jsonData->champion_id : null;

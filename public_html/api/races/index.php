@@ -27,7 +27,6 @@ function validGetRequestURLParams() {
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
     try {
-
         $query = "SELECT * FROM race LIMIT :_limit OFFSET :off_set";
         $OptionsForQuery = [];
         $pageQuery = "SELECT COUNT(*) AS total FROM race";
@@ -106,6 +105,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
+}
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
+    // Admin only View
+    if (!Utils::isAdmin()) {
+        Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+        exit;
+    }
+
+    if (!Utils::isValidContentType()) {
+        Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+        exit;
+    }
+
+    $postData = file_get_contents('php://input');
+    if (!$jsonData = json_decode($postData)) {
+        Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+        exit;
+    }
+
+    // Required data && Optional data
+    if (empty($jsonData->event_id) || isset($jsonData->window_closed) || isset($jsonData->cancelled) || isset($jsonData->horses)) {
+        $messages = array();
+        // Required
+        (empty($jsonData->event_id) || !is_numeric($jsonData->event_id) ?
+            $messages[] = "event_id field is required and must be numeric" : false);
+
+        // Optionals
+        (isset($jsonData->window_closed) && !(is_numeric($jsonData->window_closed) &&
+            (intval($jsonData->window_closed) === 0 || intval($jsonData->window_closed === 1))) ?
+            $messages[] = "window_closed field is must be numeric 0(open) or 1(close)" : false);
+
+        (isset($jsonData->cancelled) && !(is_numeric($jsonData->cancelled) &&
+            (intval($jsonData->cancelled) === 0 || intval($jsonData->cancelled) === 1)) ?
+            $messages[] = "cancelled field is must be numeric 0(open) or 1(close)" : false);
+
+        ((isset($jsonData->horses) && !is_array($jsonData->horses)) ?
+            $messages[] = "horses field must be an array of string" : false);
+
+        Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
+        exit;
+    }
+    //Required
+    $eventId = $jsonData->event_id;
+    //Optionals
+    $windowClosed = isset($jsonData->window_closed) ? $jsonData->window_closed : null;
+    $cancelled = isset($jsonData->cancelled) ? $jsonData->cancelled : null;
+    $horses = isset($jsonData->horses) ? $jsonData->horses : null;
+
+    try {
+        // Create race 2 steps
+
+        // Step 1: Insert into race table
+        $val = "(event_id,";
+        $aliases = "(:event_id,";
+        $option = ["event_id" => $eventId];
+
+        if ($windowClosed !== null) {
+            $val .= "window_closed,";
+            $aliases .= ":window_closed,";
+            $option = ["window_closed" => $windowClosed];
+        }
+
+        if ($cancelled !== null) {
+            $val .= "cancelled,";
+            $aliases .= ":cancelled,";
+            $option = ["cancelled" => $cancelled];
+        }
+
+        $val = substr($val, 0, -1) . ")";
+        $aliases = substr($aliases, 0, -1) . ")";
+
+        // TODO: race_number is not defaulted in db
+
+        $pdo->beginTransaction();
+        $query = "INSERT INTO race " . $val . " VALUES " . $aliases;
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($option);
+        $createdRace = $pdo->lastInsertId();
+        $pdo->commit();
+
+        $query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['event_id' => $eventId, 'race_number' => $createdRace]);
+
+        Utils::sendResponse(201, $success=true, $msg=["Event created"], $data=$stmt->fetchAll());
+        exit;
+    }
+    catch (PDOException $ex) {
+        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
+        exit;
+    }
+
 }
 
 // ANY UNSUPPORTED OPERATION
