@@ -15,54 +15,95 @@ if(!Utils::isLoggedIn()) {
 }
 
 function validGetRequestURLParams() {
-    return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
+    if (count($_GET) > 2) return false;
+    if (key_exists("e", $_GET) && Utils::getEventId() === null) return false;
+    if (key_exists("r", $_GET)) {
+        if (Utils::getRaceNumber() === null) return false;
+        if (!key_exists("e", $_GET)) return false;
+        elseif (Utils::getEventId() === null) return false;
+    }
+    return true;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
     try {
-        $page = Utils::getPageNumber();
-        $raceData = Utils::getWithPagination($pdo, "race", $page, "/api/races/", "races");
+
+        $query = "SELECT * FROM race LIMIT :_limit OFFSET :off_set";
+        $OptionsForQuery = [];
+        $pageQuery = "SELECT COUNT(*) AS total FROM race";
+        $optionForPageQuery = [];
+
+        if (key_exists("e", $_GET) && Utils::getEventId() !== null) {
+            // Check if there is an event with the id in url params['e']
+            $query = "SELECT * FROM event WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(["id" => Utils::getEventId()]);
+            if ($stmt->rowCount() !== 1) {
+                Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+                exit;
+            }
+
+            if (Utils::getRaceNumber() === null) {
+                // Get all races for event
+                $query = "SELECT * FROM race WHERE event_id = :event_id LIMIT :_limit OFFSET :off_set";
+                $OptionsForQuery = ["event_id" => Utils::getEventId()];
+                $pageQuery = "SELECT COUNT(*) AS total FROM race WHERE event_id = :event_id";
+                $optionForPageQuery = ["event_id" => Utils::getEventId()];
+            }
+            else {
+                $query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number LIMIT :_limit OFFSET :off_set";
+                $OptionsForQuery = ["event_id" => Utils::getEventId(), "race_number" => Utils::getRaceNumber()];
+                $pageQuery = "SELECT COUNT(*) AS total FROM race WHERE event_id = :event_id AND race_number = :race_number";
+                $optionForPageQuery = ["event_id" => Utils::getEventId(), "race_number" => Utils::getRaceNumber()];
+            }
+        }
+
+        $endPoint = "/api/races/";
+        $keyword = "races";
+        $raceData = Utils::getAllWithPagination($pdo, $endPoint, $keyword,
+            $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]);
 
         if (key_exists("pageNotFound", $raceData)) {
             Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+            exit;
         }
-        else {
-            $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
-            $stmt = $pdo->prepare($query);
 
-            $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
-            $horseStmt = $pdo->prepare($horseQuery);
+        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
 
-            $races = array();
-            // Get horses for each race
-            foreach ($raceData["races"] as $race) {
-                $stmt->execute(["race_event_id" => $race["event_id"], "race_race_number" => $race["race_number"]]);
-                $horses = $stmt->fetchAll();
-                $horsesVal = array();
-                // Answer: Whether a horse can be deleted
-                foreach ($horses as $horse) {
-                    $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
-                        "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
+        $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $horseStmt = $pdo->prepare($horseQuery);
 
-                    if ($horseStmt->rowCount() > 0) {
-                        $horse["can_be_delete"] = false;
-                    } else {
-                        $horse["can_be_delete"] = true;
-                    }
-                    $horsesVal[] = $horse;
+        // Get horses for each race
+        $races = array();
+        foreach ($raceData["races"] as $race) {
+            $stmt->execute(["race_event_id" => $race["event_id"], "race_race_number" => $race["race_number"]]);
+            $horses = $stmt->fetchAll();
+            $horsesVal = array();
+
+            // Answer: Whether horse can be deleted
+            foreach ($horses as $horse) {
+                $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
+                    "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
+
+                if ($horseStmt->rowCount() > 0) {
+                    $horse["can_be_delete"] = false;
+                } else {
+                    $horse["can_be_delete"] = true;
                 }
-
-                $race["horses"] = $horsesVal;
-                $races[] = $race;
+                $horsesVal[] = $horse;
             }
 
-            $raceData["races"] = $races;
-            Utils::sendResponse(200, $success=true, $msg=null, $data=$raceData);
+            $race["horses"] = $horsesVal;
+            $races[] = $race;
         }
+
+        $raceData["races"] = $races;
+        Utils::sendResponse(200, $success=true, $msg=null, $data=$raceData);
         exit;
     }
     catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
+        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
         exit;
     }
 }
