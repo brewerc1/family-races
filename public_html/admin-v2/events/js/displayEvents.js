@@ -1,3 +1,5 @@
+const loader = $("#loader-container");
+
 const state = {
   firstPage: "http://localhost/api/events/?pg=1",
   nextPage: null,
@@ -37,6 +39,9 @@ function addEventsToDOM(events) {
   // Turn events into an array if there is only 1
   if (events.id) events = [events];
 
+  let eventsProcessed = 0;
+
+  console.log(events.length);
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
 
@@ -58,13 +63,22 @@ function addEventsToDOM(events) {
       state.currentEventID = event.id;
       $("#current-event-container").css("display", "block");
       currentEventlist.append(template);
-      return;
+    } else {
+      eventsList.append(template);
     }
 
-    eventsList.append(template);
+    eventsProcessed++;
+    console.log("Processed: " + eventsProcessed);
+
+    if (eventsProcessed === events.length) toggleLoader();
   });
 
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
+}
+
+function toggleLoader() {
+  console.log("toggling");
+  loader.css("display", "none");
 }
 
 function toggleButtonVisibility() {

@@ -21,8 +21,10 @@ if ($_SESSION["admin"] != 1) {
 {main_nav}
 <main role="main" id="admin_events_page">
 	<h1 class="sticky-top" id="view-all-events-header">Events</h1>
+	<div id="loader-container">
+			<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
+		</div>
 	<section id="events" class="mt-5">
-
 		<div id="current-event-container">
 			<h3 class="mb-3">Current Event</h3>
 			<ul id="current-event-list" class="list-group list-group-flush col-md-12">
