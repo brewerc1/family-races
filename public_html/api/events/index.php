@@ -2,14 +2,14 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-//$_SESSION['id'] = '1';
-//$_SESSION['admin'] = 1;
+$_SESSION['id'] = '1';
+$_SESSION['admin'] = 1;
 
 use api\Utils;
 include_once '../Utils.php';
 
 function validGetRequestURLParams() {
-    return ((count($_GET) == 1) && !empty($_GET['pg']) && is_numeric($_GET['pg'])) || empty($_GET);
+    return Utils::getPageNumber() !== null;
 }
 
 
@@ -22,8 +22,15 @@ if(!Utils::isLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
 
     try {
-        $page = Utils::getPageNumber();
-        $eventData = Utils::getWithPagination($pdo, "event", $page, "/api/events/", "events");
+
+        $query = "SELECT * FROM event ORDER BY id DESC LIMIT :_limit OFFSET :off_set";
+        $OptionsForQuery = [];
+        $pageQuery = "SELECT COUNT(*) AS total FROM event";
+        $optionForPageQuery = [];
+        $endPoint = "/api/events/";
+        $keyword = "events";
+        $eventData = Utils::getAllWithPagination($pdo, $endPoint, $keyword,
+            $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]);
 
         if (key_exists("pageNotFound", $eventData)) {
             Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
