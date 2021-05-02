@@ -80,8 +80,6 @@ function handleOnChange() {
     pot: Number.parseFloat(potField.val()),
   };
 
-  console.log(typeof data.pot);
-
   $.ajax({
     type: "PUT",
     url: requestURL,

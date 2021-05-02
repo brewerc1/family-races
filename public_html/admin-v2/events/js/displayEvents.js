@@ -41,7 +41,6 @@ function addEventsToDOM(events) {
 
   let eventsProcessed = 0;
 
-  console.log(events.length);
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
 
@@ -68,7 +67,6 @@ function addEventsToDOM(events) {
     }
 
     eventsProcessed++;
-    console.log("Processed: " + eventsProcessed);
 
     if (eventsProcessed === events.length) toggleLoader();
   });
