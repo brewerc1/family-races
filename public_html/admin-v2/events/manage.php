@@ -29,41 +29,51 @@ if ($_SESSION["admin"] != 1) {
 	</h1>
 
 	<form id="create-event" method="POST">
-				<section>
-	                <!-- Event Name -->
-	                <div class="form-row">
-	                    <div class="form-group col-md-6">
-							<div class="input-group">
-								<div class="input-group-prepend">
-									 <span class="input-group-text"><i class="fas fa-horse-head"></i></span>
-  								</div>
-								  <input type="text" class="form-control" id="name" name="event_name" maxlength="25">
-							</div>
-	                    </div>
-	                	<!-- Event Date -->
-						<div class="form-group col-md-6">
-							<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
-								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-								</div>
-								<input type="text" class="form-control" id="date" name="event_date">
-							</div>
+		<section>
+			<!-- Event Name -->
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<div class="input-group">
+						<div class="input-group-prepend">
+								<span class="input-group-text"><i class="fas fa-horse-head"></i></span>
 						</div>
+							<input type="text" class="form-control" id="name" name="event_name" maxlength="25">
 					</div>
-	                <!-- Event POT -->
-	                <div class="form-row">
-	                    <div class="form-group col-md-6">
-							<div class="input-group">
-								<div class="input-group-prepend">
-									 <span class="input-group-text"><i class="fas fa-donate"></i></span>
-  								</div>
-								<input type="number" class="form-control" id="pot" name="event_pot" min="1" max="9999">
-							</div>
-	                    </div>
-	                </div>
-				</section>
+				</div>
+				<!-- Event Date -->
+				<div class="form-group col-md-6">
+					<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+						</div>
+						<input type="text" class="form-control" id="date" name="event_date">
+					</div>
+				</div>
+			</div>
+			<!-- Event POT -->
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<div class="input-group">
+						<div class="input-group-prepend">
+								<span class="input-group-text"><i class="fas fa-donate"></i></span>
+						</div>
+						<input type="number" class="form-control" id="pot" name="event_pot" min="1" max="9999">
+					</div>
+				</div>
+			</div>
+		</section>
+	</form>
 
-            </form>
+	<h3 class="m-3">Races in this Event</h3>
+
+	<div id="loader-container">
+		<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
+	</div>
+
+	<ul id="races-list" class="list-group list-group-flush col-md-12">
+
+	</ul>
+
 
 </main>
 

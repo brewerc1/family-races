@@ -6,6 +6,7 @@ const eventNameHeader = $("#event-name");
 const nameField = $("#name");
 const dateField = $("#date");
 const potField = $("#pot");
+const loader = $("#loader-container");
 
 function fetchEvent() {
   displayEventInformation();
@@ -27,10 +28,45 @@ function displayEventInformation() {
 }
 
 function displayEventRaces() {
-  // const url = `http://localhost/api/races?e=${params.get("e")}`;
-  // $.get(url, (data) => {
-  //   console.log(data);
-  // });
+  let racesProcessed = 0;
+  const racesList = $("#races-list");
+  const url = `http://localhost/api/races?e=${params.get("e")}`;
+  $.get(url, (data) => {
+    const races = data.data.races;
+
+    if (races.length === 0) toggleLoader();
+
+    races.forEach((race) => {
+      const template = `
+      <li class="list-group-item" id="${race.race_number}">
+        <div class="flex-space-between">
+
+          <div class="event-title-container"> 
+            <p class="event-title">
+              Race ${race.race_number}
+            </p>
+          </div>
+          <div class="race-btns">
+            <a class="black-btn" href="#">
+              Edit
+            </a>
+            <a class="black-btn" href="#">
+              Betting Window
+            </a>
+          </div>
+        </div>
+      </li>
+      `;
+
+      racesList.append(template);
+      racesProcessed++;
+      if (racesProcessed === races.length) toggleLoader();
+    });
+  });
+}
+
+function toggleLoader() {
+  loader.css("display", "none");
 }
 
 function handleOnChange() {
