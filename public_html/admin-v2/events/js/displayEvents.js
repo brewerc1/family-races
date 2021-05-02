@@ -46,7 +46,7 @@ function addEventsToDOM(events) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="view-event-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}">
+        <a class="view-event-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}&status=${event.status}">
           View
         </a>
       </div>
