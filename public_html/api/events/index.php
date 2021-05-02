@@ -71,8 +71,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (empty($jsonData->name) ? $messages[] = "Name field is required and can't be blank" : false);
             (empty($jsonData->date) ? $messages[] = "Date field is required and can't be blank" : false);
             (empty($jsonData->pot) ? $messages[] = "Pot field is required and can't be blank" : false);
-            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
-            exit;
+            if (count($messages) > 0) {
+                Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+                exit;
+            }
         }
 
         // Validate input type
@@ -88,8 +90,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (!empty($eventNameErr) ? $messages[] = $eventNameErr : false);
             (!empty($dateErr) ? $messages[] = $dateErr : false);
             (!empty($potErr) ? $messages[] = $potErr : false);
-            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
-            exit;
+            if (count($messages) > 0) {
+                Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+                exit;
+            }
         }
 
         // Create the new event
