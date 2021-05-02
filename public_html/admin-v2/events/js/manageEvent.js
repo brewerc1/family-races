@@ -27,10 +27,13 @@ function displayEventInformation() {
 }
 
 function displayEventRaces() {
-  console.log("displaying races");
+  const url = `http://localhost/api/races?e=${params.get("e")}`;
+
+  $.get(url, (data) => {
+    console.log(data);
+  });
 }
 
-// Only current event can be updated
 function handleOnChange() {
   if (loading) return;
 
