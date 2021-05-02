@@ -40,7 +40,7 @@ if($_SESSION["admin"] != 1) {
 	                	<!-- Event Date -->
 						<div class="form-group col-md-6">
 							<label for="date" class="col-form-label">Event Date:</label>
-							<div class="input-group date" data-provide="datepicker" data-date-format="DD, MM d, yyyy" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
+							<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
 								</div>

@@ -27,11 +27,10 @@ function displayEventInformation() {
 }
 
 function displayEventRaces() {
-  const url = `http://localhost/api/races?e=${params.get("e")}`;
-
-  $.get(url, (data) => {
-    console.log(data);
-  });
+  // const url = `http://localhost/api/races?e=${params.get("e")}`;
+  // $.get(url, (data) => {
+  //   console.log(data);
+  // });
 }
 
 function handleOnChange() {

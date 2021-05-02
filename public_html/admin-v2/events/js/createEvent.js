@@ -12,11 +12,18 @@ function createEvent() {
     pot: potField.val(),
   };
 
-  const requestURL = `http://localhost/api/events`;
+  const requestURL = `http://localhost/api/events/`;
 
-  $.post(requestURL, JSON.stringify(event), (data) => {
-    console.log(data);
-  });
+  // $.post(requestURL, JSON.stringify(event), (data) => {
+  //   console.log(data);
+  // });
+
+  $.ajax({
+    type: "POST",
+    url: requestURL,
+    contentType: "application/json",
+    data: JSON.stringify(event),
+  }).done(() => console.log("done"));
 }
 
 // Checks for errors, will need put method if it is done this way
