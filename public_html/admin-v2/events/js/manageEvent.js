@@ -2,20 +2,12 @@ const params = new URLSearchParams(window.location.search);
 
 let loading = true;
 
-// HTML Elements
 const eventNameHeader = $("#event-name");
 const nameField = $("#name");
 const dateField = $("#date");
 const potField = $("#pot");
 
 function fetchEvent() {
-  // Only current event can be updated
-  if (params.get("status") == 1) {
-    nameField.prop("disabled", true);
-    dateField.prop("disabled", true);
-    potField.prop("disabled", true);
-  }
-
   displayEventInformation();
   displayEventRaces();
 
@@ -47,8 +39,10 @@ function handleOnChange() {
   const data = {
     name: nameField.val(),
     date: dateField.val(),
-    pot: potField.val(),
+    pot: Number.parseFloat(potField.val()),
   };
+
+  console.log(typeof data.pot);
 
   $.ajax({
     type: "PUT",
@@ -69,8 +63,22 @@ function useNewEventData() {
   eventNameHeader.text(nameField.val());
 }
 
+function restrictNumberRange() {
+  let value = parseInt(potField.val());
+  let min = parseFloat(potField.attr("min"));
+  let max = parseFloat(potField.attr("max"));
+
+  if (value < min) {
+    potField.val(min);
+  } else if (value > max) {
+    potField.val(max);
+  }
+}
+
 $(document).ready(fetchEvent);
 
 nameField.on("change", handleOnChange);
 dateField.on("change", handleOnChange);
 potField.on("change", handleOnChange);
+
+potField.on("keyup", restrictNumberRange);
