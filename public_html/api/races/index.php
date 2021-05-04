@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         $OptionsForQuery = [];
         $pageQuery = "SELECT COUNT(*) AS total FROM race";
         $optionForPageQuery = [];
+        $urlParams = [];
 
         if (key_exists("e", $_GET) && Utils::getEventId() !== null) {
             // Check if there is an event with the id in url params['e']
@@ -43,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
                 exit;
             }
 
+            $urlParams["e"] = Utils::getEventId();
+
             if (Utils::getRaceNumber() === null) {
                 // Get all races for event
                 $query = "SELECT * FROM race WHERE event_id = :event_id LIMIT :_limit OFFSET :off_set";
@@ -51,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
                 $optionForPageQuery = ["event_id" => Utils::getEventId()];
             }
             else {
+                $urlParams["r"] = Utils::getRaceNumber();
+
                 $query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number LIMIT :_limit OFFSET :off_set";
                 $OptionsForQuery = ["event_id" => Utils::getEventId(), "race_number" => Utils::getRaceNumber()];
                 $pageQuery = "SELECT COUNT(*) AS total FROM race WHERE event_id = :event_id AND race_number = :race_number";
@@ -61,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
         $endPoint = "/api/races/";
         $keyword = "races";
         $raceData = Utils::getAllWithPagination($pdo, $endPoint, $keyword,
-            $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]);
+            $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams);
 
         if (key_exists("pageNotFound", $raceData)) {
             Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
