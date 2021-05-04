@@ -159,9 +159,9 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     //Required
     $eventId = $jsonData->event_id;
     //Optionals
-    $windowClosed = isset($jsonData->window_closed) ? $jsonData->window_closed : null;
-    $cancelled = isset($jsonData->cancelled) ? $jsonData->cancelled : null;
-    $horses = isset($jsonData->horses) ? $jsonData->horses : null;
+    $windowClosed = $jsonData->window_closed ?? null;
+    $cancelled = $jsonData->cancelled ?? null;
+    $horses = $jsonData->horses ?? null;
 
     try {
         // Create race 2 steps
@@ -273,8 +273,8 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         }
 
         //Optionals
-        $windowClosed = isset($jsonData->window_closed) ? $jsonData->window_closed : null;
-        $cancelled = isset($jsonData->cancelled) ? $jsonData->cancelled : null;
+        $windowClosed = $jsonData->window_closed ?? null;
+        $cancelled = $jsonData->cancelled ?? null;
 
         // Update
         try {

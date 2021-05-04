@@ -26,29 +26,35 @@ class Utils
         return !empty($_SESSION['admin']) && $_SESSION['admin'] === 1;
     }
 
-    public static function isLoggedIn() {
+    public static function isLoggedIn(): bool
+    {
         return !empty($_SESSION["id"]);
     }
 
-    public static function getEventId() {
-        return isset($_GET['e']) && is_numeric($_GET['e']) ? $_GET['e'] : null;
+    public static function getEventId(): ?int
+    {
+        return isset($_GET['e']) && is_numeric($_GET['e']) ? intval($_GET['e']) : null;
     }
 
-    public static function getRaceNumber() {
-        return isset($_GET['r']) && is_numeric($_GET['r']) ? $_GET['r'] : null;
+    public static function getRaceNumber(): ?int
+    {
+        return isset($_GET['r']) && is_numeric($_GET['r']) ? intval($_GET['r']) : null;
     }
 
-    public static function isValidContentType() {
+    public static function isValidContentType(): bool
+    {
         return isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json';
     }
 
-    public static function getPageNumber() {
-        return array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? $_GET['pg'] : 1;
+    public static function getPageNumber(): int
+    {
+        return array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? intval($_GET['pg']) : 1;
     }
 
     public static function getWithPagination($pdo, $tableName, $page, $endPoint, $keyWord,
                                              $customQuery=null, $urlQuery=null, $customOptions=null,
-                                             $customQueryTotalPage=null, $customOptionPage=null) {
+                                             $customQueryTotalPage=null, $customOptionPage=null): array
+    {
         // Number of events per page
         $pageLimit = 10;
 
@@ -111,7 +117,8 @@ class Utils
     }
 
     public static function getAllWithPagination($pdo, $endPoint, $keyWord,
-                                             $query, $pageQuery, $optionsForQuery, $optionForPageQuery, $urlParams=[]) {
+                                             $query, $pageQuery, $optionsForQuery, $optionForPageQuery, $urlParams=[]): array
+    {
 
         // Number of items per page (Default)
         $pageLimit = 10;
