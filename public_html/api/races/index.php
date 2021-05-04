@@ -113,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
     }
 }
 
-// TODO: Not done
 // CREATE race
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     // Admin only View
@@ -168,9 +167,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         // Create race 2 steps
 
         // Step 1: Insert into race table
-        $val = "(event_id,";
-        $aliases = "(:event_id,";
-        $option = ["event_id" => $eventId];
+        $val = "(event_id,race_number,";
+        $aliases = "(:event_id,:race_number,";
 
         if ($windowClosed !== null) {
             $val .= "window_closed,";
@@ -184,21 +182,26 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             $option = ["cancelled" => $cancelled];
         }
 
-        $val = substr($val, 0, -1) . ")";
-        $aliases = substr($aliases, 0, -1) . ")";
+        $val = substr($val, -1) === "," ? substr($val, 0, -1) . ")" : $val . ")";
+        $aliases = substr($aliases, -1) === "," ? substr($aliases, 0, -1) . ")" : $aliases . ")";
 
-        // TODO: race_number is not defaulted in db
+        $query = "SELECT * FROM race WHERE event_id = :event_id ORDER BY race_number DESC LIMIT 1";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(["event_id" => $eventId]);
+
+        $raceNumber = $stmt->rowCount() > 0 ? intval($stmt->fetch()["race_number"]) + 1 : 1;
+        $option["race_number"] = $raceNumber;
+        $option["event_id"] = $eventId;
 
         $pdo->beginTransaction();
         $query = "INSERT INTO race " . $val . " VALUES " . $aliases;
         $stmt = $pdo->prepare($query);
         $stmt->execute($option);
-        $createdRace = $pdo->lastInsertId();
         $pdo->commit();
 
         $query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
         $stmt = $pdo->prepare($query);
-        $stmt->execute(['event_id' => $eventId, 'race_number' => $createdRace]);
+        $stmt->execute(['event_id' => $eventId, 'race_number' => $raceNumber]);
 
         Utils::sendResponse(201, $success=true, $msg=["Race created"], $data=$stmt->fetchAll());
         exit;
