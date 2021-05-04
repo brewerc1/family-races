@@ -21,7 +21,8 @@ class Utils
         $response->send();
     }
 
-    public static function isAdmin() {
+    public static function isAdmin(): bool
+    {
         return !empty($_SESSION['admin']) && $_SESSION['admin'] === 1;
     }
 
@@ -110,7 +111,7 @@ class Utils
     }
 
     public static function getAllWithPagination($pdo, $endPoint, $keyWord,
-                                             $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]) {
+                                             $query, $pageQuery, $optionsForQuery, $optionForPageQuery, $urlParams=[]) {
 
         // Number of items per page (Default)
         $pageLimit = 10;
@@ -146,7 +147,7 @@ class Utils
 
             // Get all
             $stmt = $pdo->prepare($query);
-            $stmt->execute(array_merge($OptionsForQuery, ['_limit' => $pageLimit, 'off_set' => $offset]));
+            $stmt->execute(array_merge($optionsForQuery, ['_limit' => $pageLimit, 'off_set' => $offset]));
             $data = $stmt->fetchAll();
             $rowReturned = count($data);
 
