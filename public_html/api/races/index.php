@@ -179,7 +179,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $stmt = $pdo->prepare($query);
         $stmt->execute(['event_id' => $eventId, 'race_number' => $raceNumber]);
         $raceData = $stmt->fetchAll();
-        $raceData["horses"] = ($horses !== null && count($horses) > 0) ?
+        $raceData[0]["horses"] = ($horses !== null && count($horses) > 0) ?
             Utils::createAndGetHorses($pdo, $eventId, $raceNumber, $horses) : Utils::getHorses($pdo, $eventId, $raceNumber);
 
         Utils::sendResponse(201, $success=true, $msg=["Race created"], $data=$raceData);

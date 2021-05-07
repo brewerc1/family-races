@@ -170,7 +170,7 @@ class Utils
         return $returnData;
     }
 
-    public static function getHorses($pdo, $eventId, $raceNumber): array
+    public static function getHorses($pdo, $eventId=null, $raceNumber=null): array
     {
 
         $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
