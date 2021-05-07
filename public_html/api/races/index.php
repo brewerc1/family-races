@@ -73,36 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
             exit;
         }
 
-        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
-        $stmt = $pdo->prepare($query);
-
-        $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
-        $horseStmt = $pdo->prepare($horseQuery);
-
         // Get horses for each race
         $races = array();
         foreach ($raceData["races"] as $race) {
-            $stmt->execute(["race_event_id" => $race["event_id"], "race_race_number" => $race["race_number"]]);
-            $horses = $stmt->fetchAll();
-            $horsesVal = array();
-
-            // Answer: Whether horse can be deleted
-            foreach ($horses as $horse) {
-                $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
-                    "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
-
-                if ($horseStmt->rowCount() > 0) {
-                    $horse["can_be_delete"] = false;
-                } else {
-                    $horse["can_be_delete"] = true;
-                }
-                $horsesVal[] = $horse;
-            }
-
-            $race["horses"] = $horsesVal;
+            $race["horses"] = Utils::getHorses($pdo, $race["event_id"], $race["race_number"]);
             $races[] = $race;
         }
-
         $raceData["races"] = $races;
         Utils::sendResponse(200, $success=true, $msg=null, $data=$raceData);
         exit;
@@ -202,8 +178,11 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $query = "SELECT * FROM race WHERE event_id = :event_id AND race_number = :race_number";
         $stmt = $pdo->prepare($query);
         $stmt->execute(['event_id' => $eventId, 'race_number' => $raceNumber]);
+        $raceData = $stmt->fetchAll();
+        $raceData["horses"] = ($horses !== null && count($horses) > 0) ?
+            Utils::createAndGetHorses($pdo, $eventId, $raceNumber, $horses) : Utils::getHorses($pdo, $eventId, $raceNumber);
 
-        Utils::sendResponse(201, $success=true, $msg=["Race created"], $data=$stmt->fetchAll());
+        Utils::sendResponse(201, $success=true, $msg=["Race created"], $data=$raceData);
         exit;
     }
     catch (PDOException $ex) {

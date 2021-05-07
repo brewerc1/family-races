@@ -170,4 +170,47 @@ class Utils
         return $returnData;
     }
 
+    public static function getHorses($pdo, $eventId, $raceNumber): array
+    {
+
+        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+
+        $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $horseStmt = $pdo->prepare($horseQuery);
+
+        // Get horses for each race
+        $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber]);
+        $horses = $stmt->fetchAll();
+        $horsesVal = array();
+
+        // Answer: Whether horse can be deleted
+        foreach ($horses as $horse) {
+            $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
+                "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
+
+            if ($horseStmt->rowCount() > 0) {
+                $horse["can_be_delete"] = false;
+            } else {
+                $horse["can_be_delete"] = true;
+            }
+            $horsesVal[] = $horse;
+        }
+
+        return $horsesVal;
+    }
+
+    public static function createAndGetHorses($pdo, $eventId, $raceNumber, $horses): array
+    {
+        $pdo->beginTransaction();
+        $query = "INSERT INTO horse (race_event_id, race_race_number, horse_number) VALUES (:race_event_id, :race_race_number, :horse_number)";
+        $stmt = $pdo->prepare($query);
+
+        foreach ($horses as $horse) {
+            $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
+        }
+        $pdo->commit();
+        return self::getHorses($pdo, $eventId, $raceNumber);
+    }
+
 }
