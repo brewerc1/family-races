@@ -235,8 +235,14 @@ class Utils
         $query = "INSERT INTO horse (race_event_id, race_race_number, horse_number) VALUES (:race_event_id, :race_race_number, :horse_number)";
         $stmt = $pdo->prepare($query);
 
+        // Check if there is already a horse with the same name for this race and event
+        $checkQuery = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $stmtCheckQuery = $pdo->prepare($checkQuery);
+
         foreach ($horses as $horse) {
-            $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
+            $stmtCheckQuery->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
+            if ($stmtCheckQuery->rowCount() === 0)
+                $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
         }
         $pdo->commit();
         return self::getHorses($pdo, $eventId, $raceNumber);
@@ -249,6 +255,11 @@ class Utils
         if (isset($_GET['e']) && !is_numeric($_GET['e'])) return false;
         if (isset($_GET['r']) && !is_numeric($_GET['r']) && !isset($_GET['e'])) return false;
         return true;
+    }
+
+    public static function validatePostRequestURLParams(): bool
+    {
+        return empty($_GET);
     }
 
 }

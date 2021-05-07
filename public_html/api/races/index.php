@@ -84,7 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 // CREATE race
-elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!Utils::validatePostRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
+
     // Admin only View
     if (!Utils::isAdmin()) {
         Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
@@ -103,28 +109,22 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     }
 
     // Required data && Optional data
-    if (empty($jsonData->event_id) || isset($jsonData->window_closed) || isset($jsonData->cancelled) || isset($jsonData->horses)) {
-        $messages = array();
-        // Required
-        (empty($jsonData->event_id) || !is_numeric($jsonData->event_id) ?
-            $messages[] = "event_id field is required and must be numeric" : false);
-
-        // Optionals
-        (isset($jsonData->window_closed) && !(is_numeric($jsonData->window_closed) &&
-            (intval($jsonData->window_closed) === 0 || intval($jsonData->window_closed === 1))) ?
-            $messages[] = "window_closed field is must be numeric 0(open) or 1(close)" : false);
-
-        (isset($jsonData->cancelled) && !(is_numeric($jsonData->cancelled) &&
-            (intval($jsonData->cancelled) === 0 || intval($jsonData->cancelled) === 1)) ?
-            $messages[] = "cancelled field is must be numeric 0(open) or 1(close)" : false);
-
-        ((isset($jsonData->horses) && !is_array($jsonData->horses)) ?
-            $messages[] = "horses field must be an array of string" : false);
-
-        if (count($messages) > 0) {
-            Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
-            exit;
-        }
+    $messages = array();
+    // Required
+    (!is_numeric($jsonData->event_id) ?
+        $messages[] = "event_id field is required and must be numeric" : false);
+    // Optionals
+    (isset($jsonData->window_closed) && !(is_numeric($jsonData->window_closed) &&
+        (intval($jsonData->window_closed) === 0 || intval($jsonData->window_closed === 1))) ?
+        $messages[] = "window_closed field is must be numeric 0(open) or 1(close)" : false);
+    (isset($jsonData->cancelled) && !(is_numeric($jsonData->cancelled) &&
+        (intval($jsonData->cancelled) === 0 || intval($jsonData->cancelled) === 1)) ?
+        $messages[] = "cancelled field is must be numeric 0(open) or 1(close)" : false);
+    ((isset($jsonData->horses) && !is_array($jsonData->horses)) ?
+        $messages[] = "horses field must be an array of string" : false);
+    if (count($messages) > 0) {
+        Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+        exit;
     }
     //Required
     $eventId = $jsonData->event_id;
