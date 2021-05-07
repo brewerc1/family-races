@@ -173,17 +173,39 @@ class Utils
     public static function getHorses($pdo, $eventId=null, $raceNumber=null): array
     {
 
-        $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
-        $stmt = $pdo->prepare($query);
+        if ($eventId === null && $raceNumber !== null) return [];
+
+        $horsesWihPagination = null;
+
+        if ($eventId !== null && $raceNumber !== null) {
+            $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $options = ["race_event_id" => $eventId, "race_race_number" => $raceNumber];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+        elseif ($eventId !== null && $raceNumber === null) {
+            $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id LIMIT :_limit OFFSET :off_set";
+            $options = ["race_event_id" => $eventId];
+            $pageQuery = "SELECT COUNT(*) AS total FROM horse WHERE race_event_id = :race_event_id";
+            $optionPage = ["race_event_id" => $eventId];
+            $urlParams = ["e" => $eventId];
+            $horsesWihPagination = self::getAllWithPagination($pdo, "/api/horses/", "horses", $query, $pageQuery, $options, $optionPage, $urlParams);
+            $horses = $horsesWihPagination["horses"];
+        }
+        else {
+            $query = "SELECT * FROM horse LIMIT :_limit OFFSET :off_set";
+            $options = [];
+            $pageQuery = "SELECT COUNT(*) AS total FROM horse";
+            $optionPage = [];
+            $horsesWihPagination = self::getAllWithPagination($pdo, "/api/horses/", "horses", $query, $pageQuery, $options, $optionPage);
+            $horses = $horsesWihPagination["horses"];
+        }
 
         $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
         $horseStmt = $pdo->prepare($horseQuery);
-
         // Get horses for each race
-        $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber]);
-        $horses = $stmt->fetchAll();
         $horsesVal = array();
-
         // Answer: Whether horse can be deleted
         foreach ($horses as $horse) {
             $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
@@ -197,6 +219,13 @@ class Utils
             $horsesVal[] = $horse;
         }
 
+        // Return horses with pagination
+        if ($horsesWihPagination !== null) {
+            $horsesWihPagination["horses"] = $horsesVal;
+            return $horsesWihPagination;
+        }
+
+        // Return only horses
         return $horsesVal;
     }
 
@@ -211,6 +240,15 @@ class Utils
         }
         $pdo->commit();
         return self::getHorses($pdo, $eventId, $raceNumber);
+    }
+
+    public static function validGetRequestURLParams(): bool
+    {
+        if (count($_GET) > 2) return false;
+        if (isset($_GET['pg']) && !is_numeric($_GET['pg'])) return false;
+        if (isset($_GET['e']) && !is_numeric($_GET['e'])) return false;
+        if (isset($_GET['r']) && !is_numeric($_GET['r']) && !isset($_GET['e'])) return false;
+        return true;
     }
 
 }

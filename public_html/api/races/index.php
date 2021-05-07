@@ -14,19 +14,13 @@ if(!Utils::isLoggedIn()) {
     exit;
 }
 
-function validGetRequestURLParams() {
-    if (count($_GET) > 2) return false;
-    if (key_exists("e", $_GET) && Utils::getEventId() === null) return false;
-    if (key_exists("r", $_GET)) {
-        if (Utils::getRaceNumber() === null) return false;
-        if (!key_exists("e", $_GET)) return false;
-        elseif (Utils::getEventId() === null) return false;
-    }
-    return true;
-}
 
 // GET ALL races (ALL, ALL for event, a race)
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (!Utils::validGetRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
     try {
         $query = "SELECT * FROM race LIMIT :_limit OFFSET :off_set";
         $OptionsForQuery = [];

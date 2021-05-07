@@ -6,10 +6,13 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 //$_SESSION['admin'] = 1;
 
 use api\Utils;
+use JetBrains\PhpStorm\Pure;
+
 include_once '../Utils.php';
 
-function validGetRequestURLParams() {
-    return Utils::getPageNumber() !== null;
+function validGetRequestURLParams(): bool
+{
+    return !isset($_GET['pg']) || is_numeric($_GET['pg']);
 }
 
 
@@ -19,7 +22,12 @@ if(!Utils::isLoggedIn()) {
 }
 
 // GET ALL EVENTS
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+    if (!validGetRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
 
     try {
 
