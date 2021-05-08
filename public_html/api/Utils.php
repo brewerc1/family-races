@@ -170,14 +170,22 @@ class Utils
         return $returnData;
     }
 
-    public static function getHorses($pdo, $eventId=null, $raceNumber=null): array
+    public static function getHorses($pdo, $eventId=null, $raceNumber=null, $horseId=null): array
     {
+        // TODO: Support to get a single horse
 
-        if ($eventId === null && $raceNumber !== null) return [];
+//        if ($eventId === null && $raceNumber !== null) return [];
 
         $horsesWihPagination = null;
 
-        if ($eventId !== null && $raceNumber !== null) {
+        if ($eventId !== null && $raceNumber !== null && $horseId !== null) {
+            $query = "SELECT * FROM horse WHERE id = :id AND race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $options = ["id" => $horseId, "race_event_id" => $eventId, "race_race_number" => $raceNumber];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+        elseif ($eventId !== null && $raceNumber !== null) {
             $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
             $stmt = $pdo->prepare($query);
             $options = ["race_event_id" => $eventId, "race_race_number" => $raceNumber];
@@ -260,6 +268,43 @@ class Utils
     public static function validatePostRequestURLParams(): bool
     {
         return empty($_GET);
+    }
+
+    public static function updateHorse($pdo, $horse) {
+
+        $options = array();
+        $options["race_event_id"] = $horse["race_event_id"];
+        $options["race_race_number"] = $horse["race_race_number"];
+        $options["id"] = $horse["id"];
+
+        unset($horse["race_event_id"]);
+        unset($horse["race_race_number"]);
+        unset($horse["id"]);
+
+        $update = "";
+
+        foreach ($horse as $key => $val) {
+            if ($val !== null) {
+                $update .= $key . " =:" . $key . ",";
+                $options[$key] = $val;
+            }
+        }
+        $update = (substr($update, -1) === ',') ? substr($update, 0, -1) : $update;
+//        echo $update . "\n";
+//        var_dump($options);
+//        exit;
+
+        $pdo->beginTransaction();
+        $query = "UPDATE horse SET " . $update . " WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($options);
+        $pdo->commit();
+
+//        $query = "SELECT * FROM horse  WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND id = :id";
+//        $stmt = $pdo->prepare($query);
+//        $stmt->execute(["race_event_id" => $options["race_event_id"], "race_race_number" => $options["race_race_number"], "id" => $options["id"]]);
+
+        return self::getHorses($pdo, $options["race_event_id"], $options["race_race_number"], $options["id"])[0];
     }
 
 }
