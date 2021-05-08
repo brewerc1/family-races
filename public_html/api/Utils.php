@@ -220,9 +220,9 @@ class Utils
                 "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
 
             if ($horseStmt->rowCount() > 0) {
-                $horse["can_be_delete"] = false;
+                $horse["can_be_deleted"] = false;
             } else {
-                $horse["can_be_delete"] = true;
+                $horse["can_be_deleted"] = true;
             }
             $horsesVal[] = $horse;
         }
