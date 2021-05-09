@@ -99,13 +99,14 @@ function useNewEventData() {
   eventNameHeader.text(nameField.val());
 }
 
+// highlight field with error instead
 function restrictNumberRange() {
   let value = parseInt(potField.val());
   let min = parseFloat(potField.attr("min"));
   let max = parseFloat(potField.attr("max"));
 
   if (value < min) {
-    potField.val(min);
+    potField.val(min); //
   } else if (value > max) {
     potField.val(max);
   }

@@ -44,7 +44,7 @@ function addEventsToDOM(events) {
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
 
-    const template = `
+    let template = `
     <li class="list-group-item" id=${event.id}>
       <div class="flex-container">
         <p class="event-title">
@@ -61,7 +61,28 @@ function addEventsToDOM(events) {
       state.hasCurrentEvent = true;
       state.currentEventID = event.id;
       $("#current-event-container").css("display", "block");
+
+      template = `
+      <li class="list-group-item" id=${event.id}>
+        <div class="flex-container">
+          <p class="event-title">
+            ${event.name}
+          </p>
+          <div class="current-event-controls">
+            <a class="black-btn" href="" id="admin-close-event-btn">
+            Close Event
+            </a>
+            <a class="black-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}&status=${event.status}">
+            View
+            </a>
+          </div>
+        </div>
+      </li>
+      `;
       currentEventlist.append(template);
+
+      // Add event listener
+      $("#admin-close-event-btn").on("click", (e) => closeEvent(e));
     } else {
       eventsList.append(template);
     }
@@ -72,6 +93,13 @@ function addEventsToDOM(events) {
   });
 
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
+}
+
+function closeEvent(e) {
+  e.preventDefault();
+  let canCloseEvent = confirm("Are you sure you want to close this event?");
+
+  if (!canCloseEvent) return;
 }
 
 function toggleLoader() {

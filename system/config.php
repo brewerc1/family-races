@@ -4,7 +4,8 @@ global $config;
 
 $config = array(
     'prod_mode' => false, // set to false for development
-    'db_host' => 'informatics.plus',
+    // 'db_host' => 'informatics.plus',
+    'db_host' => 'localhost',
     'db_name' => 'races',
     'db_user' => 'racesdbuser',
     'db_password' => 'racesdb!',
