@@ -292,6 +292,7 @@ class Utils
 
         if (isset($horse["race_event_id"])) unset($horse["race_event_id"]);
         if (isset($horse["race_race_number"])) unset($horse["race_race_number"]);
+        if (isset($horse["can_be_deleted"])) unset($horse["can_be_delete"]);
         unset($horse["id"]);
 
         $update = "";
@@ -318,6 +319,15 @@ class Utils
 //        $stmt->execute(["race_event_id" => $options["race_event_id"], "race_race_number" => $options["race_race_number"], "id" => $options["id"]]);
 
         return self::getHorses($pdo, null, null, $options["id"])[0];
+    }
+
+    public static function populateRaceStandingsTable() {}
+    public static function populateEventStandingsTable() {}
+
+    public static function unsetResult($pdo, $race_event_id, $race_race_number) {
+        $query = "UPDATE horse SET finish = NULL, win_purse = NULL, place_purse = NULL, show_purse = NULL WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND finish IS NOT NULL";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(["race_event_id" => $race_event_id, "race_race_number" => $race_race_number]);
     }
 
 }

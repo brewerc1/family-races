@@ -204,6 +204,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         }
 
         if ($status !== null) {
+            // TODO: populate events standings table if status is 1
             $subQuery .= " status = :status,";
             $options["status"] = $status;
         }

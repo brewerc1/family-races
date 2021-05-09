@@ -149,8 +149,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === '
         $hrs = array();
         foreach ($horses as $horse) {
             $horse = (array)$horse;
-            if (isset($horse["can_be_delete"]))
-                unset($horse["can_be_delete"]);
+            if (isset($horse["can_be_deleted"]))
+                unset($horse["can_be_deleted"]);
 
             $hrs[] = Utils::updateHorse($pdo, $horse);
         }

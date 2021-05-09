@@ -75,6 +75,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 }
+
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
+
+    if (!Utils::validatePostRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
+
+    // Admin only View
+    if (!Utils::isAdmin()) {
+        Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+        exit;
+    }
+
+    if (!Utils::isValidContentType()) {
+        Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+        exit;
+    }
+
+    $postData = file_get_contents('php://input');
+    if (!$jsonData = json_decode($postData)) {
+        Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+        exit;
+    }
+
+    $messages = array();
+    (((isset($jsonData->horses) && !is_array($jsonData->horses)) || count($jsonData->horses) < 3 || count($jsonData->horses) > 3) ?
+        $messages[] = "horses field must be an array of 3 horses" : false);
+    if (count($messages) > 0) {
+        Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+        exit;
+    }
+
+    $horses = $jsonData->horses;
+
+    $message = $_SERVER['REQUEST_METHOD'] === 'POST' ? "Result created" : "Result Updated";
+    $statusCd = $_SERVER['REQUEST_METHOD'] === 'POST' ? 201 : 200;
+
+    try {
+        // Unset result
+        Utils::unsetResult($pdo, $horses[0]->race_event_id, $horses[0]->race_race_number);
+        $hrs = [];
+        foreach ($horses as $horse) {
+            $horse = (array)$horse;
+            if (isset($horse["can_be_deleted"])) unset($horse["can_be_deleted"]);
+
+            $hrs[] = Utils::updateHorse($pdo, $horse);
+        }
+
+        Utils::sendResponse($statusCd, $success=true, $msg=[$message], $data=$hrs);
+        exit;
+    }
+    catch (PDOException $ex) {
+        Utils::sendResponse(500, $success=false, $msg=["Some horse object misses id field." . $ex], $data=null);
+        exit;
+    }
+}
+
 else {
     Utils::sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
     exit;
