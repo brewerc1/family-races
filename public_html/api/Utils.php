@@ -170,7 +170,7 @@ class Utils
         return $returnData;
     }
 
-    public static function getHorses($pdo, $eventId=null, $raceNumber=null, $horseId=null): array
+    public static function getHorses($pdo, $eventId=null, $raceNumber=null, $horseId=null, $horseName=null): array
     {
         // TODO: Support to get a single horse
 
@@ -178,21 +178,34 @@ class Utils
 
         $horsesWihPagination = null;
 
-        if ($horseId !== null) {
+        // GET one horse by id
+        if ($eventId === null && $raceNumber === null && $horseId !== null) {
             $query = "SELECT * FROM horse WHERE id = :id";
             $stmt = $pdo->prepare($query);
             $options = ["id" => $horseId];
             $stmt->execute($options);
             $horses = $stmt->fetchAll();
         }
-        elseif ($eventId !== null && $raceNumber !== null) {
+
+        // GET one horse by the horse number
+        elseif ($eventId !== null && $raceNumber !== null && $horseName !== null) {
+            $query = "SELECT * FROM horse WHERE horse_number = :horse_number AND race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $options = ["horse_number" => $horseName, "race_event_id" => $eventId, "race_race_number" => $raceNumber];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+
+        // TODO:
+        elseif ($eventId !== null && $raceNumber !== null && $horseId == null) {
             $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
             $stmt = $pdo->prepare($query);
             $options = ["race_event_id" => $eventId, "race_race_number" => $raceNumber];
             $stmt->execute($options);
             $horses = $stmt->fetchAll();
         }
-        elseif ($eventId !== null && $raceNumber === null) {
+        // GET LOTS OF HORSES WITH Pagination
+        elseif ($eventId !== null && $raceNumber === null && $horseId === null) {
             $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id LIMIT :_limit OFFSET :off_set";
             $options = ["race_event_id" => $eventId];
             $pageQuery = "SELECT COUNT(*) AS total FROM horse WHERE race_event_id = :race_event_id";

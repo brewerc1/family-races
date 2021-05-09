@@ -14,11 +14,13 @@ if(!Utils::isLoggedIn()) {
     exit;
 }
 
+// TODO: Add validGetRequestURLParams()
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (!Utils::validGetRequestURLParams()) {
-        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
-        exit;
-    }
+//    if (!Utils::validGetRequestURLParams()) {
+//        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+//        exit;
+//    }
     try {
         // GET ALL horses
         $horsesData = Utils::getHorses($pdo, Utils::getEventId(), Utils::getRaceNumber());
