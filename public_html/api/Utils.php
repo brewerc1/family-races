@@ -21,33 +21,40 @@ class Utils
         $response->send();
     }
 
-    public static function isAdmin() {
+    public static function isAdmin(): bool
+    {
         return !empty($_SESSION['admin']) && $_SESSION['admin'] === 1;
     }
 
-    public static function isLoggedIn() {
+    public static function isLoggedIn(): bool
+    {
         return !empty($_SESSION["id"]);
     }
 
-    public static function getEventId() {
-        return isset($_GET['e']) && is_numeric($_GET['e']) ? $_GET['e'] : null;
+    public static function getEventId(): ?int
+    {
+        return isset($_GET['e']) && is_numeric($_GET['e']) ? intval($_GET['e']) : null;
     }
 
-    public static function getRaceNumber() {
-        return isset($_GET['r']) && is_numeric($_GET['r']) ? $_GET['r'] : null;
+    public static function getRaceNumber(): ?int
+    {
+        return isset($_GET['r']) && is_numeric($_GET['r']) ? intval($_GET['r']) : null;
     }
 
-    public static function isValidContentType() {
+    public static function isValidContentType(): bool
+    {
         return isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json';
     }
 
-    public static function getPageNumber() {
-        return array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? $_GET['pg'] : 1;
+    public static function getPageNumber(): int
+    {
+        return array_key_exists('pg', $_GET) && is_numeric($_GET['pg']) ? intval($_GET['pg']) : 1;
     }
 
     public static function getWithPagination($pdo, $tableName, $page, $endPoint, $keyWord,
                                              $customQuery=null, $urlQuery=null, $customOptions=null,
-                                             $customQueryTotalPage=null, $customOptionPage=null) {
+                                             $customQueryTotalPage=null, $customOptionPage=null): array
+    {
         // Number of events per page
         $pageLimit = 10;
 
@@ -110,7 +117,8 @@ class Utils
     }
 
     public static function getAllWithPagination($pdo, $endPoint, $keyWord,
-                                             $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]) {
+                                             $query, $pageQuery, $optionsForQuery, $optionForPageQuery, $urlParams=[]): array
+    {
 
         // Number of items per page (Default)
         $pageLimit = 10;
@@ -146,7 +154,7 @@ class Utils
 
             // Get all
             $stmt = $pdo->prepare($query);
-            $stmt->execute(array_merge($OptionsForQuery, ['_limit' => $pageLimit, 'off_set' => $offset]));
+            $stmt->execute(array_merge($optionsForQuery, ['_limit' => $pageLimit, 'off_set' => $offset]));
             $data = $stmt->fetchAll();
             $rowReturned = count($data);
 
@@ -160,6 +168,166 @@ class Utils
         }
 
         return $returnData;
+    }
+
+    public static function getHorses($pdo, $eventId=null, $raceNumber=null, $horseId=null, $horseName=null): array
+    {
+        // TODO: Support to get a single horse
+
+//        if ($eventId === null && $raceNumber !== null) return [];
+
+        $horsesWihPagination = null;
+
+        // GET one horse by id
+        if ($eventId === null && $raceNumber === null && $horseId !== null) {
+            $query = "SELECT * FROM horse WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $options = ["id" => $horseId];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+
+        // GET one horse by the horse number
+        elseif ($eventId !== null && $raceNumber !== null && $horseName !== null) {
+            $query = "SELECT * FROM horse WHERE horse_number = :horse_number AND race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $options = ["horse_number" => $horseName, "race_event_id" => $eventId, "race_race_number" => $raceNumber];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+
+        // TODO:
+        elseif ($eventId !== null && $raceNumber !== null && $horseId == null) {
+            $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $options = ["race_event_id" => $eventId, "race_race_number" => $raceNumber];
+            $stmt->execute($options);
+            $horses = $stmt->fetchAll();
+        }
+        // GET LOTS OF HORSES WITH Pagination
+        elseif ($eventId !== null && $raceNumber === null && $horseId === null) {
+            $query = "SELECT * FROM horse WHERE race_event_id = :race_event_id LIMIT :_limit OFFSET :off_set";
+            $options = ["race_event_id" => $eventId];
+            $pageQuery = "SELECT COUNT(*) AS total FROM horse WHERE race_event_id = :race_event_id";
+            $optionPage = ["race_event_id" => $eventId];
+            $urlParams = ["e" => $eventId];
+            $horsesWihPagination = self::getAllWithPagination($pdo, "/api/horses/", "horses", $query, $pageQuery, $options, $optionPage, $urlParams);
+            $horses = $horsesWihPagination["horses"];
+        }
+        else {
+            $query = "SELECT * FROM horse LIMIT :_limit OFFSET :off_set";
+            $options = [];
+            $pageQuery = "SELECT COUNT(*) AS total FROM horse";
+            $optionPage = [];
+            $horsesWihPagination = self::getAllWithPagination($pdo, "/api/horses/", "horses", $query, $pageQuery, $options, $optionPage);
+            $horses = $horsesWihPagination["horses"];
+        }
+
+        $horseQuery = "SELECT * FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $horseStmt = $pdo->prepare($horseQuery);
+        // Get horses for each race
+        $horsesVal = array();
+        // Answer: Whether horse can be deleted
+        foreach ($horses as $horse) {
+            $horseStmt->execute(["race_event_id" => $horse["race_event_id"],
+                "race_race_number" => $horse["race_race_number"], "horse_number" => $horse["horse_number"]]);
+
+            if ($horseStmt->rowCount() > 0) {
+                $horse["can_be_deleted"] = false;
+            } else {
+                $horse["can_be_deleted"] = true;
+            }
+            $horsesVal[] = $horse;
+        }
+
+        // Return horses with pagination
+        if ($horsesWihPagination !== null) {
+            $horsesWihPagination["horses"] = $horsesVal;
+            return $horsesWihPagination;
+        }
+
+        // Return only horses
+        return $horsesVal;
+    }
+
+    public static function createAndGetHorses($pdo, $eventId, $raceNumber, $horses): array
+    {
+        $pdo->beginTransaction();
+        $query = "INSERT INTO horse (race_event_id, race_race_number, horse_number) VALUES (:race_event_id, :race_race_number, :horse_number)";
+        $stmt = $pdo->prepare($query);
+
+        // Check if there is already a horse with the same name for this race and event
+        $checkQuery = "SELECT * FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND horse_number = :horse_number";
+        $stmtCheckQuery = $pdo->prepare($checkQuery);
+
+        foreach ($horses as $horse) {
+            $stmtCheckQuery->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
+            if ($stmtCheckQuery->rowCount() === 0)
+                $stmt->execute(["race_event_id" => $eventId, "race_race_number" => $raceNumber, "horse_number" => $horse]);
+        }
+        $pdo->commit();
+        return self::getHorses($pdo, $eventId, $raceNumber);
+    }
+
+    public static function validGetRequestURLParams(): bool
+    {
+        if (count($_GET) > 2) return false;
+        if (isset($_GET['pg']) && !is_numeric($_GET['pg'])) return false;
+        if (isset($_GET['e']) && !is_numeric($_GET['e'])) return false;
+        if (isset($_GET['r']) && !is_numeric($_GET['r']) && !isset($_GET['e'])) return false;
+        return true;
+    }
+
+    public static function validatePostRequestURLParams(): bool
+    {
+        return empty($_GET);
+    }
+
+    public static function updateHorse($pdo, $horse) {
+
+        $options = array();
+//        $options["race_event_id"] = $horse["race_event_id"];
+//        $options["race_race_number"] = $horse["race_race_number"];
+        $options["id"] = $horse["id"];
+
+        if (isset($horse["race_event_id"])) unset($horse["race_event_id"]);
+        if (isset($horse["race_race_number"])) unset($horse["race_race_number"]);
+        if (isset($horse["can_be_deleted"])) unset($horse["can_be_delete"]);
+        unset($horse["id"]);
+
+        $update = "";
+
+        foreach ($horse as $key => $val) {
+            if ($val !== null) {
+                $update .= $key . " =:" . $key . ",";
+                $options[$key] = $val;
+            }
+        }
+        $update = (substr($update, -1) === ',') ? substr($update, 0, -1) : $update;
+//        echo $update . "\n";
+//        var_dump($options);
+//        exit;
+
+        $pdo->beginTransaction();
+        $query = "UPDATE horse SET " . $update . " WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($options);
+        $pdo->commit();
+
+//        $query = "SELECT * FROM horse  WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND id = :id";
+//        $stmt = $pdo->prepare($query);
+//        $stmt->execute(["race_event_id" => $options["race_event_id"], "race_race_number" => $options["race_race_number"], "id" => $options["id"]]);
+
+        return self::getHorses($pdo, null, null, $options["id"])[0];
+    }
+
+    public static function populateRaceStandingsTable() {}
+    public static function populateEventStandingsTable() {}
+
+    public static function unsetResult($pdo, $race_event_id, $race_race_number) {
+        $query = "UPDATE horse SET finish = NULL, win_purse = NULL, place_purse = NULL, show_purse = NULL WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND finish IS NOT NULL";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(["race_event_id" => $race_event_id, "race_race_number" => $race_race_number]);
     }
 
 }

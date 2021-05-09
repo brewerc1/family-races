@@ -2,14 +2,17 @@
 require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
-$_SESSION['id'] = '1';
-$_SESSION['admin'] = 1;
+//$_SESSION['id'] = '1';
+//$_SESSION['admin'] = 1;
 
 use api\Utils;
+use JetBrains\PhpStorm\Pure;
+
 include_once '../Utils.php';
 
-function validGetRequestURLParams() {
-    return Utils::getPageNumber() !== null;
+function validGetRequestURLParams(): bool
+{
+    return !isset($_GET['pg']) || is_numeric($_GET['pg']);
 }
 
 
@@ -19,7 +22,12 @@ if(!Utils::isLoggedIn()) {
 }
 
 // GET ALL EVENTS
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+    if (!validGetRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
 
     try {
 
@@ -71,8 +79,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (empty($jsonData->name) ? $messages[] = "Name field is required and can't be blank" : false);
             (empty($jsonData->date) ? $messages[] = "Date field is required and can't be blank" : false);
             (empty($jsonData->pot) ? $messages[] = "Pot field is required and can't be blank" : false);
-            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
-            exit;
+            if (count($messages) > 0) {
+                Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+                exit;
+            }
         }
 
         // Validate input type
@@ -88,8 +98,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
             (!empty($eventNameErr) ? $messages[] = $eventNameErr : false);
             (!empty($dateErr) ? $messages[] = $dateErr : false);
             (!empty($potErr) ? $messages[] = $potErr : false);
-            Utils::sendResponse(400, $success=false, $msg=$messages, $data=null);
-            exit;
+            if (count($messages) > 0) {
+                Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
+                exit;
+            }
         }
 
         // Create the new event
@@ -150,7 +162,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         $errMessages[] = "Pot field must be int with no more than 6 digits" : false);
 
     $status = isset($jsonData->status) ? $jsonData->status : null;
-    ($status !== null && !($status === 1 || $status === 0) ?
+    ($status !== null && !(intval($status) === 1 || intval($status) === 0) ?
         $errMessages[] = "Status must be either 0 (open) or 1 (close)." : false);
 
     $championId = isset($jsonData->champion_id) ? $jsonData->champion_id : null;
@@ -192,6 +204,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         }
 
         if ($status !== null) {
+            // TODO: populate events standings table if status is 1
             $subQuery .= " status = :status,";
             $options["status"] = $status;
         }
