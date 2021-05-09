@@ -321,13 +321,124 @@ class Utils
         return self::getHorses($pdo, null, null, $options["id"])[0];
     }
 
-    public static function populateRaceStandingsTable() {}
-    public static function populateEventStandingsTable() {}
+    public static function populateRaceStandingsTable($pdo, $event_id, $race_number, $win, $place, $show) {
+
+        $pdo->beginTransaction(); // Start transaction
+
+        //
+        $query = "DELETE FROM race_standings WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+
+        $query = "SELECT user_id, horse_number, finish FROM pick WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['race_event_id' => $event_id, 'race_race_number' => $race_number]);
+        $picks = $stmt->fetchAll();
+
+        $insert_race_standings_sql = "INSERT INTO `race_standings` (race_event_id, race_race_number, user_id, earnings) VALUES (?, ?, ?, ?)";
+        $insert_race_standings = $pdo->prepare($insert_race_standings_sql);
+
+        foreach ($picks as $pick) {
+
+            if ($pick['horse_number'] === $win[0]) {
+
+                if ($pick['finish'] === 'win')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[1]]);
+
+                elseif ($pick['finish'] === 'place')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[2]]);
+
+                elseif ($pick['finish'] === 'show')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $win[3]]);
+            }
+
+            elseif ($pick['horse_number'] === $place[0]) {
+
+                if ($pick['finish'] === 'place')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $place[1]]);
+
+                elseif ($pick['finish'] === 'show')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $place[2]]);
+
+                else
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
+
+            }
+
+            elseif ($pick['horse_number'] === $show[0]) {
+
+                if ($pick['finish'] === 'show')
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], $show[1]]);
+
+                else
+                    $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
+
+            }
+
+            else {
+                $insert_race_standings->execute([$event_id, $race_number, $pick['user_id'], 0.00]);
+            }
+
+        }
+        $pdo->commit();
+    }
+    public static function populateEventStandingsTable($pdo, $event_id, $recalculate=false) {
+        $pdo->beginTransaction(); // Start transaction
+        if ($recalculate) {
+            $query = "DELETE FROM event_standings WHERE event_id = :event_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['event_id' => $event_id]);
+        }
+
+        $query = "SELECT user_id, sum(earnings) as total FROM race_standings WHERE race_event_id = :race_event_id GROUP BY user_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['race_event_id' => $event_id]);
+
+        if ($stmt->rowCount() > 0) { // If event has records
+            $race_standings = $stmt->fetchAll();
+            $query = "INSERT INTO event_standings (event_id, user_id, earnings) VALUES (:event_id, :user_id, :earnings)";
+            $stmt = $pdo->prepare($query);
+            $winner = array('total' => 0);
+            foreach ($race_standings as $standing) {
+                $uid = $standing['user_id'];
+                $earnings = floatval($standing['total']);
+                $stmt->execute(['event_id' => $event_id, 'user_id' => $uid, 'earnings' => $earnings]);
+
+                if ($earnings > floatval($winner['total']))
+                    $winner = $standing;
+            }
+            $query = "UPDATE event SET status = :status, champion_id = :champion_id, champion_purse = :champion_purse, champion_photo = :champion_photo WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['status' => 1, 'champion_id' => $winner['user_id'], 'champion_purse' => $winner['total'], 'champion_photo' => '', 'id' => $event_id]);
+
+        }
+        else { // If event has no record
+            // Change event Status
+            $query = "UPDATE event SET status = :status WHERE id = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['status' => 1, 'id' => $event_id]);
+
+            // Close all races that belong to this event
+            $query = "SELECT race_number FROM race WHERE event_id = :event_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['event_id' => $event_id]);
+            $races = $stmt->fetchAll();
+            foreach($races as $race) {
+                $race_number = $race["race_number"];
+                $query = "UPDATE race SET window_closed = 1 WHERE event_id = :event_id AND race_number = :race_number";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute(['event_id' => $event_id, 'race_number' => $race_number]);
+            }
+        }
+        $pdo->commit(); // Write all changes into DB
+    }
 
     public static function unsetResult($pdo, $race_event_id, $race_race_number) {
+        $pdo->beginTransaction(); // Start transaction
         $query = "UPDATE horse SET finish = NULL, win_purse = NULL, place_purse = NULL, show_purse = NULL WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number AND finish IS NOT NULL";
         $stmt = $pdo->prepare($query);
         $stmt->execute(["race_event_id" => $race_event_id, "race_race_number" => $race_race_number]);
+        $pdo->commit(); // Write all changes into DB
     }
 
 }

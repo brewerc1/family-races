@@ -204,7 +204,6 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         }
 
         if ($status !== null) {
-            // TODO: populate events standings table if status is 1
             $subQuery .= " status = :status,";
             $options["status"] = $status;
         }
@@ -235,6 +234,8 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
             $query = "SELECT * FROM event WHERE id = :id";
             $stmt = $pdo->prepare($query);
             $stmt->execute(["id" => $eventId]);
+
+            if (intval($status) === 1) Utils::populateEventStandingsTable($pdo, $eventId);
 
             Utils::sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
             exit;
