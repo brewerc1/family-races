@@ -51,13 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         $horses = Utils::getHorses($pdo, Utils::getEventId(), Utils::getRaceNumber());
 
-//        for ($i = 0; $i < count($horses); $i++) {
-//            $horse = $horses[$i];
-//            if ($horse['id'] === $winHorse['id'] || $horse['id'] === $placeHorse['id'] || $horse['id'] === $showHorse['id']) {
-//                unset($horses[$i]);
-//            }
-//        }
-//        var_dump($horses);
+        $notTop = array();
+        foreach ($horses as $h) {
+            if ($h["id"] !== $winHorse["id"] && $h["id"] !== $placeHorse["id"] && $h["id"] !== $showHorse["id"]) $notTop[] = $h;
+        }
 
         $data = array();
         $data["race_event_id"] = Utils::getEventId();
@@ -66,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $data["place"] = [$place["place_purse"], $place["show_purse"]];
         $data["show"] = [$show["show_purse"]];
         $data["top_horses"] = [$winHorse, $placeHorse, $showHorse];
-        $data["horses"] = $horses;
+        $data["other_horses"] = $notTop;
         Utils::sendResponse(200, $success=true, $msg=null, $data);
         exit;
     }
