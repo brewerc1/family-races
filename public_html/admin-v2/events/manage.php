@@ -66,6 +66,10 @@ if ($_SESSION["admin"] != 1) {
 
 	<h3 class="m-3">Races in this Event</h3>
 
+	<div id="add-race-container">
+		<p><a class="fas fa-plus-circle"></a><span>Add a race</span></p>
+	</div>
+
 	<div id="loader-container">
 		<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
 	</div>

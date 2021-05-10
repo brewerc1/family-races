@@ -6,6 +6,7 @@ const state = {
   previousPage: null,
   hasCurrentEvent: false,
   currentEventID: null,
+  pageNumber: 1,
 };
 
 function fetchEvents(requestURL) {
@@ -50,7 +51,7 @@ function addEventsToDOM(events) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}">
+        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
           View
         </a>
       </div>
@@ -72,7 +73,7 @@ function addEventsToDOM(events) {
             <a class="black-btn" href="" id="admin-close-event-btn">
             Close Event
             </a>
-            <a class="black-btn" href="./manage.php?e=${event.id}">
+            <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
             View
             </a>
           </div>
@@ -127,7 +128,7 @@ function closeEvent(e, event) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}">
+        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
           View
         </a>
       </div>
@@ -156,11 +157,13 @@ function toggleButtonVisibility() {
 
 function nextPage() {
   if (state.nextPage === null) return;
+  state.pageNumber++;
   fetchEvents(state.nextPage);
 }
 
 function previousPage() {
   if (state.previousPage === null) return;
+  state.pageNumber--;
   fetchEvents(state.previousPage);
 }
 

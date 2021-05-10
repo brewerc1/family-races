@@ -1,8 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 
 let loading = true;
-
 let invalidFields = false;
+let racesProcessed = 0;
 
 const eventNameHeader = $("#event-name");
 const nameField = $("#name");
@@ -10,17 +10,25 @@ const dateField = $("#date");
 const potField = $("#pot");
 const loader = $("#loader-container");
 
+const addRaceButton = $("#add-race-container p a");
+
 function fetchEvent() {
   displayEventInformation();
   displayEventRaces();
-
   loading = false;
 }
 
 function displayEventInformation() {
-  const requestURL = `http://localhost/api/events?e=${params.get("e")}`;
+  // Need page due to API
+  const requestURL = `http://localhost/api/events?e=${params.get(
+    "e"
+  )}&pg=${params.get("pg")}`;
   $.get(requestURL, (data) => {
-    const event = data.data.events[0];
+    // Hacky, only way this can be done with the current API
+    let event = data.data.events.filter(
+      (event) => event.id == params.get("e")
+    )[0];
+
     const eventName = event.name;
     const eventPot = Number.parseFloat(event.pot);
     const eventDate = event.date;
@@ -33,13 +41,16 @@ function displayEventInformation() {
 }
 
 function displayEventRaces() {
-  let racesProcessed = 0;
   const racesList = $("#races-list");
   const requestURL = `http://localhost/api/races?e=${params.get("e")}`;
   $.get(requestURL, (data) => {
     const races = data.data.races;
 
-    if (races.length === 0) toggleLoader();
+    if (races.length === 0) {
+      toggleLoader();
+      toggleAddRace(0);
+      return;
+    }
 
     races.forEach((race) => {
       const template = `
@@ -65,9 +76,22 @@ function displayEventRaces() {
 
       racesList.append(template);
       racesProcessed++;
-      if (racesProcessed === races.length) toggleLoader();
+      if (racesProcessed === races.length) {
+        toggleLoader();
+        toggleAddRace(racesProcessed);
+      }
     });
   });
+}
+
+function toggleAddRace(numRaces) {
+  $("#add-race-container").css("display", "block");
+  addRaceButton.attr(
+    "href",
+    `../races/race.php?e=${params.get("e")}&r=${numRaces + 1}&pg=${params.get(
+      "pg"
+    )}&mode=create`
+  );
 }
 
 function toggleLoader() {
@@ -90,9 +114,8 @@ function handleOnChange() {
     url: requestURL,
     contentType: "application/json",
     data: JSON.stringify(data),
-  }).done((data) => {
+  }).done(() => {
     eventNameHeader.text(nameField.val());
-    console.log(data);
   });
 }
 

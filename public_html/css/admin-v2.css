@@ -7,7 +7,8 @@
   color: #555;
 }
 
-#manage-events-page-header {
+#manage-events-page-header,
+#manage-race-page-header {
   text-align: left;
 }
 
@@ -68,6 +69,15 @@
   padding: 0.4rem 1.2rem 0.2rem;
 }
 
+#race-done-container {
+  display: flex;
+  justify-content: center;
+}
+
+#race-done {
+  padding-bottom: 0.4rem;
+}
+
 .black-btn:hover {
   background-color: white;
 }
@@ -110,6 +120,59 @@
 #admin-close-event-btn:hover {
   background-color: black;
   color: white;
+}
+
+#add-race-container {
+  display: none;
+}
+
+#add-race-container p {
+  text-align: center;
+}
+
+#add-race-container p a,
+#add-horse-container p a {
+  margin-right: 1rem;
+}
+
+#current-race {
+  display: flex;
+  justify-content: space-between;
+}
+
+#current-race .checkbox-container {
+  margin-left: 1rem;
+}
+
+#number-horses {
+  padding: 0.5rem;
+  width: 40%;
+}
+
+#remove-hint {
+  display: none;
+}
+
+#horses {
+  margin-bottom: 1rem;
+}
+
+.horse {
+  display: flex;
+  margin-bottom: 0.8rem;
+}
+
+.horse input {
+  margin-right: 1rem;
+}
+
+.horse .black-btn {
+  display: flex;
+  align-items: center;
+}
+
+.horse .black-btn i {
+  margin-right: 0.5rem;
 }
 
 .error {
