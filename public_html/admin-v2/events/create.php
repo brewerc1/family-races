@@ -64,7 +64,7 @@ if($_SESSION["admin"] != 1) {
 
 				<div class="form-row my-5">
 					<div class="col text-center">
-	                    <button class="btn btn-primary btn col-sm-5" id="save-event">Save This Event</button>
+	                    <a class="btn btn-primary btn col-sm-5 disabled" id="save-event">Save This Event</a>
 	                    <a class="btn btn-text d-block mt-2 text-center" href="/admin-v2/events/">Cancel</a>
 	                </div>
 				</div>

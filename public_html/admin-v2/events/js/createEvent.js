@@ -29,6 +29,8 @@ function createEvent() {
     console.log(data);
     if (!state.eventCreated) state.eventId = data.data[0].id;
     state.eventCreated = true;
+    saveEventBtn.removeClass("disabled");
+    saveEventBtn.attr("href", `./manage.php?e=${state.eventId}}`); //change
   });
 }
 
@@ -43,9 +45,3 @@ function handleOnChange() {
 nameField.on("change", handleOnChange);
 dateField.on("change", handleOnChange);
 potField.on("change", handleOnChange);
-
-saveEventBtn.on("click", (e) => {
-  e.preventDefault();
-});
-
-$(document).ready();

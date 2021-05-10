@@ -2,6 +2,8 @@ const params = new URLSearchParams(window.location.search);
 
 let loading = true;
 
+let invalidFields = false;
+
 const eventNameHeader = $("#event-name");
 const nameField = $("#name");
 const dateField = $("#date");
@@ -13,25 +15,28 @@ function fetchEvent() {
   displayEventRaces();
 
   loading = false;
-  // Display error if none
 }
 
 function displayEventInformation() {
-  const eventName = params.get("name");
-  const eventPot = params.get("pot");
-  const eventDate = params.get("date");
+  const requestURL = `http://localhost/api/events?e=${params.get("e")}`;
+  $.get(requestURL, (data) => {
+    const event = data.data.events[0];
+    const eventName = event.name;
+    const eventPot = Number.parseFloat(event.pot);
+    const eventDate = event.date;
 
-  eventNameHeader.text(eventName);
-  nameField.val(eventName);
-  dateField.val(eventDate);
-  potField.val(eventPot);
+    eventNameHeader.text(eventName);
+    nameField.val(eventName);
+    dateField.val(eventDate);
+    potField.val(eventPot);
+  });
 }
 
 function displayEventRaces() {
   let racesProcessed = 0;
   const racesList = $("#races-list");
-  const url = `http://localhost/api/races?e=${params.get("e")}`;
-  $.get(url, (data) => {
+  const requestURL = `http://localhost/api/races?e=${params.get("e")}`;
+  $.get(requestURL, (data) => {
     const races = data.data.races;
 
     if (races.length === 0) toggleLoader();
@@ -70,7 +75,7 @@ function toggleLoader() {
 }
 
 function handleOnChange() {
-  if (loading) return;
+  if (loading || invalidFields) return;
 
   const requestURL = `http://localhost/api/events?e=${params.get("e")}`;
 
@@ -85,31 +90,25 @@ function handleOnChange() {
     url: requestURL,
     contentType: "application/json",
     data: JSON.stringify(data),
-  }).done(useNewEventData);
+  }).done((data) => {
+    eventNameHeader.text(nameField.val());
+    console.log(data);
+  });
 }
 
-function useNewEventData() {
-  params.set("name", nameField.val());
-  params.set("date", dateField.val());
-  params.set("pot", potField.val());
-
-  let newURL = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(null, "", newURL);
-
-  eventNameHeader.text(nameField.val());
-}
-
-// highlight field with error instead
 function restrictNumberRange() {
   let value = parseInt(potField.val());
   let min = parseFloat(potField.attr("min"));
   let max = parseFloat(potField.attr("max"));
 
-  if (value < min) {
-    potField.val(min); //
-  } else if (value > max) {
-    potField.val(max);
+  if (value < min || value > max) {
+    invalidFields = true;
+    potField.addClass("error");
+    return;
   }
+
+  invalidFields = false;
+  potField.removeClass("error");
 }
 
 $(document).ready(fetchEvent);

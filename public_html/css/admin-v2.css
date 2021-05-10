@@ -107,6 +107,15 @@
   margin-right: 0.5rem;
 }
 
+#admin-close-event-btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.error {
+  border: 2px solid red;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,

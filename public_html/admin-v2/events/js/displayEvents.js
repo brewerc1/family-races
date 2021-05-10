@@ -50,7 +50,7 @@ function addEventsToDOM(events) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}&status=${event.status}">
+        <a class="black-btn" href="./manage.php?e=${event.id}">
           View
         </a>
       </div>
@@ -72,7 +72,7 @@ function addEventsToDOM(events) {
             <a class="black-btn" href="" id="admin-close-event-btn">
             Close Event
             </a>
-            <a class="black-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}&status=${event.status}">
+            <a class="black-btn" href="./manage.php?e=${event.id}">
             View
             </a>
           </div>
@@ -82,7 +82,7 @@ function addEventsToDOM(events) {
       currentEventlist.append(template);
 
       // Add event listener
-      $("#admin-close-event-btn").on("click", (e) => closeEvent(e));
+      $("#admin-close-event-btn").on("click", (e) => closeEvent(e, event));
     } else {
       eventsList.append(template);
     }
@@ -95,15 +95,54 @@ function addEventsToDOM(events) {
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
 }
 
-function closeEvent(e) {
+function closeEvent(e, event) {
   e.preventDefault();
   let canCloseEvent = confirm("Are you sure you want to close this event?");
 
   if (!canCloseEvent) return;
+
+  const requestURL = `http://localhost/api/events?e=${state.currentEventID}`;
+
+  const data = {
+    name: event.name,
+    date: event.date,
+    pot: Number.parseFloat(event.pot),
+    status: 1,
+  };
+
+  $.ajax({
+    type: "PUT",
+    url: requestURL,
+    contentType: "application/json",
+    data: JSON.stringify(data),
+  }).done(() => {
+    // Update UI
+    $("#current-event-container").empty();
+    $("#current-event-container").css("display", "none");
+    $("#create-event-container").css("display", "block");
+
+    let template = `
+    <li class="list-group-item" id=${event.id}>
+      <div class="flex-container">
+        <p class="event-title">
+          ${event.name}
+        </p>
+        <a class="black-btn" href="./manage.php?e=${event.id}">
+          View
+        </a>
+      </div>
+    </li>
+    `;
+
+    $("#events-list").prepend(template);
+
+    // Update state
+    state.currentEventID = null;
+    state.hasCurrentEvent = false;
+  });
 }
 
 function toggleLoader() {
-  console.log("toggling");
   loader.css("display", "none");
 }
 
@@ -117,7 +156,6 @@ function toggleButtonVisibility() {
 
 function nextPage() {
   if (state.nextPage === null) return;
-  console.log("here with nextpage " + state.nextPage);
   fetchEvents(state.nextPage);
 }
 
