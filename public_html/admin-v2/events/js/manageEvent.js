@@ -53,6 +53,10 @@ function displayEventRaces() {
     }
 
     races.forEach((race) => {
+      const editRaceURL = `../races/race.php?e=${params.get("e")}&r=${
+        race.race_number
+      }&pg=${params.get("pg")}&mode=edit`;
+
       const template = `
       <li class="list-group-item" id="${race.race_number}">
         <div class="flex-space-between">
@@ -63,7 +67,7 @@ function displayEventRaces() {
             </p>
           </div>
           <div class="race-btns">
-            <a class="black-btn" href="#">
+            <a class="black-btn" href="${editRaceURL}">
               Edit
             </a>
             <a class="black-btn" href="#">

@@ -51,7 +51,7 @@ if ($_SESSION["admin"] != 1) {
 
 		<div id="race-done-container">
 			<!-- Setting href w/ php for simplicity -->
-			<a id="race-done" href="../events/manage.php?e=<?php echo $_GET["e"] . "&pg=" . $_GET["pg"]; ?>" class="black-btn">Done</a>
+			<a id="race-done" href="../events/manage.php?e=<?php echo $_GET["e"] . "&pg=" . $_GET["pg"]; ?>" class="black-btn">Save</a>
 		</div>
 
 	</section>
