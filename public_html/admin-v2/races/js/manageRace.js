@@ -1,26 +1,37 @@
 const params = new URLSearchParams(window.location.search);
-const state = { event: null, numHorses: 0 };
+const state = {
+  event: null,
+  numHorses: 0,
+  eventId: params.get("e"),
+  page: params.get("pg"),
+  race: params.get("r"),
+  mode: params.get("mode"),
+};
 
 let horsesToDelete = [];
 
 function displayInformation() {
   fetchEvent();
-  if (params.get("mode") === "create") {
-    $("#race-mode").text("Create a Race");
-    return;
+
+  $("#race-mode").text(
+    state.mode === "create" ? "Create a Race" : "Edit a Race"
+  );
+
+  if (state.mode === "create") $(".checkbox-container").css("display", "none");
+
+  if (state.mode === "edit") {
+    fetchRaceHorses();
+    let toolTipNeeded = $("highlight-race").hasClass("disabled");
+    if (toolTipNeeded) $("#highlight-race").toolTip();
   }
-  $("#race-mode").text("Edit a Race");
-  fetchRaceHorses();
 }
 
 function fetchEvent() {
-  const requestURL = `http://localhost/api/events?e=${params.get(
-    "e"
-  )}&pg=${params.get("pg")}`;
+  const requestURL = `http://localhost/api/events?e=${state.eventId}&pg=${state.page}`;
 
   $.get(requestURL, (data) => {
     let event = data.data.events.filter(
-      (event) => event.id == params.get("e")
+      (event) => event.id == state.eventId
     )[0];
 
     state.event = event;
@@ -28,15 +39,13 @@ function fetchEvent() {
     $("#event-name").text(event.name);
     $("#event-name").attr(
       "href",
-      `../events/manage.php?e=${params.get("e")}&pg=${params.get("pg")}`
+      `../events/manage.php?e=${state.eventId}&pg=${state.page}`
     );
   });
 }
 
 function fetchRaceHorses() {
-  const requestURL = `http://localhost/api/horses?e=${params.get(
-    "e"
-  )}&r=${params.get("r")}`;
+  const requestURL = `http://localhost/api/horses?e=${state.eventId}&r=${state.race}`;
 
   $.get(requestURL).done((data) => {
     const horses = data.data;
@@ -83,14 +92,14 @@ function addListeners(horse) {
 }
 
 function deleteHorse(horse, e) {
-  e.stopPropagation(); // stops event bubbling
+  e.stopPropagation();
+
   $(`#horse${horse}`).remove();
   state.numHorses--;
+
   if (state.numHorses === 0) $("#remove-hint").css("display", "none");
 
-  if (params.get("mode") === "edit") {
-    horsesToDelete.push({ id: horse });
-  }
+  if (state.mode === "edit") horsesToDelete.push({ id: horse });
 }
 
 function updateRace(e, update) {
@@ -102,7 +111,7 @@ function updateRace(e, update) {
     $("#horses .horse input").each((index, elem) => horses.push($(elem).val()));
 
     const data = {
-      event_id: params.get("e"),
+      event_id: state.eventId,
       horses: horses,
     };
 
@@ -111,14 +120,12 @@ function updateRace(e, update) {
       url: requestURL,
       contentType: "application/json",
       data: JSON.stringify(data),
-    }).done((data) => {
-      console.log(data);
     });
+
     return;
   }
 
   if (update) {
-    // Check if horse has been created, if not, create it, update ids
     const element = $(`#${e.target.id}`);
 
     const notCreated = element.hasClass("not-created");
@@ -129,8 +136,8 @@ function updateRace(e, update) {
       const createHorseURL = "http://localhost/api/horses/";
 
       const createHorseData = {
-        race_event_id: params.get("e"),
-        race_race_number: params.get("r"),
+        race_event_id: state.eventId,
+        race_race_number: state.race,
         horses: [name],
       };
 
@@ -171,8 +178,6 @@ function updateRace(e, update) {
         url: updateHorseURL,
         contentType: "application/json",
         data: JSON.stringify(updateHorseData),
-      }).done((data) => {
-        console.log(data);
       });
     }
   }

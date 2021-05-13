@@ -67,6 +67,12 @@
   background-color: black;
   color: white;
   padding: 0.4rem 1.2rem 0.2rem;
+  cursor: pointer;
+}
+
+.black-btn:hover {
+  color: black;
+  background-color: white;
 }
 
 #race-done-container {
@@ -76,10 +82,6 @@
 
 #race-done {
   padding-bottom: 0.4rem;
-}
-
-.black-btn:hover {
-  background-color: white;
 }
 
 .padded-top-header {
@@ -179,11 +181,20 @@
   border: 2px solid red;
 }
 
+#race {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
   #page-btns-container {
     width: 100% !important;
+  }
+
+  main {
+    overflow-x: hidden;
   }
 
   #page-btns-container {
