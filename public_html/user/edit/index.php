@@ -266,24 +266,24 @@ if(isset($_POST['save_button'])){
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="motto" class="col-form-label" >First Name:</label> 
-                        <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>">
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $_SESSION['first_name'] ?>" maxlength="45">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="motto" class="col-form-label" >Last Name:</label> 
-                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>">
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $_SESSION['last_name'] ?>" maxlength="45">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="email" class="col-form-label" >Email:</label> 
-                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>">
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email'] ?>" maxlength="255">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="city" class="col-form-label" >City:</label> 
-                        <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>">
+                        <input type="text" class="form-control" id="city" name="city" value="<?php echo $_SESSION['city'] ?>" maxlength="45">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -307,7 +307,7 @@ ENDOPTION;
                 <div class="form-row">
                     <div class="col-md-6">
                         <label for="motto" class="col-form-label" >Motto:</label> 
-                        <textarea class="form-control" id="motto" name="motto" rows="2"><?php echo $_SESSION['motto'] ?></textarea>
+                        <textarea class="form-control" id="motto" name="motto" rows="2" maxlength="255"><?php echo $_SESSION['motto'] ?></textarea>
                     </div>
                 </div>
 

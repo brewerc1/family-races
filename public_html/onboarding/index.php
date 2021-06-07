@@ -134,16 +134,16 @@ if(isset($_POST['create_account_button'])) {
 		<h1 class="mb-5 sticky-top"><?php echo $page_title;?></h1>
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 			<div class="form-group">
-	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $email; ?>" placeholder="Enter Email">
+	            <input  type="email" required class="form-control" name="email" id="email" value="<?php echo $email; ?>" placeholder="Enter Email" maxlength="255">
 			</div>
 			<div class="form-group">
-				<input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $code; ?>" placeholder="Enter Code">
+				<input type="textbox" required class="form-control" name="code" id="code" value="<?php echo $code; ?>" placeholder="Enter Code" maxlength="8">
 			</div>
 			<div class="form-group">
-				<input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password">
+				<input type="password" required class="form-control" name="password" id="password" placeholder="Enter Password" maxlength="255">
 			</div>
 			<div class="form-group">
-				<input type="password" required class="form-control" name="password_confirm" id="password_confirm" placeholder="Confirm Password">
+				<input type="password" required class="form-control" name="password_confirm" id="password_confirm" placeholder="Confirm Password" maxlength="255">
 			</div>
 				<input type="submit" class="btn btn-primary" name="create_account_button" value="Create Account">
 		</form>
