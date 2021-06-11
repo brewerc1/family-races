@@ -12,7 +12,7 @@ function createEvent() {
     pot: Number.parseFloat(potField.val()),
   };
 
-  let requestURL = `http://localhost/api/events/`;
+  let requestURL = `/api/events/`;
 
   console.log(state);
 
@@ -30,7 +30,7 @@ function createEvent() {
     if (!state.eventCreated) state.eventId = data.data[0].id;
     state.eventCreated = true;
     saveEventBtn.removeClass("disabled");
-    saveEventBtn.attr("href", `./manage.php?e=${state.eventId}}`); //change
+    saveEventBtn.attr("href", `./manage.php?e=${state.eventId}`); //change
   });
 }
 

@@ -20,9 +20,9 @@ function fetchEvent() {
 
 function displayEventInformation() {
   // Need page due to API
-  const requestURL = `http://localhost/api/events?e=${params.get(
+  const requestURL = `/api/events?e=${params.get(
     "e"
-  )}&pg=${params.get("pg")}`;
+  )}`;
   $.get(requestURL, (data) => {
     // Hacky, only way this can be done with the current API
     let event = data.data.events.filter(
@@ -42,7 +42,7 @@ function displayEventInformation() {
 
 function displayEventRaces() {
   const racesList = $("#races-list");
-  const requestURL = `http://localhost/api/races?e=${params.get("e")}`;
+  const requestURL = `/api/races?e=${params.get("e")}`;
   $.get(requestURL, (data) => {
     const races = data.data.races;
 
@@ -105,7 +105,7 @@ function toggleLoader() {
 function handleOnChange() {
   if (loading || invalidFields) return;
 
-  const requestURL = `http://localhost/api/events?e=${params.get("e")}`;
+  const requestURL = `/api/events?e=${params.get("e")}`;
 
   const data = {
     name: nameField.val(),

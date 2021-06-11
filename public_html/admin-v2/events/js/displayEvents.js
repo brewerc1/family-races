@@ -1,7 +1,7 @@
 const loader = $("#loader-container");
 
 const state = {
-  firstPage: "http://localhost/api/events/?pg=1",
+  firstPage: "/api/events/?pg=1",
   nextPage: null,
   previousPage: null,
   hasCurrentEvent: false,
@@ -13,10 +13,10 @@ function fetchEvents(requestURL) {
   $.get(requestURL, (data) => {
     const events = data.data.events;
 
-    if (data.data.next) state.nextPage = `http://${data.data.next}`;
+    if (data.data.next) state.nextPage = `./${data.data.next}`;
     else state.nextPage = null;
 
-    if (data.data.previous) state.previousPage = `http://${data.data.previous}`;
+    if (data.data.previous) state.previousPage = `./${data.data.previous}`;
     else state.previousPage = null;
 
     addEventsToDOM(events);
@@ -102,7 +102,7 @@ function closeEvent(e, event) {
 
   if (!canCloseEvent) return;
 
-  const requestURL = `http://localhost/api/events?e=${state.currentEventID}`;
+  const requestURL = `/api/events?e=${state.currentEventID}`;
 
   const data = {
     name: event.name,
