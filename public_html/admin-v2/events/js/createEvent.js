@@ -30,18 +30,19 @@ function createEvent() {
     if (!state.eventCreated) state.eventId = data.data[0].id;
     state.eventCreated = true;
     saveEventBtn.removeClass("disabled");
-    saveEventBtn.attr("href", `./manage.php?e=${state.eventId}`); //change
+    //saveEventBtn.attr("href", `./manage.php?e=${state.eventId}`); //change
+    window.location.href = `./manage.php?e=${state.eventId}`;
   });
 }
 
 function handleOnChange() {
   let allFieldsComplete = nameField.val() && dateField.val() && potField.val();
-
-  if (!allFieldsComplete) return;
-
-  createEvent();
+  // TODO: Simplify below
+  if (!allFieldsComplete) saveEventBtn.attr("class", "btn btn-primary btn col-sm-5 disabled");
+  else saveEventBtn.attr("class", "btn btn-primary btn col-sm-5");
 }
 
 nameField.on("change", handleOnChange);
 dateField.on("change", handleOnChange);
 potField.on("change", handleOnChange);
+saveEventBtn.on("click", createEvent);
