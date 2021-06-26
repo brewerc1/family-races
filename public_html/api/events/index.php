@@ -6,7 +6,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 //$_SESSION['admin'] = 1;
 
 use api\Utils;
-use JetBrains\PhpStorm\Pure;
 
 include_once '../Utils.php';
 
@@ -65,6 +64,11 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
 
         if (!Utils::isValidContentType()) {
             Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+            exit;
+        }
+
+        if (Utils::dbHasAnOpenEvent($pdo)) {
+            Utils::sendResponse(400, $success=false, $msg=["Close the current event before creating the new one."], $data=null);
             exit;
         }
 

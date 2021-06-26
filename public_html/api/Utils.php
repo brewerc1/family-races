@@ -116,6 +116,23 @@ class Utils
         return $returnData;
     }
 
+
+    /**
+     * @param $pdo
+     * @return bool
+     *
+     * True is returned if there is an open event in DB
+     */
+    public static function dbHasAnOpenEvent($pdo): bool {
+        $query = "SELECT * FROM event WHERE status = 1";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) return true;
+
+        return false;
+    }
+
     public static function getAllWithPagination($pdo, $endPoint, $keyWord,
                                              $query, $pageQuery, $optionsForQuery, $optionForPageQuery, $urlParams=[]): array
     {
