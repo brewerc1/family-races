@@ -119,7 +119,6 @@ function handleOnChange() {
     contentType: "application/json",
     data: JSON.stringify(data),
     success: function (data) {
-      console.log(data);
       const style = data.success === true ? "alert-success" : "alert-warning";
       $("#alert span#msg").text(data.messages[0]);
       $("#alert").removeClass("d-none").addClass(style);
