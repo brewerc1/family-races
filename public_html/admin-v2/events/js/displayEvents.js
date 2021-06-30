@@ -13,10 +13,10 @@ function fetchEvents(requestURL) {
   $.get(requestURL, (data) => {
     const events = data.data.events;
 
-    if (data.data.next) state.nextPage = `./${data.data.next}`;
+    if (data.data.next) state.nextPage = `${data.data.next}`;
     else state.nextPage = null;
 
-    if (data.data.previous) state.previousPage = `./${data.data.previous}`;
+    if (data.data.previous) state.previousPage = `${data.data.previous}`;
     else state.previousPage = null;
 
     addEventsToDOM(events);
