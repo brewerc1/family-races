@@ -113,15 +113,21 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Required
     (!is_numeric($jsonData->event_id) ?
         $messages[] = "event_id field is required and must be numeric" : false);
+
+    ### Issue: 233
+    # TODO: Check for empty string, whitespaces for each horse name
+    (!((isset($jsonData->horses) && is_array($jsonData->horses) && count($jsonData->horses) > 0)) ?
+        $messages[] = "Cannot create a race without at least one horse" : false);
+
+
     // Optionals
     (isset($jsonData->window_closed) && !(is_numeric($jsonData->window_closed) &&
         (intval($jsonData->window_closed) === 0 || intval($jsonData->window_closed === 1))) ?
-        $messages[] = "window_closed field is must be numeric 0(open) or 1(close)" : false);
+        $messages[] = "window_closed field must be numeric 0(open) or 1(close)" : false);
     (isset($jsonData->cancelled) && !(is_numeric($jsonData->cancelled) &&
         (intval($jsonData->cancelled) === 0 || intval($jsonData->cancelled) === 1)) ?
-        $messages[] = "cancelled field is must be numeric 0(open) or 1(close)" : false);
-    ((isset($jsonData->horses) && !is_array($jsonData->horses)) ?
-        $messages[] = "horses field must be an array of string" : false);
+        $messages[] = "cancelled field must be numeric 0(open) or 1(close)" : false);
+
     if (count($messages) > 0) {
         Utils::sendResponse(400, $success = false, $msg = $messages, $data = null);
         exit;
@@ -180,7 +186,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
+        Utils::sendResponse(500, $success=false, $msg= ["Error display only for debug " . $ex], $data=null);
         exit;
     }
 
