@@ -121,6 +121,11 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 
             $hrs[] = Utils::updateHorse($pdo, $horse);
         }
 
+        $win = [$hrs[0]["horse_number"], $hrs[0]["win_purse"], $hrs[0]["place_purse"], $hrs[0]["show_purse"]];
+        $place = [$hrs[1]["horse_number"], $hrs[1]["place_purse"], $hrs[1]["show_purse"]];
+        $show = [$hrs[2]["horse_number"], $hrs[2]["show_purse"]];
+        Utils::populateRaceStandingsTable($pdo, $horses[0]->race_event_id, $horses[0]->race_race_number, $win, $place, $show);
+
         Utils::sendResponse($statusCd, $success=true, $msg=[$message], $data=$hrs);
         exit;
     }
