@@ -159,13 +159,15 @@ class Utils
             // Pagination urls
             if ($page < $numberOfPage) {
                 $urlParams["pg"] = ($page + 1);
-                $nextUrl = $_SERVER["SERVER_NAME"] . $endPoint  . "?" .  http_build_query($urlParams);
+                //$nextUrl = $_SERVER["SERVER_NAME"] . $endPoint  . "?" .  http_build_query($urlParams);
+                $nextUrl = $endPoint  . "?" .  http_build_query($urlParams);
             }
             else $nextUrl = null;
 
             if ($page > 1) {
                 $urlParams["pg"] = ($page - 1);
-                $previousUrl = $_SERVER["SERVER_NAME"] . $endPoint . "?" . http_build_query($urlParams);
+                //$previousUrl = $_SERVER["SERVER_NAME"] . $endPoint . "?" . http_build_query($urlParams);
+                $previousUrl = $endPoint  . "?" .  http_build_query($urlParams);
             }
             else $previousUrl = null;
 
