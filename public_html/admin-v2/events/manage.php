@@ -22,6 +22,12 @@ if ($_SESSION["admin"] != 1) {
 {main_nav}
 
 <main role="main" id="admin_main_events_page">
+    <div class="floating-alert alert  alert-dismissible fade show fixed-top mt-5 mx-4 d-none" role="alert" id="alert">
+        <span id="msg">messages will be display here.</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <h1 class="sticky-top padded-top-header mb-5" id="manage-events-page-header">
 		<a href="../events/" class="font-lighter">Events</a>
 		<span class="font-lighter"> > </span> 
