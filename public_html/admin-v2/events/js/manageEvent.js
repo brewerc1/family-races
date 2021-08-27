@@ -1,6 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 
 let loading = true;
+let invalidFields = false;
+let racesProcessed = 0;
 
 const eventNameHeader = $("#event-name");
 const nameField = $("#name");
@@ -8,35 +10,53 @@ const dateField = $("#date");
 const potField = $("#pot");
 const loader = $("#loader-container");
 
+const addRaceButton = $("#add-race-container p a");
+
 function fetchEvent() {
   displayEventInformation();
   displayEventRaces();
-
   loading = false;
-  // Display error if none
 }
 
 function displayEventInformation() {
-  const eventName = params.get("name");
-  const eventPot = params.get("pot");
-  const eventDate = params.get("date");
+  // Need page due to API
+  const requestURL = `/api/events?e=${params.get(
+    "e"
+  )}`;
+  $.get(requestURL, (data) => {
+    // Hacky, only way this can be done with the current API
+    let event = data.data.events.filter(
+      (event) => event.id == params.get("e")
+    )[0];
 
-  eventNameHeader.text(eventName);
-  nameField.val(eventName);
-  dateField.val(eventDate);
-  potField.val(eventPot);
+    const eventName = event.name;
+    const eventPot = Number.parseFloat(event.pot);
+    const eventDate = event.date;
+
+    eventNameHeader.text(eventName);
+    nameField.val(eventName);
+    dateField.val(eventDate);
+    potField.val(eventPot);
+  });
 }
 
 function displayEventRaces() {
-  let racesProcessed = 0;
   const racesList = $("#races-list");
-  const url = `http://localhost/api/races?e=${params.get("e")}`;
-  $.get(url, (data) => {
+  const requestURL = `/api/races?e=${params.get("e")}`;
+  $.get(requestURL, (data) => {
     const races = data.data.races;
 
-    if (races.length === 0) toggleLoader();
+    if (races.length === 0) {
+      toggleLoader();
+      toggleAddRace(0);
+      return;
+    }
 
     races.forEach((race) => {
+      const editRaceURL = `../races/race.php?e=${params.get("e")}&r=${
+        race.race_number
+      }&pg=${params.get("pg")}&mode=edit`;
+
       const template = `
       <li class="list-group-item" id="${race.race_number}">
         <div class="flex-space-between">
@@ -47,7 +67,7 @@ function displayEventRaces() {
             </p>
           </div>
           <div class="race-btns">
-            <a class="black-btn" href="#">
+            <a class="black-btn" href="${editRaceURL}">
               Edit
             </a>
             <a class="black-btn" href="#">
@@ -60,9 +80,22 @@ function displayEventRaces() {
 
       racesList.append(template);
       racesProcessed++;
-      if (racesProcessed === races.length) toggleLoader();
+      if (racesProcessed === races.length) {
+        toggleLoader();
+        toggleAddRace(racesProcessed);
+      }
     });
   });
+}
+
+function toggleAddRace(numRaces) {
+  $("#add-race-container").css("display", "block");
+  addRaceButton.attr(
+    "href",
+    `../races/race.php?e=${params.get("e")}&r=${numRaces + 1}&pg=${params.get(
+      "pg"
+    )}&mode=create`
+  );
 }
 
 function toggleLoader() {
@@ -70,9 +103,9 @@ function toggleLoader() {
 }
 
 function handleOnChange() {
-  if (loading) return;
+  if (loading || invalidFields) return;
 
-  const requestURL = `http://localhost/api/events?e=${params.get("e")}`;
+  const requestURL = `/api/events?e=${params.get("e")}`;
 
   const data = {
     name: nameField.val(),
@@ -85,18 +118,14 @@ function handleOnChange() {
     url: requestURL,
     contentType: "application/json",
     data: JSON.stringify(data),
-  }).done(useNewEventData);
-}
-
-function useNewEventData() {
-  params.set("name", nameField.val());
-  params.set("date", dateField.val());
-  params.set("pot", potField.val());
-
-  let newURL = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(null, "", newURL);
-
-  eventNameHeader.text(nameField.val());
+    success: function (data) {
+      const style = data.success === true ? "alert-success" : "alert-warning";
+      $("#alert span#msg").text(data.messages[0]);
+      $("#alert").removeClass("d-none").addClass(style);
+    }
+  }).done(() => {
+    eventNameHeader.text(nameField.val());
+  });
 }
 
 function restrictNumberRange() {
@@ -104,11 +133,14 @@ function restrictNumberRange() {
   let min = parseFloat(potField.attr("min"));
   let max = parseFloat(potField.attr("max"));
 
-  if (value < min) {
-    potField.val(min);
-  } else if (value > max) {
-    potField.val(max);
+  if (value < min || value > max) {
+    invalidFields = true;
+    potField.addClass("error");
+    return;
   }
+
+  invalidFields = false;
+  potField.removeClass("error");
 }
 
 $(document).ready(fetchEvent);

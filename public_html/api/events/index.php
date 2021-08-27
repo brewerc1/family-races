@@ -6,10 +6,12 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 //$_SESSION['admin'] = 1;
 
 use api\Utils;
+
 include_once '../Utils.php';
 
-function validGetRequestURLParams() {
-    return Utils::getPageNumber() !== null;
+function validGetRequestURLParams(): bool
+{
+    return !isset($_GET['pg']) || is_numeric($_GET['pg']);
 }
 
 
@@ -19,7 +21,12 @@ if(!Utils::isLoggedIn()) {
 }
 
 // GET ALL EVENTS
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && validGetRequestURLParams()) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+    if (!validGetRequestURLParams()) {
+        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        exit;
+    }
 
     try {
 
@@ -57,6 +64,11 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
 
         if (!Utils::isValidContentType()) {
             Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+            exit;
+        }
+
+        if (Utils::dbHasAnOpenEvent($pdo)) {
+            Utils::sendResponse(400, $success=false, $msg=["Close the current event before creating the new one."], $data=null);
             exit;
         }
 
@@ -226,6 +238,8 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
             $query = "SELECT * FROM event WHERE id = :id";
             $stmt = $pdo->prepare($query);
             $stmt->execute(["id" => $eventId]);
+
+            if (intval($status) === 1) Utils::populateEventStandingsTable($pdo, $eventId);
 
             Utils::sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
             exit;

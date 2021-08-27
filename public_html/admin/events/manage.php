@@ -645,7 +645,6 @@ $MIN_HORSES_NUMBER = empty($_SESSION["site_default_horse_count"]) ? 1 : $_SESSIO
 
     function closeEventBackend(id, action) {
         $('#' + id).click( function () {
-            console.log(action);
             $.ajax({
                 type: 'POST',
                 url: './race.php?e='+ EVENT_ID +'&r=' + 1 + '&q=' + 9,

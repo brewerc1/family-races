@@ -1,21 +1,22 @@
 const loader = $("#loader-container");
 
 const state = {
-  firstPage: "http://localhost/api/events/?pg=1",
+  firstPage: "/api/events/?pg=1",
   nextPage: null,
   previousPage: null,
   hasCurrentEvent: false,
   currentEventID: null,
+  pageNumber: 1,
 };
 
 function fetchEvents(requestURL) {
   $.get(requestURL, (data) => {
     const events = data.data.events;
 
-    if (data.data.next) state.nextPage = `http://${data.data.next}`;
+    if (data.data.next) state.nextPage = `${data.data.next}`;
     else state.nextPage = null;
 
-    if (data.data.previous) state.previousPage = `http://${data.data.previous}`;
+    if (data.data.previous) state.previousPage = `${data.data.previous}`;
     else state.previousPage = null;
 
     addEventsToDOM(events);
@@ -44,13 +45,13 @@ function addEventsToDOM(events) {
   events.forEach((event) => {
     if (event.id === state.currentEventID) return;
 
-    const template = `
+    let template = `
     <li class="list-group-item" id=${event.id}>
       <div class="flex-container">
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}&name=${event.name}&date=${event.date}&pot=${event.pot}&status=${event.status}">
+        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
           View
         </a>
       </div>
@@ -61,7 +62,28 @@ function addEventsToDOM(events) {
       state.hasCurrentEvent = true;
       state.currentEventID = event.id;
       $("#current-event-container").css("display", "block");
+
+      template = `
+      <li class="list-group-item" id=${event.id}>
+        <div class="flex-container">
+          <p class="event-title">
+            ${event.name}
+          </p>
+          <div class="current-event-controls">
+            <a class="black-btn" href="" id="admin-close-event-btn">
+            Close Event
+            </a>
+            <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
+            View
+            </a>
+          </div>
+        </div>
+      </li>
+      `;
       currentEventlist.append(template);
+
+      // Add event listener
+      $("#admin-close-event-btn").on("click", (e) => closeEvent(e, event));
     } else {
       eventsList.append(template);
     }
@@ -74,8 +96,54 @@ function addEventsToDOM(events) {
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
 }
 
+function closeEvent(e, event) {
+  e.preventDefault();
+  let canCloseEvent = confirm("Are you sure you want to close this event?");
+
+  if (!canCloseEvent) return;
+
+  const requestURL = `/api/events?e=${state.currentEventID}`;
+
+  const data = {
+    name: event.name,
+    date: event.date,
+    pot: Number.parseFloat(event.pot),
+    status: 1,
+  };
+
+  $.ajax({
+    type: "PUT",
+    url: requestURL,
+    contentType: "application/json",
+    data: JSON.stringify(data),
+  }).done(() => {
+    // Update UI
+    $("#current-event-container").empty();
+    $("#current-event-container").css("display", "none");
+    $("#create-event-container").css("display", "block");
+
+    let template = `
+    <li class="list-group-item" id=${event.id}>
+      <div class="flex-container">
+        <p class="event-title">
+          ${event.name}
+        </p>
+        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
+          View
+        </a>
+      </div>
+    </li>
+    `;
+
+    $("#events-list").prepend(template);
+
+    // Update state
+    state.currentEventID = null;
+    state.hasCurrentEvent = false;
+  });
+}
+
 function toggleLoader() {
-  console.log("toggling");
   loader.css("display", "none");
 }
 
@@ -89,12 +157,13 @@ function toggleButtonVisibility() {
 
 function nextPage() {
   if (state.nextPage === null) return;
-  console.log("here with nextpage " + state.nextPage);
+  state.pageNumber++;
   fetchEvents(state.nextPage);
 }
 
 function previousPage() {
   if (state.previousPage === null) return;
+  state.pageNumber--;
   fetchEvents(state.previousPage);
 }
 
