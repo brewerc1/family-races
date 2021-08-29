@@ -95,7 +95,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $date = $jsonData->date;
         $dateErr = (date('Y-m-d', strtotime($date)) == $date) ? "" : "Date field must be a valid date (YYYY-MM-DD)";
         $pot = $jsonData->pot;
-        $potErr = (!is_numeric($pot) || strlen($pot) > 6) ? "Pot field must be int with no more than 6 digits" : "";
+        $potErr = (!is_numeric($pot) || strlen($pot) > 8 || floatval($pot) > 9999.99) ? "Pot field must be decimal < 9999.99 with no more than 8 digits" : "";
 
         if (!empty($eventNameErr) || !empty($potErr) || !empty($dateErr)) {
             $messages = array();
@@ -162,8 +162,8 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
         $errMessages[] = "Date field must be a valid date (YYYY-MM-DD)" : false);
 
     $pot = isset($jsonData->pot) ? $jsonData->pot : null;
-    ($pot !== null && !is_numeric($pot) || (strlen($pot) > 6) ?
-        $errMessages[] = "Pot field must be int with no more than 6 digits" : false);
+    ($pot !== null && !is_numeric($pot) || (strlen($pot) > 8 || floatval($pot) > 9999.99) ?
+        $errMessages[] = "Pot field must be decimal < 9999.99 with no more than 8 digits" : false);
 
     $status = isset($jsonData->status) ? $jsonData->status : null;
     ($status !== null && !(intval($status) === 1 || intval($status) === 0) ?

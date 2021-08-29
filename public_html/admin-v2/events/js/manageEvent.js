@@ -20,9 +20,7 @@ function fetchEvent() {
 
 function displayEventInformation() {
   // Need page due to API
-  const requestURL = `/api/events?e=${params.get(
-    "e"
-  )}`;
+  const requestURL = `/api/events?e=${params.get("e")}`;
   $.get(requestURL, (data) => {
     // Hacky, only way this can be done with the current API
     let event = data.data.events.filter(
@@ -113,6 +111,12 @@ function handleOnChange() {
     pot: Number.parseFloat(potField.val()),
   };
 
+  // Extra guard to prevent pot from being bad value
+  if (data.pot > 9999.99 || data.pot < 1) {
+    restrictNumberRange();
+    return;
+  }
+
   $.ajax({
     type: "PUT",
     url: requestURL,
@@ -122,16 +126,16 @@ function handleOnChange() {
       const style = data.success === true ? "alert-success" : "alert-warning";
       $("#alert span#msg").text(data.messages[0]);
       $("#alert").removeClass("d-none").addClass(style);
-    }
+    },
   }).done(() => {
     eventNameHeader.text(nameField.val());
   });
 }
 
 function restrictNumberRange() {
-  let value = parseInt(potField.val());
-  let min = parseFloat(potField.attr("min"));
-  let max = parseFloat(potField.attr("max"));
+  let value = parseFloat(potField.val());
+  let min = 1;
+  let max = 9999.99;
 
   if (value < min || value > max) {
     invalidFields = true;

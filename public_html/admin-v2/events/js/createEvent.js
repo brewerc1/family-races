@@ -6,7 +6,7 @@ const potField = $("#pot");
 const saveEventBtn = $("#save-event");
 
 function createEvent() {
-  let validPot = potField.val() <= 99999 && potField.val() >= 1;
+  let validPot = potField.val() <= 9999.99 && potField.val() >= 1;
 
   // Extra guard to prevent large pots
   if (!validPot) {
