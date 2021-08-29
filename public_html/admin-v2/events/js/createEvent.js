@@ -6,6 +6,14 @@ const potField = $("#pot");
 const saveEventBtn = $("#save-event");
 
 function createEvent() {
+  let validPot = potField.val() <= 99999 && potField.val() >= 1;
+
+  // Extra guard to prevent large pots
+  if (!validPot) {
+    handleOnChange();
+    return;
+  }
+
   const event = {
     name: nameField.val(),
     date: dateField.val(),
@@ -13,8 +21,6 @@ function createEvent() {
   };
 
   let requestURL = `/api/events/`;
-
-  console.log(state);
 
   if (state.eventCreated) requestURL = requestURL.concat(`?e=${state.eventId}`);
 
@@ -26,20 +32,23 @@ function createEvent() {
     contentType: "application/json",
     data: JSON.stringify(event),
   }).done((data) => {
-    console.log(data);
     if (!state.eventCreated) state.eventId = data.data[0].id;
     state.eventCreated = true;
     saveEventBtn.removeClass("disabled");
-    //saveEventBtn.attr("href", `./manage.php?e=${state.eventId}`); //change
     window.location.href = `./manage.php?e=${state.eventId}`;
   });
 }
 
 function handleOnChange() {
   let allFieldsComplete = nameField.val() && dateField.val() && potField.val();
-  // TODO: Simplify below
-  if (!allFieldsComplete) saveEventBtn.attr("class", "btn btn-primary btn col-sm-5 disabled");
-  else saveEventBtn.attr("class", "btn btn-primary btn col-sm-5");
+  let validPot = potField.val() <= 9999.99 && potField.val() >= 1;
+
+  if (potField.val() && !validPot) potField.addClass("is-invalid");
+  else potField.removeClass("is-invalid");
+
+  if (!allFieldsComplete || !validPot)
+    saveEventBtn.attr("class", "btn btn-primary btn col-sm-5 disabled");
+  else saveEventBtn.attr("class", "btn btn-primary btn col-sm-5 text-white");
 }
 
 nameField.on("change", handleOnChange);

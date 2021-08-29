@@ -124,7 +124,7 @@ class Utils
      * True is returned if there is an open event in DB
      */
     public static function dbHasAnOpenEvent($pdo): bool {
-        $query = "SELECT * FROM event WHERE status = 1";
+        $query = "SELECT * FROM event WHERE status = 0";
         $stmt = $pdo->prepare($query);
         $stmt->execute();
 
