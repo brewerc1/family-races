@@ -1,0 +1,280 @@
+.admin-header {
+  margin-top: 1rem;
+  padding: 0.7rem 0;
+  background-color: #eee;
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+}
+
+#manage-events-page-header,
+#manage-race-page-header {
+  text-align: left;
+}
+
+#has-current-event-warning {
+  border: none;
+  padding: 0.75rem 1.25rem 0 1.25rem !important;
+}
+
+.event-container-header {
+  background-color: #ddd;
+  text-align: center;
+  font-weight: bold;
+  color: black;
+}
+
+#events-list-container,
+#current-event-container,
+#page-btns-container,
+#view-all-events-header {
+  margin: 0 auto !important;
+  width: 90% !important;
+}
+
+#current-event-container,
+#create-event-container {
+  display: none;
+}
+
+#current-event-container {
+  margin-bottom: 1rem !important;
+}
+
+#page-btns-container {
+  display: flex;
+  padding-bottom: 4rem;
+}
+
+.page-control-btn {
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.event-title {
+  font-size: 1.2rem;
+}
+
+.black-btn {
+  text-decoration: none !important;
+  font-size: 1rem;
+  border: 2px solid black;
+  background-color: black;
+  color: white;
+  padding: 0.4rem 1.2rem 0.2rem;
+  cursor: pointer;
+}
+
+.black-btn:hover {
+  color: black;
+  background-color: white;
+}
+
+#race-done-container {
+  display: flex;
+  justify-content: center;
+}
+
+#race-done {
+  padding-bottom: 0.4rem;
+}
+
+.padded-top-header {
+  padding-top: 1rem;
+}
+
+.font-lighter {
+  font-weight: 300;
+}
+
+#races-list {
+  margin-bottom: 2rem;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.race-btns {
+  display: flex;
+}
+
+.race-btns .black-btn:first-of-type {
+  margin-right: 1rem;
+}
+
+.current-event-controls {
+  display: flex;
+}
+
+#admin-close-event-btn {
+  background-color: white;
+  color: black;
+  margin-right: 0.5rem;
+}
+
+#admin-close-event-btn:hover {
+  background-color: black;
+  color: white;
+}
+
+#add-race-container {
+  display: none;
+}
+
+#add-race-container p {
+  text-align: center;
+}
+
+#add-race-container p a,
+#add-horse-container p a {
+  margin-right: 1rem;
+}
+
+#current-race {
+  display: flex;
+  justify-content: space-between;
+}
+
+#current-race .checkbox-container {
+  margin-left: 1rem;
+}
+
+#number-horses {
+  padding: 0.5rem;
+  width: 40%;
+}
+
+#remove-hint {
+  display: none;
+}
+
+#horses {
+  margin-bottom: 1rem;
+}
+
+.horse {
+  display: flex;
+  margin-bottom: 0.8rem;
+}
+
+.horse input {
+  margin-right: 1rem;
+}
+
+.horse .black-btn {
+  display: flex;
+  align-items: center;
+}
+
+.horse .black-btn i {
+  margin-right: 0.5rem;
+}
+
+.error {
+  border: 2px solid red;
+}
+
+#race {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 500px) {
+  #events-list-container,
+  #current-event-container,
+  #page-btns-container {
+    width: 100% !important;
+  }
+
+  main {
+    overflow-x: hidden;
+  }
+
+  #page-btns-container {
+    justify-content: center;
+    padding-bottom: 3rem;
+  }
+
+  .current-event-controls {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #admin-close-event-btn {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .race-btns {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .race-btns .black-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .race-btns .black-btn:first-of-type {
+    margin: 0 0 1rem 0;
+  }
+
+  .event-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .black-btn {
+    padding: 0.3rem 0.9rem 0.3rem;
+  }
+}
+
+/* Loading animation */
+#loader-container {
+  display: flex;
+  justify-content: center;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #ccc transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
