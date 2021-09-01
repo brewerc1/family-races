@@ -2,6 +2,7 @@ const params = new URLSearchParams(window.location.search);
 const state = {
   event: null,
   numHorses: 0,
+  loading: true,
   eventId: params.get("e"),
   page: params.get("pg"),
   race: params.get("r"),
@@ -41,6 +42,7 @@ function fetchEvent() {
       "href",
       `../events/manage.php?e=${state.eventId}&pg=${state.page}`
     );
+    $("#race-loader").css("display", "none");
   });
 }
 

@@ -281,3 +281,17 @@
     transform: rotate(360deg);
   }
 }
+
+#race-loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+}
+
+#race-loader > #loader-container {
+  position: relative;
+  top: 50%;
+}

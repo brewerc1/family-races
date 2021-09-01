@@ -84,6 +84,12 @@ if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {
 			<a id="race-done" href="../events/manage.php?e=<?php echo $_GET["e"] . "&pg=" . $_GET["pg"]; ?>" class="black-btn btn">Save</a>
 		</div>
 
+		<div id="race-loader">
+			<div id="loader-container">
+				<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
+			</div>
+		</div>
+
 	</section>
 </main>
 {footer}
