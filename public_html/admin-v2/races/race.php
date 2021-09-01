@@ -22,12 +22,18 @@ $stmt->execute();
 $result = $stmt->fetchAll();
 $toolTipNeeded = $result[0]["memorial_race_enable"] == 1 ? false : true;
 
-
+// Check if race is currently highlighted
 $query = "SELECT memorial_race_number FROM site_settings";
 $stmt = $pdo->prepare($query);
 $stmt->execute();
 $result = $stmt->fetchAll();
 $is_highlighted = $result[0]["memorial_race_number"] == $_GET["r"];
+
+$query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
+$stmt = $pdo->prepare($query);
+$stmt->execute();
+$result = $stmt->fetch();
+$is_highlighted = $is_highlighted && $result["id"] == $_GET["e"];
 
 // Highlight race
 if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {

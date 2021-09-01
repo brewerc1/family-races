@@ -54,9 +54,7 @@ function fetchRaceHorses() {
     if (state.numHorses >= 1) $("#remove-hint").css("display", "block");
 
     horses.forEach((horse) => {
-      console.log(horse);
       const deleteStatus = horse.can_be_deleted ? "" : "disabled";
-      console.log(deleteStatus);
       const template = `
       <div class="horse" id="horse${horse.id}">
 			  <input type="text" class="form-control" placeholder="Name of horse" id="horse${horse.id}-name"

@@ -17,7 +17,7 @@ function createEvent() {
   const event = {
     name: nameField.val(),
     date: dateField.val(),
-    pot: Number.parseFloat(potField.val()).toFixed(),
+    pot: Number.parseFloat(potField.val()).toFixed(2),
   };
 
   let requestURL = `/api/events/`;

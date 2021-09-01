@@ -13,20 +13,26 @@ const loader = $("#loader-container");
 const addRaceButton = $("#add-race-container p a");
 
 function fetchEvent() {
-  displayEventInformation();
+  displayEventInformation(0);
   displayEventRaces();
   loading = false;
 }
 
-function displayEventInformation() {
+function displayEventInformation(offset) {
   // Need page due to API
-  const requestURL = `/api/events?e=${params.get("e")}`;
+  const reqPage = parseInt(params.get("pg")) + offset;
+  const requestURL = `/api/events?e=${params.get("e")}&pg=${reqPage}`;
   $.get(requestURL, (data) => {
     // Hacky, only way this can be done with the current API
     let event = data.data.events.filter(
       (event) => event.id == params.get("e")
     )[0];
 
+    // Event is on another page
+    if (!event) {
+      displayEventInformation(offset + 1);
+      return;
+    }
     const eventName = event.name;
     const eventPot = Number.parseFloat(event.pot).toFixed(2);
     const eventDate = event.date;
