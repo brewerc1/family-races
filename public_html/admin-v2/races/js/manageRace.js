@@ -54,15 +54,16 @@ function fetchRaceHorses() {
     if (state.numHorses >= 1) $("#remove-hint").css("display", "block");
 
     horses.forEach((horse) => {
+      console.log(horse);
+      const deleteStatus = horse.can_be_deleted ? "" : "disabled";
+      console.log(deleteStatus);
       const template = `
       <div class="horse" id="horse${horse.id}">
-			  <input type="text" class="form-control" placeholder="Name of horse" id="horse${
-          horse.id
-        }-name"
+			  <input type="text" class="form-control" placeholder="Name of horse" id="horse${horse.id}-name"
         value="${horse.horse_number}">
-			  <div class="black-btn ${horse.canBeDeleted ? "" : "disabled"}"
+			  <a class="black-btn btn ${deleteStatus}"
         id="delete-horse${horse.id}"><i class="fas fa-minus-circle">
-        </i>Delete</div>
+        </i>Delete</a>
 	    </div>`;
 
       $("#horses").append(template);
@@ -105,10 +106,12 @@ function deleteHorse(horse, e) {
 function updateRace(e, update) {
   if (params.get("mode") === "create") {
     const requestURL = `http://localhost/api/races/`;
-
     const horses = [];
 
-    $("#horses .horse input").each((index, elem) => horses.push($(elem).val()));
+    $("#horses .horse input").each((index, elem) => {
+      const name = $(elem).val();
+      if (hasName(name)) horses.push(name);
+    });
 
     const data = {
       event_id: state.eventId,
@@ -132,6 +135,8 @@ function updateRace(e, update) {
 
     if (notCreated) {
       const name = element.val();
+
+      if (!name) return;
 
       const createHorseURL = "http://localhost/api/horses/";
 
@@ -157,6 +162,20 @@ function updateRace(e, update) {
     } else {
       // Horse already created, update horse
       const newName = element.val();
+      // Hacky way to get the affected horses ID
+      const changedHorseId = element.attr("id").split("e")[1].split("-")[0];
+      // Was the horse given a name?
+      if (!hasName(newName)) {
+        element.addClass("is-invalid");
+        $("#race-done").addClass("disabled");
+        $(`#delete-horse${changedHorseId}`).addClass("disabled");
+        return;
+      } else {
+        element.removeClass("is-invalid");
+        $("#race-done").removeClass("disabled");
+        $(`#delete-horse${changedHorseId}`).removeClass("disabled");
+      }
+
       const id = element.attr("id");
 
       let idStartIdx = id.indexOf("e");
@@ -192,6 +211,13 @@ function updateRace(e, update) {
     contentType: "application/json",
     data: JSON.stringify(deleteData),
   });
+}
+
+// Was the horse given a name?
+function hasName(name) {
+  const withoutSpaces = name.replace(/ /g, "");
+  if (!withoutSpaces) return false;
+  return true;
 }
 
 $(document).ready(displayInformation);

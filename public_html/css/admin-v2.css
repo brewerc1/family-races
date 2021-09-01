@@ -65,13 +65,16 @@
   font-size: 1rem;
   border: 2px solid black;
   background-color: black;
-  color: white;
+  color: white !important;
   padding: 0.4rem 1.2rem 0.2rem;
   cursor: pointer;
+  font-weight: 400;
+  text-transform: capitalize;
+  border-radius: 0;
 }
 
 .black-btn:hover {
-  color: black;
+  color: black !important;
   background-color: white;
 }
 
