@@ -118,13 +118,13 @@
 
 #admin-close-event-btn {
   background-color: white;
-  color: black;
+  color: black !important;
   margin-right: 0.5rem;
 }
 
 #admin-close-event-btn:hover {
   background-color: black;
-  color: white;
+  color: white !important;
 }
 
 #add-race-container {

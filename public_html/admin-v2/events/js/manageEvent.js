@@ -28,7 +28,7 @@ function displayEventInformation() {
     )[0];
 
     const eventName = event.name;
-    const eventPot = Number.parseFloat(event.pot);
+    const eventPot = Number.parseFloat(event.pot).toFixed(2);
     const eventDate = event.date;
 
     eventNameHeader.text(eventName);
@@ -108,7 +108,7 @@ function handleOnChange() {
   const data = {
     name: nameField.val(),
     date: dateField.val(),
-    pot: Number.parseFloat(potField.val()),
+    pot: Number.parseFloat(potField.val()).toFixed(2),
   };
 
   // Extra guard to prevent pot from being bad value
@@ -133,7 +133,7 @@ function handleOnChange() {
 }
 
 function restrictNumberRange() {
-  let value = parseFloat(potField.val());
+  let value = parseFloat(potField.val()).toFixed(2);
   let min = 1;
   let max = 9999.99;
 
