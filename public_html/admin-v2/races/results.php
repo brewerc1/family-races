@@ -39,7 +39,7 @@ if ($_SESSION["admin"] != 1) {
         <div id="scoreboard">
 
             <h2>Results</h2>
-
+            {{ availableWinHorses }}
             <div id="message"><table class="table table-borderless scoreboard">
                 <!-- Row A -->
                 <thead>
@@ -57,45 +57,45 @@ if ($_SESSION["admin"] != 1) {
                 <tbody><tr id="first">
                     <td>
                         <select id="win-result" class="race-result w-100"  v-model="results.top_horses[0].horse_number" @change="updateResults()" required>
-                            <option v-for="(horse, index) in horses" :key="index" v-if="showHorse('win', horse.horse_number)">{{ horse.horse_number }}</option>
+                            <option v-for="(horse, index) in availableWinHorses" :key="index">{{ horse.horse_number }}</option>
                         </select>
                     </td>
                     <td class="position-relative">
-                        <input type="text" class="w-100" v-model="results.win[0]">
+                        <input type="text" class="w-100" v-model="results.win[0]" @change="updateResults()">
                     </td>
                     <td>
-                        <input type="text" class="w-100" v-model="results.win[1]">
+                        <input type="text" class="w-100" v-model="results.win[1]" @change="updateResults()">
                     </td>
                     <td>
-                        <input type="text" class="w-100" v-model="results.win[2]">
+                        <input type="text" class="w-100" v-model="results.win[2]" @change="updateResults()">
                     </td>
                 </tr>
                 <!-- Row C -->
                 <tr id="second">
                     <td>
                         <select id="place-result" class=" race-result" v-model="results.top_horses[1].horse_number" @change="updateResults()">
-                            <option v-for="(horse, index) in horses" :key="index" v-if="showHorse('place', horse.horse_number)">{{ horse.horse_number }}</option>
+                            <option v-for="(horse, index) in availablePlaceHorses" :key="index">{{ horse.horse_number }}</option>
                         </select>
                     </td>
                     <td></td>
                     <td class="">
-                        <input type="text" class="w-100" v-model="results.place[0]">
+                        <input type="text" class="w-100" v-model="results.place[0]" @change="updateResults()">
                     </td>
                     <td class="">
-                        <input type="text" class="w-100" v-model="results.place[1]">
+                        <input type="text" class="w-100" v-model="results.place[1]" @change="updateResults()">
                     </td>
                 </tr>
                 <!-- Row D -->
                 <tr id="third">
                     <td>
                         <select id="show-result" class=" race-result" v-model="results.top_horses[2].horse_number" @change="updateResults()">
-                            <option v-for="(horse, index) in horses" :key="index" v-if="showHorse('show', horse.horse_number)">{{ horse.horse_number }}</option>
+                            <option v-for="(horse, index) in availableShowHorses" :key="index">{{ horse.horse_number }}</option>
                         </select>
                     </td>
                     <td></td>
                     <td></td>
                     <td class="">
-                        <input type="text" class="w-100" v-model="results.show[0]">
+                        <input type="text" class="w-100" v-model="results.show[0]" @change="updateResults()">
                     </td>
                 </tr>
                 </tbody></table></div>

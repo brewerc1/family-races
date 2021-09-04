@@ -13,12 +13,53 @@ const results = new Vue({
         place: [0, 0, 0],
         show: [0, 0, 0],
         top_horses: [
-          { horse_number: 0 },
-          { horse_number: 0 },
-          { horse_number: 0 },
+          { horse_number: 0, id: -1 },
+          { horse_number: 0, id: -1 },
+          { horse_number: 0, id: -1 },
         ],
       },
     };
+  },
+  computed: {
+    availableWinHorses: function () {
+      if (this.loading) return [];
+      const result = [];
+      this.horses.forEach((horse) => {
+        if (
+          horse.id !== this.results.top_horses[1].id &&
+          horse.id !== this.results.top_horses[2].id
+        ) {
+          result.push(horse);
+        }
+      });
+      return result;
+    },
+    availablePlaceHorses: function () {
+      if (this.loading) return [];
+      const result = [];
+      this.horses.forEach((horse) => {
+        if (
+          horse.id !== this.results.top_horses[0].id &&
+          horse.id !== this.results.top_horses[2].id
+        ) {
+          result.push(horse);
+        }
+      });
+      return result;
+    },
+    availableShowHorses: function () {
+      if (this.loading) return [];
+      const result = [];
+      this.horses.forEach((horse) => {
+        if (
+          horse.id !== this.results.top_horses[0].id &&
+          horse.id !== this.results.top_horses[1].id
+        ) {
+          result.push(horse);
+        }
+      });
+      return result;
+    },
   },
   methods: {
     async fetchEvent() {
@@ -49,8 +90,10 @@ const results = new Vue({
       console.log(results);
       this.results = results.data;
     },
+
+    // Might need to be redone
     async updateResults() {
-      // Add guard to make sure everything is filled out to make robust
+      // Add guard to make sure everything is filled out too
       this.toggleLoading();
       const data = { horses: [] };
       data.horses.forEach(
@@ -60,7 +103,6 @@ const results = new Vue({
       const e = params.get("e");
       const r = params.get("r");
       const requestURL = `/api/results/?e=${e}&r=${r}`;
-      console.log(data);
 
       const win = this.horses.filter((horse) => {
         return horse.horse_number == this.results.top_horses[0].horse_number;
@@ -74,7 +116,18 @@ const results = new Vue({
 
       data.horses = [win, place, show];
 
-      console.log(data);
+      data.horses.forEach((horse, i) => {
+        if (i == 0) {
+          horse.win_purse = this.results.win[0];
+          horse.place_purse = this.results.win[1];
+          horse.show_purse = this.results.win[2];
+        } else if (i == 1) {
+          horse.place_purse = this.results.place[0];
+          horse.show_purse = this.results.place[1];
+        } else {
+          horse.show_purse = this.results.show[0];
+        }
+      });
 
       let response = await fetch(requestURL, {
         method: "PUT",
@@ -83,9 +136,10 @@ const results = new Vue({
         },
         body: JSON.stringify(data),
       });
-
       response = await response.json();
+
       console.log(response);
+
       await this.fetchResults();
       this.toggleLoading();
     },
