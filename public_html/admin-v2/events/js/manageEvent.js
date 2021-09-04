@@ -193,7 +193,7 @@ function buildRaceTemplate(race) {
     ${bettingWindowAction.capitalize()} Betting Window
   </a>`;
 
-  const enterResultsButton = `<a class="black-btn" href="${enterResultsURL}">Enter Results</a>`;
+  const enterResultsButton = `<a class="black-btn outlined-btn" href="${enterResultsURL}">Enter Results</a>`;
 
   return `
   <li class="list-group-item" id="${race.race_number}">

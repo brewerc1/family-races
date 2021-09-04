@@ -186,6 +186,17 @@
   margin: 0 auto;
 }
 
+.black-btn.outlined-btn {
+  border: 2px solid black !important;
+  background-color: white !important;
+  color: black !important;
+}
+
+.black-btn.black-btn.outlined-btn:hover {
+  color: white !important;
+  background-color: black !important;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
