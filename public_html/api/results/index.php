@@ -74,8 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
-
-    if (!Utils::validatePostRequestURLParams()) {
+    if (Utils::validatePostRequestURLParams()) {
         Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
         exit;
     }
@@ -125,7 +124,6 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 
         $place = [$hrs[1]["horse_number"], $hrs[1]["place_purse"], $hrs[1]["show_purse"]];
         $show = [$hrs[2]["horse_number"], $hrs[2]["show_purse"]];
         Utils::populateRaceStandingsTable($pdo, $horses[0]->race_event_id, $horses[0]->race_race_number, $win, $place, $show);
-
         Utils::sendResponse($statusCd, $success=true, $msg=[$message], $data=$hrs);
         exit;
     }
