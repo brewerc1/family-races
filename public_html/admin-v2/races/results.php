@@ -37,9 +37,7 @@ if ($_SESSION["admin"] != 1) {
 		</div>
 
         <div id="scoreboard">
-
             <h2>Results</h2>
-            {{ availableWinHorses }}
             <div id="message"><table class="table table-borderless scoreboard">
                 <!-- Row A -->
                 <thead>

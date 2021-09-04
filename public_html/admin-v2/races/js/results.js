@@ -129,6 +129,17 @@ const results = new Vue({
         }
       });
 
+      //   // log the names with ids for winners
+      //   console.log("Start winners");
+      //   data.horses.forEach((horse) => {
+      //     console.log(horse.id, horse.horse_number);
+      //   });
+      //   // log names with ids for all aswell
+      //   console.log("start all");
+      //   this.horses.forEach((horse) => {
+      //     console.log(horse.id, horse.horse_number);
+      //   });
+
       let response = await fetch(requestURL, {
         method: "PUT",
         headers: {
@@ -137,9 +148,6 @@ const results = new Vue({
         body: JSON.stringify(data),
       });
       response = await response.json();
-
-      console.log(response);
-
       await this.fetchResults();
       this.toggleLoading();
     },
