@@ -1,6 +1,5 @@
+// TODO: restructure file & improve fcns for readability
 const params = new URLSearchParams(window.location.search);
-
-// ADD NUMERRORS TO STATE TO PREVENT BLANK HORSE NAMES
 
 const state = {
   event: null,
@@ -10,6 +9,7 @@ const state = {
   page: params.get("pg"),
   race: params.get("r"),
   mode: params.get("mode"),
+  numberErrors: 0,
 };
 
 let horsesToDelete = [];
@@ -169,13 +169,15 @@ function updateRace(e, update) {
       const changedHorseId = element.attr("id").split("e")[1].split("-")[0];
       // Was the horse given a name?
       if (!hasName(newName)) {
+        state.numberErrors++;
         element.addClass("is-invalid");
         $("#race-done").addClass("disabled");
         $(`#delete-horse${changedHorseId}`).addClass("disabled");
         return;
       } else {
+        state.numberErrors--;
+        if (state.numberErrors === 0) $("#race-done").removeClass("disabled");
         element.removeClass("is-invalid");
-        $("#race-done").removeClass("disabled");
         $(`#delete-horse${changedHorseId}`).removeClass("disabled");
       }
 
