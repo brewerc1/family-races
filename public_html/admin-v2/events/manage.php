@@ -76,15 +76,14 @@ if ($_SESSION["admin"] != 1) {
 		<p><a class="fas fa-plus-circle"></a><span>Add a race</span></p>
 	</div>
 
-	<div id="loader-container">
-		<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
+	<div id="race-loader">
+		<div id="loader-container">
+			<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
+		</div>
 	</div>
 
 	<ul id="races-list" class="list-group list-group-flush col-md-12">
-
 	</ul>
-
-
 </main>
 
 {footer}

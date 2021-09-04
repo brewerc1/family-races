@@ -106,10 +106,7 @@
 
 .race-btns {
   display: flex;
-}
-
-.race-btns .black-btn:first-of-type {
-  margin-right: 1rem;
+  gap: 1rem;
 }
 
 .current-event-controls {

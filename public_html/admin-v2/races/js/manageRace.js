@@ -1,4 +1,7 @@
 const params = new URLSearchParams(window.location.search);
+
+// ADD NUMERRORS TO STATE TO PREVENT BLANK HORSE NAMES
+
 const state = {
   event: null,
   numHorses: 0,
