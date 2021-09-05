@@ -31,7 +31,7 @@ if ($_SESSION["admin"] != 1) {
         <a href="../events/" class="font-lighter">Events</a>
         <span class="font-lighter"> > </span>
         <a id="event-name" class="font-lighter"
-            href="../events/manage.php?e=<?php echo "e=".$_GET["e"]."&r=".$_GET["r"]."&pg=".$_GET["pg"];?>"
+            href="../events/manage.php?<?php echo "e=".$_GET["e"]."&r=".$_GET["r"]."&pg=".$_GET["pg"];?>"
         >
             <?php echo $_GET["name"]; ?>
         </a>
