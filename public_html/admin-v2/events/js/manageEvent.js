@@ -20,7 +20,7 @@ String.prototype.capitalize = function () {
 const params = new URLSearchParams(window.location.search);
 
 // Page state
-const state = { loading: true, invalidFields: false, raceList: [] };
+const state = { loading: true, invalidFields: false, raceList: [], eventName: '' };
 
 // Orchestration Function
 function fetchEvent() {
@@ -54,6 +54,7 @@ function displayEventInformation(offset) {
       displayEventInformation(offset + 1);
       return;
     }
+    state.eventName = event.name;
     updateEventInfoUI(
       event.name,
       Number.parseFloat(event.pot).toFixed(2),
@@ -183,7 +184,7 @@ function addBettingWindowListener(race) {
 function buildRaceTemplate(race) {
   const sharedParams = `e=${params.get("e")}&r=${
     race.race_number
-  }&pg=${params.get("pg")}`;
+  }&pg=${params.get("pg")}&name=${state.eventName}`;
   const editRaceURL = `../races/race.php?${sharedParams}&mode=edit`;
   const enterResultsURL = `../races/results.php?${sharedParams}`;
 

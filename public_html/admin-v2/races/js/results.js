@@ -4,141 +4,74 @@ const results = new Vue({
   el: "#app",
   data() {
     return {
+      nextRace: "",
+      previousRace: "",
+      showSuccessAlert: false,
+      showFailureAlert: false,
+      eventId: params.get("e"),
+      raceId: params.get("r"),
+      page: params.get("pg"),
+      enteredResults: {
+        win: -1,
+        show: -1,
+        place: -1,
+        win_purse: [0, 0, 0],
+        place_purse: [0, 0],
+        show_purse: [0],
+      },
       event: {},
       race: {},
       horses: [],
       loading: true,
-      results: {
-        win: [0, 0, 0],
-        place: [0, 0, 0],
-        show: [0, 0, 0],
-        top_horses: [
-          { horse_number: 0, id: -1 },
-          { horse_number: 0, id: -1 },
-          { horse_number: 0, id: -1 },
-        ],
-      },
     };
   },
   computed: {
     availableWinHorses: function () {
-      if (this.loading) return [];
-      const result = [];
-      this.horses.forEach((horse) => {
-        if (
-          horse.id !== this.results.top_horses[1].id &&
-          horse.id !== this.results.top_horses[2].id
-        ) {
-          result.push(horse);
-        }
-      });
-      return result;
+      const placeId = this.enteredResults.place;
+      const showId = this.enteredResults.show;
+      return this.horses.filter(horse => horse.id != placeId && horse.id != showId);
     },
     availablePlaceHorses: function () {
-      if (this.loading) return [];
-      const result = [];
-      this.horses.forEach((horse) => {
-        if (
-          horse.id !== this.results.top_horses[0].id &&
-          horse.id !== this.results.top_horses[2].id
-        ) {
-          result.push(horse);
-        }
-      });
-      return result;
+      const winId = this.enteredResults.win;
+      const showId = this.enteredResults.show;
+      return this.horses.filter(horse => horse.id != winId && horse.id != showId);
     },
     availableShowHorses: function () {
-      if (this.loading) return [];
-      const result = [];
-      this.horses.forEach((horse) => {
-        if (
-          horse.id !== this.results.top_horses[0].id &&
-          horse.id !== this.results.top_horses[1].id
-        ) {
-          result.push(horse);
-        }
-      });
-      return result;
+      const winId = this.enteredResults.win;
+      const placeId = this.enteredResults.place;
+      return this.horses.filter(horse => horse.id != winId && horse.id != placeId);
     },
   },
   methods: {
     async fetchEvent() {
-      const e = params.get("e");
-      const pg = params.get("pg");
-      const requestURL = `/api/events?e=${e}&pg=${pg}`;
+      const requestURL = `/api/events?e=${this.eventId}&pg=${this.page}`;
       let event = await fetch(requestURL);
       event = await event.json();
-      console.log(event);
-      event = event.data.events.filter((event) => event.id == e)[0];
+      event = event.data.events.filter((event) => event.id == this.eventId)[0];
       this.event = event;
     },
     async fetchRace() {
-      const e = params.get("e");
-      const r = params.get("r");
-      const requestURL = `/api/races?e=${e}&r=${r}`;
+      const requestURL = `/api/races?e=${this.eventId}&r=${this.raceId}`;
       let race = await fetch(requestURL);
       race = await race.json();
       this.race = race.data.races[0];
       this.horses = this.race.horses;
     },
     async fetchResults() {
-      const e = params.get("e");
-      const r = params.get("r");
-      const requestURL = `/api/results?e=${e}&r=${r}`;
-      let results = await fetch(requestURL);
-      results = await results.json();
-      console.log(results);
-      this.results = results.data;
+      try {
+        const requestURL = `/api/results?e=${this.eventId}&r=${this.raceId}`;
+        let results = await fetch(requestURL);
+        results = await results.json();
+        this.mapResults(results.data);
+      } catch (e) {
+        console.log("Error retrieving results (results not yet entered)");
+      }
     },
-
-    // Might need to be redone
     async updateResults() {
-      // Add guard to make sure everything is filled out too
+      if (!this.allFieldsFilledOut()) return;
+      const data = this.buildRequestObject();
+      const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
       this.toggleLoading();
-      const data = { horses: [] };
-      data.horses.forEach(
-        (horse, i) =>
-          (horse.finish = i == 0 ? "win" : i == 1 ? "place" : "show")
-      );
-      const e = params.get("e");
-      const r = params.get("r");
-      const requestURL = `/api/results/?e=${e}&r=${r}`;
-
-      const win = this.horses.filter((horse) => {
-        return horse.horse_number == this.results.top_horses[0].horse_number;
-      })[0];
-      const place = this.horses.filter((horse) => {
-        return horse.horse_number == this.results.top_horses[1].horse_number;
-      })[0];
-      const show = this.horses.filter((horse) => {
-        return horse.horse_number == this.results.top_horses[2].horse_number;
-      })[0];
-
-      data.horses = [win, place, show];
-
-      data.horses.forEach((horse, i) => {
-        if (i == 0) {
-          horse.win_purse = this.results.win[0];
-          horse.place_purse = this.results.win[1];
-          horse.show_purse = this.results.win[2];
-        } else if (i == 1) {
-          horse.place_purse = this.results.place[0];
-          horse.show_purse = this.results.place[1];
-        } else {
-          horse.show_purse = this.results.show[0];
-        }
-      });
-
-      //   // log the names with ids for winners
-      //   console.log("Start winners");
-      //   data.horses.forEach((horse) => {
-      //     console.log(horse.id, horse.horse_number);
-      //   });
-      //   // log names with ids for all aswell
-      //   console.log("start all");
-      //   this.horses.forEach((horse) => {
-      //     console.log(horse.id, horse.horse_number);
-      //   });
 
       let response = await fetch(requestURL, {
         method: "PUT",
@@ -147,15 +80,106 @@ const results = new Vue({
         },
         body: JSON.stringify(data),
       });
+
       response = await response.json();
-      await this.fetchResults();
+      console.log(response);
+
+      if (response.statusCode === 200) this.showSuccess();
+      else this.showFailure();
+
       this.toggleLoading();
     },
-    showHorse(type, horseName) {
-      const horse = this.horses.filter(
-        (horse) => horse.horse_number == horseName
-      )[0];
-      return horse.finish === null || horse.finish === type;
+    async setPrevAndNextRaces() {
+      let baseURL = `/admin-v2/races/results.php?`
+      const nextParams = new URLSearchParams();
+      const prevParams = new URLSearchParams();
+      if (this.raceId === 1) this.previousRace = ""
+      else {
+        prevParams.append("e", this.eventId);
+        prevParams.append("r", Number.parseInt(this.raceId) - 1)
+        if (Number.parseInt(this.raceId) % 10 == 0) {
+          prevParams.append("pg", Number.parseInt(this.page) - 1);
+        } else {
+          prevParams.append("pg", this.page);
+        }
+        prevParams.append("name", this.event.name);
+        this.previousRace = baseURL + prevParams.toString();
+      }
+      const requestURL = `/api/races?e=${this.eventId}&r=${Number.parseInt(this.raceId) + 1}`;
+      let race = await fetch(requestURL);
+      race = await race.json();
+      if (race.data?.rowReturned === 1) {
+        nextParams.append("e", this.eventId);
+        nextParams.append("r", Number.parseInt(this.raceId) + 1)
+        if (race.numberOfPages > 1 && Number.parseInt(this.raceId) % 10 == 0) {
+          nextParams.append("pg", Number.parseInt(this.page) + 1);
+        } else {
+          nextParams.append("pg", this.page);
+        }
+        nextParams.append("name", this.event.name);
+        this.nextRace = baseURL + nextParams.toString();
+      } else {
+        this.nextRace = "";
+      }
+    },
+    mapResults(results) {
+      this.enteredResults.win = results.top_horses[0].id;
+      this.enteredResults.place = results.top_horses[1].id;
+      this.enteredResults.show = results.top_horses[2].id;
+      this.enteredResults.win_purse = results.win;
+      this.enteredResults.place_purse = results.place;
+      this.enteredResults.show_purse = results.show;
+    },
+    buildRequestObject() {
+      const winHorse = { 
+        id: this.enteredResults.win,
+        race_event_id: this.eventId,
+        race_race_number: this.raceId,
+        finish: "win",
+        win_purse: this.enteredResults.win_purse[0],
+        place_purse: this.enteredResults.win_purse[1],
+        show_purse: this.enteredResults.win_purse[2]
+      }
+      const placeHorse = {
+        id: this.enteredResults.place,
+        race_event_id: this.eventId,
+        race_race_number: this.raceId,
+        finish: "place",
+        win_purse: null,
+        place_purse: this.enteredResults.place_purse[0],
+        show_purse: this.enteredResults.place_purse[1]
+      }
+      const showHorse = { 
+        id: this.enteredResults.show,
+        race_event_id: this.eventId,
+        race_race_number: this.raceId,
+        finish: "show",
+        win_purse: null,
+        place_purse: null,
+        show_purse: this.enteredResults.show_purse[0]
+      }
+      const data = { horses: [winHorse, placeHorse, showHorse] };
+      return data
+    },
+    allFieldsFilledOut() {
+      const res = this.enteredResults
+      const win = res.win != -1 && res.win_purse[0] > 0 && res.win_purse[1] > 1 && res.win_purse[2] > 0;
+      const place = res.place != -1 && res.place_purse[0] > 0 && res.place_purse[1] > 0;
+      const show = res.show != -1 && res.show_purse[0] > 0;
+      return win && place && show;
+    },
+    async showSuccess() {
+      this.showSuccessAlert = true;
+      await this.delay(3000);
+      this.showSuccessAlert = false;
+    },
+    async showFailure() {
+      this.showFailureAlert = true;
+      await this.delay(3000);
+      this.showFailureAlert = false;
+    },
+    async delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     },
     toggleLoading() {
       this.loading = !this.loading;
@@ -165,10 +189,7 @@ const results = new Vue({
     await this.fetchEvent();
     await this.fetchRace();
     await this.fetchResults();
+    await this.setPrevAndNextRaces();
     this.toggleLoading();
-    console.log(this.horses);
-    console.log(this.event);
-    console.log(this.race);
-    console.log(this.results);
   },
 });

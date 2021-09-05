@@ -197,6 +197,57 @@
   background-color: black !important;
 }
 
+.board-blank {
+  opacity: 0;
+}
+
+.custom-alert {
+  position: absolute;
+  top: 80px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  max-width: 300px;
+  text-align: center;
+}
+
+.contain-width {
+  width: 95%;
+  min-width: 95%;
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.header-blurred {
+  backdrop-filter: blur(20px);
+}
+
+.board-wrapper {
+  display: flex;
+}
+
+.control-btn {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 4rem;
+  color: black !important;
+}
+
+.control-btn:active,
+.control-btn:focus,
+.control-btn:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.dim {
+  color: #ccc !important;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
@@ -297,7 +348,7 @@
   height: 100%;
   left: 0;
   top: 0;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
 }
 
 #race-loader > #loader-container {
