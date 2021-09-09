@@ -189,8 +189,17 @@ if ($_SESSION["admin"] != 1) {
         </div>
         <div class="mt-4 mb-4 contain-width">
             <h2>Horses in this race</h2>
-            <div v-for="horse in horses" :key="horse.id" class="pb-4 font-weight-bold">
+            <div v-for="horse in sortedHorses" :key="horse.id" class="pb-4 font-weight-bold">     
                 {{ horse.horse_number }}
+                <span v-if="horse.id === enteredResults.win" class="gold">
+                    <i class="fas fa-trophy"></i>
+                </span>
+                <span v-else-if="horse.id === enteredResults.place" class="silver">
+                    <i class="fas fa-trophy"></i>
+                </span>
+                <span v-else-if="horse.id === enteredResults.show" class="bronze">
+                    <i class="fas fa-trophy"></i>
+                </span>   
             </div>
         </div>
     </section>

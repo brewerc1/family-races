@@ -41,6 +41,15 @@ const results = new Vue({
       const placeId = this.enteredResults.place;
       return this.horses.filter(horse => horse.id != winId && horse.id != placeId);
     },
+    sortedHorses: function() {
+      if (this.loading || this.enteredResults.win === -1) return [];
+      const win = this.horses.filter(horse => horse.id === this.enteredResults.win)[0]
+      const place = this.horses.filter(horse => horse.id === this.enteredResults.place)[0]
+      const show = this.horses.filter(horse => horse.id === this.enteredResults.show)[0]
+      const winPlaceShow = [win, place, show];
+      const otherHorses = this.horses.filter(horse => horse.id !== this.enteredResults.win && horse.id !== this.enteredResults.place && horse.id !== this.enteredResults.show);
+      return [...winPlaceShow, ...otherHorses];
+    }
   },
   methods: {
     async fetchEvent() {
@@ -168,7 +177,7 @@ const results = new Vue({
       const show = res.show != -1 && res.show_purse[0] > 0;
       return win && place && show;
     },
-    async showSuccess() {
+    async showSuccess() { 
       this.showSuccessAlert = true;
       await this.delay(3000);
       this.showSuccessAlert = false;
