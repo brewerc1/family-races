@@ -65,13 +65,16 @@
   font-size: 1rem;
   border: 2px solid black;
   background-color: black;
-  color: white;
+  color: white !important;
   padding: 0.4rem 1.2rem 0.2rem;
   cursor: pointer;
+  font-weight: 400;
+  text-transform: capitalize;
+  border-radius: 0;
 }
 
 .black-btn:hover {
-  color: black;
+  color: black !important;
   background-color: white;
 }
 
@@ -115,13 +118,13 @@
 
 #admin-close-event-btn {
   background-color: white;
-  color: black;
+  color: black !important;
   margin-right: 0.5rem;
 }
 
 #admin-close-event-btn:hover {
   background-color: black;
-  color: white;
+  color: white !important;
 }
 
 #add-race-container {
@@ -277,4 +280,18 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+#race-loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+}
+
+#race-loader > #loader-container {
+  position: relative;
+  top: 50%;
 }

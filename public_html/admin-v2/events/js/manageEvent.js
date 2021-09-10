@@ -13,22 +13,28 @@ const loader = $("#loader-container");
 const addRaceButton = $("#add-race-container p a");
 
 function fetchEvent() {
-  displayEventInformation();
+  displayEventInformation(0);
   displayEventRaces();
   loading = false;
 }
 
-function displayEventInformation() {
+function displayEventInformation(offset) {
   // Need page due to API
-  const requestURL = `/api/events?e=${params.get("e")}`;
+  const reqPage = parseInt(params.get("pg")) + offset;
+  const requestURL = `/api/events?e=${params.get("e")}&pg=${reqPage}`;
   $.get(requestURL, (data) => {
     // Hacky, only way this can be done with the current API
     let event = data.data.events.filter(
       (event) => event.id == params.get("e")
     )[0];
 
+    // Event is on another page
+    if (!event) {
+      displayEventInformation(offset + 1);
+      return;
+    }
     const eventName = event.name;
-    const eventPot = Number.parseFloat(event.pot);
+    const eventPot = Number.parseFloat(event.pot).toFixed(2);
     const eventDate = event.date;
 
     eventNameHeader.text(eventName);
@@ -108,7 +114,7 @@ function handleOnChange() {
   const data = {
     name: nameField.val(),
     date: dateField.val(),
-    pot: Number.parseFloat(potField.val()),
+    pot: Number.parseFloat(potField.val()).toFixed(2),
   };
 
   // Extra guard to prevent pot from being bad value
@@ -133,7 +139,7 @@ function handleOnChange() {
 }
 
 function restrictNumberRange() {
-  let value = parseFloat(potField.val());
+  let value = parseFloat(potField.val()).toFixed(2);
   let min = 1;
   let max = 9999.99;
 
