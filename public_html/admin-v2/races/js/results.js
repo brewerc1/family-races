@@ -42,13 +42,17 @@ const results = new Vue({
       return this.horses.filter(horse => horse.id != winId && horse.id != placeId);
     },
     sortedHorses: function() {
-      if (this.loading || this.enteredResults.win === -1) return [];
-      const win = this.horses.filter(horse => horse.id === this.enteredResults.win)[0]
-      const place = this.horses.filter(horse => horse.id === this.enteredResults.place)[0]
-      const show = this.horses.filter(horse => horse.id === this.enteredResults.show)[0]
-      const winPlaceShow = [win, place, show];
+      if (this.loading) return [];
+      if (this.enteredResults.win === -1) return this.horses
+      const win = this.horses.filter(horse => horse.id === this.enteredResults.win)
+      const place = this.horses.filter(horse => horse.id === this.enteredResults.place)
+      const show = this.horses.filter(horse => horse.id === this.enteredResults.show)
       const otherHorses = this.horses.filter(horse => horse.id !== this.enteredResults.win && horse.id !== this.enteredResults.place && horse.id !== this.enteredResults.show);
-      return [...winPlaceShow, ...otherHorses];
+      const result = [...otherHorses];
+      if (show.length > 0) result.unshift(show[0]);
+      if (place.length > 0) result.unshift(place[0]);
+      if (win.length > 0) result.unshift(win[0]);
+      return result;
     }
   },
   methods: {
@@ -200,5 +204,7 @@ const results = new Vue({
     await this.fetchResults();
     await this.setPrevAndNextRaces();
     this.toggleLoading();
+    console.log(this.horses);
+    console.log(this.sortedHorses);
   },
 });

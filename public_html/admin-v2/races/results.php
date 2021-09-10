@@ -90,7 +90,7 @@ $eventName = $stmt->fetch()["name"];
                                         @change="updateResults()"
                                     >
                                         <option
-                                            v-for="horse in availableWinHorses" 
+                                            v-for="horse in availableWinHorses"
                                             :key="horse.id"
                                             :label="horse.horse_number"
                                             :value="horse.id"
