@@ -46,11 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $hasWin = false;
             $hasPlace = false;
             $hasShow = false;
-            $raceNumber = 0;
             foreach ($result as $row) {
                 foreach ($row as $horse) {
-                    $raceNumber = $horse["race_race_number"];
-
                     $isWin = key_exists("win_purse", $horse) && !is_null($horse["win_purse"])
                     && key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
                     && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
@@ -66,10 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 }
             }
             $hasResults = $hasWin && $hasPlace && $hasShow;
-            array_push($data, [$raceNumber => $hasResults]);
+            array_push($data, $hasResults);
         }
 
-        Utils::sendResponse(200, $success = true, $msg = ["All Event Race Result Status Retrieved"], $data=$data);
+        Utils::sendResponse(200, $success = true, $msg = ["All Event Race Result Statuses Retrieved"], $data=$data);
         exit;
     } catch (PDOException $ex) {
         Utils::sendResponse(500, $success = false, $msg = ["Server error: " . $ex], $data = null);

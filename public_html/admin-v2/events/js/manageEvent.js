@@ -20,13 +20,27 @@ String.prototype.capitalize = function () {
 const params = new URLSearchParams(window.location.search);
 
 // Page state
-const state = { loading: true, invalidFields: false, raceList: [], eventName: '' };
+const state = {
+  loading: true,
+  invalidFields: false,
+  raceList: [],
+  resultStatuses: [],
+  eventName: "",
+};
 
 // Orchestration Function
 function fetchEvent() {
   displayEventInformation(0);
+  fetchEventRaceResultStatuses();
   fetchEventRaces();
   state.loading = false;
+}
+
+function fetchEventRaceResultStatuses() {
+  const requestURL = `/api/results/bulk?e=${params.get("e")}`;
+  $.get(requestURL, (data) => {
+    state.resultStatuses = data.data;
+  });
 }
 
 // Request Functions
