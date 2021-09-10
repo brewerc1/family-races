@@ -1,236 +1,272 @@
-// TODO: restructure file & improve fcns for readability
+// URL query string parameters
 const params = new URLSearchParams(window.location.search);
 
+// Page state
 const state = {
   event: null,
   numHorses: 0,
+  horsesToDelete: [],
+  horses: [],
   loading: true,
+  numErrors: 0,
   eventId: params.get("e"),
   page: params.get("pg"),
   race: params.get("r"),
   mode: params.get("mode"),
-  numberErrors: 0,
 };
 
-let horsesToDelete = [];
-
-function displayInformation() {
-  fetchEvent();
-
-  $("#race-mode").text(
-    state.mode === "create" ? "Create a Race" : "Edit a Race"
-  );
-
-  if (state.mode === "create") $(".checkbox-container").css("display", "none");
-
+// Page load orchestration function
+async function preparePage() {
+  await fetchEvent();
+  displayEventUI();
+  displayStateInformationUI();
   if (state.mode === "edit") {
-    fetchRaceHorses();
-    let toolTipNeeded = $("highlight-race").hasClass("disabled");
-    if (toolTipNeeded) $("#highlight-race").toolTip();
+    await fetchRaceHorses();
+    displayExistingHorsesUI();
+  }
+  toggleLoader();
+}
+
+// Orchestrates requests when race is saved
+async function orchestrateRequests(e, isUpdate) {
+  if (params.get("mode") === "create") await createRace();
+  if (state.horsesToDelete.length > 0) await deleteHorses();
+  if (isUpdate) {
+    const horseNotCreated = $(`#${e.target.id}`).hasClass("not-created");
+    if (horseNotCreated) await createNewHorse(e.target.id);
+    else await updateHorse(e.target.id);
   }
 }
 
-function fetchEvent() {
-  const requestURL = `http://localhost/api/events?e=${state.eventId}&pg=${state.page}`;
-
-  $.get(requestURL, (data) => {
-    let event = data.data.events.filter(
-      (event) => event.id == state.eventId
-    )[0];
-
-    state.event = event;
-
-    $("#event-name").text(event.name);
-    $("#event-name").attr(
-      "href",
-      `../events/manage.php?e=${state.eventId}&pg=${state.page}`
-    );
-    $("#race-loader").css("display", "none");
-  });
+// Request Functions
+async function fetchEvent() {
+  const requestURL = `/api/events?e=${state.eventId}&pg=${state.page}`;
+  const request = await fetch(requestURL);
+  const response = await request.json();
+  const events = response.data.events;
+  const event = events.filter((event) => event.id == state.eventId)[0];
+  state.event = event;
 }
 
-function fetchRaceHorses() {
+async function fetchRaceHorses() {
   const requestURL = `http://localhost/api/horses?e=${state.eventId}&r=${state.race}`;
+  const request = await fetch(requestURL);
+  const response = await request.json();
+  const horses = response.data;
+  state.horses = response.data;
+  state.numHorses = horses.length;
+}
 
-  $.get(requestURL).done((data) => {
-    const horses = data.data;
-    state.numHorses = horses.length;
+async function createRace() {
+  const requestURL = `http://localhost/api/races/`;
+  const horses = [];
 
-    if (state.numHorses >= 1) $("#remove-hint").css("display", "block");
+  $("#horses .horse input").each((i, elem) => {
+    const name = $(elem).val();
+    if(horseHasName(name)) horses.push($(elem).val())
+  });
 
-    horses.forEach((horse) => {
-      const deleteStatus = horse.can_be_deleted ? "" : "disabled";
-      const template = `
-      <div class="horse" id="horse${horse.id}">
-			  <input type="text" class="form-control" placeholder="Name of horse" id="horse${horse.id}-name"
-        value="${horse.horse_number}">
-			  <a class="black-btn btn ${deleteStatus}"
-        id="delete-horse${horse.id}"><i class="fas fa-minus-circle">
-        </i>Delete</a>
-	    </div>`;
+  const data = {
+    event_id: state.eventId,
+    horses: horses,
+  };
 
-      $("#horses").append(template);
-      addListeners(horse.id);
-    });
+  const request = await fetch(requestURL, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  await request.json();
+  if (request.status !== 201) console.log("Error creating race.");
+}
+
+
+async function updateHorse(id) {
+  const element = $(`#${id}`);
+
+  if (!validateHorse(element)) return
+
+  const newName = element.val();
+  const idStartIdx = id.indexOf("e");
+  const idEndIdx = id.indexOf("-");
+  const horseId = id.substring(idStartIdx + 1, idEndIdx);
+  const requestURL = "http://localhost/api/horses";
+  const data = {
+    horses: [
+      {
+        id: horseId,
+        horse_number: newName,
+      },
+    ],
+  };
+
+  const request = await fetch(requestURL, {
+    method: "PUT",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  await request.json();
+
+  if (request.status !== 200) console.log("Error updating horse.");
+}
+
+async function deleteHorses() {
+  const requestURL = `http://localhost/api/horses`;
+
+  const data = { horses: state.horsesToDelete };
+
+  const request = await fetch(requestURL, {
+    method: "DELETE",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (request.status !== 204) console.log("Error deleting horse.");
+  else state.horsesToDelete = [];
+}
+
+async function createNewHorse(oldID) {
+  const name = $(`#${oldID}`).val();
+  const requestURL = "http://localhost/api/horses/";
+
+  const data = {
+    race_event_id: state.eventId,
+    race_race_number: state.race,
+    horses: [name],
+  };
+
+  const request = await fetch(requestURL, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const response = await request.json();
+
+  if (request.status !== 201) console.log("Error creating horse.");
+  else updateCreatedHorseUI(response.data[response.data.length - 1].id, oldID);
+}
+
+// UI Modifying Functions
+function displayEventUI() {
+  const eventURL = `../events/manage.php?e=${state.eventId}&pg=${state.page}`;
+  $("#event-name").text(state.event.name);
+  $("#event-name").attr("href", eventURL);
+}
+
+function displayStateInformationUI() {
+  $("#race-mode").text(`${state.mode} a Race`);
+  if (state.mode === "create") $(".checkbox-container").css("display", "none");
+}
+
+function displayExistingHorsesUI() {
+  if (state.numHorses >= 1) $("#remove-hint").css("display", "block");
+  state.horses.forEach((horse) => {
+    const template = buildExistingHorseTemplateUI(horse);
+    $("#horses").append(template);
+    $(`#delete-horse${horse.id}`).on("click", () => deleteHorseUI(horse.id));
   });
 }
 
-function addHorse() {
+function createHorseUI() {
   state.numHorses++;
-
   if (state.numHorses === 1) $("#remove-hint").css("display", "block");
-
-  const template = `
-    <div class="horse" id="horse${state.numHorses}">
-			<input type="text" class="form-control not-created" placeholder="Name of horse"  id="horse${state.numHorses}-name">
-			<div class="black-btn" id="delete-horse${state.numHorses}"><i class="fas fa-minus-circle"></i>Delete</div>
-		</div>`;
-
+  const template = buildNewHorseTemplateUI();
   $("#horses").append(template);
-
-  addListeners(state.numHorses);
+  $(`#delete-horse${state.numHorses}`).on("click", () =>
+    deleteHorseUI(state.numHorses)
+  );
 }
 
-function addListeners(horse) {
-  $(`#delete-horse${horse}`).on("click", (e) => deleteHorse(horse, e));
-}
-
-function deleteHorse(horse, e) {
-  e.stopPropagation();
-
+function deleteHorseUI(horse) {
   $(`#horse${horse}`).remove();
-  state.numHorses--;
-
   if (state.numHorses === 0) $("#remove-hint").css("display", "none");
-
-  if (state.mode === "edit") horsesToDelete.push({ id: horse });
+  if (state.mode === "edit") state.horsesToDelete.push({ id: horse });
+  state.horses = state.horses.filter((horse) => horse.id !== horse);
+  state.numHorses--;
 }
 
-function updateRace(e, update) {
-  if (params.get("mode") === "create") {
-    const requestURL = `http://localhost/api/races/`;
-    const horses = [];
-
-    $("#horses .horse input").each((index, elem) => {
-      const name = $(elem).val();
-      if (hasName(name)) horses.push(name);
-    });
-
-    const data = {
-      event_id: state.eventId,
-      horses: horses,
-    };
-
-    $.ajax({
-      type: "POST",
-      url: requestURL,
-      contentType: "application/json",
-      data: JSON.stringify(data),
-    });
-
-    return;
-  }
-
-  if (update) {
-    const element = $(`#${e.target.id}`);
-
-    const notCreated = element.hasClass("not-created");
-
-    if (notCreated) {
-      const name = element.val();
-
-      if (!name) return;
-
-      const createHorseURL = "http://localhost/api/horses/";
-
-      const createHorseData = {
-        race_event_id: state.eventId,
-        race_race_number: state.race,
-        horses: [name],
-      };
-
-      $.ajax({
-        type: "POST",
-        url: createHorseURL,
-        contentType: "application/json",
-        data: JSON.stringify(createHorseData),
-      }).done((data) => {
-        const newId = data.data[data.data.length - 1].id;
-        element.siblings().attr("id", `delete-horse${newId}`);
-        element.parent().attr("id", `horse${newId}`);
-        element.removeClass("not-created");
-        element.attr("id", `horse${newId}-name`);
-        addListeners(newId);
-      });
-    } else {
-      // Horse already created, update horse
-      const newName = element.val();
-      // Hacky way to get the affected horses ID
-      const changedHorseId = element.attr("id").split("e")[1].split("-")[0];
-      // Was the horse given a name?
-      if (!hasName(newName)) {
-        state.numberErrors++;
-        element.addClass("is-invalid");
-        $("#race-done").addClass("disabled");
-        $(`#delete-horse${changedHorseId}`).addClass("disabled");
-        return;
-      } else {
-        state.numberErrors--;
-        if (state.numberErrors === 0) $("#race-done").removeClass("disabled");
-        element.removeClass("is-invalid");
-        $(`#delete-horse${changedHorseId}`).removeClass("disabled");
-      }
-
-      const id = element.attr("id");
-
-      let idStartIdx = id.indexOf("e");
-      let idEndIdx = id.indexOf("-");
-      const horseId = id.substring(idStartIdx + 1, idEndIdx);
-      const updateHorseURL = "http://localhost/api/horses";
-
-      const updateHorseData = {
-        horses: [
-          {
-            id: horseId,
-            horse_number: newName,
-          },
-        ],
-      };
-
-      $.ajax({
-        type: "PUT",
-        url: updateHorseURL,
-        contentType: "application/json",
-        data: JSON.stringify(updateHorseData),
-      });
-    }
-  }
-
-  const deleteRequestURL = `http://localhost/api/horses`;
-
-  const deleteData = { horses: horsesToDelete };
-
-  $.ajax({
-    url: deleteRequestURL,
-    type: "DELETE",
-    contentType: "application/json",
-    data: JSON.stringify(deleteData),
-  });
+function updateCreatedHorseUI(id, oldId) {
+  const element = $(`#${oldId}`);
+  element.siblings().attr("id", `delete-horse${id}`);
+  element.parent().attr("id", `horse${id}`);
+  element.removeClass("not-created");
+  element.attr("id", `horse${id}-name`);
+  $(`#delete-horse${id}`).on("click", () => deleteHorseUI(id));
 }
 
-// Was the horse given a name?
-function hasName(name) {
+function addHorseErrorUI(element) {
+  state.numErrors++;
+  const changedHorseId = element.attr("id").split("e")[1].split("-")[0];
+  element.addClass("is-invalid");
+  $("#race-done").addClass("disabled");
+  $(`#delete-horse${changedHorseId}`).addClass("disabled");
+}
+
+function removeHorseErrorUI(element) {
+  state.numErrors--;
+  const changedHorseId = element.attr("id").split("e")[1].split("-")[0];
+  element.removeClass("is-invalid");
+  $(`#delete-horse${changedHorseId}`).removeClass("disabled");
+  if (state.numErrors === 0) $("#race-done").removeClass("disabled");
+}
+
+// UI Template Functions
+function buildExistingHorseTemplateUI(horse) {
+  const deleteStatus = horse.can_be_deleted ? "" : "disabled";
+  return `
+  <div class="horse" id="horse${horse.id}">
+    <input type="text" class="form-control" placeholder="Name of horse" id="horse${
+      horse.id
+    }-name"
+    value="${horse.horse_number}">
+    <a class="black-btn btn ${deleteStatus}"
+      id="delete-horse${horse.id}"><i class="fas fa-minus-circle">
+    </i>Delete</a>
+  </div>`;
+}
+
+function buildNewHorseTemplateUI() {
+  return `
+  <div class="horse" id="horse${state.numHorses}">
+    <input type="text" class="form-control not-created" placeholder="Name of horse"  id="horse${state.numHorses}-name">
+    <div class="black-btn" id="delete-horse${state.numHorses}"><i class="fas fa-minus-circle"></i>Delete</div>
+  </div>`;
+}
+
+// Utility Functions
+function horseHasName(name) {
   const withoutSpaces = name.replace(/ /g, "");
   if (!withoutSpaces) return false;
   return true;
 }
 
-$(document).ready(displayInformation);
+function validateHorse(element) {
+  const name = element.val();
+  if (!horseHasName(name)) {
+    addHorseErrorUI(element)
+    return false;
+  } else {
+    removeHorseErrorUI(element);
+  }
+}
 
-$("#add-horse-container p a").on("click", addHorse);
+function toggleLoader() {
+  $("#race-loader").css("display", "none");
+  state.loading = false;
+}
 
-$("#race-done").on("click", (e) => updateRace(e, false));
-
+// Event Listeners
+$(document).ready(preparePage);
+$("#add-horse-container p a").on("click", createHorseUI);
+$("#race-done").on("click", (e) => orchestrateRequests(e, (isUpdate = false)));
 if (params.get("mode") === "edit") {
-  $("#horses").on("change", (e) => updateRace(e, true));
+  $("#horses").on("change", (e) => orchestrateRequests(e, (isUpdate = true)));
 }
