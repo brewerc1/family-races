@@ -99,6 +99,10 @@ $random_image = array_rand($background_images);
 					<div class="linkedin"><a class="text-info" href="https://www.linkedin.com/in/josh-hannon15"><img src="/images/linkedin-bug.png" alt="LinkedIn logo" class="linkedin-bug mr-2">Josh's LinkedIn profile</a></div>
 				</div>
 				<div class="col-lg-4 col-md-6 col-sm-12 mb-5">
+					<p><strong>Nick Klaene</strong> is a junior Computer Science student with a minor in Mathematics interested primarily in software development.</p>
+					<div class="linkedin"><a class="text-info" href="https://www.linkedin.com/in/nicholas-klaene"><img src="/images/linkedin-bug.png" alt="LinkedIn logo" class="linkedin-bug mr-2">Nick's LinkedIn profile</a></div>
+				</div>
+				<div class="col-lg-4 col-md-6 col-sm-12 mb-5">
 					<p><strong>Jonathan Makunga</strong> is a junior majoring in both Computer Science and Information Technology with a minor in Information Systems.</p>
 					<div class="linkedin"><a class="text-info" href="https://www.linkedin.com/in/makungaj1"><img src="/images/linkedin-bug.png" alt="LinkedIn logo" class="linkedin-bug mr-2">Jonathan's LinkedIn profile</a></div>
 				</div>
