@@ -198,7 +198,7 @@ $eventName = $stmt->fetch()["name"];
         <div class="mt-4 mb-4 contain-width">
             <h2>Horses in this race</h2>
             <div v-for="horse in sortedHorses" :key="horse.id" class="pb-4 font-weight-bold">     
-                {{ horse.horse_number }}
+                
                 <span v-if="horse.id === enteredResults.win" class="gold">
                     <i class="fas fa-trophy"></i>
                 </span>
@@ -208,6 +208,7 @@ $eventName = $stmt->fetch()["name"];
                 <span v-else-if="horse.id === enteredResults.show" class="bronze">
                     <i class="fas fa-trophy"></i>
                 </span>   
+                {{ horse.horse_number }}
             </div>
         </div>
     </section>
