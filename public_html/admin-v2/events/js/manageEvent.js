@@ -148,7 +148,6 @@ function displayRacesUI(races) {
 }
 
 function updateEventInfoUI(name, pot, date) {
-  eventNameHeader.text(name);
   nameField.val(name);
   potField.val(pot);
   dateField.val(date);

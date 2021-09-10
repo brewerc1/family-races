@@ -16,6 +16,12 @@ if ($_SESSION["admin"] != 1) {
 	exit;
 }
 
+$eventId = (int) $_GET["e"];
+$query = "SELECT name FROM event WHERE id=:eventId";
+$stmt = $pdo->prepare($query);
+$stmt->execute(['eventId'=>$eventId]);
+$eventName = $stmt->fetch()["name"];
+
 ?>
 
 {header}
@@ -31,7 +37,7 @@ if ($_SESSION["admin"] != 1) {
     <h1 class="sticky-top padded-top-header mb-5" id="manage-events-page-header">
 		<a href="../events/" class="font-lighter">Events</a>
 		<span class="font-lighter"> > </span> 
-		<span id="event-name"></span>
+		<span id="event-name"> <?php echo $eventName; ?></span>
 	</h1>
 
 	<form id="create-event" method="POST">

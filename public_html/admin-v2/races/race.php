@@ -43,6 +43,12 @@ if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {
 	$stmt->execute(['race'=>$race]);
 }
 
+$eventId = (int) $_GET["e"];
+$query = "SELECT name FROM event WHERE id=:eventId";
+$stmt = $pdo->prepare($query);
+$stmt->execute(['eventId'=>$eventId]);
+$eventName = $stmt->fetch()["name"];
+
 ?>
 
 {header}
@@ -51,9 +57,9 @@ if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {
     <h1 class="sticky-top padded-top-header pl-4 mb-5" id="manage-race-page-header">
 		<a href="../events/" class="font-lighter">Events</a>
 		<span class="font-lighter"> > </span> 
-		<a id="event-name" class="font-lighter">Event</a>
+		<a id="event-name" class="font-lighter"><?php echo $eventName ?></a>
         <span class="font-lighter"> > </span> 
-        <span id="race-mode"></span>
+        <span id="race-mode"><?php echo $_GET["mode"] . " A Race" ?></span>
 	</h1>
 	<section id="race" class="mt-5">
 
