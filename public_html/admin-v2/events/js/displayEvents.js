@@ -92,7 +92,12 @@ function addEventsToDOM(events) {
 
     eventsProcessed++;
 
-    if (eventsProcessed === events.length) toggleLoader();
+    if (eventsProcessed === events.length){
+       toggleLoader();
+       if (events.length === 1 && state.hasCurrentEvent) {
+         eventsList.append(`<p class="text-center">No Past Events</p>`)
+       }
+    }
   });
 
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
