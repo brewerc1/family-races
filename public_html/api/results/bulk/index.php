@@ -1,5 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 use api\Utils;
 
@@ -11,32 +11,71 @@ function validGetRequestURLParams(): bool
 }
 
 
-if(!Utils::isLoggedIn()) {
-    Utils::sendResponse(401, $success=false, $msg=["Authentication is required."]);
+if (!Utils::isLoggedIn()) {
+    Utils::sendResponse(401, $success = false, $msg = ["Authentication is required."]);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!validGetRequestURLParams()) {
-        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        Utils::sendResponse(404, $success = false, $msg = ["Page not found"], $data = null);
         exit;
     }
+
     try {
         $eventId = $_GET["e"];
-        $query = "SELECT * FROM pick WHERE race_event_id=:eventId";
+        $query = "SELECT race_number FROM race WHERE event_id=:eventId ORDER BY race_number DESC LIMIT 1";
         $options = ["eventId" => $eventId];
         $stmt = $pdo->prepare($query);
         $stmt->execute($options);
-        Utils::sendResponse(200, $success=true, $msg=["All Event Race Results Retrieved"], $data=$stmt->fetchAll());
-        exit;
-    }
-    catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
-        exit;
-    }
-}
+        $race = $stmt->fetch();
+        $lastRace = $race["race_number"];
 
-else {
-    Utils::sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
+        $unfilteredResults = [];
+        for ($raceId = 0; $raceId <= $lastRace; $raceId++) {
+            $query = "SELECT race_race_number, horse_number, win_purse, place_purse, show_purse FROM horse WHERE race_event_id = :race_event_id AND race_race_number = :race_race_number";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute(['race_event_id' => $eventId, 'race_race_number' => $raceId]);
+            $horses = $stmt->fetchAll();
+            array_push($unfilteredResults, [$raceId => $horses]);
+        }
+
+        $data = [];
+        // Triple nested for loop is not a problem since this is a very small amount of data
+        foreach ($unfilteredResults as $result) {
+            $hasWin = false;
+            $hasPlace = false;
+            $hasShow = false;
+            $raceNumber = 0;
+            foreach ($result as $row) {
+                foreach ($row as $horse) {
+                    $raceNumber = $horse["race_race_number"];
+
+                    $isWin = key_exists("win_purse", $horse) && !is_null($horse["win_purse"])
+                    && key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
+                    && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
+                    
+                    $isPlace = key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
+                    && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
+
+                    $isShow = key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
+
+                    if ($isWin) $hasWin = true;
+                    if ($isPlace && !$isWin) $hasPlace = true;
+                    if ($isShow && !$isPlace && !$isWin) $hasShow = true;
+                }
+            }
+            $hasResults = $hasWin && $hasPlace && $hasShow;
+            array_push($data, [$raceNumber => $hasResults]);
+        }
+
+        Utils::sendResponse(200, $success = true, $msg = ["All Event Race Result Status Retrieved"], $data=$data);
+        exit;
+    } catch (PDOException $ex) {
+        Utils::sendResponse(500, $success = false, $msg = ["Server error: " . $ex], $data = null);
+        exit;
+    }
+} else {
+    Utils::sendResponse(405, $success = false, $msg = ["Method not allowed."], $data = null);
     exit;
 }
