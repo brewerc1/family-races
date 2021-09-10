@@ -72,7 +72,7 @@ async function createRace() {
     horses: horses,
   };
 
-  await $.ajax({
+  $.ajax({
     type: "POST",
     url: requestURL,
     contentType: "application/json",
@@ -80,7 +80,7 @@ async function createRace() {
   }).done((data) => {
     if (data.statusCode !== 201) console.log("Error creating race.");
   });
-  
+
 }
 
 async function updateHorse(id) {
