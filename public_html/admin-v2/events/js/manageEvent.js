@@ -44,7 +44,8 @@ function fetchEventRaces() {
 }
 
 function displayEventInformation(offset) {
-  const reqPage = parseInt(params.get("pg")) + offset;
+  const pg = params.get("pg") ? params.get("pg") : "1";
+  const reqPage = parseInt(pg) + offset;
   const requestURL = `/api/events?e=${params.get("e")}&pg=${reqPage}`;
   $.get(requestURL, (data) => {
     let event = data.data.events.filter(
