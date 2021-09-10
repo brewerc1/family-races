@@ -77,6 +77,7 @@ $eventName = $stmt->fetch()["name"];
 	</form>
 
 	<h3 class="m-3">Races in this Event</h3>
+	<p class="m-3 text-center">Races with results already entered may not be edited or reopened.</p>
 
 	<div id="add-race-container">
 		<p><a class="fas fa-plus-circle"></a><span>Add a race</span></p>
