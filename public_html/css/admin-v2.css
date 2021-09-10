@@ -106,10 +106,7 @@
 
 .race-btns {
   display: flex;
-}
-
-.race-btns .black-btn:first-of-type {
-  margin-right: 1rem;
+  gap: 1rem;
 }
 
 .current-event-controls {
@@ -187,6 +184,68 @@
 #race {
   max-width: 560px;
   margin: 0 auto;
+}
+
+.black-btn.outlined-btn {
+  border: 2px solid black !important;
+  background-color: white !important;
+  color: black !important;
+}
+
+.black-btn.black-btn.outlined-btn:hover {
+  color: white !important;
+  background-color: black !important;
+}
+
+.board-blank {
+  opacity: 0;
+}
+
+.custom-alert {
+  position: absolute;
+  top: 80px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  max-width: 300px;
+  text-align: center;
+}
+
+.contain-width {
+  width: 95%;
+  min-width: 95%;
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.header-blurred {
+  backdrop-filter: blur(20px);
+}
+
+.board-wrapper {
+  display: flex;
+}
+
+.control-btn {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 4rem;
+  color: black !important;
+}
+
+.control-btn:active,
+.control-btn:focus,
+.control-btn:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.dim {
+  color: #ccc !important;
 }
 
 @media screen and (max-width: 500px) {
@@ -283,12 +342,13 @@
 }
 
 #race-loader {
+  z-index: 100;
   position: absolute;
   width: 100%;
   height: 100%;
   left: 0;
   top: 0;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
 }
 
 #race-loader > #loader-container {

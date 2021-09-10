@@ -48,7 +48,7 @@ if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {
 {header}
 {main_nav}
 <main role="main" id="admin_events_page">
-    <h1 class="sticky-top padded-top-header ml-1 mb-5" id="manage-race-page-header">
+    <h1 class="sticky-top padded-top-header pl-4 mb-5" id="manage-race-page-header">
 		<a href="../events/" class="font-lighter">Events</a>
 		<span class="font-lighter"> > </span> 
 		<a id="event-name" class="font-lighter">Event</a>

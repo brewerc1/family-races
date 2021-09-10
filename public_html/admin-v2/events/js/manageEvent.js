@@ -1,115 +1,70 @@
+// Extend jQuery to allow inserting a list item at specific index
+jQuery.fn.insertAt = function (index, element) {
+  let lastIndex = this.children().length;
+  if (index < 0) {
+    index = Math.max(0, lastIndex + 1 + index);
+  }
+  this.append(element);
+  if (index < lastIndex) {
+    this.children().eq(index).before(this.children().last());
+  }
+  return this;
+};
+
+// Extend String class to allow capitalizing the first letter of a string.
+String.prototype.capitalize = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+// Used to get query string paramaters
 const params = new URLSearchParams(window.location.search);
 
-let loading = true;
-let invalidFields = false;
-let racesProcessed = 0;
+// Page state
+const state = { loading: true, invalidFields: false, raceList: [], eventName: '' };
 
-const eventNameHeader = $("#event-name");
-const nameField = $("#name");
-const dateField = $("#date");
-const potField = $("#pot");
-const loader = $("#loader-container");
-
-const addRaceButton = $("#add-race-container p a");
-
+// Orchestration Function
 function fetchEvent() {
   displayEventInformation(0);
-  displayEventRaces();
-  loading = false;
+  fetchEventRaces();
+  state.loading = false;
+}
+
+// Request Functions
+function fetchEventRaces() {
+  const requestURL = `/api/races?e=${params.get("e")}`;
+  $.get(requestURL, (data) => {
+    const races = data.data.races;
+    if (races.length === 0) {
+      toggleLoader(false);
+      toggleAddRace(0);
+    } else {
+      displayRacesUI(races);
+    }
+  });
 }
 
 function displayEventInformation(offset) {
-  // Need page due to API
   const reqPage = parseInt(params.get("pg")) + offset;
   const requestURL = `/api/events?e=${params.get("e")}&pg=${reqPage}`;
   $.get(requestURL, (data) => {
-    // Hacky, only way this can be done with the current API
     let event = data.data.events.filter(
       (event) => event.id == params.get("e")
     )[0];
-
-    // Event is on another page
     if (!event) {
       displayEventInformation(offset + 1);
       return;
     }
-    const eventName = event.name;
-    const eventPot = Number.parseFloat(event.pot).toFixed(2);
-    const eventDate = event.date;
-
-    eventNameHeader.text(eventName);
-    nameField.val(eventName);
-    dateField.val(eventDate);
-    potField.val(eventPot);
+    state.eventName = event.name;
+    updateEventInfoUI(
+      event.name,
+      Number.parseFloat(event.pot).toFixed(2),
+      event.date
+    );
   });
 }
 
-function displayEventRaces() {
-  const racesList = $("#races-list");
-  const requestURL = `/api/races?e=${params.get("e")}`;
-  $.get(requestURL, (data) => {
-    const races = data.data.races;
-
-    if (races.length === 0) {
-      toggleLoader();
-      toggleAddRace(0);
-      return;
-    }
-
-    races.forEach((race) => {
-      const editRaceURL = `../races/race.php?e=${params.get("e")}&r=${
-        race.race_number
-      }&pg=${params.get("pg")}&mode=edit`;
-
-      const template = `
-      <li class="list-group-item" id="${race.race_number}">
-        <div class="flex-space-between">
-
-          <div class="event-title-container"> 
-            <p class="event-title">
-              Race ${race.race_number}
-            </p>
-          </div>
-          <div class="race-btns">
-            <a class="black-btn" href="${editRaceURL}">
-              Edit
-            </a>
-            <a class="black-btn" href="#">
-              Betting Window
-            </a>
-          </div>
-        </div>
-      </li>
-      `;
-
-      racesList.append(template);
-      racesProcessed++;
-      if (racesProcessed === races.length) {
-        toggleLoader();
-        toggleAddRace(racesProcessed);
-      }
-    });
-  });
-}
-
-function toggleAddRace(numRaces) {
-  $("#add-race-container").css("display", "block");
-  addRaceButton.attr(
-    "href",
-    `../races/race.php?e=${params.get("e")}&r=${numRaces + 1}&pg=${params.get(
-      "pg"
-    )}&mode=create`
-  );
-}
-
-function toggleLoader() {
-  loader.css("display", "none");
-}
-
-function handleOnChange() {
-  if (loading || invalidFields) return;
-
-  const requestURL = `/api/events?e=${params.get("e")}`;
+function handleEventChange() {
+  if (state.loading || state.invalidFields) return;
 
   const data = {
     name: nameField.val(),
@@ -117,11 +72,12 @@ function handleOnChange() {
     pot: Number.parseFloat(potField.val()).toFixed(2),
   };
 
-  // Extra guard to prevent pot from being bad value
   if (data.pot > 9999.99 || data.pot < 1) {
-    restrictNumberRange();
+    restrictPot();
     return;
   }
+
+  const requestURL = `/api/events?e=${params.get("e")}`;
 
   $.ajax({
     type: "PUT",
@@ -138,25 +94,160 @@ function handleOnChange() {
   });
 }
 
-function restrictNumberRange() {
+function updateRace(race, action) {
+  if (action === "close") race.window_closed = 1;
+  else if (action === "open") race.window_closed = 0;
+  else return;
+
+  toggleLoader(true);
+
+  const requestURL = `/api/races/?e=${params.get("e")}&r=${race.race_number}`;
+  $.ajax({
+    type: "PUT",
+    url: requestURL,
+    contentType: "application/json",
+    data: JSON.stringify(race),
+  }).done((data) => {
+    const updatedRace = data.data[0];
+    if (data.statusCode === 200) updateRaceUI(updatedRace);
+  });
+}
+
+// UI Modifying Functions
+function displayRacesUI(races) {
+  let racesProcessed = 0;
+  const racesList = $("#races-list");
+  races.forEach((race) => {
+    const template = buildRaceTemplate(race);
+    racesList.append(template);
+    state.raceList.push(race);
+
+    addBettingWindowListener(race);
+
+    racesProcessed++;
+    if (racesProcessed === races.length) {
+      toggleLoader(false);
+      toggleAddRace(racesProcessed);
+    }
+  });
+}
+
+function updateEventInfoUI(name, pot, date) {
+  eventNameHeader.text(name);
+  nameField.val(name);
+  potField.val(pot);
+  dateField.val(date);
+}
+
+function updateRaceUI(race) {
+  $(`#${race.race_number}`).remove();
+  $("#races-list").insertAt(race.race_number - 1, buildRaceTemplate(race));
+  addBettingWindowListener(race);
+  toggleLoader(false);
+}
+
+// Utility Functions
+function fetchRaceById(raceId) {
+  return state.raceList.filter((race) => race.race_number === raceId)[0];
+}
+
+function restrictPot() {
   let value = parseFloat(potField.val()).toFixed(2);
   let min = 1;
   let max = 9999.99;
 
-  if (value < min || value > max) {
-    invalidFields = true;
+  if (isNaN(value) || value < min || value > max) {
+    state.invalidFields = true;
     potField.addClass("error");
     return;
   }
 
-  invalidFields = false;
+  state.invalidFields = false;
   potField.removeClass("error");
 }
 
+function changeBettingWindow(e) {
+  if (state.loading) return;
+  const raceInfo = e.target.id.split("-");
+  const action = raceInfo[0];
+  const raceId = Number.parseInt(raceInfo[1]);
+  const race = fetchRaceById(raceId);
+  updateRace(race, action);
+}
+
+function addBettingWindowListener(race) {
+  const prefix = race.window_closed === 0 ? "close" : "open";
+  const windowBtn = $(`#${prefix}-${race.race_number}`);
+  windowBtn.on("click", changeBettingWindow);
+}
+
+function buildRaceTemplate(race) {
+  const sharedParams = `e=${params.get("e")}&r=${
+    race.race_number
+  }&pg=${params.get("pg")}&name=${state.eventName}`;
+  const editRaceURL = `../races/race.php?${sharedParams}&mode=edit`;
+  const enterResultsURL = `../races/results.php?${sharedParams}`;
+
+  const bettingWindowAction = race.window_closed == 0 ? "close" : "open";
+  const bettingWindowButton = `
+  <a class="black-btn" id="${bettingWindowAction}-${race.race_number}">
+    ${bettingWindowAction.capitalize()} Betting Window
+  </a>`;
+
+  const enterResultsButton = `<a class="black-btn outlined-btn" href="${enterResultsURL}">Enter Results</a>`;
+
+  return `
+  <li class="list-group-item" id="${race.race_number}">
+    <div class="flex-space-between">
+      <div class="event-title-container"> 
+        <p class="event-title">
+          Race ${race.race_number}
+        </p>
+      </div>
+      <div class="race-btns" id="btns-${race.race_number}">
+        ${race.window_closed == 1 ? enterResultsButton : ""}
+        <a class="black-btn" href="${editRaceURL}">
+          Edit
+        </a>
+        ${bettingWindowButton}
+      </div>
+    </div>
+  </li>
+  `;
+}
+
+// UI Toggle Functions
+function toggleAddRace(numRaces) {
+  $("#add-race-container").css("display", "block");
+  addRaceButton.attr(
+    "href",
+    `../races/race.php?e=${params.get("e")}&r=${numRaces + 1}&pg=${params.get(
+      "pg"
+    )}&mode=create`
+  );
+}
+
+function toggleLoader(show) {
+  if (show) {
+    loader.css("display", "flex");
+    $("#race-loader").css("display", "block");
+  } else {
+    loader.css("display", "none");
+    $("#race-loader").css("display", "none");
+  }
+}
+
+// DOM Elements
+const eventNameHeader = $("#event-name");
+const nameField = $("#name");
+const dateField = $("#date");
+const potField = $("#pot");
+const loader = $("#loader-container");
+const addRaceButton = $("#add-race-container p a");
+
+// Event Listeners
 $(document).ready(fetchEvent);
-
-nameField.on("change", handleOnChange);
-dateField.on("change", handleOnChange);
-potField.on("change", handleOnChange);
-
-potField.on("keyup", restrictNumberRange);
+nameField.on("change", handleEventChange);
+dateField.on("change", handleEventChange);
+potField.on("change", handleEventChange);
+potField.on("keyup", restrictPot);
