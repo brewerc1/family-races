@@ -14,6 +14,14 @@ if ($_SESSION["admin"] != 1) {
     header("Location: /races/");
     exit;
 }
+
+
+$eventId = (int) $_GET["e"];
+$query = "SELECT name FROM event WHERE id=:eventId";
+$stmt = $pdo->prepare($query);
+$stmt->execute(['eventId'=>$eventId]);
+$eventName = $stmt->fetch()["name"];
+
 ?>
 
 {header}
@@ -33,7 +41,7 @@ if ($_SESSION["admin"] != 1) {
         <a id="event-name" class="font-lighter"
             href="../events/manage.php?<?php echo "e=".$_GET["e"]."&r=".$_GET["r"]."&pg=".$_GET["pg"];?>"
         >
-            <?php echo $_GET["name"]; ?>
+            <?php echo $eventName ?>
         </a>
         <span class="font-lighter"> > </span>
         <span id="race-name">Race <?php echo $_GET["r"] ?> </span>
