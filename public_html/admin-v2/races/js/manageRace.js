@@ -30,7 +30,7 @@ async function preparePage() {
 // Orchestrates requests when race is saved
 async function orchestrateRequests(e, isUpdate) {
   e.preventDefault();
-  if (params.get("mode") === "create") await createRace();
+  if (params.get("mode") === "create") createRace();
   if (state.horsesToDelete.length > 0) await deleteHorses();
   if (isUpdate) {
     const horseNotCreated = $(`#${e.target.id}`).hasClass("not-created");
@@ -58,7 +58,7 @@ async function fetchRaceHorses() {
   state.numHorses = horses.length;
 }
 
-async function createRace() {
+function createRace() {
   const requestURL = `http://localhost/api/races/`;
   const horses = [];
 
@@ -78,6 +78,7 @@ async function createRace() {
     contentType: "application/json",
     data: JSON.stringify(data),
   }).done((data) => {
+    console.log(data);
     if (data.statusCode !== 201) console.log("Error creating race.");
   });
 
