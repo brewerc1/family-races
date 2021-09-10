@@ -29,6 +29,7 @@ async function preparePage() {
 
 // Orchestrates requests when race is saved
 async function orchestrateRequests(e, isUpdate) {
+  e.preventDefault();
   if (params.get("mode") === "create") await createRace();
   if (state.horsesToDelete.length > 0) await deleteHorses();
   if (isUpdate) {
@@ -63,7 +64,7 @@ async function createRace() {
 
   $("#horses .horse input").each((i, elem) => {
     const name = $(elem).val();
-    if(horseHasName(name)) horses.push($(elem).val())
+    if (horseHasName(name)) horses.push($(elem).val());
   });
 
   const data = {
@@ -71,22 +72,21 @@ async function createRace() {
     horses: horses,
   };
 
-  const request = await fetch(requestURL, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const request = await $.ajax({
+    type: "POST",
+    data: JSON.stringify(data),
+    url: requestURL,
+    success: (data) => console.log(data), // remove
+    contentType: "application/json",
   });
-  await request.json();
-  if (request.status !== 201) console.log("Error creating race.");
-}
 
+  if (request.statusCode !== 201) console.log("Error creating race.");
+}
 
 async function updateHorse(id) {
   const element = $(`#${id}`);
 
-  if (!validateHorse(element)) return
+  if (!validateHorse(element)) return;
 
   const newName = element.val();
   const idStartIdx = id.indexOf("e");
@@ -223,9 +223,7 @@ function buildExistingHorseTemplateUI(horse) {
   const deleteStatus = horse.can_be_deleted ? "" : "disabled";
   return `
   <div class="horse" id="horse${horse.id}">
-    <input type="text" class="form-control" placeholder="Name of horse" id="horse${
-      horse.id
-    }-name"
+    <input type="text" class="form-control" placeholder="Name of horse" id="horse${horse.id}-name"
     value="${horse.horse_number}">
     <a class="black-btn btn ${deleteStatus}"
       id="delete-horse${horse.id}"><i class="fas fa-minus-circle">
@@ -251,7 +249,7 @@ function horseHasName(name) {
 function validateHorse(element) {
   const name = element.val();
   if (!horseHasName(name)) {
-    addHorseErrorUI(element)
+    addHorseErrorUI(element);
     return false;
   } else {
     removeHorseErrorUI(element);
