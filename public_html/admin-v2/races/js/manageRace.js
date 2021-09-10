@@ -17,9 +17,9 @@ const state = {
 
 // Page load orchestration function
 async function preparePage() {
+  displayStateInformationUI();
   await fetchEvent();
   displayEventUI();
-  displayStateInformationUI();
   if (state.mode === "edit") {
     await fetchRaceHorses();
     displayExistingHorsesUI();
@@ -157,12 +157,10 @@ async function createNewHorse(oldID) {
 // UI Modifying Functions
 function displayEventUI() {
   const eventURL = `../events/manage.php?e=${state.eventId}&pg=${state.page}`;
-  $("#event-name").text(state.event.name);
   $("#event-name").attr("href", eventURL);
 }
 
 function displayStateInformationUI() {
-  $("#race-mode").text(`${state.mode} a Race`);
   if (state.mode === "create") $(".checkbox-container").css("display", "none");
 }
 
