@@ -32,9 +32,10 @@ function addEventsToDOM(events) {
   toggleButtonVisibility();
 
   if (events.length === 0) {
-    const alert =
-      '<p class="alert alert-info" role="alert">No events have been created.</p>';
+    const alert = '<p>No events have been created.</p>';
     eventsList.append(alert);
+    toggleLoader();
+    return;
   }
 
   // Turn events into an array if there is only 1
