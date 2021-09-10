@@ -30,7 +30,7 @@ async function preparePage() {
 // Orchestrates requests when race is saved
 async function orchestrateRequests(e, isUpdate) {
   e.preventDefault();
-  if (params.get("mode") === "create") createRace();
+  if (params.get("mode") === "create") await createRace();
   if (state.horsesToDelete.length > 0) await deleteHorses();
   if (isUpdate) {
     const horseNotCreated = $(`#${e.target.id}`).hasClass("not-created");
@@ -58,8 +58,8 @@ async function fetchRaceHorses() {
   state.numHorses = horses.length;
 }
 
-function createRace() {
-  const requestURL = `http://localhost/api/races/`;
+async function createRace() {
+  const requestURL = `/api/races/`;
   const horses = [];
 
   $("#horses .horse input").each((i, elem) => {
@@ -72,16 +72,15 @@ function createRace() {
     horses: horses,
   };
 
-  $.ajax({
-    type: "POST",
-    url: requestURL,
-    contentType: "application/json",
-    data: JSON.stringify(data),
-  }).done((data) => {
-    console.log(data);
-    if (data.statusCode !== 201) console.log("Error creating race.");
+  const request = await fetch(requestURL, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-
+  await request.json();
+  if (request.status !== 201) console.log("Error creating race.");
 }
 
 async function updateHorse(id) {
