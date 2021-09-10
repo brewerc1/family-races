@@ -95,7 +95,6 @@ const results = new Vue({
       });
 
       response = await response.json();
-      console.log(response);
 
       if (response.statusCode === 200) this.showSuccess();
       else this.showFailure();
@@ -204,7 +203,5 @@ const results = new Vue({
     await this.fetchResults();
     await this.setPrevAndNextRaces();
     this.toggleLoading();
-    console.log(this.horses);
-    console.log(this.sortedHorses);
   },
 });
