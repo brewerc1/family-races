@@ -50,7 +50,7 @@ async function fetchEvent() {
 }
 
 async function fetchRaceHorses() {
-  const requestURL = `http://localhost/api/horses?e=${state.eventId}&r=${state.race}`;
+  const requestURL = `/api/horses?e=${state.eventId}&r=${state.race}`;
   const request = await fetch(requestURL);
   const response = await request.json();
   const horses = response.data;
@@ -92,7 +92,7 @@ async function updateHorse(id) {
   const idStartIdx = id.indexOf("e");
   const idEndIdx = id.indexOf("-");
   const horseId = id.substring(idStartIdx + 1, idEndIdx);
-  const requestURL = "http://localhost/api/horses";
+  const requestURL = "/api/horses";
   const data = {
     horses: [
       {
@@ -115,7 +115,7 @@ async function updateHorse(id) {
 }
 
 async function deleteHorses() {
-  const requestURL = `http://localhost/api/horses`;
+  const requestURL = `/api/horses`;
 
   const data = { horses: state.horsesToDelete };
 
@@ -133,7 +133,7 @@ async function deleteHorses() {
 
 async function createNewHorse(oldID) {
   const name = $(`#${oldID}`).val();
-  const requestURL = "http://localhost/api/horses/";
+  const requestURL = "/api/horses/";
 
   const data = {
     race_event_id: state.eventId,
