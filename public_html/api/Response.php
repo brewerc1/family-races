@@ -53,9 +53,10 @@ class Response
 
     public function send() {
         header('Content-type: application/json;charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+        header ("Access-Control-Allow-Origin: *");
+        header ("Access-Control-Expose-Headers: Content-Length, X-JSON");
+        header ("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+        header ("Access-Control-Allow-Headers: *");
 
 //        if ($this->_toCache == true) header('Cache-control: max-age-60');
 //        else header('Cache-control: no-cache, no-store');
