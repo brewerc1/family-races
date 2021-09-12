@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
 
-    if (!Utils::validatePostRequestURLParams()) {
+    if (Utils::validatePostRequestURLParams()) {
         Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
         exit;
     }

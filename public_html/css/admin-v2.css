@@ -248,6 +248,18 @@
   color: #ccc !important;
 }
 
+.gold {
+  color: gold !important;
+}
+
+.silver {
+  color: silver !important;
+}
+
+.bronze {
+  color: #CD7F32 !important;
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,

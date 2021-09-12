@@ -41,6 +41,19 @@ const results = new Vue({
       const placeId = this.enteredResults.place;
       return this.horses.filter(horse => horse.id != winId && horse.id != placeId);
     },
+    sortedHorses: function() {
+      if (this.loading) return [];
+      if (this.enteredResults.win === -1) return this.horses
+      const win = this.horses.filter(horse => horse.id === this.enteredResults.win)
+      const place = this.horses.filter(horse => horse.id === this.enteredResults.place)
+      const show = this.horses.filter(horse => horse.id === this.enteredResults.show)
+      const otherHorses = this.horses.filter(horse => horse.id !== this.enteredResults.win && horse.id !== this.enteredResults.place && horse.id !== this.enteredResults.show);
+      const result = [...otherHorses];
+      if (show.length > 0) result.unshift(show[0]);
+      if (place.length > 0) result.unshift(place[0]);
+      if (win.length > 0) result.unshift(win[0]);
+      return result;
+    }
   },
   methods: {
     async fetchEvent() {
@@ -59,7 +72,7 @@ const results = new Vue({
     },
     async fetchResults() {
       try {
-        const requestURL = `/api/results?e=${this.eventId}&r=${this.raceId}`;
+        const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
         let results = await fetch(requestURL);
         results = await results.json();
         this.mapResults(results.data);
@@ -82,7 +95,6 @@ const results = new Vue({
       });
 
       response = await response.json();
-      console.log(response);
 
       if (response.statusCode === 200) this.showSuccess();
       else this.showFailure();

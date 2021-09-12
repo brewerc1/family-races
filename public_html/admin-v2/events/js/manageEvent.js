@@ -20,16 +20,31 @@ String.prototype.capitalize = function () {
 const params = new URLSearchParams(window.location.search);
 
 // Page state
-const state = { loading: true, invalidFields: false, raceList: [], eventName: '' };
+const state = {
+  loading: true,
+  invalidFields: false,
+  raceList: [],
+  resultStatuses: [],
+  eventName: "",
+};
 
 // Orchestration Function
-function fetchEvent() {
+async function fetchEvent() {
   displayEventInformation(0);
+  await fetchEventRaceResultStatuses();
   fetchEventRaces();
   state.loading = false;
 }
 
 // Request Functions
+// This one is async because other fcns depend on the state it sets
+async function fetchEventRaceResultStatuses() {
+  const requestURL = `/api/results/bulk?e=${params.get("e")}`;
+  await $.get(requestURL, (data) => {
+    state.resultStatuses = data.data;
+  });
+}
+
 function fetchEventRaces() {
   const requestURL = `/api/races?e=${params.get("e")}`;
   $.get(requestURL, (data) => {
@@ -118,8 +133,8 @@ function updateRace(race, action) {
 function displayRacesUI(races) {
   let racesProcessed = 0;
   const racesList = $("#races-list");
-  races.forEach((race) => {
-    const template = buildRaceTemplate(race);
+  races.forEach((race, index) => {
+    const template = buildRaceTemplate(race, index + 1);
     racesList.append(template);
     state.raceList.push(race);
 
@@ -141,7 +156,7 @@ function updateEventInfoUI(name, pot, date) {
 
 function updateRaceUI(race) {
   $(`#${race.race_number}`).remove();
-  $("#races-list").insertAt(race.race_number - 1, buildRaceTemplate(race));
+  $("#races-list").insertAt(race.race_number - 1, buildRaceTemplate(race, 0));
   addBettingWindowListener(race);
   toggleLoader(false);
 }
@@ -181,20 +196,21 @@ function addBettingWindowListener(race) {
   windowBtn.on("click", changeBettingWindow);
 }
 
-function buildRaceTemplate(race) {
+function buildRaceTemplate(race, raceNumber) {
   const sharedParams = `e=${params.get("e")}&r=${
     race.race_number
   }&pg=${params.get("pg")}&name=${state.eventName}`;
   const editRaceURL = `../races/race.php?${sharedParams}&mode=edit`;
   const enterResultsURL = `../races/results.php?${sharedParams}`;
+  const resultsEntered = state.resultStatuses[raceNumber];
 
   const bettingWindowAction = race.window_closed == 0 ? "close" : "open";
   const bettingWindowButton = `
-  <a class="black-btn" id="${bettingWindowAction}-${race.race_number}">
+  <a class="black-btn btn ${resultsEntered ? 'disabled' : ''}" id="${bettingWindowAction}-${race.race_number}">
     ${bettingWindowAction.capitalize()} Betting Window
   </a>`;
 
-  const enterResultsButton = `<a class="black-btn outlined-btn" href="${enterResultsURL}">Enter Results</a>`;
+  const enterResultsButton = `<a class="black-btn outlined-btn btn" href="${enterResultsURL}">Enter Results</a>`;
 
   return `
   <li class="list-group-item" id="${race.race_number}">
@@ -206,7 +222,7 @@ function buildRaceTemplate(race) {
       </div>
       <div class="race-btns" id="btns-${race.race_number}">
         ${race.window_closed == 1 ? enterResultsButton : ""}
-        <a class="black-btn" href="${editRaceURL}">
+        <a class="black-btn btn ${resultsEntered ? 'disabled' : ''}"" href="${editRaceURL}">
           Edit
         </a>
         ${bettingWindowButton}
