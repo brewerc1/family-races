@@ -1,5 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // Testing only
 //$_SESSION['id'] = '1';
@@ -15,8 +15,8 @@ function validGetRequestURLParams(): bool
 }
 
 
-if(!Utils::isLoggedIn()) {
-    Utils::sendResponse(401, $success=false, $msg=["Authentication is required."]);
+if (!Utils::isLoggedIn()) {
+    Utils::sendResponse(401, $success = false, $msg = ["Authentication is required."]);
     exit;
 }
 
@@ -24,7 +24,7 @@ if(!Utils::isLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if (!validGetRequestURLParams()) {
-        Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
+        Utils::sendResponse(404, $success = false, $msg = ["Page not found"], $data = null);
         exit;
     }
 
@@ -36,19 +36,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $optionForPageQuery = [];
         $endPoint = "/api/events/";
         $keyword = "events";
-        $eventData = Utils::getAllWithPagination($pdo, $endPoint, $keyword,
-            $query, $pageQuery, $OptionsForQuery, $optionForPageQuery, $urlParams=[]);
+        $eventData = Utils::getAllWithPagination(
+            $pdo,
+            $endPoint,
+            $keyword,
+            $query,
+            $pageQuery,
+            $OptionsForQuery,
+            $optionForPageQuery,
+            $urlParams = []
+        );
 
         if (key_exists("pageNotFound", $eventData)) {
-            Utils::sendResponse(404, $success=false, $msg=["Page not found"], $data=null);
-        }
-        else {
-            Utils::sendResponse(200, $success=true, $msg=null, $data=$eventData);
+            Utils::sendResponse(404, $success = false, $msg = ["Page not found"], $data = null);
+        } else {
+            Utils::sendResponse(200, $success = true, $msg = null, $data = $eventData);
         }
         exit;
-    }
-    catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: " . $ex], $data=null);
+    } catch (PDOException $ex) {
+        Utils::sendResponse(500, $success = false, $msg = ["Server error: " . $ex], $data = null);
         exit;
     }
 }
@@ -58,23 +64,23 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
     try {
         // Admin only View
         if (!Utils::isAdmin()) {
-            Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+            Utils::sendResponse(403, $success = false, $msg = ["Forbidden"], $data = null);
             exit;
         }
 
         if (!Utils::isValidContentType()) {
-            Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+            Utils::sendResponse(400, $success = false, $msg = ["Content type must be set to application/json"], $data = null);
             exit;
         }
 
         if (Utils::dbHasAnOpenEvent($pdo)) {
-            Utils::sendResponse(400, $success=false, $msg=["Close the current event before creating the new one."], $data=null);
+            Utils::sendResponse(400, $success = false, $msg = ["Close the current event before creating the new one."], $data = null);
             exit;
         }
 
         $postData = file_get_contents('php://input');
         if (!$jsonData = json_decode($postData)) {
-            Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+            Utils::sendResponse(400, $success = false, $msg = ["Request body is not valid JSON."], $data = null);
             exit;
         }
 
@@ -96,7 +102,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $dateErr = (date('Y-m-d', strtotime($date)) == $date) ? "" : "Date field must be a valid date (YYYY-MM-DD)";
         $pot = $jsonData->pot;
 
-        $potErr = (!is_numeric($pot) || strlen($pot) > 6) ? "Pot field must be int with no more than 6 digits" : "";
+        $potErr = (!is_numeric($pot) || strlen($pot) > 7 || floatval($pot) > 9999.99) ? "Pot field must be numeric value < 9999.99 with no more than 8 digits" : "";
 
         if (!empty($eventNameErr) || !empty($potErr) || !empty($dateErr)) {
             $messages = array();
@@ -122,31 +128,30 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_GET)) {
         $stmt = $pdo->prepare($query);
         $stmt->execute(['id' => $createdEventId]);
 
-        Utils::sendResponse(201, $success=true, $msg=["Event created"], $data=$stmt->fetchAll());
+        Utils::sendResponse(201, $success = true, $msg = ["Event created"], $data = $stmt->fetchAll());
         exit;
     } catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success = false, $msg = ["Server error: "], $data = null);
         exit;
     }
-
 }
 
 // UPDATE AN EVENT
 elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') && (Utils::getEventId() !== null)) {
     // Admin only View
     if (!Utils::isAdmin()) {
-        Utils::sendResponse(403, $success=false, $msg=["Forbidden"], $data=null);
+        Utils::sendResponse(403, $success = false, $msg = ["Forbidden"], $data = null);
         exit;
     }
 
     if (!Utils::isValidContentType()) {
-        Utils::sendResponse(400, $success=false, $msg=["Content type must be set to application/json"], $data=null);
+        Utils::sendResponse(400, $success = false, $msg = ["Content type must be set to application/json"], $data = null);
         exit;
     }
 
     $postData = file_get_contents('php://input');
     if (!$jsonData = json_decode($postData)) {
-        Utils::sendResponse(400, $success=false, $msg=["Request body is not valid JSON."], $data=null);
+        Utils::sendResponse(400, $success = false, $msg = ["Request body is not valid JSON."], $data = null);
         exit;
     }
 
@@ -164,8 +169,8 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
 
     $pot = isset($jsonData->pot) ? $jsonData->pot : null;
 
-    ($pot !== null && !is_numeric($pot) || (strlen($pot) > 6) ?
-        $errMessages[] = "Pot field must be int with no more than 6 digits" : false);
+    ($pot == null || !is_numeric($pot) || strlen($pot) > 7 || floatval($pot) > 9999.99) ?
+        $errMessages[] = "Pot field must be numeric value < 9999.99 with no more than 8 digits" : false;
 
     $status = isset($jsonData->status) ? $jsonData->status : null;
     ($status !== null && !(intval($status) === 1 || intval($status) === 0) ?
@@ -186,7 +191,7 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
 
     // Send any error messages
     if (count($errMessages) > 0) {
-        Utils::sendResponse(400, $success=false, $msg=$errMessages, $data=null);
+        Utils::sendResponse(400, $success = false, $msg = $errMessages, $data = null);
         exit;
     }
 
@@ -243,20 +248,18 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
 
             if (intval($status) === 1) Utils::populateEventStandingsTable($pdo, $eventId);
 
-            Utils::sendResponse(200, $success=true, $msg=["Event updated"], $data=$stmt->fetchAll());
+            Utils::sendResponse(200, $success = true, $msg = ["Event updated"], $data = $stmt->fetchAll());
             exit;
         }
-
     } catch (PDOException $ex) {
-        Utils::sendResponse(500, $success=false, $msg=["Server error: "], $data=null);
+        Utils::sendResponse(500, $success = false, $msg = ["Server error: "], $data = null);
         exit;
     }
-
 }
 //elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {}
 
 // ANY UNSUPPORTED OPERATION
 else {
-    Utils::sendResponse(405, $success=false, $msg=["Method not allowed."], $data=null);
+    Utils::sendResponse(405, $success = false, $msg = ["Method not allowed."], $data = null);
     exit;
 }

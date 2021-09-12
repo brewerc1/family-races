@@ -92,11 +92,13 @@ function addEventsToDOM(events) {
 
     eventsProcessed++;
 
-    if (eventsProcessed === events.length){
-       toggleLoader();
-       if (events.length === 1 && state.hasCurrentEvent) {
-         eventsList.append(`<p class="text-center" id="no-past-events">No Past Events</p>`)
-       }
+    if (eventsProcessed === events.length) {
+      toggleLoader();
+      if (events.length === 1 && state.hasCurrentEvent) {
+        eventsList.append(
+          `<p class="text-center" id="no-past-events">No Past Events</p>`
+        );
+      }
     }
   });
 
@@ -124,7 +126,8 @@ function closeEvent(e, event) {
     contentType: "application/json",
     data: JSON.stringify(data),
   }).done(() => {
-    if($("#no-past-events").length > 0) $("#no-past-events").css("display", "none");
+    if ($("#no-past-events").length > 0)
+      $("#no-past-events").css("display", "none");
     $("#current-event-container").empty();
     $("#current-event-container").css("display", "none");
     $("#create-event-container").css("display", "block");
