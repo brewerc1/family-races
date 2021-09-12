@@ -19,7 +19,7 @@ if ($_SESSION["admin"] != 1) {
 $eventId = (int) $_GET["e"];
 $query = "SELECT name FROM event WHERE id=:eventId";
 $stmt = $pdo->prepare($query);
-$stmt->execute(['eventId'=>$eventId]);
+$stmt->execute(['eventId' => $eventId]);
 $eventName = $stmt->fetch()["name"];
 
 ?>
@@ -28,15 +28,15 @@ $eventName = $stmt->fetch()["name"];
 {main_nav}
 
 <main role="main" id="admin_main_events_page">
-    <div class="floating-alert alert  alert-dismissible fade show fixed-top mt-5 mx-4 d-none" role="alert" id="alert">
-        <span id="msg">messages will be display here.</span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <h1 class="sticky-top padded-top-header mb-5" id="manage-events-page-header">
+	<div class="floating-alert alert  alert-dismissible fade show fixed-top mt-5 mx-4 d-none" role="alert" id="alert">
+		<span id="msg">messages will be display here.</span>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<h1 class="sticky-top padded-top-header mb-5" id="manage-events-page-header">
 		<a href="../events/" class="font-lighter">Events</a>
-		<span class="font-lighter"> > </span> 
+		<span class="font-lighter"> > </span>
 		<span id="event-name"> <?php echo $eventName; ?></span>
 	</h1>
 
@@ -47,14 +47,14 @@ $eventName = $stmt->fetch()["name"];
 				<div class="form-group col-md-6">
 					<div class="input-group">
 						<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-horse-head"></i></span>
+							<span class="input-group-text"><i class="fas fa-horse-head"></i></span>
 						</div>
-							<input type="text" class="form-control" id="name" name="event_name" maxlength="25">
+						<input type="text" class="form-control" id="name" name="event_name" maxlength="25">
 					</div>
 				</div>
 				<!-- Event Date -->
 				<div class="form-group col-md-6">
-					<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto"  data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true" >
+					<div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-auto-close="true" data-date-today-highlight="true" data-date-orientation="auto" data-date-z-index-offset="2000" data-date-clear-btn="true" data-date-today-btn="true">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
 						</div>
@@ -67,7 +67,7 @@ $eventName = $stmt->fetch()["name"];
 				<div class="form-group col-md-6">
 					<div class="input-group">
 						<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-donate"></i></span>
+							<span class="input-group-text"><i class="fas fa-donate"></i></span>
 						</div>
 						<input type="number" class="form-control" id="pot" name="event_pot" min="1" max="9999">
 					</div>
@@ -83,15 +83,24 @@ $eventName = $stmt->fetch()["name"];
 		<p><a class="fas fa-plus-circle"></a><span>Add a race</span></p>
 	</div>
 
-	<div id="race-loader">
-		<div id="loader-container">
-			<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
-		</div>
-	</div>
-
 	<ul id="races-list" class="list-group list-group-flush col-md-12">
 	</ul>
+	<div id="page-btns-container" style="margin: 0 !important;">
+		<button id="prev-btn" class="btn btn-sm shadow-none ml-1 page-control-btn" style="display: none;">Previous</button>
+		<button id="next-btn" class="btn btn-sm shadow-none ml-1 page-control-btn" style="display: block;">Next</button>
+	</div>
 </main>
+
+<div id="race-loader">
+	<div id="loader-container">
+		<div class="lds-ring" id="loader">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+</div>
 
 {footer}
 
