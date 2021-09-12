@@ -29,6 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $stmt = $pdo->prepare($query);
         $stmt->execute($options);
         $race = $stmt->fetch();
+
+        if (!isset($race["race_number"])) {
+            Utils::sendResponse(200, $success = true, $msg = ["No Races To Retrieve"], $data = []);
+            exit;
+        }
+
         $lastRace = $race["race_number"];
 
         $unfilteredResults = [];
@@ -49,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             foreach ($result as $row) {
                 foreach ($row as $horse) {
                     $isWin = key_exists("win_purse", $horse) && !is_null($horse["win_purse"])
-                    && key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
-                    && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
-                    
+                        && key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
+                        && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
+
                     $isPlace = key_exists("place_purse", $horse) && !is_null($horse["place_purse"])
-                    && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
+                        && key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
 
                     $isShow = key_exists("show_purse", $horse) && !is_null($horse["show_purse"]);
 
@@ -66,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             array_push($data, $hasResults);
         }
 
-        Utils::sendResponse(200, $success = true, $msg = ["All Event Race Result Statuses Retrieved"], $data=$data);
+        Utils::sendResponse(200, $success = true, $msg = ["All Event Race Result Statuses Retrieved"], $data = $data);
         exit;
     } catch (PDOException $ex) {
         Utils::sendResponse(500, $success = false, $msg = ["Server error: " . $ex], $data = null);
