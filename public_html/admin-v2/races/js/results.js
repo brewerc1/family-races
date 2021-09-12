@@ -59,7 +59,7 @@ const results = new Vue({
     },
     async fetchResults() {
       try {
-        const requestURL = `/api/results?e=${this.eventId}&r=${this.raceId}`;
+        const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
         let results = await fetch(requestURL);
         results = await results.json();
         this.mapResults(results.data);
