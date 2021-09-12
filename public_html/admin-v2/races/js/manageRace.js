@@ -17,7 +17,7 @@ const state = {
 
 // Page load orchestration function
 async function preparePage() {
-  if (state.page === null) state.page = 1;
+  if (!state.page || state.page === "null") state.page = 1;
   displayStateInformationUI();
   await fetchEvent();
   displayEventUI();
