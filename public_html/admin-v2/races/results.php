@@ -26,9 +26,9 @@ $stmt->execute(['eventId' => $eventId]);
 $eventName = $stmt->fetch()["name"];
 
 // Get next race that is closed
-$query = "SELECT race_number FROM race WHERE race_number > :currentRace AND window_closed = 1 ORDER BY race_number ASC LIMIT 1";
+$query = "SELECT race_number FROM race WHERE race_number > :currentRace AND event_id = :eventId AND window_closed = 1 ORDER BY race_number ASC LIMIT 1";
 $stmt = $pdo->prepare($query);
-$stmt->execute(['currentRace' => $currentRace]);
+$stmt->execute(['currentRace' => $currentRace, "eventId" => $eventId]);
 $nextRace = $stmt->fetch();
 $nextRaceId = -1;
 
@@ -37,9 +37,9 @@ if (isset($nextRace["race_number"])) {
 }
 
 // Get previous race that is closed
-$query = "SELECT race_number FROM race WHERE race_number < :currentRace AND window_closed = 1 ORDER BY race_number DESC LIMIT 1";
+$query = "SELECT race_number FROM race WHERE race_number < :currentRace AND event_id = :eventId AND window_closed = 1 ORDER BY race_number DESC LIMIT 1";
 $stmt = $pdo->prepare($query);
-$stmt->execute(['currentRace' => $currentRace]);
+$stmt->execute(['currentRace' => $currentRace, "eventId" => $eventId]);
 $prevRace = $stmt->fetch();
 $prevRaceId = -1;
 
