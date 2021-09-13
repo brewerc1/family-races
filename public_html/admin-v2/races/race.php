@@ -44,10 +44,12 @@ if (isset($_POST["race"]) && $_SESSION["admin"] == 1) {
 }
 
 $eventId = (int) $_GET["e"];
-$query = "SELECT name FROM event WHERE id=:eventId";
+$query = "SELECT name, status FROM event WHERE id=:eventId";
 $stmt = $pdo->prepare($query);
 $stmt->execute(['eventId' => $eventId]);
-$eventName = $stmt->fetch()["name"];
+$data = $stmt->fetch();
+$eventName = $data["name"];
+$currentEvent = !$data["status"];
 
 ?>
 
@@ -64,6 +66,7 @@ $eventName = $stmt->fetch()["name"];
 	<section id="race" class="mt-5">
 
 		<div id="current-race">
+
 			<h3 class="mb-3">
 				<?php
 				echo $_GET["mode"] == "edit"
@@ -73,10 +76,9 @@ $eventName = $stmt->fetch()["name"];
 			</h3>
 
 			<div class="checkbox-container">
-				<input type="checkbox" id="highlight-race" data-toggle="tooltip" data-placement="top" <?php echo $is_highlighted ? "Checked" : ""; ?> <?php echo $toolTipNeeded ? "title='Turn on Enable Memorial Race in Site Settings to highlight this race.'" : "title='If a there is already a race being highlighted, it will be replaced.'" ?> <?php echo $toolTipNeeded ? "disabled" : "" ?>>
+				<input type="checkbox" id="highlight-race" data-toggle="tooltip" data-placement="top" <?php echo $is_highlighted ? "Checked" : ""; ?> <?php echo $toolTipNeeded ? "title='Turn on Enable Memorial Race in Site Settings to highlight this race.'" : "title='If a there is already a race being highlighted, it will be replaced.'" ?> <?php echo !$currentEvent ? "disabled" : "" ?>>
 				Highlight this race
 			</div>
-
 		</div>
 
 		<p id="remove-hint">You may remove any horse that has no bets on it.</p>
@@ -102,7 +104,6 @@ $eventName = $stmt->fetch()["name"];
 				</div>
 			</div>
 		</div>
-
 	</section>
 </main>
 {footer}
