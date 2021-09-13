@@ -66,13 +66,19 @@ $currentEvent = !$data["status"];
 	<section id="race" class="mt-5">
 
 		<div id="current-race">
-			<h3 class="mb-3">Race <?php echo $_GET["r"] ?></h3>
+
+			<h3 class="mb-3">
+				<?php
+				echo $_GET["mode"] == "edit"
+					? "Race " . $_GET["r"]
+					: "New Race"
+				?>
+			</h3>
 
 			<div class="checkbox-container">
 				<input type="checkbox" id="highlight-race" data-toggle="tooltip" data-placement="top" <?php echo $is_highlighted ? "Checked" : ""; ?> <?php echo $toolTipNeeded ? "title='Turn on Enable Memorial Race in Site Settings to highlight this race.'" : "title='If a there is already a race being highlighted, it will be replaced.'" ?> <?php echo !$currentEvent ? "disabled" : "" ?>>
 				Highlight this race
 			</div>
-
 		</div>
 
 		<p id="remove-hint">You may remove any horse that has no bets on it.</p>
@@ -98,7 +104,6 @@ $currentEvent = !$data["status"];
 				</div>
 			</div>
 		</div>
-
 	</section>
 </main>
 {footer}

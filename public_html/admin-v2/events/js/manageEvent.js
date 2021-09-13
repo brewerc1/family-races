@@ -26,6 +26,8 @@ const state = {
   raceList: [],
   resultStatuses: [],
   eventName: "",
+  currentRacePage: 1,
+  lastRacePage: 1,
 };
 
 // Orchestration Function
@@ -46,14 +48,18 @@ async function fetchEventRaceResultStatuses() {
 }
 
 function fetchEventRaces() {
-  const requestURL = `/api/races?e=${params.get("e")}`;
+  const requestURL = `/api/races?e=${params.get("e")}&pg=${
+    state.currentRacePage
+  }`;
   $.get(requestURL, (data) => {
+    state.lastRacePage = data.data.numberOfPages;
     const races = data.data.races;
     if (races.length === 0) {
       toggleLoader(false);
       toggleAddRace(0);
     } else {
       displayRacesUI(races);
+      toggleNextAndPrevBtns();
     }
   });
 }
@@ -133,8 +139,9 @@ function updateRace(race, action) {
 function displayRacesUI(races) {
   let racesProcessed = 0;
   const racesList = $("#races-list");
-  races.forEach((race, index) => {
-    const template = buildRaceTemplate(race, index + 1);
+  racesList.empty();
+  races.forEach((race) => {
+    const template = buildRaceTemplate(race);
     racesList.append(template);
     state.raceList.push(race);
 
@@ -156,7 +163,7 @@ function updateEventInfoUI(name, pot, date) {
 
 function updateRaceUI(race) {
   $(`#${race.race_number}`).remove();
-  $("#races-list").insertAt(race.race_number - 1, buildRaceTemplate(race, 0));
+  $("#races-list").insertAt(race.race_number - 1, buildRaceTemplate(race));
   addBettingWindowListener(race);
   toggleLoader(false);
 }
@@ -196,7 +203,8 @@ function addBettingWindowListener(race) {
   windowBtn.on("click", changeBettingWindow);
 }
 
-function buildRaceTemplate(race, raceNumber) {
+function buildRaceTemplate(race) {
+  const raceNumber = race.race_number;
   const sharedParams = `e=${params.get("e")}&r=${
     race.race_number
   }&pg=${params.get("pg")}&name=${state.eventName}`;
@@ -206,7 +214,9 @@ function buildRaceTemplate(race, raceNumber) {
 
   const bettingWindowAction = race.window_closed == 0 ? "close" : "open";
   const bettingWindowButton = `
-  <a class="black-btn btn ${resultsEntered ? 'disabled' : ''}" id="${bettingWindowAction}-${race.race_number}">
+  <a class="black-btn btn ${
+    resultsEntered ? "disabled" : ""
+  }" id="${bettingWindowAction}-${race.race_number}">
     ${bettingWindowAction.capitalize()} Betting Window
   </a>`;
 
@@ -222,7 +232,9 @@ function buildRaceTemplate(race, raceNumber) {
       </div>
       <div class="race-btns" id="btns-${race.race_number}">
         ${race.window_closed == 1 ? enterResultsButton : ""}
-        <a class="black-btn btn ${resultsEntered ? 'disabled' : ''}"" href="${editRaceURL}">
+        <a class="black-btn btn ${
+          resultsEntered ? "disabled" : ""
+        }"" href="${editRaceURL}">
           Edit
         </a>
         ${bettingWindowButton}
@@ -253,6 +265,27 @@ function toggleLoader(show) {
   }
 }
 
+function toggleNextAndPrevBtns() {
+  if (state.lastRacePage > state.currentRacePage) {
+    nextBtn.attr("style", "display: block;");
+  } else {
+    nextBtn.attr("style", "display: none;");
+  }
+
+  if (state.currentRacePage > 1) {
+    prevBtn.attr("style", "display: block;");
+  } else {
+    prevBtn.attr("style", "display: none;");
+  }
+}
+
+function togglePage(change) {
+  state.currentRacePage += change;
+  toggleLoader(true);
+  fetchEventRaces();
+  toggleLoader(false);
+}
+
 // DOM Elements
 const eventNameHeader = $("#event-name");
 const nameField = $("#name");
@@ -260,6 +293,8 @@ const dateField = $("#date");
 const potField = $("#pot");
 const loader = $("#loader-container");
 const addRaceButton = $("#add-race-container p a");
+const nextBtn = $("#next-btn");
+const prevBtn = $("#prev-btn");
 
 // Event Listeners
 $(document).ready(fetchEvent);
@@ -267,3 +302,6 @@ nameField.on("change", handleEventChange);
 dateField.on("change", handleEventChange);
 potField.on("change", handleEventChange);
 potField.on("keyup", restrictPot);
+
+nextBtn.on("click", () => togglePage(1));
+prevBtn.on("click", () => togglePage(-1));
