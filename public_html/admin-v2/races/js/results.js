@@ -29,31 +29,48 @@ const results = new Vue({
     availableWinHorses: function () {
       const placeId = this.enteredResults.place;
       const showId = this.enteredResults.show;
-      return this.horses.filter(horse => horse.id != placeId && horse.id != showId);
+      return this.horses.filter(
+        (horse) => horse.id != placeId && horse.id != showId
+      );
     },
     availablePlaceHorses: function () {
       const winId = this.enteredResults.win;
       const showId = this.enteredResults.show;
-      return this.horses.filter(horse => horse.id != winId && horse.id != showId);
+      return this.horses.filter(
+        (horse) => horse.id != winId && horse.id != showId
+      );
     },
     availableShowHorses: function () {
       const winId = this.enteredResults.win;
       const placeId = this.enteredResults.place;
-      return this.horses.filter(horse => horse.id != winId && horse.id != placeId);
+      return this.horses.filter(
+        (horse) => horse.id != winId && horse.id != placeId
+      );
     },
-    sortedHorses: function() {
+    sortedHorses: function () {
       if (this.loading) return [];
-      if (this.enteredResults.win === -1) return this.horses
-      const win = this.horses.filter(horse => horse.id === this.enteredResults.win)
-      const place = this.horses.filter(horse => horse.id === this.enteredResults.place)
-      const show = this.horses.filter(horse => horse.id === this.enteredResults.show)
-      const otherHorses = this.horses.filter(horse => horse.id !== this.enteredResults.win && horse.id !== this.enteredResults.place && horse.id !== this.enteredResults.show);
+      if (this.enteredResults.win === -1) return this.horses;
+      const win = this.horses.filter(
+        (horse) => horse.id === this.enteredResults.win
+      );
+      const place = this.horses.filter(
+        (horse) => horse.id === this.enteredResults.place
+      );
+      const show = this.horses.filter(
+        (horse) => horse.id === this.enteredResults.show
+      );
+      const otherHorses = this.horses.filter(
+        (horse) =>
+          horse.id !== this.enteredResults.win &&
+          horse.id !== this.enteredResults.place &&
+          horse.id !== this.enteredResults.show
+      );
       const result = [...otherHorses];
       if (show.length > 0) result.unshift(show[0]);
       if (place.length > 0) result.unshift(place[0]);
       if (win.length > 0) result.unshift(win[0]);
       return result;
-    }
+    },
   },
   methods: {
     async fetchEvent() {
@@ -82,6 +99,8 @@ const results = new Vue({
     },
     async updateResults() {
       if (!this.allFieldsFilledOut()) return;
+      this.restrictPurseSizes();
+
       const data = this.buildRequestObject();
       const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
       this.toggleLoading();
@@ -102,13 +121,13 @@ const results = new Vue({
       this.toggleLoading();
     },
     async setPrevAndNextRaces() {
-      let baseURL = `/admin-v2/races/results.php?`
+      let baseURL = `/admin-v2/races/results.php?`;
       const nextParams = new URLSearchParams();
       const prevParams = new URLSearchParams();
-      if (this.raceId === 1) this.previousRace = ""
+      if (this.raceId === 1) this.previousRace = "";
       else {
         prevParams.append("e", this.eventId);
-        prevParams.append("r", Number.parseInt(this.raceId) - 1)
+        prevParams.append("r", Number.parseInt(this.raceId) - 1);
         if (Number.parseInt(this.raceId) % 10 == 0) {
           prevParams.append("pg", Number.parseInt(this.page) - 1);
         } else {
@@ -117,12 +136,14 @@ const results = new Vue({
         prevParams.append("name", this.event.name);
         this.previousRace = baseURL + prevParams.toString();
       }
-      const requestURL = `/api/races?e=${this.eventId}&r=${Number.parseInt(this.raceId) + 1}`;
+      const requestURL = `/api/races?e=${this.eventId}&r=${
+        Number.parseInt(this.raceId) + 1
+      }`;
       let race = await fetch(requestURL);
       race = await race.json();
       if (race.data?.rowReturned === 1) {
         nextParams.append("e", this.eventId);
-        nextParams.append("r", Number.parseInt(this.raceId) + 1)
+        nextParams.append("r", Number.parseInt(this.raceId) + 1);
         if (race.numberOfPages > 1 && Number.parseInt(this.raceId) % 10 == 0) {
           nextParams.append("pg", Number.parseInt(this.page) + 1);
         } else {
@@ -143,15 +164,15 @@ const results = new Vue({
       this.enteredResults.show_purse = results.show;
     },
     buildRequestObject() {
-      const winHorse = { 
+      const winHorse = {
         id: this.enteredResults.win,
         race_event_id: this.eventId,
         race_race_number: this.raceId,
         finish: "win",
         win_purse: this.enteredResults.win_purse[0],
         place_purse: this.enteredResults.win_purse[1],
-        show_purse: this.enteredResults.win_purse[2]
-      }
+        show_purse: this.enteredResults.win_purse[2],
+      };
       const placeHorse = {
         id: this.enteredResults.place,
         race_event_id: this.eventId,
@@ -159,26 +180,52 @@ const results = new Vue({
         finish: "place",
         win_purse: null,
         place_purse: this.enteredResults.place_purse[0],
-        show_purse: this.enteredResults.place_purse[1]
-      }
-      const showHorse = { 
+        show_purse: this.enteredResults.place_purse[1],
+      };
+      const showHorse = {
         id: this.enteredResults.show,
         race_event_id: this.eventId,
         race_race_number: this.raceId,
         finish: "show",
         win_purse: null,
         place_purse: null,
-        show_purse: this.enteredResults.show_purse[0]
-      }
+        show_purse: this.enteredResults.show_purse[0],
+      };
       const data = { horses: [winHorse, placeHorse, showHorse] };
-      return data
+      return data;
     },
     allFieldsFilledOut() {
-      const res = this.enteredResults
-      const win = res.win != -1 && res.win_purse[0] > 0 && res.win_purse[1] > 1 && res.win_purse[2] > 0;
-      const place = res.place != -1 && res.place_purse[0] > 0 && res.place_purse[1] > 0;
+      const res = this.enteredResults;
+      const win =
+        res.win != -1 &&
+        res.win_purse[0] > 0 &&
+        res.win_purse[1] > 1 &&
+        res.win_purse[2] > 0;
+      const place =
+        res.place != -1 && res.place_purse[0] > 0 && res.place_purse[1] > 0;
       const show = res.show != -1 && res.show_purse[0] > 0;
       return win && place && show;
+    },
+    restrictPurseSizes() {
+      const largestAcceptableValue = 9999.99;
+      this.enteredResults.win_purse.forEach((value, i) => {
+        this.enteredResults.win_purse[i] = Math.min(
+          largestAcceptableValue,
+          Number.parseFloat(value).toFixed(2)
+        );
+      });
+      this.enteredResults.place_purse[0] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.place_purse[0]).toFixed(2)
+      );
+      this.enteredResults.place_purse[1] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.place_purse[1]).toFixed(2)
+      );
+      this.enteredResults.show_purse[0] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.show_purse[0]).toFixed(2)
+      );
     },
     async showSuccess() {
       this.showSuccessAlert = true;
@@ -191,7 +238,7 @@ const results = new Vue({
       this.showFailureAlert = false;
     },
     async delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
     toggleLoading() {
       this.loading = !this.loading;
