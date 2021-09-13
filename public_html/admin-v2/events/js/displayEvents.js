@@ -127,7 +127,6 @@ function closeEvent(e, event) {
     data: JSON.stringify(data),
     error: (err) => console.log(err),
   }).done(() => {
-    console.log(data);
     if ($("#no-past-events").length > 0)
       $("#no-past-events").css("display", "none");
     $("#current-event-container").empty();
