@@ -4,8 +4,6 @@ const results = new Vue({
   el: "#app",
   data() {
     return {
-      nextRace: "",
-      previousRace: "",
       showSuccessAlert: false,
       showFailureAlert: false,
       eventId: params.get("e"),
@@ -120,41 +118,6 @@ const results = new Vue({
 
       this.toggleLoading();
     },
-    async setPrevAndNextRaces() {
-      let baseURL = `/admin-v2/races/results.php?`;
-      const nextParams = new URLSearchParams();
-      const prevParams = new URLSearchParams();
-      if (this.raceId === 1) this.previousRace = "";
-      else {
-        prevParams.append("e", this.eventId);
-        prevParams.append("r", Number.parseInt(this.raceId) - 1);
-        if (Number.parseInt(this.raceId) % 10 == 0) {
-          prevParams.append("pg", Number.parseInt(this.page) - 1);
-        } else {
-          prevParams.append("pg", this.page);
-        }
-        prevParams.append("name", this.event.name);
-        this.previousRace = baseURL + prevParams.toString();
-      }
-      const requestURL = `/api/races?e=${this.eventId}&r=${
-        Number.parseInt(this.raceId) + 1
-      }`;
-      let race = await fetch(requestURL);
-      race = await race.json();
-      if (race.data?.rowReturned === 1) {
-        nextParams.append("e", this.eventId);
-        nextParams.append("r", Number.parseInt(this.raceId) + 1);
-        if (race.numberOfPages > 1 && Number.parseInt(this.raceId) % 10 == 0) {
-          nextParams.append("pg", Number.parseInt(this.page) + 1);
-        } else {
-          nextParams.append("pg", this.page);
-        }
-        nextParams.append("name", this.event.name);
-        this.nextRace = baseURL + nextParams.toString();
-      } else {
-        this.nextRace = "";
-      }
-    },
     mapResults(results) {
       this.enteredResults.win = results.top_horses[0].id;
       this.enteredResults.place = results.top_horses[1].id;
@@ -248,7 +211,6 @@ const results = new Vue({
     await this.fetchEvent();
     await this.fetchRace();
     await this.fetchResults();
-    await this.setPrevAndNextRaces();
     this.toggleLoading();
   },
 });
