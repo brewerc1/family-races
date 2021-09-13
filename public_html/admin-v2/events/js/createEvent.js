@@ -35,7 +35,7 @@ function createEvent() {
     if (!state.eventCreated) state.eventId = data.data[0].id;
     state.eventCreated = true;
     saveEventBtn.removeClass("disabled");
-    window.location.href = `./manage.php?e=${state.eventId}`;
+    window.location.href = `./manage.php?e=${state.eventId}&pg=1`;
   });
 }
 

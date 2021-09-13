@@ -64,7 +64,7 @@ async function createRace() {
 
   $("#horses .horse input").each((i, elem) => {
     const name = $(elem).val();
-    if (horseHasName(name)) horses.push($(elem).val());
+    if (horseHasName(name)) horses.push(getHorseName($(elem)));
   });
 
   const data = {
@@ -88,7 +88,7 @@ async function updateHorse(id) {
 
   if (!validateHorse(element)) return;
 
-  const newName = element.val();
+  const newName = getHorseName(element);
   const idStartIdx = id.indexOf("e");
   const idEndIdx = id.indexOf("-");
   const horseId = id.substring(idStartIdx + 1, idEndIdx);
@@ -132,7 +132,8 @@ async function deleteHorses() {
 }
 
 async function createNewHorse(oldID) {
-  const name = $(`#${oldID}`).val();
+  const element = $(`#${oldID}`);
+  const name = getHorseName(element);
   const requestURL = "/api/horses/";
 
   const data = {
@@ -251,7 +252,14 @@ function validateHorse(element) {
     return false;
   } else {
     removeHorseErrorUI(element);
+    return true;
   }
+}
+
+function getHorseName(element) {
+  return element.val().length < 48
+    ? element.val()
+    : element.val().substring(0, 48);
 }
 
 function toggleLoader() {

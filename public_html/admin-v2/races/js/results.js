@@ -97,6 +97,8 @@ const results = new Vue({
     },
     async updateResults() {
       if (!this.allFieldsFilledOut()) return;
+      this.restrictPurseSizes();
+
       const data = this.buildRequestObject();
       const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
       this.toggleLoading();
@@ -166,6 +168,27 @@ const results = new Vue({
         res.place != -1 && res.place_purse[0] > 0 && res.place_purse[1] > 0;
       const show = res.show != -1 && res.show_purse[0] > 0;
       return win && place && show;
+    },
+    restrictPurseSizes() {
+      const largestAcceptableValue = 9999.99;
+      this.enteredResults.win_purse.forEach((value, i) => {
+        this.enteredResults.win_purse[i] = Math.min(
+          largestAcceptableValue,
+          Number.parseFloat(value).toFixed(2)
+        );
+      });
+      this.enteredResults.place_purse[0] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.place_purse[0]).toFixed(2)
+      );
+      this.enteredResults.place_purse[1] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.place_purse[1]).toFixed(2)
+      );
+      this.enteredResults.show_purse[0] = Math.min(
+        largestAcceptableValue,
+        Number.parseFloat(this.enteredResults.show_purse[0]).toFixed(2)
+      );
     },
     async showSuccess() {
       this.showSuccessAlert = true;
