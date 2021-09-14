@@ -80,7 +80,10 @@ async function createRace() {
       "Content-Type": "application/json",
     },
   });
-  await request.json();
+  console.log(request);
+  let res = await request.json();
+  console.log(res);
+
   if (request.status !== 201) console.log("Error creating race.");
 }
 
