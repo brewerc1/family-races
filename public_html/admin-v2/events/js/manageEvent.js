@@ -59,8 +59,8 @@ function fetchEventRaces() {
       toggleAddRace(0);
     } else {
       displayRacesUI(races);
-      toggleNextAndPrevBtns();
     }
+    toggleNextAndPrevBtns();
   });
 }
 
