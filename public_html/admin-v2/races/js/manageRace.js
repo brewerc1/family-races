@@ -30,6 +30,7 @@ async function preparePage() {
 
 // Orchestrates requests when race is saved
 async function orchestrateRequests(e, isUpdate) {
+  e.preventDefault();
   if (params.get("mode") === "create") await createRace();
   if (state.horsesToDelete.length > 0) await deleteHorses();
   if (isUpdate) {
