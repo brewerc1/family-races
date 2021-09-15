@@ -129,8 +129,8 @@ function closeEvent(e, event) {
     $.ajax({
       type: "PUT",
       url: requestURL,
-      contentType: "application/json",
-      data: data,
+      contentType: "json",
+      data: $.serialize(data),
       error: (err) => alert(err.responseText),
     }).done(closeEventUI(event));
   });
