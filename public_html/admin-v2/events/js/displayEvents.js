@@ -113,7 +113,7 @@ function closeEvent(e, event) {
 
     alert(canCloseEvent);
 
-    const requestURL = `/api/events?e=${state.currentEventID}`;
+    const requestURL = `/api/events/?e=${state.currentEventID}`;
 
     const data = {
       name: event.name,
