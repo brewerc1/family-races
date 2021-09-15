@@ -122,7 +122,7 @@ function closeEvent(e, event) {
       status: 1,
     };
 
-    alert(data.name, data.date, data.pot, data.status);
+    alert(state.currentEventID);
 
     $.ajax({
       type: "PUT",
