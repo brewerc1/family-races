@@ -129,7 +129,7 @@ function closeEvent(e, event) {
     $.ajax({
       type: "PUT",
       url: requestURL,
-      contentType: "json",
+      contentType: "application/json",
       data: JSON.stringify(data),
       error: (err) => alert(err.responseText),
     }).done(closeEventUI(event));
