@@ -107,51 +107,54 @@ function addEventsToDOM(events) {
 
 function closeEvent(e, event) {
   e.preventDefault();
-  let canCloseEvent = confirm("Are you sure you want to close this event?");
 
-  if (!canCloseEvent) return;
+  canCloseEvent = bootbox.confirm("Are you sure?", (canCloseEvent) => {
+    if (!canCloseEvent) return;
 
-  const requestURL = `/api/events?e=${state.currentEventID}`;
+    const requestURL = `/api/events?e=${state.currentEventID}`;
 
-  const data = {
-    name: event.name,
-    date: event.date,
-    pot: Number.parseFloat(event.pot),
-    status: 1,
-  };
+    const data = {
+      name: event.name,
+      date: event.date,
+      pot: Number.parseFloat(event.pot),
+      status: 1,
+    };
 
-  $.ajax({
-    type: "PUT",
-    url: requestURL,
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    error: (err) => console.log(err),
-  }).done(() => {
-    if ($("#no-past-events").length > 0)
-      $("#no-past-events").css("display", "none");
-    $("#current-event-container").empty();
-    $("#current-event-container").css("display", "none");
-    $("#create-event-container").css("display", "block");
-
-    let template = `
-    <li class="list-group-item" id=${event.id}>
-      <div class="flex-container">
-        <p class="event-title">
-          ${event.name}
-        </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
-          View
-        </a>
-      </div>
-    </li>
-    `;
-
-    $("#events-list").prepend(template);
-
-    // Update state
-    state.currentEventID = null;
-    state.hasCurrentEvent = false;
+    $.ajax({
+      type: "PUT",
+      url: requestURL,
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      error: (err) => console.log(err),
+    }).done(closeEventUI(event));
   });
+}
+
+function closeEventUI(event) {
+  if ($("#no-past-events").length > 0)
+    $("#no-past-events").css("display", "none");
+  $("#current-event-container").empty();
+  $("#current-event-container").css("display", "none");
+  $("#create-event-container").css("display", "block");
+
+  let template = `
+<li class="list-group-item" id=${event.id}>
+  <div class="flex-container">
+    <p class="event-title">
+      ${event.name}
+    </p>
+    <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
+      View
+    </a>
+  </div>
+</li>
+`;
+
+  $("#events-list").prepend(template);
+
+  // Update state
+  state.currentEventID = null;
+  state.hasCurrentEvent = false;
 }
 
 function toggleLoader() {
