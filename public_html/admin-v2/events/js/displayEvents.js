@@ -122,6 +122,8 @@ function closeEvent(e, event) {
       status: 1,
     };
 
+    alert(requestURL);
+
     for (let prop in data) {
       alert(data[prop]);
     }
