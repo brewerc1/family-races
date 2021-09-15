@@ -130,7 +130,7 @@ function closeEvent(e, event) {
       type: "PUT",
       url: requestURL,
       contentType: "application/json",
-      data: JSON.stringify(data),
+      data: data,
       error: (err) => alert(err.responseText),
     }).done(closeEventUI(event));
   });
