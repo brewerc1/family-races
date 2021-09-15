@@ -122,14 +122,12 @@ function closeEvent(e, event) {
       status: 1,
     };
 
-    alert(state.currentEventID);
-
     $.ajax({
       type: "PUT",
       url: requestURL,
       contentType: "application/json",
       data: JSON.stringify(data),
-      error: (err) => console.log(err),
+      error: (err) => alert(err),
     }).done(closeEventUI(event));
   });
 }
