@@ -122,7 +122,7 @@ function closeEvent(e, event) {
       status: 1,
     };
 
-    for (let prop of data) {
+    for (let prop in data) {
       alert(data[prop]);
     }
 
