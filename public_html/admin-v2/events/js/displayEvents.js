@@ -105,10 +105,10 @@ function addEventsToDOM(events) {
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
 }
 
-async function closeEvent(e, event) {
+function closeEvent(e, event) {
   e.preventDefault();
 
-  bootbox.confirm("Are you sure?", async (canCloseEvent) => {
+  bootbox.confirm("Are you sure?", (canCloseEvent) => {
     if (!canCloseEvent) return;
 
     alert(canCloseEvent);
@@ -122,34 +122,14 @@ async function closeEvent(e, event) {
       status: 1,
     };
 
-    alert(requestURL);
-
-    for (let prop in data) {
-      alert(data[prop]);
-    }
-
-    const request = await fetch(requestURL, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (request.status === 400) {
-      alert("error!");
-      return;
-    }
-
-    closeEventUI(event);
-
-    // $.ajax({
-    //   type: "PUT",
-    //   url: requestURL,
-    //   contentType: "application/json",
-    //   data: JSON.stringify(data),
-    //   error: (err) => alert(err.responseText),
-    // }).done(closeEventUI(event));
+    $.ajax({
+      type: "PUT",
+      crossDomain: true,
+      url: requestURL,
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      error: (err) => alert(err.responseText),
+    }).done(closeEventUI(event));
   });
 }
 
