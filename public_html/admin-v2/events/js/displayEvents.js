@@ -122,6 +122,10 @@ function closeEvent(e, event) {
       status: 1,
     };
 
+    for (let prop of data) {
+      alert(data[prop]);
+    }
+
     $.ajax({
       type: "PUT",
       url: requestURL,
