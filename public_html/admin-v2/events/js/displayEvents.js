@@ -108,7 +108,7 @@ function addEventsToDOM(events) {
 function closeEvent(e, event) {
   e.preventDefault();
 
-  canCloseEvent = bootbox.confirm("Are you sure?", (canCloseEvent) => {
+  bootbox.confirm("Are you sure?", (canCloseEvent) => {
     if (!canCloseEvent) return;
 
     const requestURL = `/api/events?e=${state.currentEventID}`;
