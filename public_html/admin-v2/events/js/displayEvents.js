@@ -108,7 +108,7 @@ function addEventsToDOM(events) {
 async function closeEvent(e, event) {
   e.preventDefault();
 
-  bootbox.confirm("Are you sure?", (canCloseEvent) => {
+  bootbox.confirm("Are you sure?", async (canCloseEvent) => {
     if (!canCloseEvent) return;
 
     alert(canCloseEvent);
