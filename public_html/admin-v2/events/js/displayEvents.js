@@ -111,8 +111,6 @@ function closeEvent(e, event) {
   bootbox.confirm("Are you sure?", (canCloseEvent) => {
     if (!canCloseEvent) return;
 
-    alert(canCloseEvent);
-
     const requestURL = `/api/events/?e=${state.currentEventID}`;
 
     const data = {
