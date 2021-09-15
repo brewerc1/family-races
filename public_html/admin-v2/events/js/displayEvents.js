@@ -105,7 +105,7 @@ function addEventsToDOM(events) {
   if (!state.hasCurrentEvent) createEventContainer.css("display", "block");
 }
 
-function closeEvent(e, event) {
+async function closeEvent(e, event) {
   e.preventDefault();
 
   bootbox.confirm("Are you sure?", (canCloseEvent) => {
@@ -128,13 +128,28 @@ function closeEvent(e, event) {
       alert(data[prop]);
     }
 
-    $.ajax({
-      type: "PUT",
-      url: requestURL,
-      contentType: "application/json",
-      data: JSON.stringify(data),
-      error: (err) => alert(err.responseText),
-    }).done(closeEventUI(event));
+    const request = await fetch(requestURL, {
+      method: "PUT",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (request.status === 400) {
+      alert("error!");
+      return;
+    }
+
+    closeEventUI(event);
+
+    // $.ajax({
+    //   type: "PUT",
+    //   url: requestURL,
+    //   contentType: "application/json",
+    //   data: JSON.stringify(data),
+    //   error: (err) => alert(err.responseText),
+    // }).done(closeEventUI(event));
   });
 }
 

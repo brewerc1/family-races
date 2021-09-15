@@ -150,8 +150,6 @@ elseif (($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 
     }
 
     $postData = file_get_contents('php://input');
-    Utils::sendResponse(400, $success = false, $msg = ["Request body is not valid JSON."], $data = $postData);
-    exit;
     if (!$jsonData = json_decode($postData)) {
         Utils::sendResponse(400, $success = false, $msg = ["Request body is not valid JSON."], $data = null);
         exit;
