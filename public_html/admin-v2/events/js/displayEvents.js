@@ -126,6 +126,7 @@ function closeEvent(e, event) {
       type: "PUT",
       crossDomain: true,
       url: requestURL,
+      dataType: "json",
       contentType: "application/json",
       data: JSON.stringify(data),
       error: (err) => alert(err.responseText),
