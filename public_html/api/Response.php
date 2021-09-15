@@ -8,7 +8,7 @@ class Response
     private $_httpStatusCode;
     private $_messages = array();
     private $_data;
-//    private $_toCache = false;
+    //    private $_toCache = false;
     private $_responseData = array();
 
     /**
@@ -43,19 +43,20 @@ class Response
         $this->_data = $data;
     }
 
-//    /**
-//     * @param bool $toCache
-//     */
-//    public function setToCache($toCache)
-//    {
-//        $this->_toCache = $toCache;
-//    }
+    //    /**
+    //     * @param bool $toCache
+    //     */
+    //    public function setToCache($toCache)
+    //    {
+    //        $this->_toCache = $toCache;
+    //    }
 
-    public function send() {
+    public function send()
+    {
         header('Content-type: application/json;charset=utf-8');
-
-//        if ($this->_toCache == true) header('Cache-control: max-age-60');
-//        else header('Cache-control: no-cache, no-store');
+        header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
+        //        if ($this->_toCache == true) header('Cache-control: max-age-60');
+        //        else header('Cache-control: no-cache, no-store');
 
         if ($this->_success !== false && $this->_success !== true || !is_numeric($this->_httpStatusCode)) {
             http_response_code(500);
@@ -72,5 +73,4 @@ class Response
         }
         echo json_encode($this->_responseData);
     }
-
 }

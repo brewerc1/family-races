@@ -123,7 +123,7 @@ function closeEvent(e, event) {
     };
 
     $.ajax({
-      type: "PATCH",
+      type: "PUT",
       crossDomain: true,
       url: requestURL,
       dataType: "json",
