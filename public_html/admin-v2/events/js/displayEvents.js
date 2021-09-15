@@ -122,6 +122,8 @@ function closeEvent(e, event) {
       status: 1,
     };
 
+    alert(data.name, data.date, data.pot, data.status);
+
     $.ajax({
       type: "PUT",
       url: requestURL,
