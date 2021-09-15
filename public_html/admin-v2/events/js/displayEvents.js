@@ -127,7 +127,7 @@ function closeEvent(e, event) {
       url: requestURL,
       contentType: "application/json",
       data: JSON.stringify(data),
-      error: (err) => alert(err),
+      error: (err) => alert(err.responseText),
     }).done(closeEventUI(event));
   });
 }
