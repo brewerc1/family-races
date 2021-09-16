@@ -121,7 +121,7 @@ if ($prevRaceId != -1) {
                             <tr>
                                 <td>
                                     <select class="race-result w-100" v-model="enteredResults.win" @change="updateResults()">
-                                        <option v-for="horse in availableWinHorses" :key="horse.id" :label="horse.horse_number" :value="horse.id">
+                                        <option v-for="horse in availableWinHorses" :key="horse.id" :value="horse.id">
                                             {{ horse.horse_number }}
                                         </option>
                                     </select>
@@ -140,7 +140,7 @@ if ($prevRaceId != -1) {
                             <tr>
                                 <td>
                                     <select class="race-result w-100" v-model="enteredResults.place" @change="updateResults()">
-                                        <option v-for="horse in availablePlaceHorses" :key="horse.id" :label="horse.horse_number" :value="horse.id">
+                                        <option v-for="horse in availablePlaceHorses" :key="horse.id" :value="horse.id">
                                             {{ horse.horse_number }}
                                         </option>
                                     </select>
@@ -158,7 +158,7 @@ if ($prevRaceId != -1) {
                             <tr>
                                 <td>
                                     <select class="race-result w-100" v-model="enteredResults.show" @change="updateResults()">
-                                        <option v-for="horse in availableShowHorses" :key="horse.id" :label="horse.horse_number" :value="horse.id">
+                                        <option v-for="horse in availableShowHorses" :key="horse.id" :value="horse.id">
                                             {{ horse.horse_number }}
                                         </option>
                                     </select>
