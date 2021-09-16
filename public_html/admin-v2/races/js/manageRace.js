@@ -129,7 +129,7 @@ async function createNewHorses(horses) {
 }
 
 async function createRace() {
-  const requestURL = `/api/races`;
+  const requestURL = `/api/races/`;
   const horses = [];
 
   $("#horses .horse input").each((i, elem) => {
@@ -150,6 +150,8 @@ async function createRace() {
     },
   });
   const res = await request.json();
+  const test = await request.text();
+  alert(test);
   console.log(res);
   if (request.status !== 201) alert("Error creating race.");
 }
