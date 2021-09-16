@@ -99,7 +99,7 @@ function handleEventChange() {
     return;
   }
 
-  const requestURL = `/api/events?e=${params.get("e")}`;
+  const requestURL = `/api/events/?e=${params.get("e")}`;
 
   $.ajax({
     type: "PUT",
