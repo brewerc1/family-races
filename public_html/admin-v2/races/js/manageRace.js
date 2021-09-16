@@ -129,7 +129,7 @@ async function createNewHorses(horses) {
 }
 
 async function createRace() {
-  const requestURL = `/api/races/`;
+  const requestURL = `/api/races`;
   const horses = [];
 
   $("#horses .horse input").each((i, elem) => {
