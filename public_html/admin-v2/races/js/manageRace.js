@@ -138,6 +138,8 @@ async function createRace() {
     if (horseHasName(name)) horses.push(getHorseName($(elem)));
   });
 
+  alert("here");
+
   const data = {
     event_id: state.eventId,
     horses: horses,
@@ -150,7 +152,7 @@ async function createRace() {
       "Content-Type": "application/json",
     },
   });
-  const res = await request.json();
+  // const res = await request.json();
   const test = await request.text();
   alert(test);
   console.log(res);
