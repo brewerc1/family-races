@@ -53,7 +53,7 @@ function addEventsToDOM(events) {
         <p class="event-title">
           ${event.name}
         </p>
-        <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
+        <a class="black-btn" href="./view.php?e=${event.id}&pg=${state.pageNumber}">
           View
         </a>
       </div>
@@ -145,7 +145,7 @@ function closeEventUI(event) {
     <p class="event-title">
       ${event.name}
     </p>
-    <a class="black-btn" href="./manage.php?e=${event.id}&pg=${state.pageNumber}">
+    <a class="black-btn" href="./view.php?e=${event.id}&pg=${state.pageNumber}">
       View
     </a>
   </div>
