@@ -138,8 +138,6 @@ async function createRace() {
     if (horseHasName(name)) horses.push(getHorseName($(elem)));
   });
 
-  alert("here");
-
   const data = {
     event_id: state.eventId,
     horses: horses,
@@ -152,10 +150,7 @@ async function createRace() {
       "Content-Type": "application/json",
     },
   });
-  // const res = await request.json();
-  const test = await request.text();
-  alert(test);
-  // console.log(res);
+  await request.json();
   if (request.status !== 201) alert("Error creating race.");
   else {
     const managePage = `../events/manage.php?e=${state.eventId}&pg=${state.page}`;
