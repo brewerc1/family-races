@@ -11,6 +11,20 @@ const defaultResults = {
 
 const deepClone = () => JSON.parse(JSON.stringify(defaultResults));
 
+const findCorrectHorse = (horses, lookingFor) => {
+  return horses.find((horse) => horse.id === lookingFor);
+};
+
+const findOtherHorses = (horses, results) => {
+  return horses.filter((horse) => {
+    return (
+      horse.id !== results.win &&
+      horse.id !== results.place &&
+      horse.id !== results.show
+    );
+  });
+};
+
 const results = new Vue({
   el: "#app",
   data() {
@@ -31,25 +45,18 @@ const results = new Vue({
     sortedHorses: function () {
       if (this.loading) return [];
       if (this.enteredResults.win === -1) return this.horses;
-      const win = this.horses.filter(
-        (horse) => horse.id === this.enteredResults.win
-      );
-      const place = this.horses.filter(
-        (horse) => horse.id === this.enteredResults.place
-      );
-      const show = this.horses.filter(
-        (horse) => horse.id === this.enteredResults.show
-      );
-      const otherHorses = this.horses.filter(
-        (horse) =>
-          horse.id !== this.enteredResults.win &&
-          horse.id !== this.enteredResults.place &&
-          horse.id !== this.enteredResults.show
-      );
+
+      const win = findCorrectHorse(this.horses, this.enteredResults.win);
+      const place = findCorrectHorse(this.horses, this.enteredResults.place);
+      const show = findCorrectHorse(this.horses, this.enteredResults.show);
+      const otherHorses = findOtherHorses(this.horses, this.enteredResults);
+
       const result = [...otherHorses];
-      if (show.length > 0) result.unshift(show[0]);
-      if (place.length > 0) result.unshift(place[0]);
-      if (win.length > 0) result.unshift(win[0]);
+
+      if (show.id > 0) result.unshift(show);
+      if (place.id > 0) result.unshift(place);
+      if (win.id > 0) result.unshift(win);
+
       return result;
     },
   },
