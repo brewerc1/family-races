@@ -155,8 +155,12 @@ async function createRace() {
   // const res = await request.json();
   const test = await request.text();
   alert(test);
-  console.log(res);
+  // console.log(res);
   if (request.status !== 201) alert("Error creating race.");
+  else {
+    const managePage = `../events/manage.php?e=${state.eventId}&pg=${state.page}`;
+    window.location.href = managePage;
+  }
 }
 
 async function deleteHorses() {
