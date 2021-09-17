@@ -31,6 +31,7 @@ async function preparePage() {
 // Orchestrates requests when race is saved
 async function orchestrateRequests(e) {
   if (state.mode !== "create") e.preventDefault();
+  else e.preventDefault();
   toggleLoader(true);
   if (state.mode === "create") await createRace();
   else await updateRace();
