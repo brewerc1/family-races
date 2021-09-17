@@ -159,7 +159,7 @@ async function createRace() {
 }
 
 async function deleteHorses() {
-  const requestURL = `/api/horses`;
+  const requestURL = `/api/horses/`;
 
   const data = { horses: state.horsesToDelete };
 
