@@ -1,5 +1,16 @@
 const params = new URLSearchParams(window.location.search);
 
+const defaultResults = {
+  win: -1,
+  show: -1,
+  place: -1,
+  win_purse: [0, 0, 0],
+  place_purse: [0, 0],
+  show_purse: [0],
+};
+
+const deepClone = () => JSON.parse(JSON.stringify(defaultResults));
+
 const results = new Vue({
   el: "#app",
   data() {
@@ -9,14 +20,7 @@ const results = new Vue({
       eventId: params.get("e"),
       raceId: 1,
       page: params.get("pg"),
-      enteredResults: {
-        win: -1,
-        show: -1,
-        place: -1,
-        win_purse: [0, 0, 0],
-        place_purse: [0, 0],
-        show_purse: [0],
-      },
+      enteredResults: deepClone(defaultResults),
       event: {},
       race: {},
       horses: [],
@@ -73,6 +77,7 @@ const results = new Vue({
         this.mapResults(results.data);
       } catch (e) {
         console.log("Error retrieving results (results not yet entered)");
+        this.enteredResults = deepClone(defaultResults);
       }
     },
     async repopulateResults() {
