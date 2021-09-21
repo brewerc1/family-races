@@ -17,10 +17,19 @@ if ($_SESSION["admin"] != 1) {
 }
 
 $eventId = (int) $_GET["e"];
-$query = "SELECT name FROM event WHERE id=:eventId";
+$page = (int) $_GET["pg"];
+$query = "SELECT name, status FROM event WHERE id=:eventId";
 $stmt = $pdo->prepare($query);
 $stmt->execute(['eventId' => $eventId]);
-$eventName = $stmt->fetch()["name"];
+$data = $stmt->fetch();
+$eventName = $data["name"];
+$eventStatus = $data["status"];
+
+// Event is closed, send to the view page.
+if ($eventStatus == 1) {
+	$headerString = "Location: ../events/view.php?e=" . $eventId . "&pg=" . $page;
+	header($headerString);
+}
 
 ?>
 
