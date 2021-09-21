@@ -31,6 +31,7 @@ const results = new Vue({
     return {
       lastRace: -1,
       lastRacePage: -1,
+      eventHasRaces: true,
       eventId: params.get("e"),
       raceId: 1,
       page: params.get("pg"),
@@ -72,11 +73,17 @@ const results = new Vue({
       const requestURL = `/api/races?e=${this.eventId}&r=${this.raceId}`;
       let race = await fetch(requestURL);
       race = await race.json();
-      this.race = race.data.races[0];
-      this.horses = this.race.horses;
-      this.lastRacePage = race.data.numberOfPages;
+      try {
+        this.race = race.data.races[0];
+        this.horses = this.race.horses;
+        this.lastRacePage = race.data.numberOfPages;
+      } catch (e) {
+        console.log("This event contains no races.");
+        this.eventHasRaces = false;
+      }
     },
     async fetchResults() {
+      if (!this.eventHasRaces) return;
       try {
         const requestURL = `/api/results/?e=${this.eventId}&r=${this.raceId}`;
         let results = await fetch(requestURL);
@@ -110,7 +117,7 @@ const results = new Vue({
       race = await fetch(requestURL);
       race = await race.json();
       race = race.data.races[race.data.races.length - 1];
-      this.lastRace = race.race_number;
+      this.lastRace = race?.race_number ? race.race_number : 1;
     },
     mapResults(results) {
       this.enteredResults.win = results.top_horses[0].id;

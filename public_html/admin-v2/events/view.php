@@ -78,9 +78,11 @@ $eventDate = $data["date"];
             </div>
         </section>
     </form>
-    <h2 class="mt-4">Races In This Event</h2>
+
     <div class="board" id="app">
-        <div id="scoreboard">
+        <h2 class="mt-6" v-if="eventHasRaces">Races In This Event</h2>
+        <h2 class="mt-6" v-else>No races in this event.</h2>
+        <div id="scoreboard" v-show="eventHasRaces">
             <h2></h2>
             <div class="board-wrapper contain-width">
                 <a class="mr-4 font-weight-bold control-btn btn" :class="{'disabled dim': raceId == 1 }" @click="previousRace()">
@@ -152,7 +154,7 @@ $eventDate = $data["date"];
                 </a>
             </div>
         </div>
-        <div class="mt-2 mb-4 contain-width">
+        <div class="mt-2 mb-4 contain-width" v-show="eventHasRaces">
             <h2 class="mb-2">Horses in this race</h2>
             <div v-for="horse in sortedHorses" :key="horse.id" class="pb-4 font-weight-bold">
                 <span v-if="horse.id === enteredResults.win" class="gold">
@@ -177,7 +179,9 @@ $eventDate = $data["date"];
                 </div>
             </div>
         </div>
+
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
     <script src="js/viewEvent.js"></script>
