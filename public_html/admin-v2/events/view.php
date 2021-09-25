@@ -82,6 +82,9 @@ $eventDate = $data["date"];
     <div class="board" id="app">
         <h2 class="mt-6" v-if="eventHasRaces">Races In This Event</h2>
         <h2 class="mt-6" v-else>No races in this event.</h2>
+
+
+
         <div id="scoreboard" v-show="eventHasRaces">
             <h2></h2>
             <div class="board-wrapper contain-width">
@@ -155,6 +158,9 @@ $eventDate = $data["date"];
             </div>
         </div>
         <div class="mt-2 mb-4 contain-width" v-show="eventHasRaces">
+            <div class="edit-race-wrap">
+                <a class="btn black-btn" v-if="eventHasRaces" :href="editRaceURL">Edit this race</a>
+            </div>
             <h2 class="mb-2">Horses in this race</h2>
             <div v-for="horse in sortedHorses" :key="horse.id" class="pb-4 font-weight-bold">
                 <span v-if="horse.id === enteredResults.win" class="gold">
@@ -181,8 +187,6 @@ $eventDate = $data["date"];
         </div>
 
     </div>
-
-
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
     <script src="js/viewEvent.js"></script>
 </main>

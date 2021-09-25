@@ -257,7 +257,15 @@
 }
 
 .bronze {
-  color: #CD7F32 !important;
+  color: #cd7f32 !important;
+}
+
+.edit-race-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
 }
 
 @media screen and (max-width: 500px) {

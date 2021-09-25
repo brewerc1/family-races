@@ -60,6 +60,9 @@ const results = new Vue({
 
       return result;
     },
+    editRaceURL() {
+      return `/admin-v2/races/results.php?e=${this.eventId}&pg=${this.page}&r=${this.raceId}`;
+    },
   },
   methods: {
     async fetchEvent() {
