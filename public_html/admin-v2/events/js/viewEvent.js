@@ -9,7 +9,7 @@ const defaultResults = {
   show_purse: [0],
 };
 
-const deepClone = () => JSON.parse(JSON.stringify(defaultResults));
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
 const findCorrectHorse = (horses, lookingFor) => {
   return horses.find((horse) => horse.id === lookingFor);

@@ -111,29 +111,29 @@ $eventDate = $data["date"];
                         <tbody>
                             <tr>
                                 <td>
-                                    <input v-for="horse in horses" :key="horse.id" v-if="horse.id==enteredResults.win" :value="horse.horse_number" disabled="true" />
+                                    <input v-for="horse in horses" :key="horse.id" v-if="horse.id==enteredResults.win" :value="horse.horse_number" disabled="true" style="color: orange !important;" />
                                 </td>
                                 <td class="position-relative">
-                                    <input class="w-100" v-model="enteredResults.win_purse[0]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.win_purse[0]" disabled="true" style="color: orange !important;">
                                 </td>
                                 <td>
-                                    <input class="w-100" v-model="enteredResults.win_purse[1]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.win_purse[1]" disabled="true" style="color: orange !important;">
                                 </td>
                                 <td>
-                                    <input class="w-100" v-model="enteredResults.win_purse[2]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.win_purse[2]" disabled="true" style="color: orange !important;">
                                 </td>
                             </tr>
                             <!-- Place -->
                             <tr>
                                 <td>
-                                    <input v-for="horse in horses" :key="horse.id" v-if="horse.id==enteredResults.place" :value="horse.horse_number" disabled="true" />
+                                    <input v-for="horse in horses" :key="horse.id" v-if="horse.id==enteredResults.place" :value="horse.horse_number" disabled="true" style="color: orange !important;" />
                                 </td>
                                 <td class="board-blank"></td>
                                 <td>
-                                    <input class="w-100" v-model="enteredResults.place_purse[0]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.place_purse[0]" disabled="true" style="color: orange !important;">
                                 </td>
                                 <td>
-                                    <input class="w-100" v-model="enteredResults.place_purse[1]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.place_purse[1]" disabled="true" style="color: orange !important;">
                                 </td>
 
                             </tr>
@@ -145,7 +145,7 @@ $eventDate = $data["date"];
                                 <td class="board-blank"></td>
                                 <td class="board-blank"></td>
                                 <td>
-                                    <input class="w-100" v-model="enteredResults.show_purse[0]" disabled="true">
+                                    <input class="w-100" v-model="enteredResults.show_purse[0]" disabled="true" style="color: orange !important;">
                                 </td>
                             </tr>
                         </tbody>

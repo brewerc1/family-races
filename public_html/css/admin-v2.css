@@ -260,6 +260,12 @@
   color: #cd7f32 !important;
 }
 
+a.btn.green-btn {
+  background-color: #28a745 !important;
+  color: white !important;
+  border-color: #28a745;
+}
+
 .edit-race-wrap {
   display: flex;
   flex-direction: column;

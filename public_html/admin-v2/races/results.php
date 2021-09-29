@@ -59,8 +59,17 @@ if ($prevRaceId != -1) {
     $prevRacePage = ($prevRaceId / 10) + 1;
     $prevRaceURL = "/admin-v2/races/results.php?e={$eventId}&r={$prevRaceId}&pg=1";
 }
-
 // End Server Side Rendering Logic
+
+// If this is a past event, add query param to let Vue know
+$query = "SELECT status FROM event WHERE id=:eventId";
+$stmt = $pdo->prepare($query);
+$stmt->execute(["eventId" => $eventId]);
+$event = $stmt->fetch();
+
+if (isset($event["status"]) && !isset($_GET["status"])) {
+    header('Location: ' . $_SERVER["REQUEST_URI"] . "&status=" . $event["status"]);
+}
 
 ?>
 
