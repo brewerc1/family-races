@@ -214,13 +214,12 @@ function buildRaceTemplate(race) {
 
   const bettingWindowAction = race.window_closed == 0 ? "close" : "open";
   const bettingWindowButton = `
-  <a class="black-btn btn ${
-    resultsEntered ? "disabled" : ""
-  }" id="${bettingWindowAction}-${race.race_number}">
+  <a class="black-btn btn" id="${bettingWindowAction}-${race.race_number}">
     ${bettingWindowAction.capitalize()} Betting Window
   </a>`;
 
-  const enterResultsButton = `<a class="black-btn outlined-btn btn" href="${enterResultsURL}">Enter Results</a>`;
+  const enterResultsButton = `<a class="btn black-btn btn-success green-btn" href="${enterResultsURL}">Enter Results</a>`;
+  const editButton = `<a class="black-btn btn" href="${editRaceURL}">Edit</a>`;
 
   return `
   <li class="list-group-item" id="${race.race_number}">
@@ -232,12 +231,8 @@ function buildRaceTemplate(race) {
       </div>
       <div class="race-btns" id="btns-${race.race_number}">
         ${race.window_closed == 1 ? enterResultsButton : ""}
-        <a class="black-btn btn ${
-          resultsEntered ? "disabled" : ""
-        }"" href="${editRaceURL}">
-          Edit
-        </a>
-        ${bettingWindowButton}
+        ${!resultsEntered ? editButton : ""}
+        ${!resultsEntered ? bettingWindowButton : ""}
       </div>
     </div>
   </li>

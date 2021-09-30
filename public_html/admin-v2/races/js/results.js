@@ -9,6 +9,7 @@ const results = new Vue({
       eventId: params.get("e"),
       raceId: params.get("r"),
       page: params.get("pg"),
+      status: Number.parseInt(params.get("status")), // 1 = event closed, 0 = event open
       enteredResults: {
         win: -1,
         show: -1,
@@ -117,6 +118,17 @@ const results = new Vue({
       else this.showFailure();
 
       this.toggleLoading();
+      if (this.status === 1) this.recalculateResults();
+    },
+    async recalculateResults() {
+      const requestURL = `/api/recalculate/?e=${this.eventId}`;
+      const request = await fetch(requestURL, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      if (request.status !== 200) console.log("Error recalculating results.");
     },
     mapResults(results) {
       this.enteredResults.win = results.top_horses[0].id;
