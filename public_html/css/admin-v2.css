@@ -274,6 +274,12 @@ a.btn.green-btn {
   margin: 0 auto 1rem auto;
 }
 
+.scoreboard > tbody > tr > td > input:disabled {
+  -webkit-text-fill-color: orange; /* Override iOS / Android font color change */
+  -webkit-opacity: 1; /* Override iOS opacity change affecting text & background color */
+  color: orange; /* Override IE font color change */
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
