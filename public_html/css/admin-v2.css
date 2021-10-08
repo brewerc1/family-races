@@ -280,6 +280,27 @@ a.btn.green-btn {
   color: orange; /* Override IE font color change */
 }
 
+@media screen and (max-width: 720px) {
+  .board-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 3fr 1fr;
+  }
+
+  .board-wrapper > #message {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+
+  .board-wrapper a:first-of-type {
+    grid-row: 2;
+  }
+
+  .board-wrapper a:last-of-type {
+    grid-row: 2;
+  }
+}
+
 @media screen and (max-width: 500px) {
   #events-list-container,
   #current-event-container,
