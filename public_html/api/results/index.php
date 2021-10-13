@@ -3,8 +3,8 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 
 // Testing only
-$_SESSION['id'] = '1';
-$_SESSION['admin'] = 1;
+//$_SESSION['id'] = '1';
+//$_SESSION['admin'] = 1;
 
 use api\Utils;
 include_once '../Utils.php';
