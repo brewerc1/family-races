@@ -1,5 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 // turn on output buffering
 ob_start('template');
@@ -32,15 +32,15 @@ $javascript = '';
 ?>
 {header}
 {main_nav}
-    <main role="main" id="admin_page">
-		<h1 class="mb-5 sticky-top">Admin</h1>
-		<section>
-			<ul class="list-unstyled text-center mt-5">
-				<li><a class="btn btn-primary mb-4" href="./events/">Event &amp; Race Managment</a></li>
-				<li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
-				<li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
-			</ul>
-		</section> 
-	</main>
+<main role="main" id="admin_page">
+    <h1 class="mb-5 sticky-top">Admin</h1>
+    <section>
+        <ul class="list-unstyled text-center mt-5">
+            <li><a class="btn btn-primary mb-4" href="../admin-v2/events/">Event &amp; Race Managment</a></li>
+            <li><a class="btn btn-primary mb-4" href="./users/">User Management</a></li>
+            <li><a class="btn btn-primary mb-4" href="./settings/">Site Settings</a></li>
+        </ul>
+    </section>
+</main>
 {footer}
 <?php ob_end_flush(); ?>

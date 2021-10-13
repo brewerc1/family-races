@@ -21,10 +21,10 @@ $nav = <<< HTML
  
 HTML;
 
-if(isset($_SESSION['admin']) && $_SESSION['admin'] == 1){
-$nav .= <<< HTML
+if (isset($_SESSION['admin']) && $_SESSION['admin'] == 1) {
+    $nav .= <<< HTML
                 <li class="nav-item" id="admin">
-                    <a class="nav-link" href="/admin-v2/">Admin V2</a>
+                    <a class="nav-link" href="/admin/">Admin</a>
                 </li>
 
 HTML;
