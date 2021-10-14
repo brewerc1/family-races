@@ -4,6 +4,9 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 // Turn on output buffering
 ob_start('template');
 
+// Echo hashed password for testing
+//echo password_hash(hash_hmac($hash_algorithm, "password1", $pepper), PASSWORD_BCRYPT);
+
 // Set the page title for the template
 $page_title = "Login";
 

@@ -52,6 +52,7 @@ return <<< HTML
 			
 			// Main Nav: Highlight element based on page path
 	        var path_id = $(location).attr('pathname').split('/')[1];
+            path_id = path_id.includes('admin') ? 'admin' : path_id;
 	        $("#" + path_id).addClass("active");
 
 			// Main modal
