@@ -500,7 +500,7 @@ CANCEL;
                             <?php
                                 if ($_SESSION['admin']) {
                                     echo <<< ADMINPORTAL
-                            <a href="/admin/events/manage.php?e=$event" class="btn btn-secondary border">Administer this race</a>
+                            <a href="/admin-v2/events/manage.php?e=$event&pg=1" class="btn btn-secondary border">Administer this race</a>
 ADMINPORTAL;
                                 }
                             ?>
