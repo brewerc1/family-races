@@ -119,7 +119,7 @@ $random_image = array_rand($background_images);
 					<div class="linkedin"><a class="text-info" href="https://linkedin.com/in/elizabeth-schnuck"><img src="/images/linkedin-bug.png" alt="LinkedIn logo" class="linkedin-bug mr-2">Liz's LinkedIn profile</a></div>
 				</div>
 				<div class="col-lg-4 col-md-6 col-sm-12 mb-5">
-					<p><strong>Chris Brewer</strong> is the instructor of this course, a Computer Science faculty member, and is the Project Innovation Coordinator for Informatics+ in the College of Informatics.</p>
+					<p><strong>Chris Brewer</strong> is the instructor of this course, a Computer Science faculty member, and is the Director of Innovation & Technology for <a href="https://informatics.plus">Informatics+</a> in the College of Informatics.</p>
 					<div class="linkedin"><a class="text-info" href="https://www.linkedin.com/in/cbrewer"><img src="/images/linkedin-bug.png" alt="LinkedIn logo" class="linkedin-bug mr-2">Chris' LinkedIn profile</a></div>
 				</div>
 			</div>
