@@ -60,6 +60,23 @@ function template($buffer)
     return(str_replace($to_match, $replace_with, $buffer));
 }
 
+/**
+ * @param $pdo
+ * @return int
+ */
+function getCurrentEventId($pdo): int
+{
+    $query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
+    $current_event = $pdo->prepare($query);
+    $current_event->execute();
+
+    if ($current_event->rowCount() > 0) {
+        return $current_event->fetch()["id"];
+    }
+
+    return 0;
+}
+
 // Code for sending out emails
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

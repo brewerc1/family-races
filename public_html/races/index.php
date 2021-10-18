@@ -56,6 +56,8 @@ $uid = $_SESSION['id'];
 
 // URL needs to have the GET variables to work ex: http://localhost/races/?e=1&r=3
 // Handle Event
+$_SESSION["current_event"] = getCurrentEventId($pdo);
+
 if (!empty($_GET['e']) && is_numeric($_GET['e'])) {
     $event = $_GET['e'];
 }

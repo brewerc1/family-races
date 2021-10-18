@@ -80,13 +80,14 @@ if (isset($_POST["login"])) {
         }
 
 
-        $query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
-        $current_event = $pdo->prepare($query);
-        $current_event->execute();
-
-        if ($current_event->rowCount() > 0) {
-            $_SESSION["current_event"] = $current_event->fetch()["id"];
-        }
+//        $query = "SELECT id FROM event ORDER BY id DESC LIMIT 1";
+//        $current_event = $pdo->prepare($query);
+//        $current_event->execute();
+//
+//        if ($current_event->rowCount() > 0) {
+//            $_SESSION["current_event"] = $current_event->fetch()["id"];
+//        }
+        $_SESSION["current_event"] = getCurrentEventId($pdo);
 
 
         header("Location: /login/welcome");
