@@ -126,7 +126,7 @@ $random_image = array_rand($background_images);
 		</div><!-- END #team -->
 		<?php if(!isset($_SESSION['id'])){?>
 		<div>
-			<a href="#" onclick="window.history.back();" class="btn btn-primary">Back</a>
+			<a href="#" onclick="history.go(-1); event.preventDefault();" class="btn btn-primary">Back</a>
 		</div>
 		<?php
 		}
