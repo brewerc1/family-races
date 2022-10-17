@@ -12,6 +12,8 @@ if (empty($_SESSION["id"])){
 // Set the page title for the template
 $page_title = "Your Profile Photo";
 
+$debug = debug();
+
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 

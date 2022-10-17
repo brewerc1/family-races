@@ -1056,10 +1056,16 @@ table#profile_records {
 	color: #fff;
 	font-weight: 700;
 }
+#debug .nav-item.nav-link:hover {
+	background-color: rgba(34, 85, 139, 0.61);
+}
+#debug .nav-item.nav-link.active {
+	background-color: #22558b;
+}
 #debug_card {
 	width: 100%;
 	max-width: 600px;
 	font-size: .8em;
 	backdrop-filter: blur(6px);
-	background-color: rgba(0, 0, 0, .7);
+	background-color: rgba(0, 0, 0, .85);
 }

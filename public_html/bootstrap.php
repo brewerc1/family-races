@@ -158,7 +158,7 @@ function debug( $content='' ){
         $content = "<pre>" . print_r($content, TRUE) . "</pre>";
     }
     return <<< HERE
-    <button class="btn btn-link btn-sm" id="debug_button" type="button" data-toggle="collapse" data-target="#debug" aria-expanded="false" aria-controls="debug">debug</button>
+    <button class="btn btn-link btn-sm animate__animated animate__fadeInBottomLeft animate__delay-1s animate__repeat-1" id="debug_button" type="button" data-toggle="collapse" data-target="#debug" aria-expanded="false" aria-controls="debug">debug</button>
     <div class="collapse" id="debug">
         <div class="card card-body" id="debug_card">
             <nav>
