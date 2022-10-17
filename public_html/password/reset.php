@@ -4,7 +4,6 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 ob_start('template');
 
 if (!isset($_GET['email']) || !isset($_GET['code'])) {
-	echo "here";
 	header("Location: /login/index.php");
     exit;
 }
@@ -75,6 +74,8 @@ if (isset($_POST["change_pwd"])) {
 
 // set the page title for the template
 $page_title = "Create New Password";
+
+$debug = debug($_POST);
 
 // include the menu javascript for the template
 $javascript = "";

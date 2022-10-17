@@ -1,8 +1,8 @@
 <?php
-global $debug, $alert_style, $notification;
+global $debug, $alert_style, $notification, $config;
 $output = '';
 
-if (isset($debug)) {
+if (isset($debug) && $config['prod_mode'] == false) {
     $output .= $debug;
 }
 

@@ -6,6 +6,8 @@ ob_start('template');
 
 $page_title = "Events";
 
+$debug = debug();
+
 if (empty($_SESSION["id"])) {
 	header("Location: /login/");
 	exit;
@@ -15,12 +17,13 @@ if ($_SESSION["admin"] != 1) {
 	header("Location: /races/");
 	exit;
 }
+
 ?>
 
 {header}
 {main_nav}
 <main role="main" id="admin_events_page">
-	<h1 class="sticky-top" id="view-all-events-header">Events</h1>
+	<h1 class="sticky-top" id="view-all-events-header"><?php echo $page_title;?></h1>
 	<div id="loader-container">
 			<div class="lds-ring" id="loader"><div></div><div></div><div></div><div></div></div>
 		</div>

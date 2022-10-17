@@ -10,6 +10,8 @@ ob_start('template');
 // Set the page title for the template
 $page_title = "Login";
 
+$debug = debug();
+
 // Include the menu javascript for the template
 $javascript = "";
 

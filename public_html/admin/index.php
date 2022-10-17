@@ -21,11 +21,10 @@ if (!$_SESSION["admin"]) {
     exit;
 }
 
-//$debug = debug();
-
-
 // Set the page title for the template
 $page_title = "Admin";
+
+$debug = debug();
 
 $javascript = '';
 

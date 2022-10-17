@@ -5,6 +5,8 @@ ob_start('template');
 
 $page_title = "Manage an Event";
 
+$debug = debug($_GET);
+
 $javascript = <<< JAVASCRIPT
 JAVASCRIPT;
 

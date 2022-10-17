@@ -12,10 +12,10 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Change Password";
 
+$debug = debug($_POST);
+
 // include the menu javascript for the template
 $javascript = '';
-
-
 
 if (empty($_SESSION["id"])) {
     header("Location: /login/");

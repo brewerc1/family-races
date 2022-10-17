@@ -14,6 +14,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "User Settings";
 
+$debug = debug($_POST);
+
 // include the menu javascript for the template
 $javascript = <<< JAVASCRIPT
 $("form").submit(function() {
@@ -31,9 +33,6 @@ if (empty($_SESSION["id"])) {
     // Make sure the rest of code is not gonna be executed
     exit;
 }
-///// DEBUG
-//$debug = debug($_POST);
-///// end DEBUG
 
 // Get UID
 $uid = filter_var(trim($_SESSION['id']), FILTER_SANITIZE_NUMBER_INT);

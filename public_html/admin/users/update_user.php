@@ -16,6 +16,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Update User";
 
+$debug = debug($_POST);
+
 
     if(!empty($_SESSION['id']) && $_SESSION['admin'] == 1 && $_POST['id'] != 1 && !empty($_POST['id']) && ($_POST['checked'] == 0 || $_POST['checked'] == 1)) {
 

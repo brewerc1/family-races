@@ -7,6 +7,8 @@ ob_start('template');
 // Set the page title for the template
 $page_title = "Your Profile";
 
+$debug = debug($_POST);
+
 if (empty($_SESSION["id"])){
 	header("Location: /login/");
 	exit;

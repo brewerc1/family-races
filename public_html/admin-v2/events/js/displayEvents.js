@@ -187,3 +187,5 @@ $(document).ready(fetchEvents(state.firstPage));
 
 $("#next-btn").on("click", nextPage);
 $("#prev-btn").on("click", previousPage);
+
+console.log(state);

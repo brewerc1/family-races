@@ -28,15 +28,13 @@ if (empty($_SESSION["site_welcome_video_url"])) {
 // Set the page title for the template
 $page_title = "Welcome";
 
+$debug = debug();
+
 // Include the race picker javascript
 $javascript = '';
 
 // Get UID
 $uid = $_SESSION['id'];
-
-///// DEBUG
-//$debug = debug();
-///// end DEBUG
 
 ?>
 {header}

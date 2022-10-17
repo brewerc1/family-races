@@ -5,6 +5,8 @@ ob_start('template');
 
 $page_title = "Events";
 
+$debug = debug();
+
 if(empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;
@@ -12,8 +14,6 @@ if(empty($_SESSION["id"])) {
     header("Location: /races/");
     exit;
 }
-
-//$debug = debug();
 
 $output = '';
 $has_current_event = 0; // defaults to no current event

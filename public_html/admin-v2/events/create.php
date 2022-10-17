@@ -6,6 +6,8 @@ ob_start('template');
 
 $page_title = "Create Event";
 
+$debug = debug();
+
 if(empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;

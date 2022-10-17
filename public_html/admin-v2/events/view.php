@@ -6,6 +6,8 @@ ob_start('template');
 
 $page_title = "Manage Event";
 
+$debug = debug($_GET);
+
 if (empty($_SESSION["id"])) {
     header("Location: /login/");
     exit;

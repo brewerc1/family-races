@@ -322,6 +322,7 @@ table#profile_records {
 .user-list.list-group .media {
 	align-items: center;
 	justify-content: center;
+	text-shadow: none;
 }
 .list-group .media img {
 	width: 70px;
@@ -441,6 +442,9 @@ table#profile_records {
 }
 .input-group-lg .input-group-prepend, .input-group-lg .input-group-append {
 	height: calc(1.5em + 3rem + 0px);
+}
+#races_page .user_name {
+	color: #000;
 }
 /* SCOREBOARD */
 @font-face {
@@ -1031,7 +1035,7 @@ table#profile_records {
 	position: fixed;
 	top: 2px;
 	right: 2px;
-	background-color: rgba(0, 0, 0, .6);
+	background-color: rgba(220, 0, 0, .6);
 	color: #fff;
 	z-index: 2000;
 }
@@ -1057,5 +1061,5 @@ table#profile_records {
 	max-width: 600px;
 	font-size: .8em;
 	backdrop-filter: blur(6px);
-	background-color: rgba(0, 0, 0, .6);
+	background-color: rgba(0, 0, 0, .7);
 }

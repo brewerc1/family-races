@@ -25,13 +25,11 @@ if (!empty($_GET['code'])) {
 
 // Set the page title for the template
 $page_title = "Sign Up";
+
+$debug = debug($_GET);
  
 // Include the race picker javascript
 $javascript = '';
- 
-///// DEBUG
-//$debug = debug();
-///// end DEBUG
 
 // Load site settings and event session variables
 $site_settings_sql = "SELECT * FROM site_settings";

@@ -15,6 +15,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Edit User Profile";
 
+$debug = debug($_POST);
+
 // include the menu javascript for the template
 $javascript =<<< JAVASCRIPT
 
@@ -240,9 +242,6 @@ if(isset($_POST['save_button'])){
     }
 }
 
-///// DEBUG
-//$debug = debug($_POST);
-///// end DEBUG
 ?>
 {header}
 {main_nav}

@@ -20,6 +20,8 @@ if (empty($_SESSION["id"])) {
 // Set the page title for the template
 $page_title = "Hall of Fame";
 
+$debug = debug();
+
 // Gather data for this page
 // SQL to retrieve Hall of Fame related data
 $hof_sql = 'SELECT event.*, user.first_name, user.last_name, user.photo, user.update_time as user_update_time

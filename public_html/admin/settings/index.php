@@ -13,6 +13,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Site Settings";
 
+$debug = debug($_POST);
+
 // include the menu javascript for the template
 $javascript = '';
 
@@ -31,10 +33,6 @@ if (!$_SESSION["admin"]) {
     //header("Location: error401.php");
     exit;
 }
-
-///// DEBUG
-//$debug = debug($_POST);
-///// end DEBUG
 
 // Check if "save" button was clicked
 if(isset($_POST['save_button'])){

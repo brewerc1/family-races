@@ -16,6 +16,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Profile";
 
+$debug = debug();
+
 // include the menu javascript for the template
 $javascript = '';
 
@@ -26,10 +28,6 @@ if (!isset($_SESSION["id"])) {
     header("Location: /login/");
     exit;
 }
-
-///// DEBUG
-//$debug = debug();
-///// end DEBUG
 
 // logged in user
 $full_name = trim($_SESSION['first_name']).' '.trim($_SESSION['last_name']);

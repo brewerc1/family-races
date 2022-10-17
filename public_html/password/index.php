@@ -6,6 +6,8 @@ ob_start('template');
 // set the page title for the template
 $page_title = "Forgot Password";
 
+$debug = debug();
+
 // include the menu javascript for the template
 $javascript = "";
 

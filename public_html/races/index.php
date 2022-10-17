@@ -196,9 +196,7 @@ foreach($horses as $key => $value){
 }
 $horse_list_js = rtrim($horse_list_js, ','); // remove trailing comma
 
-///// DEBUG
-//$debug = debug($horses);
-///// end DEBUG
+$debug = debug($horses);
 
 ?>
 {header}
