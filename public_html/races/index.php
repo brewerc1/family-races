@@ -385,7 +385,13 @@ $debug = debug($horses);
 	</div>
 	<div class="card" id="pick_block" style="">
 		<h4 class="card-title text-center text-light">
-			<?php echo $current_event['name'];?>
+			<?php
+			if (isset($current_event['name'])) {
+				echo $current_event['name'];
+			} else {
+				echo "Admin hasn't created an event yet";
+			}
+			?>
 		</h4>
 		<div class="collapse" id="instructions">
 			<div class="card card-body">
