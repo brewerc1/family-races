@@ -82,6 +82,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+// Ensure timezone is set for SMTP
+date_default_timezone_set('America/Kentucky/Louisville');
+
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/PHPMailer.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
@@ -103,6 +106,11 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
                    $recipient_email) {
 
     $mail = new PHPMailer(true);
+    
+    if($config['prod_mode'] == false){
+		// Set PHPMailer() error reporting for development/debug
+		$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+	}
 
     try {
         //Server settings
@@ -115,8 +123,9 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->Port       = $email_server_port;
 
         //Recipients
-        $mail->setFrom($email_from_address, $email_from_name);
+        $mail->setFrom($email_server_account, $email_from_name);
         $mail->addAddress($recipient_email);
+        $mail->addReplyTo($email_from_address, $email_from_name);
 
         // Content
         $mail->isHTML(true);
