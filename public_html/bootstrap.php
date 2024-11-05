@@ -85,9 +85,9 @@ use PHPMailer\PHPMailer\Exception;
 // Ensure timezone is set for SMTP
 date_default_timezone_set('America/Kentucky/Louisville');
 
-require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/PHPMailer.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 
 /**
  * @param $email_server
@@ -105,7 +105,7 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
                    $email_from_name, $email_from_address, $invite_email_subject, $invite_email_body,
                    $recipient_email) {
 
-    $mail = new PHPMailer(true);
+    $mail = new PHPMailer();
     
     if($config['prod_mode'] == false){
 		// Set PHPMailer() error reporting for development/debug
@@ -119,7 +119,8 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->SMTPAuth   = true;
         $mail->Username   = $email_server_account;
         $mail->Password   = $email_server_password;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->SMTPSecure = 'ssl';
         $mail->Port       = $email_server_port;
 
         //Recipients
@@ -136,8 +137,12 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->send();
         return true;
     } catch (Exception $e) {
-        return false;
-    }
+    	echo $e->errorMessage(); //Pretty error messages from PHPMailer
+		return false;
+	} catch (\Exception $e) { //The leading slash means the Global PHP Exception class will be caught
+		echo $e->getMessage(); //Boring error messages from anything else!
+		return false;
+	}
 }
 
 
