@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jul 23, 2020 at 11:44 PM
--- Server version: 10.2.10-MariaDB
--- PHP Version: 7.2.30
+-- Host: localhost:3306
+-- Generation Time: Nov 02, 2024 at 04:39 PM
+-- Server version: 8.0.37
+-- PHP Version: 8.3.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,17 +28,17 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `event` (
-  `id` smallint(6) NOT NULL,
+  `id` smallint NOT NULL,
   `name` varchar(25) NOT NULL,
   `date` date NOT NULL,
   `pot` decimal(6,2) NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Boolean, 1 means completed.',
-  `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `champion_id` smallint(6) DEFAULT NULL,
+  `status` tinyint NOT NULL DEFAULT '0' COMMENT 'Boolean, 1 means completed.',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `champion_id` smallint DEFAULT NULL,
   `champion_purse` decimal(6,2) DEFAULT NULL,
   `champion_photo` varchar(128) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `event`
@@ -56,10 +56,10 @@ INSERT INTO `event` (`id`, `name`, `date`, `pot`, `status`, `create_time`, `upda
 --
 
 CREATE TABLE `event_standings` (
-  `event_id` smallint(6) NOT NULL,
-  `user_id` smallint(6) NOT NULL,
+  `event_id` smallint NOT NULL,
+  `user_id` smallint NOT NULL,
   `earnings` decimal(6,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `event_standings`
@@ -96,15 +96,15 @@ INSERT INTO `event_standings` (`event_id`, `user_id`, `earnings`) VALUES
 --
 
 CREATE TABLE `horse` (
-  `id` int(11) NOT NULL,
-  `race_event_id` smallint(6) NOT NULL,
-  `race_race_number` tinyint(4) NOT NULL,
+  `id` int NOT NULL,
+  `race_event_id` smallint NOT NULL,
+  `race_race_number` tinyint NOT NULL,
   `horse_number` varchar(64) DEFAULT NULL,
   `finish` enum('win','place','show') DEFAULT NULL,
   `win_purse` decimal(6,2) DEFAULT NULL,
   `place_purse` decimal(6,2) DEFAULT NULL,
   `show_purse` decimal(6,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `horse`
@@ -200,12 +200,12 @@ INSERT INTO `horse` (`id`, `race_event_id`, `race_race_number`, `horse_number`, 
 --
 
 CREATE TABLE `pick` (
-  `user_id` smallint(6) NOT NULL,
-  `race_event_id` smallint(6) NOT NULL,
-  `race_race_number` tinyint(4) NOT NULL,
+  `user_id` smallint NOT NULL,
+  `race_event_id` smallint NOT NULL,
+  `race_race_number` tinyint NOT NULL,
   `horse_number` varchar(64) NOT NULL,
   `finish` enum('win','place','show') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `pick`
@@ -299,11 +299,11 @@ INSERT INTO `pick` (`user_id`, `race_event_id`, `race_race_number`, `horse_numbe
 --
 
 CREATE TABLE `race` (
-  `event_id` smallint(6) NOT NULL,
-  `race_number` tinyint(4) NOT NULL,
-  `window_closed` tinyint(1) DEFAULT 0,
-  `cancelled` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `event_id` smallint NOT NULL,
+  `race_number` tinyint NOT NULL,
+  `window_closed` tinyint(1) DEFAULT '0',
+  `cancelled` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `race`
@@ -327,11 +327,11 @@ INSERT INTO `race` (`event_id`, `race_number`, `window_closed`, `cancelled`) VAL
 --
 
 CREATE TABLE `race_standings` (
-  `race_event_id` smallint(6) NOT NULL,
-  `race_race_number` tinyint(4) NOT NULL,
-  `user_id` smallint(6) NOT NULL,
+  `race_event_id` smallint NOT NULL,
+  `race_race_number` tinyint NOT NULL,
+  `user_id` smallint NOT NULL,
   `earnings` decimal(6,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `race_standings`
@@ -423,15 +423,15 @@ INSERT INTO `race_standings` (`race_event_id`, `race_race_number`, `user_id`, `e
 --
 
 CREATE TABLE `site_settings` (
-  `id` tinyint(4) NOT NULL,
+  `id` tinyint NOT NULL,
   `name` varchar(45) NOT NULL,
-  `sound_fx` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
-  `voiceovers` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
-  `terms_enable` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Boolean, 1 means enabled.',
-  `terms_text` longtext DEFAULT NULL,
-  `default_horse_count` tinyint(4) NOT NULL DEFAULT 20,
-  `memorial_race_enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
-  `memorial_race_number` tinyint(4) NOT NULL DEFAULT 9,
+  `sound_fx` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Boolean, 1 means enabled.',
+  `voiceovers` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Boolean, 1 means enabled.',
+  `terms_enable` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Boolean, 1 means enabled.',
+  `terms_text` longtext,
+  `default_horse_count` tinyint NOT NULL DEFAULT '20',
+  `memorial_race_enable` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Boolean, 1 means enabled.',
+  `memorial_race_number` tinyint NOT NULL DEFAULT '9',
   `memorial_race_name` varchar(45) NOT NULL,
   `welcome_video_url` varchar(128) NOT NULL,
   `invite_email_subject` varchar(64) NOT NULL,
@@ -442,7 +442,7 @@ CREATE TABLE `site_settings` (
   `email_server_password` varchar(64) NOT NULL,
   `email_from_name` varchar(64) NOT NULL,
   `email_from_address` varchar(64) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `site_settings`
@@ -458,24 +458,24 @@ INSERT INTO `site_settings` (`id`, `name`, `sound_fx`, `voiceovers`, `terms_enab
 --
 
 CREATE TABLE `user` (
-  `id` smallint(6) NOT NULL,
+  `id` smallint NOT NULL,
   `first_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `update_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `city` varchar(45) DEFAULT NULL,
   `state` char(2) DEFAULT NULL,
   `motto` varchar(255) DEFAULT NULL,
   `photo` varchar(128) DEFAULT '/images/no-user-image.jpg',
-  `sound_fx` tinyint(1) DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
-  `voiceovers` tinyint(1) DEFAULT 1 COMMENT 'Boolean, 1 means enabled.',
+  `sound_fx` tinyint(1) DEFAULT '1' COMMENT 'Boolean, 1 means enabled.',
+  `voiceovers` tinyint(1) DEFAULT '1' COMMENT 'Boolean, 1 means enabled.',
   `pw_reset_code` char(8) DEFAULT NULL,
   `invite_code` char(8) DEFAULT NULL,
-  `admin` tinyint(1) NOT NULL DEFAULT 0,
-  `inactive` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `admin` tinyint(1) NOT NULL DEFAULT '0',
+  `inactive` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `user`
@@ -564,25 +564,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` smallint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `horse`
 --
 ALTER TABLE `horse`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `site_settings`
 --
 ALTER TABLE `site_settings`
-  MODIFY `id` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` tinyint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` smallint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
