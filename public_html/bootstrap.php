@@ -85,9 +85,9 @@ use PHPMailer\PHPMailer\Exception;
 // Ensure timezone is set for SMTP
 date_default_timezone_set('America/Kentucky/Louisville');
 
+require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/PHPMailer.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/Exception.php';
 
 /**
  * @param $email_server
@@ -105,7 +105,7 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
                    $email_from_name, $email_from_address, $invite_email_subject, $invite_email_body,
                    $recipient_email) {
 
-    $mail = new PHPMailer();
+    $mail = new PHPMailer(true);
     
     if($config['prod_mode'] == false){
 		// Set PHPMailer() error reporting for development/debug
@@ -119,8 +119,7 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->SMTPAuth   = true;
         $mail->Username   = $email_server_account;
         $mail->Password   = $email_server_password;
-        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->SMTPSecure = 'ssl';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = $email_server_port;
 
         //Recipients
@@ -137,12 +136,8 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->send();
         return true;
     } catch (Exception $e) {
-    	echo $e->errorMessage(); //Pretty error messages from PHPMailer
-		return false;
-	} catch (\Exception $e) { //The leading slash means the Global PHP Exception class will be caught
-		echo $e->getMessage(); //Boring error messages from anything else!
-		return false;
-	}
+        return false;
+    }
 }
 
 
@@ -273,7 +268,7 @@ function random_photo(){
         'horse-3880450_1920.jpg' => 'Clarence Alford',
         'horses-3817727_1920.jpg' => 'Clarence Alford',
         'horse-4818530_1920.jpg' => 'Karuvadgraphy',
-        'horse-4811946_1920.jpg' => 'Karuvadgraphy</a>"',
+        'horse-4811946_1920.jpg' => 'Karuvadgraphy"',
         'horse-2815033_1920.jpg' => 'Richard Mcall',
         'horses-2523299_1920.jpg' => 'Yenni Vance',
         'horseracing-5061006_1920.jpg' => 'bianca-stock-photos',
