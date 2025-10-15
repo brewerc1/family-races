@@ -35,12 +35,12 @@ if (isset($_POST["invite"])) {
                 // send invite
                 $host = $_SERVER['SERVER_NAME'];
                 $email_body = nl2br($_SESSION["site_invite_email_body"]);
-				$invite_email_body = "<p>$email_body</p>\n<p><a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Click</a> to sign up.</p>\n<p><small>Note: This invite code ($unique_code) only works with the email address where you received this invitation. If you'd prefer to use a different email address, just let me know and I'll send a new invite.</small></p>";
+				$invite_email_body = "<p>$email_body</p>\n<p><a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Sign Up Now</a></p>\n<p><strong>Note:</strong> This invite code ($unique_code) only works with the email address where you received this invitation. If you'd prefer to use a different email address, just let me know and I'll send a new invite.</p>";
 				
                 if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
                     $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
                     $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
-                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email, true)) {
+                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email, false)) {
 
                     header("Location: ./?m=8&s=warning");
                     exit;
@@ -59,4 +59,5 @@ if (isset($_POST["invite"])) {
 
 }
 
+ob_end_clean();
 ?>

@@ -108,23 +108,17 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
 
 	global $config; // Fix: Access global config variable
 
-	// Log email attempt
-	$log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/email_debug.log';
-	$timestamp = date('Y-m-d H:i:s');
-	$log_msg = "\n[$timestamp] Email Attempt:\n";
-	$log_msg .= "  Method: " . ($use_php_mail ? "PHP mail()" : "SMTP") . "\n";
-	$log_msg .= "  Server: $email_server\n";
-	$log_msg .= "  Port: $email_server_port\n";
-	$log_msg .= "  Username: $email_server_account\n";
-	$log_msg .= "  Recipient: $recipient_email\n";
-	file_put_contents($log_file, $log_msg, FILE_APPEND);
-
     $mail = new PHPMailer(true);
+	
+	// Explicitly set charset to UTF-8 to prevent iso-8859-1 issues
+	$mail->CharSet = 'UTF-8';
+	
+	// Use quoted-printable encoding (more compatible than base64 for mail() function)
+	$mail->Encoding = 'quoted-printable';
 	
 	// Use PHP's mail() function instead of SMTP (better for shared hosting)
 	if ($use_php_mail) {
 		$mail->isMail();
-		file_put_contents($log_file, "  Using PHP mail() function\n", FILE_APPEND);
 	}
     
     // Disable SMTPDebug to prevent output that breaks headers
@@ -144,14 +138,11 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
 			// Try to determine encryption based on port
 			if ($email_server_port == 465) {
 				$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-				file_put_contents($log_file, "  Using SMTPS (SSL) encryption for port 465\n", FILE_APPEND);
 			} elseif ($email_server_port == 587) {
 				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-				file_put_contents($log_file, "  Using STARTTLS encryption for port 587\n", FILE_APPEND);
 			} else {
 				// For shared hosting, try no encryption first
 				$mail->SMTPSecure = '';
-				file_put_contents($log_file, "  Using NO encryption for port $email_server_port\n", FILE_APPEND);
 			}
 			
 			$mail->Port       = $email_server_port;
@@ -168,8 +159,6 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
 					'allow_self_signed' => true
 				)
 			);
-			
-			file_put_contents($log_file, "  Attempting SMTP connection...\n", FILE_APPEND);
 		}
 
         //Recipients
@@ -181,37 +170,26 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->isHTML(true);
         $mail->Subject = $invite_email_subject;
         $mail->Body    = $invite_email_body;
-        $mail->AltBody = strip_tags($invite_email_body);
-		
-		// Add headers to improve deliverability and avoid spam filters
-		$mail->XMailer = ' '; // Hide X-Mailer header (some spam filters flag PHPMailer)
-		$mail->addCustomHeader('X-Priority', '3');
-		$mail->addCustomHeader('Importance', 'Normal');
-		
-		// Log what we're about to send
-		file_put_contents($log_file, "  From: $email_from_name <$email_server_account>\n", FILE_APPEND);
-		file_put_contents($log_file, "  Reply-To: $email_from_name <$email_from_address>\n", FILE_APPEND);
-		file_put_contents($log_file, "  Subject: $invite_email_subject\n", FILE_APPEND);
+        
+        // Only include AltBody when using SMTP, not when using mail()
+		// (mail() function often has issues with multipart MIME messages)
+        if (!$use_php_mail) {
+			// Create plain text version that preserves URLs from links
+			$alt_body = $invite_email_body;
+			// Convert <a href="URL">text</a> to "text (URL)" for plain text
+			$alt_body_converted = @preg_replace('/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/i', '$2 ($1)', $alt_body);
+			if ($alt_body_converted !== null) {
+				$alt_body = $alt_body_converted;
+			}
+			$mail->AltBody = strip_tags($alt_body);
+		}
 
         $mail->send();
 		
-		// Log success with timestamp
-		$sent_time = date('Y-m-d H:i:s');
-		file_put_contents($log_file, "  Result: SUCCESS at $sent_time\n", FILE_APPEND);
-		file_put_contents($log_file, "  ** Check SPAM folder if not in inbox **\n", FILE_APPEND);
-		
         return true;
     } catch (Exception $e) {
-		// Log error - ALWAYS log, not just in dev mode
-		$error_msg = "  Result: FAILED\n";
-		$error_msg .= "  PHPMailer Error: " . $mail->ErrorInfo . "\n";
-		$error_msg .= "  Exception: " . $e->getMessage() . "\n";
-		file_put_contents($log_file, $error_msg, FILE_APPEND);
-		
-		// Also log to PHP error log
-		error_log("PHPMailer Error: " . $mail->ErrorInfo);
-		error_log("Exception: " . $e->getMessage());
-		
+		// Log to PHP error log only
+		error_log("Email Send Failed - Recipient: $recipient_email, Error: " . $mail->ErrorInfo . ", Exception: " . $e->getMessage());
         return false;
     }
 }
