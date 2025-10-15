@@ -70,11 +70,11 @@ if (isset($_POST['submit'])){
                 $email_encoded = urlencode($email); // properly encode characters for use in a URL
                 $host = $_SERVER['SERVER_NAME'];
                 $email_body = nl2br($_SESSION["site_invite_email_body"]);
-                $invite_email_body = "<p>$email_body</p>\n<p><a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Click</a> to sign up.</p>\n<p>The invite link and the unique invite code ($unique_code) is specifically tied to the email address entered by the admin ($email). It cannot be used with any other email address. If you want to use a different email address, contact your admin and request a new invite be sent to your different email address.</p>";
+                $invite_email_body = "<p>$email_body</p>\n<p><a href=\"http://$host/onboarding/?email=$email_encoded&code=$unique_code\">Click</a> to sign up.</p>\n<p><small>Note: This invite code ($unique_code) only works with the email address where you received this invitation. If you'd prefer to use a different email address, just let me know and I'll send a new invite.</small></p>";
                  if (!sendEmail($_SESSION["site_email_server"], $_SESSION["site_email_server_account"],
                     $_SESSION["site_email_server_password"], $_SESSION["site_email_server_port"],
                     $_SESSION["site_email_from_name"], $_SESSION["site_email_from_address"],
-                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email)) {
+                    $_SESSION["site_invite_email_subject"], $invite_email_body, $email, true)) {
 
                     header("Location: ./?m=8&s=warning");
                     exit;

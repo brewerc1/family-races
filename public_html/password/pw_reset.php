@@ -57,7 +57,7 @@ if (isset($_POST["reset_password"])) {
 
                     $is_sent = sendEmail($row["email_server"], $row["email_server_account"],
                         $row["email_server_password"], $row["email_server_port"], $row["email_from_name"],
-                        $row["email_from_address"], $pw_reset_email_subject, $pw_reset_email_body, $email);
+                        $row["email_from_address"], $pw_reset_email_subject, $pw_reset_email_body, $email, true);
 
 
                     if (!$is_sent) {

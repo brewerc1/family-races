@@ -99,28 +99,78 @@ require $_SERVER['DOCUMENT_ROOT'] . '/library/phpmailer/SMTP.php';
  * @param $invite_email_subject
  * @param $invite_email_body
  * @param $recipient_email
+ * @param $use_php_mail - If true, use PHP's mail() instead of SMTP (better for shared hosting)
  * @return bool
  */
 function sendEmail($email_server, $email_server_account, $email_server_password, $email_server_port,
                    $email_from_name, $email_from_address, $invite_email_subject, $invite_email_body,
-                   $recipient_email) {
+                   $recipient_email, $use_php_mail = false) {
+
+	global $config; // Fix: Access global config variable
+
+	// Log email attempt
+	$log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/email_debug.log';
+	$timestamp = date('Y-m-d H:i:s');
+	$log_msg = "\n[$timestamp] Email Attempt:\n";
+	$log_msg .= "  Method: " . ($use_php_mail ? "PHP mail()" : "SMTP") . "\n";
+	$log_msg .= "  Server: $email_server\n";
+	$log_msg .= "  Port: $email_server_port\n";
+	$log_msg .= "  Username: $email_server_account\n";
+	$log_msg .= "  Recipient: $recipient_email\n";
+	file_put_contents($log_file, $log_msg, FILE_APPEND);
 
     $mail = new PHPMailer(true);
-    
-    if($config['prod_mode'] == false){
-		// Set PHPMailer() error reporting for development/debug
-		$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+	
+	// Use PHP's mail() function instead of SMTP (better for shared hosting)
+	if ($use_php_mail) {
+		$mail->isMail();
+		file_put_contents($log_file, "  Using PHP mail() function\n", FILE_APPEND);
 	}
+    
+    // Disable SMTPDebug to prevent output that breaks headers
+	// (Output from SMTP debug causes "headers already sent" errors)
+	$mail->SMTPDebug = 0;
 
     try {
-        //Server settings
-        $mail->isSMTP();
-        $mail->Host       = $email_server;
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $email_server_account;
-        $mail->Password   = $email_server_password;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = $email_server_port;
+		// Only configure SMTP if not using PHP mail()
+		if (!$use_php_mail) {
+			//Server settings
+			$mail->isSMTP();
+			$mail->Host       = $email_server;
+			$mail->SMTPAuth   = true;
+			$mail->Username   = $email_server_account;
+			$mail->Password   = $email_server_password;
+			
+			// Try to determine encryption based on port
+			if ($email_server_port == 465) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+				file_put_contents($log_file, "  Using SMTPS (SSL) encryption for port 465\n", FILE_APPEND);
+			} elseif ($email_server_port == 587) {
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+				file_put_contents($log_file, "  Using STARTTLS encryption for port 587\n", FILE_APPEND);
+			} else {
+				// For shared hosting, try no encryption first
+				$mail->SMTPSecure = '';
+				file_put_contents($log_file, "  Using NO encryption for port $email_server_port\n", FILE_APPEND);
+			}
+			
+			$mail->Port       = $email_server_port;
+			
+			// Shared hosting compatibility settings
+			$mail->SMTPAutoTLS = false; // Disable auto-TLS (many shared hosts have issues)
+			$mail->Timeout = 10; // Shorter timeout for faster failure detection
+			$mail->SMTPKeepAlive = false;
+			
+			$mail->SMTPOptions = array(
+				'ssl' => array(
+					'verify_peer' => false,
+					'verify_peer_name' => false,
+					'allow_self_signed' => true
+				)
+			);
+			
+			file_put_contents($log_file, "  Attempting SMTP connection...\n", FILE_APPEND);
+		}
 
         //Recipients
         $mail->setFrom($email_server_account, $email_from_name);
@@ -132,10 +182,36 @@ function sendEmail($email_server, $email_server_account, $email_server_password,
         $mail->Subject = $invite_email_subject;
         $mail->Body    = $invite_email_body;
         $mail->AltBody = strip_tags($invite_email_body);
+		
+		// Add headers to improve deliverability and avoid spam filters
+		$mail->XMailer = ' '; // Hide X-Mailer header (some spam filters flag PHPMailer)
+		$mail->addCustomHeader('X-Priority', '3');
+		$mail->addCustomHeader('Importance', 'Normal');
+		
+		// Log what we're about to send
+		file_put_contents($log_file, "  From: $email_from_name <$email_server_account>\n", FILE_APPEND);
+		file_put_contents($log_file, "  Reply-To: $email_from_name <$email_from_address>\n", FILE_APPEND);
+		file_put_contents($log_file, "  Subject: $invite_email_subject\n", FILE_APPEND);
 
         $mail->send();
+		
+		// Log success with timestamp
+		$sent_time = date('Y-m-d H:i:s');
+		file_put_contents($log_file, "  Result: SUCCESS at $sent_time\n", FILE_APPEND);
+		file_put_contents($log_file, "  ** Check SPAM folder if not in inbox **\n", FILE_APPEND);
+		
         return true;
     } catch (Exception $e) {
+		// Log error - ALWAYS log, not just in dev mode
+		$error_msg = "  Result: FAILED\n";
+		$error_msg .= "  PHPMailer Error: " . $mail->ErrorInfo . "\n";
+		$error_msg .= "  Exception: " . $e->getMessage() . "\n";
+		file_put_contents($log_file, $error_msg, FILE_APPEND);
+		
+		// Also log to PHP error log
+		error_log("PHPMailer Error: " . $mail->ErrorInfo);
+		error_log("Exception: " . $e->getMessage());
+		
         return false;
     }
 }
