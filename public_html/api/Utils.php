@@ -23,7 +23,7 @@ class Utils
 
     public static function isAdmin(): bool
     {
-        return !empty($_SESSION['admin']) && $_SESSION['admin'] === 1;
+        return !empty($_SESSION['admin']) && $_SESSION['admin'] == 1;
     }
 
     public static function isLoggedIn(): bool
